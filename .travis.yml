@@ -6,6 +6,9 @@ branches:
   only:
     - master
 
+script:
+  - npm run build
+
 deploy:
   provider: firebase
   token:
