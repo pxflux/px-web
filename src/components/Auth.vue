@@ -1,18 +1,17 @@
 <template>
-  <div id="firebaseui-auth-container"></div>
+  <div id="firebaseui-auth"></div>
 </template>
 
 <script>
   import firebase from 'firebase';
   import firebaseui from 'firebaseui';
 
-  require('../../node_modules/firebaseui/dist/firebaseui.css');
+  let ui;
 
   export default {
-    name: 'auth',
     mounted() {
-      const ui = new firebaseui.auth.AuthUI(firebase.auth());
-      ui.start('#firebaseui-auth-container', {
+      ui = ui || new firebaseui.auth.AuthUI(firebase.auth());
+      ui.start('#firebaseui-auth', {
         signInSuccessUrl: '/',
         signInOptions: [
           firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -20,9 +19,12 @@
         ],
       });
     },
+    destroyed() {
+      ui.reset();
+    },
   };
 </script>
 
-<style scoped>
-
+<style>
+  @import url('../../node_modules/firebaseui/dist/firebaseui.css');
 </style>

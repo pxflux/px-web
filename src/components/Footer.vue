@@ -1,18 +1,18 @@
 <template>
-  <footer v-show=" ! loading">
+  <footer v-if="$route.name != 'auth'">
     <div class="wrap">
       <a class="icon-github" href="https://github.com/pxflux/px-dashboard-web" target="_blank"></a>
 
       <div class="sub-links">
-        <a v-if="user" @click="doSomething" class="login-btn">Logout</a>
-        <a v-if=" ! user" :href="auth" class="login-btn">Login</a>
+        <a v-if="user" @click="logOut" class="login-btn">Logout</a>
+        <router-link v-if=" ! user" to="/auth">Login</router-link>
       </div>
     </div>
   </footer>
 </template>
 
 <script>
-  import firebaseApp from 'firebase';
+  import firebaseApp from '@/firebase';
 
   export default {
     created() {
