@@ -5,7 +5,7 @@
 
       <div class="sub-links">
         <a v-if="user" @click="logOut" class="login-btn">Logout</a>
-        <router-link v-if=" ! user" to="/auth">Login</router-link>
+        <router-link v-if=" ! user" to="/auth" class="login-btn">Login</router-link>
       </div>
     </div>
   </footer>

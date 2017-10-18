@@ -1,0 +1,18 @@
+header {
+  background: $main2;
+  background: linear-gradient(to right, $main1, $main2);
+  width: 100%;
+  padding: 25px 0;
+
+  @include media(5) {
+    padding: 15px 0;
+  }
+
+  .dark & {
+    opacity: .9;
+  }
+
+  .open-modal & {
+    padding: 25px 16px 25px 0;
+  }
+}
