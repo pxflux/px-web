@@ -4,6 +4,7 @@
 
 <script>
   import { mapState } from 'vuex';
+  import firebase from 'firebase';
   import firebaseui from 'firebaseui';
   import firebaseApp from '../firebase';
 
@@ -23,11 +24,12 @@
     signInFlow: 'popup',
     signInOptions: [
       {
-        provider: firebaseApp.auth.EmailAuthProvider.PROVIDER_ID,
+        provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        scopes: ['https://www.googleapis.com/auth/plus.login'],
       },
       {
-        provider: firebaseApp.auth.GoogleAuthProvider.PROVIDER_ID,
-        scopes: ['https://www.googleapis.com/auth/plus.login'],
+        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        requireDisplayName: true,
       },
     ],
   };
