@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /**
  * mxm 28/10/2016.
  */
@@ -101,10 +99,9 @@ Color.prototype = {
   randomize: function () {
     this.h = this.clamp(this.h + (Math.random() / 60 * ((Math.random() > 0.5) ? 1 : -1)), 1)
     this.s = this.clamp(this.s + (Math.random() / 60 * ((Math.random() > 0.5) ? 1 : -1)), 1)
-    //this.l += (Math.random()/200 * ((Math.random()>0.5)? 1 : -1));
     this.rgb = this.toRGB()
   },
-  toRGBString: function (/**number=*/lightnessFact) {
+  toRGBString: function (lightnessFact) {
     if (typeof lightnessFact === 'undefined') {
       lightnessFact = 1
     }
@@ -113,7 +110,7 @@ Color.prototype = {
     var b = Math.round(this.rgb.b * 255 * lightnessFact)
     return 'rgb(' + r + ',' + g + ',' + b + ')'
   },
-  toRGBAString: function (/**number=*/a) {
+  toRGBAString: function (/** number= */a) {
     if (typeof a === 'undefined') {
       a = 1
     }
@@ -129,10 +126,10 @@ Color.prototype = {
     this.h = this.clamp(this.h - (h || 0), 1)
     this.s = this.clamp(this.s * (s || 1), 1)
     this.l = this.clamp(this.l - (l || 0), 1)
-    //this.l += (Math.random()/200 * ((Math.random()>0.5)? 1 : -1));
+    // this.l += (Math.random()/200 * ((Math.random()>0.5)? 1 : -1));
     this.rgb = this.toRGB()
   },
-  toHSLStringWithOffset: function (/**number=*/hOffset, /**number=*/sOffset, /**number=*/lOffset) {
+  toHSLStringWithOffset: function (/** number= */hOffset, /** number= */sOffset, /** number= */lOffset) {
     if (typeof hOffset === 'undefined') {
       hOffset = 0
     }
@@ -144,7 +141,7 @@ Color.prototype = {
     }
     return 'hsl(' + ((this.h * 360 + hOffset) % 360) + ',' + this.clamp(this.s * 100 + sOffset, 100) + '%,' + this.clamp(this.l * 100 + lOffset, 100) + '%)'
   },
-  toOppositeHSLAString: function (/**number=*/a) {
+  toOppositeHSLAString: function (/** number= */a) {
     if (typeof a === 'undefined') {
       a = 1
     }
@@ -240,10 +237,13 @@ Color.prototype.fromRGB = function (r, g, b, from255) {
     b = this.normalizeClamp(b, 255)
   }
 
-  var max = Math.max(r, g, b), min = Math.min(r, g, b)
-  var h, s, l = (max + min) / 2
+  var max = Math.max(r, g, b)
+  var min = Math.min(r, g, b)
+  var h
+  var s
+  var l = (max + min) / 2
 
-  if (max == min) {
+  if (max === min) {
     h = s = 0 // achromatic
   } else {
     var d = max - min

@@ -11,8 +11,6 @@ import './firebase'
 import './assets/js/px-main'
 
 Vue.config.productionTip = false
-// const images = require('./assets/img/', false, /^.png$/)
-// console.log('images: ' + images)
 
 /**
  * Sync the router with the vuex store. This registers `store.state.route`

@@ -9,7 +9,7 @@
 	position: relative;
 	overflow: hidden;
 	box-shadow: 0 0 0 1px #ccc;
-	
+
 	@media (max-width: 1000px) {
 		width: 33.333vw;
 		height: 33.333vw;
@@ -55,16 +55,24 @@
 	white-space: nowrap;
 	max-width: 100%;
 	text-decoration: none;
-	
+
 	&:hover {
 		color: $main2;
 	}
-	
+
 	&:active {
 		color: $main1;
 	}
-	
+
 	@include media(3) {
 		font-size: 15px;
 	}
+}
+
+.nothing-found {
+  float: left;
+  width: 100%;
+  font-size: 32px;
+  margin: 0 0 30px 0;
+  color: $dark;
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-trailing-spaces,no-multiple-empty-lines */
 /**
  * maxim tyminko 21.10.17.
  * maximtyminko.com

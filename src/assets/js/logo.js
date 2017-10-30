@@ -1,4 +1,3 @@
-/* eslint-disable no-trailing-spaces */
 /**
  * maxim 17/01/2017.
  */
@@ -143,8 +142,6 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
 function ImgPixels (imgScr) {
   let _this = this
 
-  /** @type {Pixel[]} */
-  // this.pixels = []
   /** @type {Pixel[][]} */
   this.pixTable = []
   this.width = 0

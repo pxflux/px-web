@@ -1,36 +1,27 @@
 <template>
-	<header>
-		<div class="wrap">
-			<router-link to="/" >
-				<div id="px-logo-box" class="px-logo flick">
-					<canvas id="px-logo"></canvas>
-					<span class="label beta">beta</span>
-				</div>
-			</router-link>
-			<div class="sub-links button flick">
-				<a v-if="user" @click="logOut" class="login-btn">Logout</a>
-				<router-link v-if=" ! user" to="/auth" class="login-btn">Login</router-link>
-			</div>
-			<router-link to="/" >
-				<div class="button flick">
-					<span class="label beta">?</span>
-				</div>
-			</router-link>
-		</div>
-	</header>
+  <header>
+    <div class="wrap">
+      <router-link to="/" class="button">PxFlux</router-link>
+      <router-link v-if=" ! user" to="/auth" class="login-btn">Login</router-link>
+      <a v-if="user" @click="logOut" class="login-btn">Logout</a>
+      <router-link v-if="user" to="/artworks" class="button">Artworks</router-link>
+      <router-link v-if="user" to="/artwork-create" class="button">Add</router-link>
+    </div>
+  </header>
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   import firebaseApp from '../firebase'
 
   export default {
-    created () {
-      this.user = firebaseApp.auth().currentUser
-    },
     data () {
-      return {
-        user: {}
-      }
+      return {}
+    },
+    computed: {
+      ...mapState({
+        user: state => state.user
+      })
     },
     methods: {
       logOut () {
