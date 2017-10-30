@@ -23,7 +23,7 @@
     },
     computed: {
       noImage () {
-        return './static/img/no-image.png'
+        return './static/img/1.gif'
       }
     }
   }
