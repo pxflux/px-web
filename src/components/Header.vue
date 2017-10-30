@@ -1,7 +1,36 @@
 <template>
-  <header>
-    <div class="wrap">
-      <router-link to="/" class="logo">PxFlux</router-link>
-    </div>
-  </header>
+	<header>
+		<div class="wrap">
+			<router-link to="/" >
+				<div id="px-logo-box" class="px-logo button flick">
+					<canvas id="px-logo"></canvas>
+					<span class="label beta">beta</span>
+				</div>
+			</router-link>
+			<div class="sub-links button flick">
+				<a v-if="user" @click="logOut" class="login-btn">Logout</a>
+				<router-link v-if=" ! user" to="/auth" class="login-btn">Login</router-link>
+			</div>
+		</div>
+	</header>
 </template>
+
+<script>
+  import firebaseApp from '../firebase'
+
+  export default {
+    created () {
+      this.user = firebaseApp.auth().currentUser
+    },
+    data () {
+      return {
+        user: {}
+      }
+    },
+    methods: {
+      logOut () {
+        firebaseApp.auth().signOut()
+      }
+    }
+  }
+</script>

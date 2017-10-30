@@ -1,9 +1,8 @@
-
-'use strict';
+'use strict'
 // Template version: 1.1.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   build: {
@@ -39,4 +38,4 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
   }
-};
+}

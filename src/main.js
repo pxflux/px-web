@@ -1,29 +1,31 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue';
-import { sync } from 'vuex-router-sync';
-import App from './App';
+import Vue from 'vue'
+import { sync } from 'vuex-router-sync'
+import App from './App'
 
-import router from './router';
-import store from './store';
+import router from './router'
+import store from './store'
 
-import './firebase';
+import './firebase'
+import './assets/js/px-main'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
+// const images = require('./assets/img/', false, /^.png$/)
+// console.log('images: ' + images)
 
 /**
  * Sync the router with the vuex store. This registers `store.state.route`
  * (https://github.com/vuejs/vuex-router-sync/tree/next)
  */
-sync(store, router);
+sync(store, router)
 
 /* eslint-disable no-new */
 const vm = new Vue({
   router,
   store,
-
   template: '<App/>',
-  components: { App },
-});
+  components: {App}
+})
 
-vm.$mount('#app');
+vm.$mount('#app')

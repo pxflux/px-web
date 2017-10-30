@@ -1,114 +1,70 @@
-main {
-  float: left;
-  width: 100%;
-  padding: 110px 0 0 0;
-  min-height: 100vh;
+.wrap-content{
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .item-wrap {
-  margin: 0 0 60px 0;
-  position: relative;
-
-  lost-column: 1/6;
-
-  @include media(1) {
-    lost-column: 1/4;
-  }
-  @include media(3) {
-    lost-column: 1/5;
-  }
-  @include media(4) {
-    lost-column: 1/4;
-  }
-  @include media(5) {
-    lost-column: 1/3;
-  }
-  @include media(6) {
-    lost-column: 1/2;
-  }
+	width: 25vw;
+	height: 25vw;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 0 0 1px #ccc;
+	
+	@media (max-width: 1000px) {
+		width: 33.333vw;
+		height: 33.333vw;
+	}
+	@media (max-width: 750px) {
+		width: 50vw;
+		height: 50vw;
+	}
+	@media (max-width: 500px) {
+		width: 100vw;
+		height: 100vw;
+	}
 }
 
 .item-image-wrap {
-  position: relative;
-  float: left;
-  max-height: 278px;
-
-  @include media(3) {
-    width: 120px;
-    height: auto;
-  }
-
-  @include media(6) {
-    width: 100px;
-  }
-
-  &:hover {
-    .logged & {
-      .item-new {
-        display: block;
-      }
-    }
-  }
+	position: relative;
 }
 
 .item-image {
-  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, .5);
-
-  @include media(3) {
-    width: 100%;
-    height: auto;
-  }
+	width: 100%;
+	height: 100%;
 }
 
 .no-image {
-  width: 185px;
-  height: 270px;
-  background: $dark;
-  float: left;
-  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .5);
 }
 
 .item-content {
-  float: left;
-  width: 100%;
-  margin: 20px 0 0 0;
-
-  @include media(5) {
-    margin: 10px 0 0 0;
-  }
+	position: absolute;
+	bottom: 0;
+	background: rgba(255,255,255,0.6);
+	padding: 0.1em 0.3em;
 }
 
 .item-genre {
-  float: left;
-  color: #888;
-  font-size: 14px;
-  clear: both;
-
-  @include media(3) {
-    font-size: 13px;
-  }
 }
 
 .item-title {
-  color: $dark;
-  clear: both;
-  font-size: 17px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-  text-decoration: none;
-  float: left;
-
-  &:hover {
-    color: $main2;
-  }
-
-  &:active {
-    color: $main1;
-  }
-
-  @include media(3) {
-    font-size: 15px;
-  }
+	color: $dark;
+	clear: both;
+	font-size: 17px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+	text-decoration: none;
+	
+	&:hover {
+		color: $main2;
+	}
+	
+	&:active {
+		color: $main1;
+	}
+	
+	@include media(3) {
+		font-size: 15px;
+	}
 }

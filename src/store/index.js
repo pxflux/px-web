@@ -1,22 +1,20 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import { firebaseMutations } from 'vuexfire';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import { firebaseMutations } from 'vuexfire'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null, // Will be bound as an object
+    user: null // Will be bound as an object
   },
-  actions: {
-  },
+  actions: {},
   mutations: {
-    UPDATE_USER(state, user) {
+    UPDATE_USER (state, user) {
       // eslint-disable-next-line no-param-reassign
-      state.user = user;
+      state.user = user
     },
-    ...firebaseMutations,
+    ...firebaseMutations
   },
-  getters: {
-  },
-});
+  getters: {}
+})
