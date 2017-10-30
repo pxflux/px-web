@@ -34,13 +34,20 @@ header {
 			text-align: right;
 		}
 	}
-	.login-btn {
-		color: #292929;
-		display: inline-block;
-		text-decoration: none;
+	.button, .login-btn{
+		display: block;
+		min-width: 48px;
 		line-height: 48px;
 		text-align: center;
+		position: relative;
+		color: #292929;
+	}
+	a{
+		text-decoration: none;
+	}
+	.login-btn {
 		width: 96px;
+		text-decoration: none;
 		&:active {
 			opacity: .6;
 		}

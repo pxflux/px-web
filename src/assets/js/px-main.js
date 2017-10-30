@@ -57,13 +57,14 @@ export default (function () {
 
     function StroboscopeBG (flickEl) {
       const el = flickEl
+      const t = Math.random() * 50
       this.draw = () => {
-        const l = Math.random() * 30 + 70
+        const l = Math.random() * 20 + 80
         const color = new Color(null, 100, l)
         el.style.backgroundColor = color.toRGBString()
         setTimeout(() => {
           requestAnimationFrame(this.draw)
-        }, 0)
+        }, t)
       }
     }
 

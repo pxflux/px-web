@@ -2,7 +2,7 @@
 	<header>
 		<div class="wrap">
 			<router-link to="/" >
-				<div id="px-logo-box" class="px-logo button flick">
+				<div id="px-logo-box" class="px-logo flick">
 					<canvas id="px-logo"></canvas>
 					<span class="label beta">beta</span>
 				</div>
@@ -11,6 +11,11 @@
 				<a v-if="user" @click="logOut" class="login-btn">Logout</a>
 				<router-link v-if=" ! user" to="/auth" class="login-btn">Login</router-link>
 			</div>
+			<router-link to="/" >
+				<div class="button flick">
+					<span class="label beta">?</span>
+				</div>
+			</router-link>
 		</div>
 	</header>
 </template>
