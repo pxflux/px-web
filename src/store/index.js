@@ -8,10 +8,10 @@ export default new Vuex.Store({
   // VuexFire will check the type of the property to bind as an array or as an object
   // strict: true,
   state: {
+    user: null, // Will be bound as an object
     artworks: [],
     items: [],
-    item: null,
-    user: null // Will be bound as an object
+    item: null
   },
   actions: {
     setArtworksRef: firebaseAction(({bindFirebaseRef}, ref) => {

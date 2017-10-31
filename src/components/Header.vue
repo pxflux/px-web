@@ -6,6 +6,7 @@
       <a v-if="user" @click="logOut" class="login-btn">Logout</a>
       <router-link v-if="user" to="/artworks" class="button">Artworks</router-link>
       <router-link v-if="user" to="/artwork-create" class="button">Add</router-link>
+      <router-link v-if="user" to="/user/update" class="button">{{ user.displayName }}</router-link>
     </div>
   </header>
 </template>
@@ -19,9 +20,7 @@
       return {}
     },
     computed: {
-      ...mapState({
-        user: state => state.user
-      })
+      ...mapState(['user'])
     },
     methods: {
       logOut () {
