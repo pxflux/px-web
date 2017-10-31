@@ -4,7 +4,7 @@
  */
 
 import Color from './color'
-// import Gradient from './gradient'
+import Perlin from './perlin'
 import ScalableCanvasFromImage from './logo'
 
 export default (function () {
@@ -55,15 +55,19 @@ export default (function () {
     }
 
     function StroboscopeBG (flickEl) {
+      const perlin = new Perlin()
       const el = flickEl
-      const t = Math.random() * 50
+      // const t = 0 // Math.random() * 50
+      let perlinOffset = Math.random() * 10000
       this.draw = () => {
-        const l = Math.random() * 20 + 80
-        const color = new Color(null, 100, l)
+        const h = (perlin.noise(perlinOffset) * 720 + 180) % 360
+        // const l = perlin.noise(0, perlinOffset) * 10 + 90
+        const color = new Color(h, 100, 95)
         el.style.backgroundColor = color.toRGBString()
-        setTimeout(() => {
-          requestAnimationFrame(this.draw)
-        }, t)
+        perlinOffset += Math.random() * 0.2
+        // setTimeout(() => {
+        requestAnimationFrame(this.draw)
+        // }, t)
       }
     }
 
