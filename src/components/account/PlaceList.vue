@@ -1,7 +1,11 @@
 <template>
   <main>
     <div v-if="user" class="wrap-content grid">
-      <PlaceItem v-for="place in accountPlaces" :place="place" :key="place['.key']"></PlaceItem>
+      <ul>
+        <li v-for="place in accountPlaces" :key="place['.key']">
+          <router-link :to="'/account/place/' + place['.key']">{{ place.title }}</router-link>
+        </li>
+      </ul>
       <span class="nothing-found" v-if="accountPlaces.length == 0">Places not found.</span>
       <ul v-if="showForm === false">
         <li><a @click="showForm = true" class="button">Add Place</a></li>
@@ -18,7 +22,6 @@
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase from '../../firebase'
-  import PlaceItem from './PlaceItem'
 
   export default {
     created () {
@@ -55,9 +58,6 @@
         const key = firebase.database().ref('users/' + this.user.uid + '/places').push(newPlace, log).key
         this.$router.push('/account/place/' + key)
       }
-    },
-    components: {
-      PlaceItem
     },
     watch: {
       $route () {

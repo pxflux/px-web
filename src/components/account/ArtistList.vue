@@ -1,7 +1,11 @@
 <template>
   <main>
     <div v-if="user" class="wrap-content grid">
-      <ArtistItem v-for="artist in accountArtists" :artist="artist" :key="artist['.key']"></ArtistItem>
+      <ul>
+        <li v-for="artist in accountArtists" :key="artist['.key']">
+          <router-link :to="'/account/artist/' + artist['.key']">{{ artist.name }}</router-link>
+        </li>
+      </ul>
       <span class="nothing-found" v-if="accountArtists.length == 0">Artists not found.</span>
       <ul v-if="showForm === false">
         <li><a @click="showForm = true" class="button">Add Artist</a></li>
@@ -18,7 +22,6 @@
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase from '../../firebase'
-  import ArtistItem from './ArtistItem'
 
   export default {
     created () {
@@ -55,9 +58,6 @@
         const key = firebase.database().ref('users/' + this.user.uid + '/artists').push(newArtist, log).key
         this.$router.push('/account/artist/' + key)
       }
-    },
-    components: {
-      ArtistItem
     },
     watch: {
       $route () {

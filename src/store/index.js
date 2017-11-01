@@ -9,11 +9,14 @@ export default new Vuex.Store({
   // strict: true,
   state: {
     user: null, // Will be bound as an object
+
     artworks: [],
-    items: [],
-    item: null,
+    artwork: null,
     artists: [],
     artist: null,
+    shows: [],
+    show: null,
+
     accountArtworks: [],
     accountArtwork: null,
     accountArtists: [],
@@ -24,12 +27,6 @@ export default new Vuex.Store({
     accountPlace: null
   },
   actions: {
-    setItemsRef: firebaseAction(({bindFirebaseRef}, ref) => {
-      bindFirebaseRef('items', ref, {wait: true})
-    }),
-    setItemRef: firebaseAction(({bindFirebaseRef}, ref) => {
-      bindFirebaseRef('item', ref, {wait: true})
-    }),
     setRef: firebaseAction(({bindFirebaseRef}, payload) => {
       bindFirebaseRef(payload.key, payload.ref, {wait: true})
     })

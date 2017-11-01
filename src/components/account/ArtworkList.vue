@@ -1,7 +1,10 @@
 <template>
   <main>
     <div v-if="user" class="wrap-content grid">
-      <ArtworkItem v-for="item in accountArtworks" :item="item" :key="item['.key']" :uri="'/account/artwork/' + item['.key']"></ArtworkItem>
+      <ul>
+        <ArtworkItem v-for="item in accountArtworks" :item="item" :key="item['.key']"
+                     :uri="'/account/artwork/' + item['.key']"></ArtworkItem>
+      </ul>
       <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
       <ul v-if="showForm === false">
         <li><a @click="showForm = true" class="button">Add Artwork</a></li>
@@ -15,7 +18,7 @@
 </template>
 
 <script>
-  import ArtworkItem from '../Item'
+  import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase'
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { log } from '../../helper'

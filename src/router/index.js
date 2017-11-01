@@ -1,11 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Content from '@/components/Content'
-import ArtistList from '@/components/ArtistList'
-import ArtistDetail from '@/components/ArtistDetail'
+import Homepage from '@/components/Homepage'
 import UserUpdate from '@/components/UserUpdate'
 import Auth from '@/components/Auth'
+
+import ArtworkList from '@/components/browse/ArtworkList'
+import ArtworkDetail from '@/components/browse/ArtworkDetail'
+import ArtistList from '@/components/browse/ArtistList'
+import ArtistDetail from '@/components/browse/ArtistDetail'
+import ShowList from '@/components/browse/ShowList'
+import ShowDetail from '@/components/browse/ShowDetail'
 
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
@@ -20,11 +25,16 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {path: '/', component: Content, name: 'home'},
-    {path: '/artists', component: ArtistList, name: 'artists'},
-    {path: '/artist/:id', component: ArtistDetail, name: 'artist-detail'},
+    {path: '/', component: Homepage, name: 'home'},
     {path: '/user/update', component: UserUpdate, name: 'user-update'},
     {path: '/auth', component: Auth, name: 'auth'},
+
+    {path: '/artworks', component: ArtworkList, name: 'artworks'},
+    {path: '/artwork/:id', component: ArtworkDetail, name: 'artwork-detail'},
+    {path: '/artists', component: ArtistList, name: 'artists'},
+    {path: '/artist/:id', component: ArtistDetail, name: 'artist-detail'},
+    {path: '/shows', component: ShowList, name: 'shows'},
+    {path: '/show/:id', component: ShowDetail, name: 'show-detail'},
 
     {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
     {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},

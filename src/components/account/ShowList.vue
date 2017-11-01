@@ -1,7 +1,11 @@
 <template>
   <main>
     <div v-if="user" class="wrap-content grid">
-      <ShowItem v-for="show in accountShows" :show="show" :key="show['.key']"></ShowItem>
+      <ul>
+        <li v-for="show in accountShows" :key="show['.key']">
+          <router-link :to="'/account/show/' + show['.key']">{{ show.title }}</router-link>
+        </li>
+      </ul>
       <span class="nothing-found" v-if="accountShows.length == 0">Shows not found.</span>
       <ul v-if="showForm === false">
         <li><a @click="showForm = true" class="button">Add Show</a></li>
@@ -18,7 +22,6 @@
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase from '../../firebase'
-  import ShowItem from './ShowItem'
 
   export default {
     created () {
@@ -55,9 +58,6 @@
         const key = firebase.database().ref('users/' + this.user.uid + '/shows').push(newShow, log).key
         this.$router.push('/account/show/' + key)
       }
-    },
-    components: {
-      ShowItem
     },
     watch: {
       $route () {

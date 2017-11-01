@@ -1,16 +1,19 @@
 <template>
   <main>
     <div class="wrap-content grid">
-      <ArtistItem v-for="artist in artists" :artist="artist" :key="artist['.key']"></ArtistItem>
+      <ul>
+        <li v-for="artist in artists" :key="artist['.key']">
+          <router-link :to="'/artist/' + artist['.key']">{{ artist.name }}</router-link>
+        </li>
+      </ul>
       <span class="nothing-found" v-if="artists.length == 0">Artists not found.</span>
     </div>
   </main>
 </template>
 
 <script>
-  import ArtistItem from './ArtistItem'
-  import firebase from '../firebase'
-  import { mapState } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
+  import firebase from '../../firebase'
 
   export default {
     created () {
@@ -20,15 +23,14 @@
       ...mapState(['artists'])
     },
     methods: {
+      ...mapActions(['setRef']),
+
       init () {
-        this.$store.dispatch('setRef', {
+        this.setRef({
           key: 'artists',
-          ref: firebase.database().ref('/artists')
+          ref: firebase.database().ref('artists')
         })
       }
-    },
-    components: {
-      ArtistItem
     },
     watch: {
       $route () {
