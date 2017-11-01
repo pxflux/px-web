@@ -7,18 +7,15 @@
           <span class="label beta">beta</span>
         </div>
       </router-link>
-      <router-link to="/artists" class="button flick">Artists</router-link>
-      <router-link to="/artworks" class="button flick">Artworks</router-link>
-      <router-link to="/shows" class="button flick">Shows</router-link>
-      <router-link to="/galleries" class="button flick">Galleries</router-link>
-      <router-link to="/museums" class="button flick">Museums</router-link>
-      <router-link to="/fairs" class="button flick">Fairs</router-link>
-      <router-link to="/auctions" class="button flick">Auctions</router-link>
-      <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
-      <a v-if="user" @click="logOut" class="button flick">Logout</a>
-      <router-link v-if="user" to="/artworks" class="button flick">My Collection</router-link>
-      <router-link v-if="user" to="/artwork-create" class="button flick">Add</router-link>
-      <router-link v-if="user" to="/user/update" class="button flick">{{ user.displayName }}</router-link>
+      <template v-if="$route.name != 'auth'">
+        <router-link to="/artists" class="button flick">Artists</router-link>
+        <router-link to="/artworks" class="button flick">Artworks</router-link>
+        <router-link to="/shows" class="button flick">Shows</router-link>
+        <!-- -->
+        <router-link v-if="user" to="/user/update" class="button flick">{{ user.displayName }}</router-link>
+        <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
+        <a v-if="user" @click="logOut" class="button flick">Logout</a>
+      </template>
     </div>
   </header>
 </template>

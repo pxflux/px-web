@@ -17,3 +17,14 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
+
+account
+ artworks
+ artists
+ shows
+
+ collections
+ places
+ collectors
+ curators
+ publications

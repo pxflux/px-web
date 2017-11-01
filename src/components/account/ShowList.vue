@@ -1,0 +1,71 @@
+<template>
+  <main>
+    <div v-if="user" class="wrap-content grid">
+      <ShowItem v-for="show in accountShows" :show="show" :key="show['.key']"></ShowItem>
+      <span class="nothing-found" v-if="accountShows.length == 0">Shows not found.</span>
+      <ul v-if="showForm === false">
+        <li><a @click="showForm = true" class="button">Add Show</a></li>
+      </ul>
+      <form v-if="showForm" id="form-show" @submit.prevent="createShow">
+        <input id="title" type="text" v-model="title" title="Show title" required="required">
+        <button class="right">Create</button>
+      </form>
+    </div>
+  </main>
+</template>
+
+<script>
+  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { log } from '../../helper'
+  import firebase from '../../firebase'
+  import ShowItem from './ShowItem'
+
+  export default {
+    created () {
+      this.init()
+    },
+    data () {
+      return {
+        title: '',
+        showForm: false
+      }
+    },
+    computed: {
+      ...mapState(['user', 'accountShows'])
+    },
+    methods: {
+      ...mapActions(['setRef']),
+      ...mapMutations(['REMOVE_ACCOUNT_SHOWS']),
+
+      init () {
+        if (this.user.uid) {
+          this.setRef({
+            key: 'accountShows',
+            ref: firebase.database().ref('users/' + this.user.uid + '/shows')
+          })
+        } else {
+          this.REMOVE_ACCOUNT_SHOWS()
+        }
+      },
+      createShow () {
+        const newShow = {
+          title: this.title,
+          publicId: ''
+        }
+        const key = firebase.database().ref('users/' + this.user.uid + '/shows').push(newShow, log).key
+        this.$router.push('/account/show/' + key)
+      }
+    },
+    components: {
+      ShowItem
+    },
+    watch: {
+      $route () {
+        this.init()
+      },
+      'user' () {
+        this.init()
+      }
+    }
+  }
+</script>

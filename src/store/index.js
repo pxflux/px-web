@@ -13,12 +13,17 @@ export default new Vuex.Store({
     items: [],
     item: null,
     artists: [],
-    artist: null
+    artist: null,
+    accountArtworks: [],
+    accountArtwork: null,
+    accountArtists: [],
+    accountArtist: null,
+    accountShows: [],
+    accountShow: null,
+    accountPlaces: [],
+    accountPlace: null
   },
   actions: {
-    setArtworksRef: firebaseAction(({bindFirebaseRef}, ref) => {
-      bindFirebaseRef('artworks', ref, {wait: true})
-    }),
     setItemsRef: firebaseAction(({bindFirebaseRef}, ref) => {
       bindFirebaseRef('items', ref, {wait: true})
     }),
@@ -32,6 +37,30 @@ export default new Vuex.Store({
   mutations: {
     UPDATE_USER (state, user) {
       state.user = user
+    },
+    REMOVE_ACCOUNT_ARTWORKS (state) {
+      state.accountArtworks = []
+    },
+    REMOVE_ACCOUNT_ARTWORK (state) {
+      state.accountArtwork = []
+    },
+    REMOVE_ACCOUNT_ARTISTS (state) {
+      state.accountArtists = []
+    },
+    REMOVE_ACCOUNT_ARTIST (state) {
+      state.accountArtist = []
+    },
+    REMOVE_ACCOUNT_SHOWS (state) {
+      state.accountShows = []
+    },
+    REMOVE_ACCOUNT_SHOW (state) {
+      state.accountShow = []
+    },
+    REMOVE_ACCOUNT_PLACES (state) {
+      state.accountPlaces = []
+    },
+    REMOVE_ACCOUNT_PLACE (state) {
+      state.accountPlace = []
     },
     ...firebaseMutations
   }

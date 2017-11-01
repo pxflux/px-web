@@ -4,7 +4,10 @@
       <h1>{{ user.displayName }}</h1>
       <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" width="100px" height="100px">
       <ul>
-        <li><a @click="publishArtistProfile" class="button">Publish Artist Profile</a></li>
+        <li><router-link to="/account/artworks" class="button flick">Artworks</router-link></li>
+        <li><router-link to="/account/artists" class="button flick">Artists</router-link></li>
+        <li><router-link to="/account/shows" class="button flick">Shows</router-link></li>
+        <li><router-link to="/account/places" class="button flick">Places</router-link></li>
       </ul>
       <h2>Information</h2>
       <form id="form-profile" @submit.prevent="updateProfile">
@@ -131,14 +134,6 @@
           .catch(function (error) {
             console.log('Account linking error', error)
           })
-      },
-      publishArtistProfile () {
-        let log = function (error) {
-          if (error) {
-            console.log(error)
-          }
-        }
-        firebaseApp.database().ref('/artists').push({name: this.user.displayName}, log)
       }
     }
   }
