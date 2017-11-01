@@ -2,6 +2,7 @@
  * maxim 17/01/2017.
  */
 import Color from './color'
+
 /**
  * @typedef {{
  *  r : number,
@@ -12,11 +13,10 @@ import Color from './color'
  *  colorString: string
  *  }} Pixel
  */
-
 /**
  * @param {string} imgPath
  * @param {string} canvasID
- * @param {ScalableCanvasFromImageOptions} options
+ * @param {ScalableCanvasFromImageOptions=} options
  * @constructor
  */
 function ScalableCanvasFromImage (imgPath, canvasID, options) {
@@ -33,7 +33,7 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
   let pixels
 
   this.pixSize = 0
-  this.start = function () {
+  this.setup = function () {
     pixels = new ImgPixels(imgPath)
     pixels.readPixels(function () {
       setLogoCanvasSize(options.width)
@@ -44,7 +44,9 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
   window.addEventListener('resize', function () {
     if (!options.width || options.width <= 1) {
       setLogoCanvasSize(options.width)
-      if (!options.animate) _this.draw()
+      if (!options.animate) {
+        _this.draw()
+      }
     }
   })
 
@@ -58,12 +60,16 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
       for (let x = 0; x < pixels.width; x++) {
         const pxX = pixSize * x
         const px = pixels.pixTable[ x ][ y ]
-        if (px.a === 0) continue
+        if (px.a === 0) {
+          continue
+        }
         if (options.gradient) {
           let pxLum = px.lum
 
           if (pxLum > 0.999) {
-            if (!options.withBackground) continue
+            if (!options.withBackground) {
+              continue
+            }
             pxLum = 1 - (Math.random() * 0.02)
           }
           const grPosition = (x * colorWidth + y * colorWidth * 0.2 + gradientPosition)
@@ -105,7 +111,9 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
   }
 
   function setLogoCanvasSize (desiredWidth) {
-    if (!desiredWidth) desiredWidth = 1
+    if (!desiredWidth) {
+      desiredWidth = 1
+    }
     const parent = canvas.parentElement
     const style = window.getComputedStyle(parent, null)
     const paddingLeft = parseFloat(style.getPropertyValue('padding-left'))
@@ -183,10 +191,10 @@ function ImgPixels (imgScr) {
     for (let i = 0; i < imageData.length; i += 4) {
       /** @type {Pixel} */
       let pix = {
-        r: imageData[i],
-        g: imageData[i + 1],
-        b: imageData[i + 2],
-        a: imageData[i + 3]
+        r: imageData[ i ],
+        g: imageData[ i + 1 ],
+        b: imageData[ i + 2 ],
+        a: imageData[ i + 3 ]
       }
       let max, min
       max = Math.max(pix.r, pix.g, pix.b)
@@ -197,15 +205,19 @@ function ImgPixels (imgScr) {
       let color = new Color(pix.r, pix.g, pix.b, true)
       pix.colorString = color.toRGBAString(pix.a)
       let x = pixIndex % _this.width
-      if (typeof _this.pixTable[x] === 'undefined') _this.pixTable[x] = []
-      _this.pixTable[x].push(pix)
+      if (typeof _this.pixTable[ x ] === 'undefined') {
+        _this.pixTable[ x ] = []
+      }
+      _this.pixTable[ x ].push(pix)
       pixIndex++
     }
     return pixels
 
     function normalize (n, max) {
       // Handle floating point rounding errors
-      if ((Math.abs(n - max) < 0.000001)) return 1
+      if ((Math.abs(n - max) < 0.000001)) {
+        return 1
+      }
       return (n % max) / parseFloat(max)
     }
   }
@@ -216,6 +228,8 @@ function ImgPixels (imgScr) {
  * @constructor
  */
 function ScalableCanvasFromImageOptions (options) {
+  if (!options) options = {}
+
   /** @type number */
   this.width = options.hasOwnProperty('width') ? options.width : 1
 

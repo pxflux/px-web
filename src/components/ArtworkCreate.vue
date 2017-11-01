@@ -5,7 +5,7 @@
         <input type="text" placeholder="Title" v-model="title">
         <input type="text" placeholder="Authors" v-model="authors">
         <input type="text" placeholder="Url" v-model="url">
-        <input type="submit" value="Save">
+        <input type="submit" value="Надо сделать одну форму Update, которая будет уметь, если надо, создавать работу!" class="button flick">
       </form>
     </div>
   </main>

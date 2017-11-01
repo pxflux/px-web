@@ -1,13 +1,3 @@
-$main1: #895bff;
-$main2: #f1309a;
-$dark: #484848;
-$rating1: #6bb01a;
-$rating2: #da9527;
-$rating3: #cd2727;
-
-@mixin grey-outline(){
-	box-shadow: 0 0 0 1px #dfdfdf;
-}
 
 @mixin transition($type, $type2: '') {
 	@if $type2 == '' {

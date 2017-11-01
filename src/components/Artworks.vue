@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="wrap-content">
+    <div class="wrap-content grid">
       <Item v-for="item in artworks" :item="item" :key="item['.key']" :uri="'artworks/' + item['.key']"></Item>
       <span class="nothing-found" v-if="artworks.length == 0">Artworks not found.</span>
     </div>
@@ -17,11 +17,13 @@
       this.init()
     },
     computed: {
-      ...mapState(['user', 'artworks'])
+      ...mapState([ 'user', 'artworks' ])
     },
     methods: {
       init () {
-        this.$store.dispatch('setArtworksRef', firebase.database().ref('users/' + this.user.uid + '/artworks'))
+        if (this.user.uid) {
+          this.$store.dispatch('setArtworksRef', firebase.database().ref('users/' + this.user.uid + '/artworks'))
+        }
       }
     },
     components: {

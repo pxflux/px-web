@@ -1,9 +1,12 @@
 header {
-	background: transparent;
-	//background: linear-gradient(to right, $main1, $main2);
+  position: fixed;
 	width: 100%;
+  height: $header-height;
+  top: 0;
 	padding: 0;
-	
+  background: transparent;
+  z-index: 1000;
+
 	.wrap{
 		display: flex;
 	}
@@ -14,8 +17,8 @@ header {
 	.px-logo{
 		position: relative;
 		display: block;
-		width: 96px;
-		height: 48px;
+		width: $header-height * 2;
+		height: $header-height;
 		padding: 0;
 		
 		canvas{
@@ -30,27 +33,22 @@ header {
 			bottom: 5px;
 			right: 15px;
 			font-size: 10px;
-			color: #ccc;
+      line-height: 1;
+			color: rgba(0, 0, 0, 0.3);
 			text-align: right;
 		}
 	}
 	.button, .login-btn{
 		display: block;
-		min-width: 48px;
-		line-height: 48px;
+		min-width: $header-height;
+		line-height: $header-height;
 		text-align: center;
 		position: relative;
 		color: #292929;
+    padding: 0 8px;
 		// @include grey-outline();
 	}
 	a{
 		text-decoration: none;
-	}
-	.login-btn {
-		width: 96px;
-		text-decoration: none;
-		&:active {
-			opacity: .6;
-		}
 	}
 }

@@ -1,9 +1,17 @@
-.wrap-content{
+main{
+	margin-top: $header-height + $outline-width;
+}
+.text-block{
+  padding: $header-height;
+}
+.grid{
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.item-wrap {
+.item-wrap,
+.grid-cell,
+.grid-cell-placeholder {
 	width: 25vw;
 	height: 25vw;
 	position: relative;
@@ -47,38 +55,4 @@
 	bottom: 0;
 	background: rgba(255,255,255,0.6);
 	padding: 0.1em 0.3em;
-}
-
-.item-genre {
-}
-
-.item-title {
-	color: $dark;
-	clear: both;
-	font-size: 17px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	max-width: 100%;
-	text-decoration: none;
-	
-	&:hover {
-		color: $main2;
-	}
-	
-	&:active {
-		color: $main1;
-	}
-	
-	@include media(3) {
-		font-size: 15px;
-	}
-}
-
-.nothing-found {
-  float: left;
-  width: 100%;
-  font-size: 32px;
-  margin: 0 0 30px 0;
-  color: $dark;
 }

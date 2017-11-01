@@ -1,5 +1,5 @@
 <template>
-	<div id="firebaseui-auth"></div>
+  <div id="firebaseui-auth"></div>
 </template>
 
 <script>
@@ -25,7 +25,7 @@
     signInOptions: [
       {
         provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        scopes: ['https://www.googleapis.com/auth/plus.login']
+        scopes: [ 'https://www.googleapis.com/auth/plus.login' ]
       },
       {
         provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -40,7 +40,7 @@
       ui.start('#firebaseui-auth', uiConfig)
     },
     computed: {
-      ...mapState(['user'])
+      ...mapState([ 'user' ])
     },
     destroyed () {
       ui.reset()
@@ -60,25 +60,25 @@
 </script>
 
 <style lang="sass">
-	@import '~firebaseui/dist/firebaseui.css'
-
-	ul.firebaseui-idp-list
-		margin: 0
-		list-style-type: none
-
-	.firebaseui-card-content
-		padding: 0 5px
-
-	.firebaseui-container
-		max-width: 768px
-
-	.firebaseui-idp-button
-		font-weight: 100
-		max-width: 768px
-		line-height: 36px
-		span
-			text-align: center
-
-	.firebaseui-idp-google > .firebaseui-idp-text
-		color: #363636
+  @import '~firebaseui/dist/firebaseui.css'
+  
+  ul.firebaseui-idp-list
+    margin: 0
+    list-style-type: none
+  
+  .firebaseui-card-content
+    padding: 0 5px
+  
+  .firebaseui-container
+    max-width: 768px
+  
+  .firebaseui-idp-button
+    font-weight: 100
+    max-width: 768px
+    line-height: 36px
+    span
+      text-align: center
+  
+  .firebaseui-idp-google > .firebaseui-idp-text
+    color: #363636
 </style>

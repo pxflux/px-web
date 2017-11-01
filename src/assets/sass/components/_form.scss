@@ -1,0 +1,49 @@
+$form-padding: $header-height;
+
+.wrap-forms, form {
+  position: relative;
+  width: 100%;
+  padding: $form-padding;
+
+  form {
+    padding: 0;
+  }
+
+  *:first-child{
+    margin-top: 0;
+  }
+}
+
+input, button, label {
+  display: block;
+  height: $header-height;
+  padding: 0 1em;
+  outline: 0;
+  border: none;
+  box-shadow: 0 0 0 $outline-width $outline-color;
+  background: $bg-color;
+}
+
+label {
+  width: 20%;
+  float: left;
+  line-height: $header-height;
+}
+input {
+  width: 80%;
+}
+
+input[type=submit], button {
+  width: auto;
+  position: relative;
+  min-width: $header-height * 2;
+  box-shadow: none;
+  top: $outline-width;
+  left: - $outline-width;
+  background: #ccc;
+
+  &.right {
+    float: right;
+    right: $outline-width;
+  }
+}

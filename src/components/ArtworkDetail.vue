@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="wrap-content">
+    <div class="wrap-content text-block">
       <template v-if="user">
         <p :title="item.title">{{ item.title }}</p>
         <p :title="item.author">{{ item.author }}</p>

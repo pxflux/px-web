@@ -8,7 +8,6 @@ import router from './router'
 import store from './store'
 
 import './firebase'
-import './assets/js/px-main'
 
 Vue.config.productionTip = false
 

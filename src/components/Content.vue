@@ -1,9 +1,9 @@
 <template>
-	<main>
-		<div class="wrap-content">
-			<Item v-for="item in items" :item="item" :key="item['.key']" :uri="'browse/' + item['.key']"></Item>
-		</div>
-	</main>
+  <main>
+    <div class="wrap-content grid" id="main-grid">
+      <Item v-for="item in items" :item="item" :key="item['.key']" :uri="'browse/' + item['.key']"></Item>
+    </div>
+  </main>
 </template>
 
 <script>
@@ -30,7 +30,7 @@
       Item
     },
     computed: {
-      ...mapState(['items'])
+      ...mapState([ 'items' ])
     },
     methods: {
       removePlaceholdersFromGrid: function (numToKeep) {
@@ -49,6 +49,9 @@
       addPlaceholdersToGrid: function (numToAdd) {
         if (numToAdd) {
           const container = document.getElementById('main-grid')
+          if (!container) {
+            return
+          }
 
           for (let i = 0; i < numToAdd; i++) {
             let placeholder = document.createElement('div')
@@ -60,7 +63,7 @@
 
       fillEmptySpaceInGrid: function () {
         const winW = window.innerWidth
-        const numArtworks = this.artworks.length
+        const numArtworks = this.items.length
 
         let smallestMaxW = 1000000
         let numItemsInRow = 0
@@ -79,6 +82,18 @@
         this.addPlaceholdersToGrid(numToAdd)
       }
     },
+    watch: {
+      items: function () {
+        this.$nextTick(function () {
+          this.fillEmptySpaceInGrid()
+        })
+      }
+    },
+    /* updated: function () {
+      this.$nextTick(function () {
+        this.fillEmptySpaceInGrid()
+      })
+    }, */
     mounted: function () {
       window.addEventListener('resize', this.fillEmptySpaceInGrid)
     }

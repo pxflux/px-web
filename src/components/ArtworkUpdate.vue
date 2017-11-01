@@ -6,7 +6,7 @@
           <input type="text" placeholder="Title" v-model="title">
           <input type="text" placeholder="Authors" v-model="authors">
           <input type="text" placeholder="Url" v-model="url">
-          <input type="submit" value="Save">
+          <input type="submit" value="Save" id="submit" class="button left flick">
         </form>
       </template>
       <template v-else-if="user === false">
@@ -19,10 +19,17 @@
 <script>
   import { mapState } from 'vuex'
   import firebase from '../firebase'
+  import ColorFlicker from '../assets/js/color-flicker'
 
   export default {
     created () {
       this.init()
+    },
+    mounted () {
+      const el = document.getElementById('submit')
+      if (el) {
+        new ColorFlicker(10).flickElement(el)
+      }
     },
     data () {
       return {

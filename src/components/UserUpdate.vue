@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="wrap-content" v-if="user">
+    <div class="wrap-content wrap-forms" v-if="user">
       <h1>{{ user.displayName }}</h1>
       <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" width="100px" height="100px">
       <h2>Information</h2>
@@ -9,7 +9,7 @@
         <input id="name" type="text" name="name" v-model="displayName" required="required">
         <label for="email">Email</label>
         <input id="email" type="email" name="email" v-model="email" required="required">
-        <button>Save Changes</button>
+        <button class="right">Save Changes</button>
       </form>
       <template v-if="user.email">
         <h2>Password</h2>
@@ -23,7 +23,7 @@
           <label v-if=" ! emailFederated" for="new_password">Set Password</label>
           <input id="new_password" name="new_password" type="password" pattern=".{6,}" title="6 characters minimum"
                  required="required" v-model="password">
-          <button>Save Changes</button>
+          <button class="right">Save Changes</button>
         </form>
       </template>
       <h2>Linked Accounts</h2>
@@ -35,12 +35,12 @@
             <div>{{ googleFederated.email }}</div>
             <img v-if="googleFederated.photoURL" :src="googleFederated.photoURL" :alt="googleFederated.displayName"
                  width="48px" height="48px">
-            <button v-if="multipleAuth">Disconnect</button>
+            <button v-if="multipleAuth" class="right">Disconnect</button>
           </form>
         </li>
         <li v-if=" ! googleFederated">
           <form id="form-connect-google" @submit.prevent="connectGoogle">
-            <button>Connect to Google</button>
+            <button class="right">Connect to Google</button>
           </form>
         </li>
       </ul>
@@ -48,7 +48,7 @@
       <form>
         <label for="receive_emails">Receive Emails</label>
         <input type="checkbox" id="receive_emails" name="receive_emails" checked="checked">
-        <button>Save Changes</button>
+        <button class="right">Save Changes</button>
       </form>
     </div>
   </main>
