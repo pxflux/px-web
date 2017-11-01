@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="wrap-content text-block">
-      <template v-if="user">
+      <template v-if="user && item">
         <p :title="item.title">{{ item.title }}</p>
         <p :title="item.author">{{ item.author }}</p>
         <p :title="item.url">{{ item.url }}</p>
@@ -9,8 +9,9 @@
           <li>
             <router-link :to="'/artworks/' + item['.key']+ '/update'" class="button">Update</router-link>
           </li>
-          <li><a v-if="user" @click="removeArtwork" class="button">Remove</a></li>
-          <li><a v-if="user" @click="publishArtwork" class="button">Publish</a></li>
+          <li><a @click="removeArtwork" class="button">Remove</a></li>
+          <li v-if=" ! item.publicId"><a @click="publishArtwork" class="button">Publish</a></li>
+          <li v-if="item.publicId"><a @click="unpublishArtwork" class="button">Unpublish</a></li>
         </ul>
       </template>
     </div>
@@ -74,11 +75,20 @@
           }
           newArtwork.controls.push(newControl)
         })
-        firebase.database().ref('/artworks').push(newArtwork, function (error) {
+        const id = firebase.database().ref('/artworks').push(newArtwork, function (error) {
           if (error) {
             console.log(error)
           }
+        }).key
+        this.source.update({
+          'publicId': id
         })
+      },
+      unpublishArtwork () {
+        if (this.item.publicId) {
+          firebase.database().ref('/artworks/' + this.item.publicId).remove()
+          firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id + '/publicId').remove()
+        }
       },
       removeArtwork () {
         this.source.remove()
