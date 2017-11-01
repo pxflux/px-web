@@ -30,9 +30,9 @@
       <ul>
         <li v-if="googleFederated">
           <form id="form-disconnect-google" @submit.prevent="disconnectGoogle">
-            <div>You are connected to Google.</div>
-            <div>You can now sign in to PxFlux using your Google account.</div>
-            <div>{{ googleFederated.email }}</div>
+            <p>You are connected to Google.</p>
+            <p>You can now sign in to PxFlux using your Google account.</p>
+            <p>{{ googleFederated.email }}</p>
             <img v-if="googleFederated.photoURL" :src="googleFederated.photoURL" :alt="googleFederated.displayName"
                  width="48px" height="48px">
             <button v-if="multipleAuth" class="right">Disconnect</button>

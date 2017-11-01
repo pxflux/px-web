@@ -28,7 +28,9 @@ label {
   width: 20%;
   float: left;
   line-height: $header-height;
+  background: darken($bg-color, 1);
 }
+
 input {
   width: 80%;
 }
@@ -45,5 +47,22 @@ input[type=submit], button {
   &.right {
     float: right;
     right: $outline-width;
+  }
+}
+
+input[type=checkbox]{
+  width: $header-height;
+  position: relative;
+
+  &[checked]:after{
+    content: '';
+    display: block;
+    //border-radius: 50%;
+    width: 60%;
+    height: 60%;
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    background: #292929;
   }
 }
