@@ -3,6 +3,9 @@
     <div class="wrap-content wrap-forms" v-if="user">
       <h1>{{ user.displayName }}</h1>
       <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" width="100px" height="100px">
+      <ul>
+        <li><a @click="publishArtistProfile" class="button">Publish Artist Profile</a></li>
+      </ul>
       <h2>Information</h2>
       <form id="form-profile" @submit.prevent="updateProfile">
         <label for="name">Display Name</label>
@@ -84,7 +87,7 @@
         this.user.updateProfile({
           displayName: this.displayName,
           email: this.email
-        }).then(this.reloadUser()).catch(function (error) {
+        }).catch(function (error) {
           console.log('Account linking error', error)
         })
       },
@@ -129,13 +132,13 @@
             console.log('Account linking error', error)
           })
       },
-      reloadUser () {
-        let vm = this
-        firebaseApp.auth().currentUser.reload().then(function () {
-          vm.$store.commit('UPDATE_USER', firebaseApp.auth().currentUser)
-        }).catch(function (error) {
-          console.log('Account reload error', error)
-        })
+      publishArtistProfile () {
+        let log = function (error) {
+          if (error) {
+            console.log(error)
+          }
+        }
+        firebaseApp.database().ref('/artists').push({name: this.user.displayName}, log)
       }
     }
   }

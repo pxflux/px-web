@@ -11,7 +11,9 @@ export default new Vuex.Store({
     user: null, // Will be bound as an object
     artworks: [],
     items: [],
-    item: null
+    item: null,
+    artists: [],
+    artist: null
   },
   actions: {
     setArtworksRef: firebaseAction(({bindFirebaseRef}, ref) => {
@@ -22,6 +24,9 @@ export default new Vuex.Store({
     }),
     setItemRef: firebaseAction(({bindFirebaseRef}, ref) => {
       bindFirebaseRef('item', ref, {wait: true})
+    }),
+    setRef: firebaseAction(({bindFirebaseRef}, payload) => {
+      bindFirebaseRef(payload.key, payload.ref, {wait: true})
     })
   },
   mutations: {
