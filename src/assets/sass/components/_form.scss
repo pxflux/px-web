@@ -35,14 +35,16 @@ input {
   width: 80%;
 }
 
-input[type=submit], button {
+input[type=submit],
+input[type=cancel],
+button {
   width: auto;
   position: relative;
   min-width: $header-height * 2;
   box-shadow: none;
   top: $outline-width;
   left: - $outline-width;
-  background: #ccc;
+  background: #f5f5f5;
 
   &.right {
     float: right;

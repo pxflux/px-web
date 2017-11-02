@@ -5,11 +5,14 @@
         <h1 :title="accountArtwork.title">{{ accountArtwork.title }}</h1>
         <p :title="accountArtwork.author">{{ accountArtwork.author }}</p>
         <p :title="accountArtwork.url">{{ accountArtwork.url }}</p>
+        <p :title="accountArtwork.thumbUrl">{{ accountArtwork.thumbUrl }}</p>
       </template>
+      <iframe :src="accountArtwork.url"></iframe>
       <form v-if="showForm" id="form-artwork" @submit.prevent="updateArtwork()">
         <input type="text" placeholder="Title" v-model="title">
         <input type="text" placeholder="Authors" v-model="authors">
         <input type="text" placeholder="Url" v-model="url">
+        <input type="text" placeholder="Thumbnail Url" v-model="thumbUrl">
         <input type="cancel" value="Cancel" class="button left flick" @click="showForm = false">
         <input type="submit" value="Save" id="submit" class="button left flick">
       </form>
@@ -37,6 +40,7 @@
       return {
         title: '',
         url: '',
+        thumbUrl: '',
         author: '',
         showForm: false
       }
@@ -58,7 +62,8 @@
           this.source.update({
             'title': this.title,
             'author': this.authors,
-            'url': this.url
+            'url': this.url,
+            'thumbUrl': this.thumbUrl
           }, log)
         }
       },
@@ -94,6 +99,7 @@
         this.title = this.accountArtwork.title
         this.authors = this.accountArtwork.author
         this.url = this.accountArtwork.url
+        this.thumbUrl = this.accountArtwork.thumbUrl
       }
     }
   }

@@ -19,7 +19,7 @@ header {
     display: block;
     width: $header-height * 2;
     height: $header-height;
-    padding: 0;
+    padding: 0 !important;
 
     canvas {
       position: absolute;
@@ -38,7 +38,8 @@ header {
       text-align: right;
     }
   }
-  .button, .login-btn {
+
+  .button{
     display: block;
     min-width: $header-height;
     min-height: $header-height;
@@ -75,11 +76,13 @@ header {
       transition: all .2s ease-out;
     }
     .sub-section {
+      background: #f9f9f9;
+
       .sub-header {
         display: block;
         background: transparent !important;
         padding: 0;
-        border-top: solid #d6d6d6;
+        // border-top: solid #d6d6d6;
         border-width: 0;
         max-height: 0;
         overflow: hidden;
@@ -94,14 +97,20 @@ header {
         &:hover { background: inherit !important; }
       }
     }
+    .button, .sub-header{
+      max-width: $header-height;
+    }
+
     &.open {
       .button {
         height: $header-height;
+        max-width: 200px;
       }
       .sub-header {
         border-width: 1px;
         padding: 0.5em 1em;
         max-height: $header-height * 2;
+        max-width: 200px;
       }
     }
   }

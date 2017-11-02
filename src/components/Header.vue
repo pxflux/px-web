@@ -12,7 +12,7 @@
         <router-link to="/artworks" class="button flick">Artworks</router-link>
         <router-link to="/shows" class="button flick">Shows</router-link>
         <!-- -->
-        <router-link v-if="user" to="/artworks" class="button flick">My Collection</router-link>
+        <router-link v-if="user" to="/account/artworks" class="button flick">My Collection</router-link>
         <router-link v-if="user" to="/artwork-create" class="button flick">Add</router-link>
         <!-- -->
         <div class="right">
@@ -27,7 +27,7 @@
               <router-link to="/account/artists" class="button flick">Artists</router-link>
               <router-link to="/account/shows" class="button flick">Shows</router-link>
               <router-link to="/account/places" class="button flick">Places</router-link>
-              <div class="sub-section flick">
+              <div class="sub-section">
                 <div class="sub-header">
                   <span>
                     <!--{{ loggedInMessage }}<br>-->
