@@ -18,7 +18,7 @@
         <div class="right">
           <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
           <div v-if="user" class="item-with-submenu">
-            <a v-if="user" class="button flick" @click="toggleSubmenu">
+            <a v-if="user" class="button flick submenu-trigger">
               <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" class="user-photo">
               <span v-else>{{ user.displayName }}</span>
             </a>
@@ -38,16 +38,19 @@
   import firebaseApp from '../firebase'
   import ScalableCanvasFromImage from '../assets/js/logo'
   import ColorFlicker from '../assets/js/color-flicker'
+  import SubmenuHelper from '../helpers/submenu'
 
   export default {
+    mixins: [ SubmenuHelper ],
+
     data () {
-      return {
-        submenuTimeout: null
-      }
+      return {}
     },
+
     computed: {
       ...mapState([ 'user' ])
     },
+
     methods: {
       logOut: () => {
         firebaseApp.auth().signOut()
@@ -57,47 +60,6 @@
         this.$nextTick(function () {
           new ColorFlicker().flickElement()
         })
-      },
-
-      /**
-       * @param {Event} event
-       */
-      toggleSubmenu: function (event) {
-        const el = event.currentTarget
-        const submenu = el.parentNode.getElementsByClassName('submenu')[ 0 ]
-        if (!submenu) {
-          return
-        }
-
-        if (submenu.classList.contains('open')) {
-          submenu.classList.remove('open')
-          clearTimeout(this.submenuTimeout)
-        } else {
-          submenu.classList.add('open')
-          this.submenuTimeout = setTimeout(this.closeSubmenus, 2000)
-        }
-      },
-
-      closeSubmenus: function () {
-        const openSubmenus = this.$el.querySelectorAll('.submenu.open')
-        for (let i = 0; i < openSubmenus.length; i++) {
-          openSubmenus[ i ].classList.remove('open')
-        }
-      },
-
-      setListenersOnSubmenus: function () {
-        const _this = this
-        const submenus = this.$el.querySelectorAll('.submenu')
-        for (let i = 0; i < submenus.length; i++) {
-          const submenu = submenus[ i ]
-          submenu.addEventListener('mouseleave', function () {
-            clearTimeout(_this.submenuTimeout)
-            this.submenuTimeout = setTimeout(_this.closeSubmenus, 1500)
-          })
-          submenu.addEventListener('mouseover', function () {
-            clearTimeout(_this.submenuTimeout)
-          })
-        }
       }
     },
 
@@ -106,10 +68,13 @@
       const canvasID = 'px-logo'
       new ScalableCanvasFromImage(logoURL, canvasID).setup()
       this.setFlicker()
-      this.setListenersOnSubmenus()
+      this.setupSubmenusWithClass('submenu', 'submenu-trigger')
     },
     updated: function () {
       this.setFlicker()
+      this.$nextTick(function () {
+        this.setupSubmenusWithClass('submenu', 'submenu-trigger')
+      })
     }
   }
 </script>
