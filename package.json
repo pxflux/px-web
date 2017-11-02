@@ -14,9 +14,8 @@
     "firebase": "^4.6.0",
     "firebaseui": "^2.4.1",
     "vue": "^2.5.2",
-    "vue-accordion-menu": "^0.1.46",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.0",
+    "vuex": "^3.0.1",
     "vuex-router-sync": "^5.0.0",
     "vuexfire": "^2.3.0",
     "weakmap": "0.0.6"
@@ -69,7 +68,7 @@
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-middleware": "^1.12.0",
     "webpack-hot-middleware": "^2.20.0",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.1"
   },
   "engines": {
     "node": ">= 4.0.0",

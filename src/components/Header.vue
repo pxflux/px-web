@@ -12,9 +12,6 @@
         <router-link to="/artworks" class="button flick">Artworks</router-link>
         <router-link to="/shows" class="button flick">Shows</router-link>
         <!-- -->
-        <router-link v-if="user" to="/artworks" class="button flick">My Collection</router-link>
-        <router-link v-if="user" to="/artwork-create" class="button flick">Add</router-link>
-        <!-- -->
         <div class="right">
           <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
           <div v-if="user" class="item-with-submenu">
@@ -22,9 +19,14 @@
               <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" class="user-photo">
               <span v-else>{{ user.displayName }}</span>
             </a>
-            <div class="submenu">
-              <router-link v-if="user" to="/user/update" class="button flick">Account</router-link>
-              <a v-if="user" @click="logOut" class="button flick">Logout</a>
+            <div v-if="user" class="submenu">
+              <router-link to="/account/artworks" class="button">Artworks</router-link>
+              <router-link to="/account/artists" class="button">Artists</router-link>
+              <router-link to="/account/shows" class="button">Shows</router-link>
+              <router-link to="/account/places" class="button">Places</router-link>
+              <router-link to="/user/update" class="button">Profile</router-link>
+              <div class="button">You're logged in as <b>{{ user.displayName }}</b>&nbsp;<a @click="logOut">Logout</a>
+              </div>
             </div>
           </div>
         </div>
@@ -46,7 +48,7 @@
       }
     },
     computed: {
-      ...mapState([ 'user' ])
+      ...mapState(['user'])
     },
     methods: {
       logOut: () => {
@@ -64,7 +66,7 @@
        */
       toggleSubmenu: function (event) {
         const el = event.currentTarget
-        const submenu = el.parentNode.getElementsByClassName('submenu')[ 0 ]
+        const submenu = el.parentNode.getElementsByClassName('submenu')[0]
         if (!submenu) {
           return
         }
@@ -81,7 +83,7 @@
       closeSubmenus: function () {
         const openSubmenus = this.$el.querySelectorAll('.submenu.open')
         for (let i = 0; i < openSubmenus.length; i++) {
-          openSubmenus[ i ].classList.remove('open')
+          openSubmenus[i].classList.remove('open')
         }
       },
 
@@ -89,7 +91,7 @@
         const _this = this
         const submenus = this.$el.querySelectorAll('.submenu')
         for (let i = 0; i < submenus.length; i++) {
-          const submenu = submenus[ i ]
+          const submenu = submenus[i]
           submenu.addEventListener('mouseleave', function () {
             clearTimeout(_this.submenuTimeout)
             this.submenuTimeout = setTimeout(_this.closeSubmenus, 1500)
