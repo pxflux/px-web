@@ -1,54 +1,91 @@
 header {
   position: fixed;
-	width: 100%;
+  width: 100%;
   height: $header-height;
   top: 0;
-	padding: 0;
+  padding: 0;
   background: transparent;
   z-index: 1000;
 
-	.wrap{
-		display: flex;
-	}
-	.open-modal & {
-		padding: 25px 16px 25px 0;
-	}
-	
-	.px-logo{
-		position: relative;
-		display: block;
-		width: $header-height * 2;
-		height: $header-height;
-		padding: 0;
-		
-		canvas{
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-		}
-		.label.beta{
-			display: block;
-			position: absolute;
-			bottom: 5px;
-			right: 15px;
-			font-size: 10px;
+  .wrap {
+    display: flex;
+  }
+  .open-modal & {
+    padding: 25px 16px 25px 0;
+  }
+
+  .px-logo {
+    position: relative;
+    display: block;
+    width: $header-height * 2;
+    height: $header-height;
+    padding: 0;
+
+    canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .label.beta {
+      display: block;
+      position: absolute;
+      bottom: 5px;
+      right: 15px;
+      font-size: 10px;
       line-height: 1;
-			color: rgba(0, 0, 0, 0.3);
-			text-align: right;
-		}
-	}
-	.button, .login-btn{
-		display: block;
-		min-width: $header-height;
-		line-height: $header-height;
-		text-align: center;
-		position: relative;
-		color: #292929;
+      color: rgba(0, 0, 0, 0.3);
+      text-align: right;
+    }
+  }
+  .button, .login-btn {
+    display: block;
+    min-width: $header-height;
+    min-height: $header-height;
+    line-height: $header-height;
+    text-align: center;
+    position: relative;
+    color: #292929;
     padding: 0 8px;
-		// @include grey-outline();
-	}
-	a{
-		text-decoration: none;
-	}
+    background: #aaa;
+    //@include grey-outline();
+  }
+  a {
+    text-decoration: none;
+  }
+
+  .right {
+    flex-grow: 2;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+  .submenu {
+    position: absolute;
+    top: $header-height;
+    right: 0;
+
+    .button{
+      min-height: 0;
+      height: 0;
+      overflow: hidden;
+      transition: all .2s ease-out;
+    }
+
+    &.open {
+      .button{
+        height: $header-height;
+      }
+    }
+  }
+
+  .user-photo{
+    $size: $header-height;// * 0.7;
+    width: $size;
+    height: $size;
+    position: absolute;
+    top: 0;
+    left: 0;
+    //border-radius: 50%;
+  }
 }

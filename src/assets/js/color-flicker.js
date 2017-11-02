@@ -11,7 +11,7 @@ import Color from './color'
  * @constructor
  */
 function ColorFlicker (saturation) {
-  const sat = typeof saturation === 'undefined' ? 100 : saturation
+  let sat = typeof saturation === 'undefined' ? 100 : saturation
   /**
    * @param {HTMLElement=} el
    */
@@ -33,9 +33,10 @@ function ColorFlicker (saturation) {
     this.draw = () => {
       const h = (perlin.noise(perlinOffset) * 720 + 180) % 360
       const l = perlin.noise(0, perlinOffset) * 10 + 90
+      sat = perlin.noise(0, 0, perlinOffset) * 70 + 30
       const color = new Color(h, sat, l)
       el.style.backgroundColor = color.toRGBString()
-      perlinOffset += Math.random() * 0.05
+      perlinOffset += 0.02
       requestAnimationFrame(this.draw)
     }
   }
