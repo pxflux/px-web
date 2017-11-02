@@ -27,11 +27,11 @@
               <router-link to="/account/artists" class="button flick">Artists</router-link>
               <router-link to="/account/shows" class="button flick">Shows</router-link>
               <router-link to="/account/places" class="button flick">Places</router-link>
-              <div class="sub-section">
+              <div class="sub-section flick">
                 <div class="sub-header">
                   <span>
                     <!--{{ loggedInMessage }}<br>-->
-                    <b>{{ user.displayName }}</b>
+                    {{ user.displayName }}
                   </span>
                 </div>
                 <router-link to="/user/update" class="button flick">Account</router-link>
