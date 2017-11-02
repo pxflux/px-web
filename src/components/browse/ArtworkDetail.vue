@@ -6,32 +6,34 @@
       <p :title="artwork.url">source: {{ artwork.url }}</p>
       <p :title="artwork.thumbUrl">thumb: {{ artwork.thumbUrl }}</p>
     </div>
+    <template v-if="artwork.artists">
+      <h2>Artists</h2>
+      <ul v-for="artist in artwork.artists" :key="artist['__key']">
+        <li>{{ artist.name }}</li>
+      </ul>
+    </template>
+    <template v-if="artwork.shows">
+      <h2>Shows</h2>
+      <ul v-for="show in artwork.shows" :key="show['__key']">
+        <li>{{ show.title }}</li>
+      </ul>
+    </template>
     <iframe :src="artwork.url"></iframe>
   </main>
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
-  import firebase from '../../firebase'
-
   export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['artwork'])
-    },
-    methods: {
-      ...mapActions(['setRef']),
+    name: 'artwork-detail',
 
-      init () {
-        this.setRef({key: 'artwork', ref: firebase.database().ref('artworks/' + this.$route.params.id)})
+    computed: {
+      artwork () {
+        return this.$store.state.items[this.$route.params.id]
       }
     },
-    watch: {
-      $route () {
-        this.init()
-      }
+
+    asyncData ({store, route: {params: {id}}}) {
+      return store.dispatch('FETCH_ITEMS', {ids: [id]})
     }
   }
 </script>

@@ -11,6 +11,10 @@ import ArtistList from '@/components/browse/ArtistList'
 import ArtistDetail from '@/components/browse/ArtistDetail'
 import ShowList from '@/components/browse/ShowList'
 import ShowDetail from '@/components/browse/ShowDetail'
+import PlaceDetail from '@/components/browse/PlaceDetail'
+import CollectorDetail from '@/components/browse/CollectorDetail'
+import CuratorDetail from '@/components/browse/CuratorDetail'
+import PublicationDetail from '@/components/browse/PublicationDetail'
 
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
@@ -23,26 +27,32 @@ import AccountPlaceDetail from '@/components/account/PlaceDetail'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {path: '/', component: Homepage, name: 'home'},
-    {path: '/user/update', component: UserUpdate, name: 'user-update'},
-    {path: '/auth', component: Auth, name: 'auth'},
+export function createRouter () {
+  return new Router({
+    routes: [
+      {path: '/', component: Homepage, name: 'home'},
+      {path: '/user/update', component: UserUpdate, name: 'user-update'},
+      {path: '/auth', component: Auth, name: 'auth'},
 
-    {path: '/artworks', component: ArtworkList, name: 'artworks'},
-    {path: '/artwork/:id', component: ArtworkDetail, name: 'artwork-detail'},
-    {path: '/artists', component: ArtistList, name: 'artists'},
-    {path: '/artist/:id', component: ArtistDetail, name: 'artist-detail'},
-    {path: '/shows', component: ShowList, name: 'shows'},
-    {path: '/show/:id', component: ShowDetail, name: 'show-detail'},
+      {path: '/artworks', component: ArtworkList, name: 'artworks'},
+      {path: '/artwork/:id', component: ArtworkDetail, name: 'artwork-detail'},
+      {path: '/artists', component: ArtistList, name: 'artists'},
+      {path: '/artist/:id', component: ArtistDetail, name: 'artist-detail'},
+      {path: '/shows', component: ShowList, name: 'shows'},
+      {path: '/show/:id', component: ShowDetail, name: 'show-detail'},
+      {path: '/place/:id', component: PlaceDetail, name: 'place-detail'},
+      {path: '/collector/:id', component: CollectorDetail, name: 'collector-detail'},
+      {path: '/curator/:id', component: CuratorDetail, name: 'curator-detail'},
+      {path: '/publication/:id', component: PublicationDetail, name: 'publication-detail'},
 
-    {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
-    {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},
-    {path: '/account/artists', component: AccountArtistList, name: 'account-artists'},
-    {path: '/account/artist/:id', component: AccountArtistDetail, name: 'account-artist-detail'},
-    {path: '/account/shows', component: AccountShowList, name: 'account-shows'},
-    {path: '/account/show/:id', component: AccountShowDetail, name: 'account-show-detail'},
-    {path: '/account/places', component: AccountPlaceList, name: 'account-places'},
-    {path: '/account/place/:id', component: AccountPlaceDetail, name: 'account-place-detail'}
-  ]
-})
+      {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
+      {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},
+      {path: '/account/artists', component: AccountArtistList, name: 'account-artists'},
+      {path: '/account/artist/:id', component: AccountArtistDetail, name: 'account-artist-detail'},
+      {path: '/account/shows', component: AccountShowList, name: 'account-shows'},
+      {path: '/account/show/:id', component: AccountShowDetail, name: 'account-show-detail'},
+      {path: '/account/places', component: AccountPlaceList, name: 'account-places'},
+      {path: '/account/place/:id', component: AccountPlaceDetail, name: 'account-place-detail'}
+    ]
+  })
+}

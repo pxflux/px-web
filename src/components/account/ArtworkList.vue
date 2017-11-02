@@ -20,7 +20,7 @@
 
 <script>
   import ArtworkItem from '../ArtworkItem'
-  import firebase from '../../firebase'
+  import firebase from '../../firebase-app'
   import { mapState, mapMutations, mapActions } from 'vuex'
   import Grider, { log } from '../../helper'
 

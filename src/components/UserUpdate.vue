@@ -57,7 +57,7 @@
 <script>
   import { mapState } from 'vuex'
   import firebase from 'firebase'
-  import firebaseApp from '../firebase'
+  import firebaseApp from '../firebase-app'
 
   export default {
     data () {

@@ -10,7 +10,7 @@
 
 <script>
   import ArtworkItem from '../ArtworkItem'
-  import firebase from '../../firebase'
+  import firebase from '../../firebase-app'
   import { mapState, mapActions } from 'vuex'
   import GridHelper from '../../helper'
 

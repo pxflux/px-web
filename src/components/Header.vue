@@ -47,7 +47,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import firebaseApp from '../firebase'
+  import firebaseApp from '../firebase-app'
   import ScalableCanvasFromImage from '../assets/js/logo'
   import ColorFlicker from '../assets/js/color-flicker'
   import SubmenuHelper from '../helpers/submenu'

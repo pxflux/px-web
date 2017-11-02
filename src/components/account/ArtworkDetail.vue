@@ -30,7 +30,7 @@
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { cloneArtwork } from '../../models/artwork'
   import { log } from '../../helper'
-  import firebase from '../../firebase'
+  import firebase from '../../firebase-app'
 
   export default {
     created () {

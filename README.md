@@ -28,3 +28,9 @@ account
  collectors
  curators
  publications
+
+ artworks >-< artists
+ artworks >- iteration -< shows
+ shows >-< places
+ artworks >-< collectors
+

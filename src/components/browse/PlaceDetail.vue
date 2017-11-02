@@ -1,10 +1,7 @@
 <template>
   <main>
-    <div v-if="artist" class="wrap-content text-block">
-      <h1>{{ artist.name }}</h1>
-      <h2>Works</h2>
-      <h2>Curriculum Vitae</h2>
-      <h2>Shows</h2>
+    <div v-if="place" class="wrap-content text-block">
+      <h1>{{ place.title }}</h1>
     </div>
   </main>
 </template>
@@ -18,16 +15,13 @@
       this.init()
     },
     computed: {
-      ...mapState(['artist'])
+      ...mapState(['place'])
     },
     methods: {
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({
-          key: 'artist',
-          ref: firebase.database().ref('artists/' + this.$route.params.id)
-        })
+        this.setRef({key: 'place', ref: firebase.database().ref('places/' + this.$route.params.id)})
       }
     },
     watch: {
