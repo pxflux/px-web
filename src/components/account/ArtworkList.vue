@@ -1,10 +1,10 @@
 <template>
   <main>
     <div v-if="user" class="wrap-content grid">
-      <ul>
+      <div>
         <ArtworkItem v-for="item in accountArtworks" :item="item" :key="item['.key']"
                      :uri="'/account/artwork/' + item['.key']"></ArtworkItem>
-      </ul>
+      </div>
       <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
       <ul v-if="showForm === false">
         <li><a @click="showForm = true" class="button">Add Artwork</a></li>
@@ -21,24 +21,27 @@
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase'
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import { log } from '../../helper'
+  import Grider, { log } from '../../helper'
 
   export default {
+    mixins: [ Grider ],
+
     created () {
       this.init()
     },
     data () {
       return {
         url: '',
-        showForm: false
+        showForm: false,
+        items: this.accountArtworks
       }
     },
     computed: {
-      ...mapState(['user', 'accountArtworks'])
+      ...mapState([ 'user', 'accountArtworks' ])
     },
     methods: {
-      ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT_ARTWORKS']),
+      ...mapActions([ 'setRef' ]),
+      ...mapMutations([ 'REMOVE_ACCOUNT_ARTWORKS' ]),
 
       init () {
         if (this.user.uid) {

@@ -1,10 +1,8 @@
 <template>
   <main>
     <div class="wrap-content grid" id="main-grid">
-      <ul>
         <ArtworkItem v-for="artwork in artworks" :item="artwork" :key="artwork['.key']"
                      :uri="'/artwork/' + artwork['.key']"></ArtworkItem>
-      </ul>
       <span class="nothing-found" v-if="artworks.length == 0">Artworks not found.</span>
     </div>
   </main>
@@ -14,10 +12,10 @@
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase'
   import { mapState, mapActions } from 'vuex'
-  import Helper from '../../helper'
+  import GridHelper from '../../helper'
 
   export default {
-    mixins: [Helper],
+    mixins: [GridHelper],
 
     created () {
       this.init()
@@ -44,7 +42,7 @@
       },
       'artworks': function () {
         this.$nextTick(function () {
-          this.fillEmptySpaceInGrid()
+          this.fillEmptySpaceInGrid(this.artworks)
         })
       }
     }

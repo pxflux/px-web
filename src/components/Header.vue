@@ -71,6 +71,7 @@
 
         if (submenu.classList.contains('open')) {
           submenu.classList.remove('open')
+          clearTimeout(this.submenuTimeout)
         } else {
           submenu.classList.add('open')
           this.submenuTimeout = setTimeout(this.closeSubmenus, 2000)
@@ -90,16 +91,13 @@
         for (let i = 0; i < submenus.length; i++) {
           const submenu = submenus[ i ]
           submenu.addEventListener('mouseleave', function () {
-            setTimeout(_this.closeSubmenus, 1500)
+            clearTimeout(_this.submenuTimeout)
+            this.submenuTimeout = setTimeout(_this.closeSubmenus, 1500)
           })
-          submenu.addEventListener('mouseenter', function () {
+          submenu.addEventListener('mouseover', function () {
             clearTimeout(_this.submenuTimeout)
           })
         }
-        // const buttons = this.$el.querySelectorAll('.button')
-        // for (let i = 0; i < buttons.length; i++) {
-        //   buttons[ i ].addEventListener('mouseleave', this.closeSubmenus)
-        // }
       }
     },
 

@@ -8,10 +8,10 @@ export default {
   data () {
     return {
       mediaRules: [
-        {maxW: 100000, numItemsInRow: 4},
-        {maxW: 1000, numItemsInRow: 3},
-        {maxW: 750, numItemsInRow: 2},
-        {maxW: 500, numItemsInRow: 1}
+        { maxW: 100000, numItemsInRow: 4 },
+        { maxW: 1000, numItemsInRow: 3 },
+        { maxW: 750, numItemsInRow: 2 },
+        { maxW: 500, numItemsInRow: 1 }
       ],
       placeholderClass: 'grid-cell-placeholder'
     }
@@ -24,7 +24,7 @@ export default {
         return Math.abs(numToRemove)
       }
       for (let i = numToRemove; i >= 0; i--) {
-        const el = placeholders[i]
+        const el = placeholders[ i ]
         el.parentNode.removeChild(el)
       }
       return 0
@@ -43,15 +43,17 @@ export default {
         }
       }
     },
-
-    fillEmptySpaceInGrid () {
+    /**
+     * @param {Array} items
+     */
+    fillEmptySpaceInGrid (items) {
       const winW = window.innerWidth
-      const numArtworks = this.items.length
+      const numArtworks = items.length
 
       let smallestMaxW = 1000000
       let numItemsInRow = 0
       for (let i = 0; i < this.mediaRules.length; i++) {
-        const rule = this.mediaRules[i]
+        const rule = this.mediaRules[ i ]
         if (winW <= rule.maxW && rule.maxW < smallestMaxW) {
           numItemsInRow = rule.numItemsInRow
         }
@@ -65,6 +67,7 @@ export default {
       this.addPlaceholdersToGrid(numToAdd)
     }
   },
+
   mounted: function () {
     window.addEventListener('resize', this.fillEmptySpaceInGrid)
   }
