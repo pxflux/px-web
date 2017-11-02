@@ -26,7 +26,7 @@ export default {
       } else {
         submenu.classList.add('open')
         this.cancelSubmenuTimeout()
-        this.submenuTimeout = setTimeout(this.closeSubmenus, 2000)
+        // this.submenuTimeout = setTimeout(this.closeSubmenus, 2000)
       }
     },
 
@@ -37,6 +37,7 @@ export default {
       }
       this.cancelSubmenuTimeout()
     },
+
     /**
      * @param {string} submenuClass
      * @param {string=} submenuTriggerClass
@@ -50,17 +51,27 @@ export default {
         return
       }
       trigger.addEventListener('click', this.toggleSubmenu)
+      trigger.addEventListener('mouseleave', function () {
+        _this.setSubmenuCloseTimeout(2000)
+      })
+      trigger.addEventListener('mouseover', this.cancelSubmenuTimeout)
+
       const submenus = this.$el.querySelectorAll(`.${submenuClass}`)
       for (let i = 0; i < submenus.length; i++) {
         const submenu = submenus[ i ]
         submenu.addEventListener('mouseleave', function () {
-          _this.cancelSubmenuTimeout()
-          this.submenuTimeout = setTimeout(_this.closeSubmenus, 1500)
+          _this.setSubmenuCloseTimeout(1500)
         })
         submenu.addEventListener('mouseover', this.cancelSubmenuTimeout)
       }
     },
-
+    /**
+     * @param {number} sec
+     */
+    setSubmenuCloseTimeout: function (sec) {
+      this.cancelSubmenuTimeout()
+      this.submenuTimeout = setTimeout(this.closeSubmenus, sec)
+    },
     cancelSubmenuTimeout: function () {
       if (typeof this.submenuTimeout === 'number') {
         clearTimeout(this.submenuTimeout)

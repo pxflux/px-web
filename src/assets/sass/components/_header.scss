@@ -46,7 +46,7 @@ header {
     text-align: center;
     position: relative;
     color: #292929;
-    padding: 0 8px;
+    padding: 0 1em;
     background: #aaa;
     //@include grey-outline();
   }
@@ -64,23 +64,45 @@ header {
     position: absolute;
     top: $header-height;
     right: 0;
+    max-width: 200px;
 
-    .button{
+    .button {
+      text-align: start;
       min-height: 0;
+      // display: table;
       height: 0;
       overflow: hidden;
       transition: all .2s ease-out;
     }
+    .sub-header {
+      display: block;
+      padding: 0 1em;
+      background: #f5f5f5;
+      border-top: solid #d6d6d6;
+      border-width: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all .2s ease-out;
+
+      span{
+        font-size: 0.7em;
+      }
+    }
 
     &.open {
-      .button{
+      .button {
         height: $header-height;
+      }
+      .sub-header {
+        border-width: 1px;
+        padding: 0.5em 1em;
+        max-height: $header-height * 2;
       }
     }
   }
 
-  .user-photo{
-    $size: $header-height;// * 0.7;
+  .user-photo {
+    $size: $header-height; // * 0.7;
     width: $size;
     height: $size;
     position: absolute;
