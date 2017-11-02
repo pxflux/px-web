@@ -22,9 +22,14 @@
               <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" class="user-photo">
               <span v-else>{{ user.displayName }}</span>
             </a>
-            <div class="submenu">
-              <router-link v-if="user" to="/user/update" class="button flick">Account</router-link>
-              <a v-if="user" @click="logOut" class="button flick">Logout</a>
+            <div v-if="user" class="submenu">
+              <router-link to="/account/artworks" class="button">Artworks</router-link>
+              <router-link to="/account/artists" class="button">Artists</router-link>
+              <router-link to="/account/shows" class="button">Shows</router-link>
+              <router-link to="/account/places" class="button">Places</router-link>
+              <router-link to="/user/update" class="button">Profile</router-link>
+              <div class="button">You're logged in as <b>{{ user.displayName }}</b>&nbsp;<a @click="logOut">Logout</a>
+              </div>
             </div>
           </div>
         </div>

@@ -14,18 +14,6 @@
 
 <script>
   export default {
-    props: ['item', 'uri'],
-
-    data () {
-      return {
-        /** @type {firebase.database.Reference} */
-        artwork: this.item
-      }
-    },
-    computed: {
-      noImage () {
-        return '/static/img/no-preview.png'
-      }
-    }
+    props: ['artwork', 'uri']
   }
 </script>

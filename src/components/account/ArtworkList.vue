@@ -2,8 +2,8 @@
   <main>
     <div v-if="user" class="wrap-content grid">
       <div>
-        <ArtworkItem v-for="item in accountArtworks" :item="item" :key="item['.key']"
-                     :uri="'/account/artwork/' + item['.key']"></ArtworkItem>
+        <ArtworkItem v-for="artwork in accountArtworks" :artwork="artwork" :key="artwork['.key']"
+                     :uri="'/account/artwork/' + artwork['.key']"></ArtworkItem>
       </div>
       <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
       <ul v-if="showForm === false">
@@ -32,8 +32,7 @@
     data () {
       return {
         url: '',
-        showForm: false,
-        items: this.accountArtworks
+        showForm: false
       }
     },
     computed: {

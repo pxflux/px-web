@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="wrap-content grid" id="main-grid">
-        <ArtworkItem v-for="artwork in artworks" :item="artwork" :key="artwork['.key']"
+        <ArtworkItem v-for="artwork in artworks" :artwork="artwork" :key="artwork['.key']"
                      :uri="'/artwork/' + artwork['.key']"></ArtworkItem>
       <span class="nothing-found" v-if="artworks.length == 0">Artworks not found.</span>
     </div>
