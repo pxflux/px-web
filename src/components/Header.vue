@@ -12,17 +12,28 @@
         <router-link to="/artworks" class="button flick">Artworks</router-link>
         <router-link to="/shows" class="button flick">Shows</router-link>
         <!-- -->
-        <router-link v-if="user" to="/account/artworks" class="button flick">My Collection</router-link>
-        <router-link v-if="user" to="/artwork-create" class="button plus medium flick" title="Add"></router-link>
-        <!-- -->
         <div class="right">
           <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
+          <!-- -->
           <div v-if="user" class="item-with-submenu">
-            <a v-if="user" class="button flick submenu-trigger">
+            <a class="button plus medium flick submenu-trigger" title="Add">
+            </a>
+            <div v-if="user" class="submenu">
+              <router-link to="/account/artworks" class="button flick">Add Artwork</router-link>
+              <router-link to="/account/artists" class="button flick">Add Collection</router-link>
+              <router-link to="/account/shows" class="button flick">Add Artist</router-link>
+              <router-link to="/account/places" class="button flick">Add Show</router-link>
+            </div>
+          </div>
+          <!-- -->
+          <router-link v-if="user" to="/account/artworks" class="button flick">Collection</router-link>
+          <!-- -->
+          <div v-if="user" class="item-with-submenu">
+            <a class="button flick submenu-trigger">
               <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" class="user-photo">
               <span v-else>{{ user.displayName }}</span>
             </a>
-            <div v-if="user" class="submenu">
+            <div class="submenu">
               <router-link to="/account/artworks" class="button flick">Artworks</router-link>
               <router-link to="/account/artists" class="button flick">Artists</router-link>
               <router-link to="/account/shows" class="button flick">Shows</router-link>
@@ -52,7 +63,7 @@
   import SubmenuHelper from '../helpers/submenu'
 
   export default {
-    mixins: [SubmenuHelper],
+    mixins: [ SubmenuHelper ],
 
     data () {
       return {
@@ -61,7 +72,7 @@
     },
 
     computed: {
-      ...mapState(['user'])
+      ...mapState([ 'user' ])
     },
 
     methods: {

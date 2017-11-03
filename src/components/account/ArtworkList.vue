@@ -15,11 +15,11 @@
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase-app'
   import { mapState, mapMutations, mapActions } from 'vuex'
-  // import GridHelper from '../../helpers/grid'
+  import GridHelper from '../../helpers/grid'
   import { log } from '../../helper'
 
   export default {
-    // mixins: [ GridHelper ],
+    mixins: [ GridHelper ],
 
     created () {
       this.init()
@@ -44,8 +44,9 @@
       createArtwork () {
         const newArtwork = {
           url: '',
+          thumbUrl: '',
           publicId: '',
-          title: 'Unnamed',
+          title: 'Untitled',
           author: 'Unknown'
         }
         const key = firebase.database().ref('users/' + this.user.uid + '/artworks').push(newArtwork, log).key

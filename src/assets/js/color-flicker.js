@@ -32,11 +32,11 @@ function ColorFlicker (saturation) {
     let perlinOffset = Math.random() * 10000
     this.draw = () => {
       const h = (perlin.noise(perlinOffset / 2) * 720 + 180) % 360
-      const l = perlin.noise(0, perlinOffset) * 25 + 80
-      sat = perlin.noise(0, 0, perlinOffset) * 60 + 40
+      const l = perlin.noise(0, perlinOffset) * 18 + 80
+      sat = perlin.noise(0, 0, perlinOffset) * 40 + 40
       const color = new Color(h, sat, l)
       el.style.backgroundColor = color.toRGBString()
-      perlinOffset += 0.008
+      perlinOffset += 0.05
       requestAnimationFrame(this.draw)
     }
   }

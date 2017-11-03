@@ -49,6 +49,9 @@ header {
     flex-wrap: nowrap;
     justify-content: flex-end;
   }
+  .item-with-submenu{
+    position: relative;
+  }
   .submenu {
     position: absolute;
     top: $header-height;
@@ -62,6 +65,7 @@ header {
       height: 0;
       overflow: hidden;
       transition: all .2s ease-out;
+      white-space: nowrap;
     }
     .sub-section {
       background: #f9f9f9;

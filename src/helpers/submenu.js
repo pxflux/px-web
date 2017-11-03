@@ -46,21 +46,23 @@ export default {
       this.submenuClass = submenuClass
       submenuTriggerClass = submenuTriggerClass || `${submenuClass}-trigger`
       const _this = this
-      const trigger = this.$el.querySelector(`.${submenuTriggerClass}`)
-      if (!trigger) {
+      const triggers = this.$el.querySelectorAll(`.${submenuTriggerClass}`)
+      if (!triggers.length) {
         return
       }
-      trigger.addEventListener('click', this.toggleSubmenu)
-      trigger.addEventListener('mouseleave', function () {
-        _this.setSubmenuCloseTimeout(2000)
-      })
-      trigger.addEventListener('mouseover', this.cancelSubmenuTimeout)
-
+      for (let i = 0; i < triggers.length; i++) {
+        const trigger = triggers[ i ]
+        trigger.addEventListener('click', this.toggleSubmenu)
+        trigger.addEventListener('mouseleave', function () {
+          _this.setSubmenuCloseTimeout(2000)
+        })
+        trigger.addEventListener('mouseover', this.cancelSubmenuTimeout)
+      }
       const submenus = this.$el.querySelectorAll(`.${submenuClass}`)
       for (let i = 0; i < submenus.length; i++) {
         const submenu = submenus[ i ]
         submenu.addEventListener('mouseleave', function () {
-          _this.setSubmenuCloseTimeout(1500)
+          _this.setSubmenuCloseTimeout(500)
         })
         submenu.addEventListener('mouseover', this.cancelSubmenuTimeout)
       }
