@@ -19,23 +19,25 @@ function fetch (child, relationships = []) {
       if (data) {
         const queries = []
         relationships.forEach(name => {
-          const relationIds = Object.keys(data[name])
-          relationIds.forEach(relationId => {
-            const path = name + '/' + relationId
-            logRequests && console.log('fetching', path)
-            queries.push(Firebase.database().ref(path).once('value')
-              .then(snapshot => {
-                const val = snapshot.val()
-                logRequests && console.log('fetched', val)
-                if (val) {
-                  val.__key = snapshot.key
-                  data[name][snapshot.key] = val
-                } else {
-                  // We encountered a deleted record.
-                  delete data[name][snapshot.key]
-                }
-              }))
-          })
+          if (data[name]) {
+            const relationIds = Object.keys(data[name])
+            relationIds.forEach(relationId => {
+              const path = name + '/' + relationId
+              logRequests && console.log('fetching', path)
+              queries.push(Firebase.database().ref(path).once('value')
+                .then(snapshot => {
+                  const val = snapshot.val()
+                  logRequests && console.log('fetched', val)
+                  if (val) {
+                    val.__key = snapshot.key
+                    data[name][snapshot.key] = val
+                  } else {
+                    // We encountered a deleted record.
+                    delete data[name][snapshot.key]
+                  }
+                }))
+            })
+          }
         })
         return Firebase.Promise.all(queries).then(results => {
           return data

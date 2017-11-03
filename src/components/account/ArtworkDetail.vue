@@ -3,13 +3,11 @@
     <div v-if="user && accountArtwork" class="wrap-content text-block">
       <template v-if="showForm === false">
         <h1 :title="accountArtwork.title">{{ accountArtwork.title }}</h1>
-        <p :title="accountArtwork.author">{{ accountArtwork.author }}</p>
         <p :title="accountArtwork.url">{{ accountArtwork.url }}</p>
         <p :title="accountArtwork.thumbUrl">{{ accountArtwork.thumbUrl }}</p>
       </template>
       <form v-if="showForm" id="form-artwork" @submit.prevent="updateArtwork()">
         <input type="text" placeholder="Title" v-model="title"/>
-        <input type="text" placeholder="Authors" v-model="authors"/>
         <input type="text" placeholder="Url" v-model="url"/>
         <input type="text" placeholder="Thumbnail Url" v-model="thumbUrl"/>
         <input type="button" value="Cancel" @click="showForm = false"/>
@@ -56,7 +54,6 @@
         title: '',
         url: '',
         thumbUrl: '',
-        author: '',
         artistId: '',
         showForm: false
       }
@@ -83,7 +80,6 @@
         if (this.source) {
           this.source.update({
             'title': this.title,
-            'author': this.authors,
             'url': this.url,
             'thumbUrl': this.thumbUrl || ''
           }, log)
@@ -150,7 +146,6 @@
       },
       'accountArtwork' () {
         this.title = this.accountArtwork.title
-        this.authors = this.accountArtwork.author
         this.url = this.accountArtwork.url
         this.thumbUrl = this.accountArtwork.thumbUrl
       }

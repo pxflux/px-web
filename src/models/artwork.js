@@ -3,8 +3,8 @@ export function cloneArtwork (uid, artworkId, artwork) {
     ownerId: uid,
     sourceId: artworkId,
     title: artwork.title,
-    author: artwork.author,
     url: artwork.url,
+    actors: artwork.actors || [],
     controls: []
   }
   if (artwork.imageUrl) {

@@ -8,7 +8,6 @@
       </div>
       <div class="item-description">
         <span :title="artwork.title" class="item-title">{{ artwork.title }}</span>
-        <span class="item-genre">{{ artwork.author }}</span>
       </div>
     </router-link>
   </transition>

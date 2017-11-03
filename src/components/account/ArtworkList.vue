@@ -46,8 +46,7 @@
           url: '',
           thumbUrl: '',
           publicId: '',
-          title: 'Untitled',
-          author: 'Unknown'
+          title: 'Untitled'
         }
         const key = firebase.database().ref('users/' + this.user.uid + '/artworks').push(newArtwork, log).key
         this.$router.push('/account/artwork/' + key)
