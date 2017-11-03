@@ -22,7 +22,7 @@
       </ul>
       <form id="form-artwork-artists" @submit.prevent="addArtist()">
         <select v-model="artistId">
-          <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.name }}</option>
+          <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
         </select>
         <input type="button" value="Cancel" @click="showForm = false">
         <input type="submit" value="Save">
