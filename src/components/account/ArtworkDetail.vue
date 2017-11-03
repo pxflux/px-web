@@ -63,13 +63,18 @@
             'title': this.title,
             'author': this.authors,
             'url': this.url,
-            'thumbUrl': this.thumbUrl
+            'thumbUrl': this.thumbUrl || ''
           }, log)
+          if (this.accountArtwork.publicId) {
+            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
+            firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+          }
         }
       },
       publishArtwork () {
         if (this.source && this.accountArtwork.publicId === '') {
-          const id = firebase.database().ref('/artworks').push(cloneArtwork(this.accountArtwork), log).key
+          const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
+          const id = firebase.database().ref('artworks').push(value, log).key
           this.source.update({
             'publicId': id
           })
@@ -77,13 +82,17 @@
       },
       unPublishArtwork () {
         if (this.source && this.accountArtwork.publicId !== '') {
-          firebase.database().ref('/artworks/' + this.accountArtwork.publicId).remove(log)
+          firebase.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
           this.source.update({'publicId': ''}, log)
         }
       },
       removeArtwork () {
         if (this.source) {
+          if (this.accountArtwork.publicId) {
+            firebase.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
+          }
           this.source.remove(log)
+          this.REMOVE_ACCOUNT_ARTWORK()
           this.$router.push('/account/artworks')
         }
       }

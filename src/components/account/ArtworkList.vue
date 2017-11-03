@@ -3,19 +3,11 @@
     <div v-if="user" class="wrap-content grid" id="main-grid">
       <ArtworkItem v-for="artwork in accountArtworks" :artwork="artwork" :key="artwork['.key']"
                    :uri="'/account/artwork/' + artwork['.key']"></ArtworkItem>
-      <a @click="showForm = true" class="grid-cell button" title="Add Artwork">
+      <a @click="createArtwork" class="grid-cell button" title="Add Artwork">
         <div class="button plus center"></div>
       </a>
     </div>
     <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
-    
-    <form v-if="showForm" id="form-artwork" @submit.prevent="createArtwork">
-      <input type="text" placeholder="Author" v-model="authors">
-      <input type="text" placeholder="Title" v-model="title">
-      <input type="text" placeholder="Url" v-model="url">
-      <input type="text" placeholder="Thumbnail Url" v-model="thumbUrl">
-      <button class="right">Create</button>
-    </form>
   </main>
 </template>
 
@@ -31,12 +23,6 @@
 
     created () {
       this.init()
-    },
-    data () {
-      return {
-        url: '',
-        showForm: false
-      }
     },
     computed: {
       ...mapState([ 'user', 'accountArtworks' ])
@@ -57,10 +43,10 @@
       },
       createArtwork () {
         const newArtwork = {
-          url: this.url,
+          url: '',
           publicId: '',
-          title: '',
-          author: ''
+          title: 'Unnamed',
+          author: 'Unknown'
         }
         const key = firebase.database().ref('users/' + this.user.uid + '/artworks').push(newArtwork, log).key
         this.$router.push('/account/artwork/' + key)

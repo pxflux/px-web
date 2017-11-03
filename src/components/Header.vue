@@ -30,7 +30,6 @@
               <div class="sub-section">
                 <div class="sub-header">
                   <span>
-                    <!--{{ loggedInMessage }}<br>-->
                     {{ user.displayName }}
                   </span>
                 </div>
@@ -53,7 +52,7 @@
   import SubmenuHelper from '../helpers/submenu'
 
   export default {
-    mixins: [ SubmenuHelper ],
+    mixins: [SubmenuHelper],
 
     data () {
       return {
@@ -62,7 +61,7 @@
     },
 
     computed: {
-      ...mapState([ 'user' ])
+      ...mapState(['user'])
     },
 
     methods: {
