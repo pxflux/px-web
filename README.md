@@ -34,3 +34,9 @@ account
  shows >-< places
  artworks >-< collectors
 
+
+artworks.{artworkId}.artists.{artistId}
+artworks.{artworkId}.shows.{showId}
+
+artists.{artistId}.artworks.{artworkId}
+
