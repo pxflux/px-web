@@ -69,9 +69,14 @@
       ...mapMutations(['REMOVE_ACCOUNT_ARTWORK']),
 
       init () {
-        this.source = firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
-        this.setRef({key: 'accountArtwork', ref: this.source})
-        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
+        if (this.user.uid) {
+          this.source = firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
+          this.setRef({key: 'accountArtwork', ref: this.source})
+          this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
+        } else {
+          this.source = null
+          this.REMOVE_ACCOUNT_ARTWORK()
+        }
       },
       updateArtwork () {
         this.showForm = false
