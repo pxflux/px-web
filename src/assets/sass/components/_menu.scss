@@ -1,0 +1,43 @@
+.item-with-submenu{
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  max-width: 200px;
+  transform: translate(0, -100%);
+  z-index: -1;
+  transition: all .15s ease-out;
+
+  .button {
+    text-align: start;
+    overflow: hidden;
+    transition: all .2s ease-out;
+    white-space: nowrap;
+  }
+  .sub-section {
+    background: #f9f9f9;
+
+    .sub-header {
+      display: block;
+      background: transparent !important;
+      padding: 0.5em 1em;
+      overflow: hidden;
+      transition: all .2s ease-out;
+
+      span {
+        font-size: 0.7em;
+      }
+    }
+    .button{
+      background: transparent !important;
+    }
+  }
+
+  &.open {
+    top: $header-height;
+    transform: translate(0, 0);
+  }
+}

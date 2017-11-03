@@ -15,7 +15,7 @@ export default {
      */
     toggleSubmenu: function (event) {
       const el = event.currentTarget
-      const submenu = el.parentNode.getElementsByClassName('submenu')[ 0 ]
+      const submenu = el.parentNode.getElementsByClassName('submenu')[0]
       if (!submenu) {
         return
       }
@@ -24,16 +24,16 @@ export default {
         submenu.classList.remove('open')
         this.cancelSubmenuTimeout()
       } else {
+        this.closeSubmenus()
         submenu.classList.add('open')
         this.cancelSubmenuTimeout()
-        // this.submenuTimeout = setTimeout(this.closeSubmenus, 2000)
       }
     },
 
     closeSubmenus: function () {
       const openSubmenus = this.$el.querySelectorAll(`.${this.submenuClass}.open`)
       for (let i = 0; i < openSubmenus.length; i++) {
-        openSubmenus[ i ].classList.remove('open')
+        openSubmenus[i].classList.remove('open')
       }
       this.cancelSubmenuTimeout()
     },
@@ -51,21 +51,32 @@ export default {
         return
       }
       for (let i = 0; i < triggers.length; i++) {
-        const trigger = triggers[ i ]
+        const trigger = triggers[i]
         trigger.addEventListener('click', this.toggleSubmenu)
-        trigger.addEventListener('mouseleave', function () {
-          _this.setSubmenuCloseTimeout(2000)
+        trigger.addEventListener('mouseleave', function () { _this.setSubmenuCloseTimeout(1000) })
+        trigger.addEventListener('mouseover', function (event) {
+          if (_this.currentMenuIsOpen(event)) {
+            _this.cancelSubmenuTimeout()
+          }
         })
-        trigger.addEventListener('mouseover', this.cancelSubmenuTimeout)
       }
       const submenus = this.$el.querySelectorAll(`.${submenuClass}`)
       for (let i = 0; i < submenus.length; i++) {
-        const submenu = submenus[ i ]
+        const submenu = submenus[i]
         submenu.addEventListener('mouseleave', function () {
           _this.setSubmenuCloseTimeout(500)
         })
-        submenu.addEventListener('mouseover', this.cancelSubmenuTimeout)
+        submenu.addEventListener('mouseover', function (event) {
+          if (submenu.classList.contains('open')) {
+            _this.cancelSubmenuTimeout()
+          }
+        })
       }
+    },
+    currentMenuIsOpen (event) {
+      const el = event.currentTarget
+      const submenu = el.parentNode.getElementsByClassName('submenu')[0]
+      return submenu && submenu.classList.contains('open')
     },
     /**
      * @param {number} sec

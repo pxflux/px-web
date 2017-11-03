@@ -49,64 +49,6 @@ header {
     flex-wrap: nowrap;
     justify-content: flex-end;
   }
-  .item-with-submenu{
-    position: relative;
-  }
-  .submenu {
-    position: absolute;
-    top: $header-height;
-    right: 0;
-    max-width: 200px;
-
-    .button {
-      text-align: start;
-      min-height: 0;
-      // display: table;
-      height: 0;
-      overflow: hidden;
-      transition: all .2s ease-out;
-      white-space: nowrap;
-    }
-    .sub-section {
-      background: #f9f9f9;
-
-      .sub-header {
-        display: block;
-        background: transparent !important;
-        padding: 0;
-        // border-top: solid #d6d6d6;
-        border-width: 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: all .2s ease-out;
-
-        span {
-          font-size: 0.7em;
-        }
-      }
-      .button{
-        background: transparent !important;
-        &:hover { background: inherit !important; }
-      }
-    }
-    .button, .sub-header{
-      max-width: $header-height;
-    }
-
-    &.open {
-      .button {
-        height: $header-height;
-        max-width: 200px;
-      }
-      .sub-header {
-        border-width: 1px;
-        padding: 0.5em 1em;
-        max-height: $header-height * 2;
-        max-width: 200px;
-      }
-    }
-  }
-
   .user-photo {
     $size: $header-height; // * 0.7;
     width: $size;
