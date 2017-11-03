@@ -1,0 +1,47 @@
+.button{
+  display: block;
+  min-width: $header-height;
+  min-height: $header-height;
+  line-height: $header-height;
+  text-align: center;
+  position: relative;
+  color: #292929;
+  padding: 0 1em;
+  background: #fcfcfc;
+  //@include grey-outline();
+}
+@mixin button-plus( $size: $header-height, $line-w: 2px) {
+  $plus-size: $size;
+  $plus-line-w: $line-w;
+  $plus-shift-x: ($header-height - $plus-size)/2;
+  $plus-shift-y: $header-height/2 - $plus-line-w/2;
+  $plus-color: rgb(131, 131, 131);
+
+  width: $header-height;
+  position: relative;
+  padding: 0;
+
+  &:before,
+  &:after {
+    content: '';
+    display: block;
+    width: $plus-size;
+    height: $plus-size;
+    position: absolute;
+  }
+  &:before{
+    border-top: $plus-line-w solid $plus-color;
+    transform: translate($plus-shift-x, $plus-shift-y);
+  }
+  &:after{
+    border-left: $plus-line-w solid $plus-color;
+    transform: translate($plus-shift-y, $plus-shift-x);
+  }
+}
+
+.button.plus{
+  @include button-plus();
+}
+.button.plus.medium{
+  @include button-plus(20px, 1px);
+}

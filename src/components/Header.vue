@@ -13,7 +13,7 @@
         <router-link to="/shows" class="button flick">Shows</router-link>
         <!-- -->
         <router-link v-if="user" to="/account/artworks" class="button flick">My Collection</router-link>
-        <router-link v-if="user" to="/artwork-create" class="button flick">Add</router-link>
+        <router-link v-if="user" to="/artwork-create" class="button plus medium flick" title="Add"></router-link>
         <!-- -->
         <div class="right">
           <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>

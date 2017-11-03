@@ -39,18 +39,6 @@ header {
     }
   }
 
-  .button{
-    display: block;
-    min-width: $header-height;
-    min-height: $header-height;
-    line-height: $header-height;
-    text-align: center;
-    position: relative;
-    color: #292929;
-    padding: 0 1em;
-    background: #aaa;
-    //@include grey-outline();
-  }
   a {
     text-decoration: none;
   }
