@@ -1,5 +1,7 @@
-export function cloneArtwork (artwork) {
+export function cloneArtwork (uid, artworkId, artwork) {
   const newArtwork = {
+    ownerId: uid,
+    sourceId: artworkId,
     title: artwork.title,
     author: artwork.author,
     url: artwork.url,

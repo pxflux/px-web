@@ -1,6 +1,6 @@
 <template>
-  <main>
-    <div v-if="artwork" class="wrap-content text-block">
+  <main v-if="artwork">
+    <div class="wrap-content text-block">
       <h1 :title="artwork.title">{{ artwork.title }}</h1>
       <p :title="artwork.author">{{ artwork.author }}</p>
       <p :title="artwork.url">source: {{ artwork.url }}</p>

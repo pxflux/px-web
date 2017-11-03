@@ -12,10 +12,8 @@
         <router-link to="/artworks" class="button flick">Artworks</router-link>
         <router-link to="/shows" class="button flick">Shows</router-link>
         <!-- -->
-        <router-link v-if="user" to="/account/artworks" class="button flick">My Collection</router-link>
-        <router-link v-if="user" to="/artwork-create" class="button flick">Add</router-link>
-        <!-- -->
         <div class="right">
+          <router-link v-if="user" to="/account/artworks" class="button flick">Collection</router-link>
           <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
           <div v-if="user" class="item-with-submenu">
             <a v-if="user" class="button flick submenu-trigger">
@@ -30,7 +28,6 @@
               <div class="sub-section">
                 <div class="sub-header">
                   <span>
-                    <!--{{ loggedInMessage }}<br>-->
                     {{ user.displayName }}
                   </span>
                 </div>
@@ -53,7 +50,7 @@
   import SubmenuHelper from '../helpers/submenu'
 
   export default {
-    mixins: [ SubmenuHelper ],
+    mixins: [SubmenuHelper],
 
     data () {
       return {
@@ -62,7 +59,7 @@
     },
 
     computed: {
-      ...mapState([ 'user' ])
+      ...mapState(['user'])
     },
 
     methods: {
