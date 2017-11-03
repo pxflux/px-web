@@ -3,7 +3,7 @@
     <div class="wrap-content grid">
       <ul>
         <li v-for="artist in artists" :key="artist['.key']">
-          <router-link :to="'/artist/' + artist['.key']">{{ artist.name }}</router-link>
+          <router-link :to="'/artist/' + artist['.key']">{{ artist.fullName }}</router-link>
         </li>
       </ul>
       <span class="nothing-found" v-if="artists.length == 0">Artists not found.</span>

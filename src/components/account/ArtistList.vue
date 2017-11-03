@@ -3,7 +3,7 @@
     <div v-if="user" class="wrap-content grid">
       <ul>
         <li v-for="artist in accountArtists" :key="artist['.key']">
-          <router-link :to="'/account/artist/' + artist['.key']">{{ artist.name }}</router-link>
+          <router-link :to="'/account/artist/' + artist['.key']">{{ artist.fullName }}</router-link>
         </li>
       </ul>
       <span class="nothing-found" v-if="accountArtists.length == 0">Artists not found.</span>
@@ -11,15 +11,17 @@
         <li><a @click="showForm = true" class="button">Add Artist</a></li>
       </ul>
       <form v-if="showForm" id="form-artist" @submit.prevent="createArtist">
-        <input id="name" type="text" v-model="name" title="Artist name" required="required">
-        <button class="right">Create</button>
+        <input type="text" v-model="fullName" title="Artist name" required="required">
+        <button class="right">Save</button>
       </form>
     </div>
   </main>
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapGetters, mapActions } from 'vuex'
+  import latinize from 'latinize'
+  import { searchArtists } from '../../models/artist'
   import { log } from '../../helper'
   import firebase from '../../firebase-app'
 
@@ -29,34 +31,43 @@
     },
     data () {
       return {
-        name: '',
+        fullName: '',
         showForm: false
       }
     },
     computed: {
-      ...mapState(['user', 'accountArtists'])
+      ...mapState(['user']),
+      ...mapGetters(['accountArtists'])
     },
     methods: {
       ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT_ARTISTS']),
 
       init () {
-        if (this.user.uid) {
-          this.setRef({
-            key: 'accountArtists',
-            ref: firebase.database().ref('users/' + this.user.uid + '/artists')
-          })
-        } else {
-          this.REMOVE_ACCOUNT_ARTISTS()
-        }
+        this.source = firebase.database().ref('artists')
+        this.setRef({
+          key: 'artists',
+          ref: this.source
+        })
       },
       createArtist () {
         const newArtist = {
-          name: this.name,
-          publicId: ''
+          ownerId: this.user.uid,
+          fullName: this.fullName,
+          photoUrl: '',
+          _search_index: {
+            full_name: latinize(this.fullName.toLowerCase()),
+            reversed_full_name: latinize(this.fullName.toLowerCase().split(' ').reverse().join(' '))
+          }
         }
-        const key = firebase.database().ref('users/' + this.user.uid + '/artists').push(newArtist, log).key
-        this.$router.push('/account/artist/' + key)
+        searchArtists(this.source, newArtist.fullName, 1).then(artists => {
+          const artistIds = Object.keys(artists)
+          if (artistIds.length === 0) {
+            const key = firebase.database().ref('artists').push(newArtist, log).key
+            this.$router.push('/account/artist/' + key)
+          } else {
+            this.showForm = false
+          }
+        })
       }
     },
     watch: {

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import actions from './actions'
 import mutations from './mutations'
+import getters from './getters'
 
 Vue.use(Vuex)
 
@@ -23,6 +24,7 @@ export function createStore () {
 
       accountArtworks: [],
       accountArtwork: null,
+
       accountArtists: [],
       accountArtist: null,
       accountShows: [],
@@ -33,6 +35,7 @@ export function createStore () {
       items: {/* [id: string]: {} */}
     },
     actions,
-    mutations
+    mutations,
+    getters
   })
 }

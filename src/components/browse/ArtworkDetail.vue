@@ -9,7 +9,7 @@
     <template v-if="artwork.artists">
       <h2>Artists</h2>
       <ul v-for="artist in artwork.artists" :key="artist['__key']">
-        <li>{{ artist.name }}</li>
+        <li>{{ artist.fullName }}</li>
       </ul>
     </template>
     <template v-if="artwork.shows">
