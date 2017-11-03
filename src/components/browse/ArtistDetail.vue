@@ -1,7 +1,7 @@
 <template>
   <main>
     <div v-if="artist" class="wrap-content text-block">
-      <h1>{{ artist.name }}</h1>
+      <h1>{{ artist.fullName }}</h1>
       <h2>Works</h2>
       <h2>Curriculum Vitae</h2>
       <h2>Shows</h2>

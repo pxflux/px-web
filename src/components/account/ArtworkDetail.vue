@@ -7,14 +7,27 @@
         <p :title="accountArtwork.url">{{ accountArtwork.url }}</p>
         <p :title="accountArtwork.thumbUrl">{{ accountArtwork.thumbUrl }}</p>
       </template>
-      <iframe :src="accountArtwork.url"></iframe>
       <form v-if="showForm" id="form-artwork" @submit.prevent="updateArtwork()">
-        <input type="text" placeholder="Title" v-model="title">
-        <input type="text" placeholder="Authors" v-model="authors">
-        <input type="text" placeholder="Url" v-model="url">
-        <input type="text" placeholder="Thumbnail Url" v-model="thumbUrl">
-        <input type="cancel" value="Cancel" class="button left flick" @click="showForm = false">
-        <input type="submit" value="Save" id="submit" class="button left flick">
+        <input type="text" placeholder="Title" v-model="title"/>
+        <input type="text" placeholder="Authors" v-model="authors"/>
+        <input type="text" placeholder="Url" v-model="url"/>
+        <input type="text" placeholder="Thumbnail Url" v-model="thumbUrl"/>
+        <input type="button" value="Cancel" @click="showForm = false"/>
+        <input type="submit" value="Save"/>
+      </form>
+      <h2>Artists</h2>
+      <ul v-if="accountArtwork.artists">
+        <li v-for="(index, artist) in accountArtwork.artists" :key="index">
+          {{ artist }}
+          <a @click="removeArtist(artist)" class="button">X</a>
+        </li>
+      </ul>
+      <form id="form-artwork-artists" @submit.prevent="addArtist()">
+        <select v-model="artistId">
+          <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.name }}</option>
+        </select>
+        <input type="button" value="Cancel" @click="showForm = false">
+        <input type="submit" value="Save">
       </form>
       <ul v-if="showForm === false">
         <li><a @click="showForm = true" class="button">Update</a></li>
@@ -22,6 +35,8 @@
         <li v-if=" ! accountArtwork.publicId"><a @click="publishArtwork" class="button">Publish</a></li>
         <li v-if="accountArtwork.publicId"><a @click="unPublishArtwork" class="button">Un publish</a></li>
       </ul>
+
+      <iframe :src="accountArtwork.url"></iframe>
     </div>
   </main>
 </template>
@@ -42,11 +57,12 @@
         url: '',
         thumbUrl: '',
         author: '',
+        artistId: '',
         showForm: false
       }
     },
     computed: {
-      ...mapState(['user', 'accountArtwork'])
+      ...mapState(['user', 'accountArtwork', 'artists'])
     },
     methods: {
       ...mapActions(['setRef']),
@@ -55,6 +71,7 @@
       init () {
         this.source = firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
         this.setRef({key: 'accountArtwork', ref: this.source})
+        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
       },
       updateArtwork () {
         this.showForm = false
@@ -94,6 +111,28 @@
           this.source.remove(log)
           this.REMOVE_ACCOUNT_ARTWORK()
           this.$router.push('/account/artworks')
+        }
+      },
+      addArtist () {
+        if (this.source && this.artistId) {
+          const data = this.accountArtwork.artists ? this.accountArtwork.artists : {}
+          data[this.artistId] = true
+          this.source.update({'artists': data}, log)
+          if (this.accountArtwork.publicId) {
+            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
+            firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+          }
+        }
+      },
+      removeArtist (artist) {
+        if (this.source && this.accountArtwork.artists) {
+          const data = this.accountArtwork.artists
+          delete data[artist]
+          this.source.update({'artists': data}, log)
+          if (this.accountArtwork.publicId) {
+            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
+            firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+          }
         }
       }
     },
