@@ -3,10 +3,13 @@
     <div v-if="user" class="wrap-content grid" id="main-grid">
       <ArtworkItem v-for="artwork in accountArtworks" :artwork="artwork" :key="artwork['.key']"
                    :uri="'/account/artwork/' + artwork['.key']"></ArtworkItem>
+      <div class="grid-cell">
+        <div><a @click="showForm = true" class="button plus" title="Add Artwork">+</a></div>
+      </div>
     </div>
     <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
     <ul v-if="showForm === false">
-      <li><a @click="showForm = true" class="button">Add Artwork</a></li>
+    
     </ul>
     <form v-if="showForm" id="form-artwork" @submit.prevent="createArtwork">
       <input type="text" placeholder="Author" v-model="authors">
@@ -22,10 +25,11 @@
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase-app'
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import Grider, { log } from '../../helper'
+  import GridHelper from '../../helpers/grid'
+  import { log } from '../../helper'
 
   export default {
-    mixins: [ Grider ],
+    mixins: [ GridHelper ],
 
     created () {
       this.init()
@@ -44,7 +48,7 @@
       ...mapMutations([ 'REMOVE_ACCOUNT_ARTWORKS' ]),
 
       init () {
-        if (this.user.uid) {
+        if (this.user && this.user.uid) {
           this.setRef({
             key: 'accountArtworks',
             ref: firebase.database().ref('users/' + this.user.uid + '/artworks')
@@ -73,6 +77,11 @@
       },
       'user' () {
         this.init()
+      },
+      accountArtworks () {
+        this.$nextTick(function () {
+          this.fillEmptySpaceInGrid('grid')
+        })
       }
     }
   }

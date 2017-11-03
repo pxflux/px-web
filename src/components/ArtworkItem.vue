@@ -1,6 +1,6 @@
 <template>
   <transition mode="out-in" name="fade">
-    <router-link :to="uri" class="item-wrap">
+    <router-link :to="uri" class="item-wrap grid-cell">
       <div class="item-image-wrap">
         <img v-if="artwork.thumbUrl" :src="artwork.thumbUrl" class="item-image">
         <!--<iframe v-else-if="artwork.url" :src="artwork.url" class="work-preview"></iframe>-->

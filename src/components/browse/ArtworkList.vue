@@ -12,7 +12,7 @@
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase-app'
   import { mapState, mapActions } from 'vuex'
-  import GridHelper from '../../helper'
+  import GridHelper from '../../helpers/grid'
 
   export default {
     mixins: [GridHelper],
@@ -42,7 +42,7 @@
       },
       'artworks': function () {
         this.$nextTick(function () {
-          this.fillEmptySpaceInGrid(this.artworks)
+          this.fillEmptySpaceInGrid('grid')
         })
       }
     }
