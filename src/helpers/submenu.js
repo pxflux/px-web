@@ -6,7 +6,8 @@ export default {
   data () {
     return {
       submenuTimeout: null,
-      submenuClass: ''
+      submenuClass: '',
+      delayBeforeClose: 1500
     }
   },
   methods: {
@@ -53,7 +54,9 @@ export default {
       for (let i = 0; i < triggers.length; i++) {
         const trigger = triggers[i]
         trigger.addEventListener('click', this.toggleSubmenu)
-        trigger.addEventListener('mouseleave', function () { _this.setSubmenuCloseTimeout(1000) })
+        trigger.addEventListener('mouseleave', function () {
+          _this.setSubmenuCloseTimeout(_this.delayBeforeClose)
+        })
         trigger.addEventListener('mouseover', function (event) {
           if (_this.currentMenuIsOpen(event)) {
             _this.cancelSubmenuTimeout()
@@ -64,7 +67,7 @@ export default {
       for (let i = 0; i < submenus.length; i++) {
         const submenu = submenus[i]
         submenu.addEventListener('mouseleave', function () {
-          _this.setSubmenuCloseTimeout(500)
+          _this.setSubmenuCloseTimeout(_this.delayBeforeClose)
         })
         submenu.addEventListener('mouseover', function (event) {
           if (submenu.classList.contains('open')) {

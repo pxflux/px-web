@@ -1,18 +1,42 @@
 <template>
   <main>
     <div v-if="user && accountArtwork" class="wrap-content text-block">
-      <template v-if="showForm === false">
-        <h1 :title="accountArtwork.title">{{ accountArtwork.title }}</h1>
-        <p :title="accountArtwork.url">{{ accountArtwork.url }}</p>
-        <p :title="accountArtwork.thumbUrl">{{ accountArtwork.thumbUrl }}</p>
-      </template>
-      <form v-if="showForm" id="form-artwork" @submit.prevent="updateArtwork()">
-        <input type="text" placeholder="Title" v-model="title"/>
-        <input type="text" placeholder="Url" v-model="url"/>
-        <input type="text" placeholder="Thumbnail Url" v-model="thumbUrl"/>
-        <input type="button" value="Cancel" @click="showForm = false"/>
-        <input type="submit" value="Save"/>
-      </form>
+      <medium-editor
+        :text='title' :options='mediumSingleLineOptions'
+        :data-placeholder="defaultTitle" :data-lable="labels.title" :data-field-name="'title'"
+        v-on:edit="processEditOperation" custom-tag='h1'>
+      </medium-editor>
+      <medium-editor
+        :text='url' :options='mediumSingleLineOptions'
+        :data-placeholder="placeholders.url" :data-lable="labels.url" :data-field-name="'url'"
+        v-on:edit='processEditOperation' custom-tag='p'>
+      </medium-editor>
+      <medium-editor
+        :text='thumbUrlText' :options='mediumSingleLineOptions'
+        :data-placeholder="placeholders.thumbUrl" :data-lable="labels.thumbUrl" :data-field-name="'thumbUrl'"
+        v-on:edit='processEditOperation' custom-tag='p'>
+      </medium-editor>
+      
+      <medium-editor
+        :text='artistsNames' :options='mediumSingleLineOptions'
+        :data-placeholder="placeholders.artists" :data-lable="labels.artist" :data-field-name="''"
+        v-on:edit='' custom-tag='p'>
+      </medium-editor>
+      
+      <medium-editor
+        :text='year' :options='mediumSingleLineOptions'
+        :data-placeholder="placeholders.year" :data-lable="labels.year" :data-field-name="'year'"
+        v-on:edit='processEditOperation' custom-tag='p'>
+      </medium-editor>
+      
+      <medium-editor
+        :text='description' :options='mediumMultiLineOptions'
+        :data-placeholder="placeholders.description"
+        :data-lable="labels.description" :data-field-name="'description'"
+        v-on:edit='processEditOperation' custom-tag='div'>
+      </medium-editor>
+      <button v-on:click="updateArtwork()">Save</button>
+      
       <h2>Artists</h2>
       <ul v-if="accountArtwork.artists">
         <li v-for="(index, artist) in accountArtwork.artists" :key="index">
@@ -33,7 +57,7 @@
         <li v-if=" ! accountArtwork.publicId"><a @click="publishArtwork" class="button">Publish</a></li>
         <li v-if="accountArtwork.publicId"><a @click="unPublishArtwork" class="button">Un publish</a></li>
       </ul>
-
+      <!---->
       <iframe :src="accountArtwork.url"></iframe>
     </div>
   </main>
@@ -44,32 +68,88 @@
   import { cloneArtwork } from '../../models/artwork'
   import { log } from '../../helper'
   import firebase from '../../firebase-app'
+  import vueMediumEditor from 'vue2-medium-editor'
 
   export default {
     created () {
       this.init()
     },
+    components: {
+      'medium-editor': vueMediumEditor
+    },
     data () {
       return {
+        defaultTitle: 'Untitled',
+        labels: {
+          title: 'Title',
+          url: 'Work URL',
+          thumbUrl: 'Thumbnail URL',
+          year: 'Year',
+          artist: 'Author',
+          artists: 'Authors',
+          description: 'Description'
+        },
+        placeholders: {
+          url: 'Enter work URL',
+          thumbUrl: 'Enter thumbnail URL',
+          year: 'Enter year of production',
+          artists: 'Add the author(s) of the work here',
+          description: 'Type your text'
+        },
         title: '',
         url: '',
         thumbUrl: '',
+        year: '',
+        description: '',
         artistId: '',
-        showForm: false
+        showForm: false,
+        mediumSingleLineOptions: {
+          toolbar: false,
+          disableReturn: true,
+          disableExtraSpaces: true
+        },
+        mediumMultiLineOptions: {}
       }
     },
     computed: {
-      ...mapState(['user', 'accountArtwork', 'artists'])
+      ...mapState(['user', 'accountArtwork', 'artists']),
+      artistsNames: function () {
+        if (this.accountArtwork && this.accountArtwork.artists) {
+          let str = ''
+          for (let key in this.accountArtwork.artists) {
+            if (this.accountArtwork.artists.hasOwnProperty(key)) {
+              if (str) {
+                str += ', '
+              }
+              str += key
+            }
+          }
+          return str
+        }
+        return ''
+      },
+      thumbUrlText () {
+        return this.thumbUrl
+      }
     },
     methods: {
+      disableEditor (operation) {
+        // operation.tearDown()
+      },
+      processEditOperation: function (operation) {
+        const field = operation.api.origElements.dataset.fieldName
+        if (this.hasOwnProperty(field)) {
+          this[field] = operation.api.origElements.innerHTML
+        }
+      },
       ...mapActions(['setRef']),
       ...mapMutations(['REMOVE_ACCOUNT_ARTWORK']),
 
       init () {
-        if (this.user.uid) {
+        if (this.user && this.user.uid) {
           this.source = firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
-          this.setRef({key: 'accountArtwork', ref: this.source})
-          this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
+          this.setRef({ key: 'accountArtwork', ref: this.source })
+          this.setRef({ key: 'artists', ref: firebase.database().ref('artists') })
         } else {
           this.source = null
           this.REMOVE_ACCOUNT_ARTWORK()
@@ -79,9 +159,11 @@
         this.showForm = false
         if (this.source) {
           this.source.update({
-            'title': this.title,
+            'title': this.title || this.defaultTitle,
             'url': this.url,
-            'thumbUrl': this.thumbUrl || ''
+            'thumbUrl': this.thumbUrl || '',
+            'year': this.year || '',
+            'description': this.description || ''
           }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
@@ -101,7 +183,7 @@
       unPublishArtwork () {
         if (this.source && this.accountArtwork.publicId !== '') {
           firebase.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
-          this.source.update({'publicId': ''}, log)
+          this.source.update({ 'publicId': '' }, log)
         }
       },
       removeArtwork () {
@@ -118,7 +200,7 @@
         if (this.source && this.artistId) {
           const data = this.accountArtwork.artists ? this.accountArtwork.artists : {}
           data[this.artistId] = true
-          this.source.update({'artists': data}, log)
+          this.source.update({ 'artists': data }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
             firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
@@ -129,7 +211,7 @@
         if (this.source && this.accountArtwork.artists) {
           const data = this.accountArtwork.artists
           delete data[artist]
-          this.source.update({'artists': data}, log)
+          this.source.update({ 'artists': data }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
             firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
@@ -148,6 +230,8 @@
         this.title = this.accountArtwork.title
         this.url = this.accountArtwork.url
         this.thumbUrl = this.accountArtwork.thumbUrl
+        this.year = this.accountArtwork.year
+        this.description = this.accountArtwork.hasOwnProperty('description') ? this.accountArtwork.description : ''
       }
     }
   }

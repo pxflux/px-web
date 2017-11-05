@@ -1,17 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Work+Sans:300,400,600&subset=latin-ext');
 
 * {
 	box-sizing: border-box;
-	font-family: 'Open Sans', sans-serif;
+}
+
+html {
+  font-size: 62.5%; // 1rem = 10px
+}
+body {
+  font-size: 1.6rem;
 }
 
 body {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: $normal-font-wight;
 	overflow-y: scroll;
 	background: #fff;
-	
+
 	&.dark {
 		background: #AAAA;
 	}
-	
+
 	&.open-modal {
 		overflow: hidden;
 	}
@@ -27,7 +36,7 @@ input {
 
 h1, h2, h3, h4{
   display: block;
-  font-weight: 400;
+  font-weight: $normal-font-wight;
 }
 h2 {
   margin: 2em 0 0.5em;
