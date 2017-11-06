@@ -17,11 +17,18 @@
         v-on:edit='processEditOperation' custom-tag='p'>
       </medium-editor>
       
-      <medium-editor
-        :text='artistsNames' :options='mediumSingleLineOptions'
-        :data-placeholder="placeholders.artists" :data-lable="labels.artist" :data-field-name="''"
-        v-on:edit='' custom-tag='p'>
-      </medium-editor>
+      <div class="editor-section">
+        <medium-editor
+          :text='artistsNamesStr' :options='mediumSingleLineOptions'
+          :data-placeholder="placeholders.artists" :data-lable="labels.artists" :data-field-name="''"
+          v-on:edit='' custom-tag='p'></medium-editor>
+        <p>
+          <!--<button class="mini">+</button>-->
+          <select @change="addArtistNameToString" v-model="artistName">
+            <option v-for="fullName in availableArtistsNames" v-bind:value="fullName">{{ fullName }}</option>
+          </select>
+        </p>
+      </div>
       
       <medium-editor
         :text='year' :options='mediumSingleLineOptions'
@@ -36,27 +43,6 @@
         v-on:edit='processEditOperation' custom-tag='div'>
       </medium-editor>
       <button v-on:click="updateArtwork()">Save</button>
-      
-      <h2>Artists</h2>
-      <ul v-if="accountArtwork.artists">
-        <li v-for="(index, artist) in accountArtwork.artists" :key="index">
-          {{ artist }}
-          <a @click="removeArtist(artist)" class="button">X</a>
-        </li>
-      </ul>
-      <form id="form-artwork-artists" @submit.prevent="addArtist()">
-        <select v-model="artistId">
-          <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
-        </select>
-        <input type="button" value="Cancel" @click="showForm = false">
-        <input type="submit" value="Save">
-      </form>
-      <ul v-if="showForm === false">
-        <li><a @click="showForm = true" class="button">Update</a></li>
-        <li><a @click="removeArtwork" class="button">Remove</a></li>
-        <li v-if=" ! accountArtwork.publicId"><a @click="publishArtwork" class="button">Publish</a></li>
-        <li v-if="accountArtwork.publicId"><a @click="unPublishArtwork" class="button">Un publish</a></li>
-      </ul>
       <!---->
       <iframe :src="accountArtwork.url"></iframe>
     </div>
@@ -93,7 +79,7 @@
           url: 'Enter work URL',
           thumbUrl: 'Enter thumbnail URL',
           year: 'Enter year of production',
-          artists: 'Add the author(s) of the work here',
+          artists: 'Type the name of the author(s) here or select it from the list',
           description: 'Type your text'
         },
         title: '',
@@ -101,7 +87,11 @@
         thumbUrl: '',
         year: '',
         description: '',
+        artistsList: [],
+        artistsNamesStr: '',
+        availableArtistsNames: [],
         artistId: '',
+        artistName: '',
         showForm: false,
         mediumSingleLineOptions: {
           toolbar: false,
@@ -113,28 +103,24 @@
     },
     computed: {
       ...mapState(['user', 'accountArtwork', 'artists']),
-      artistsNames: function () {
-        if (this.accountArtwork && this.accountArtwork.artists) {
-          let str = ''
-          for (let key in this.accountArtwork.artists) {
-            if (this.accountArtwork.artists.hasOwnProperty(key)) {
-              if (str) {
-                str += ', '
-              }
-              str += key
-            }
-          }
-          return str
-        }
-        return ''
-      },
       thumbUrlText () {
         return this.thumbUrl
       }
     },
     methods: {
-      disableEditor (operation) {
-        // operation.tearDown()
+      addArtistNameToString () {
+        if (this.artistName) {
+          if (this.artistsNamesStr) this.artistsNamesStr += ', '
+          this.artistsNamesStr += this.artistName
+          this.removeArtistNameFromAvailableNames(this.artistName)
+          this.artistName = ''
+        }
+      },
+      removeArtistNameFromAvailableNames (name) {
+        const index = this.availableArtistsNames.indexOf(name)
+        if (index !== -1) {
+          this.availableArtistsNames.splice(index, 1)
+        }
       },
       processEditOperation: function (operation) {
         const field = operation.api.origElements.dataset.fieldName
@@ -158,12 +144,14 @@
       updateArtwork () {
         this.showForm = false
         if (this.source) {
+          const artistsData = this.parseArtistsString()
           this.source.update({
             'title': this.title || this.defaultTitle,
             'url': this.url,
             'thumbUrl': this.thumbUrl || '',
             'year': this.year || '',
-            'description': this.description || ''
+            'description': this.description || '',
+            'artists': artistsData
           }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
@@ -196,6 +184,59 @@
           this.$router.push('/account/artworks')
         }
       },
+      parseArtistsString () {
+        let data = {}
+        const artistsList = this.artistsNamesStr.split(/\s*,\s*/)
+        for (let i = 0; i < artistsList.length; i++) {
+          const artist = this.searchArtistName(artistsList[i])
+          if (artist) {
+            data[artist['.key']] = true
+          } else {
+            // TODO: make it really happen.. right now it is just a mock-up call..
+            // and after creation of the artist we need to update the artwork again..
+            if (this.hasOwnProperty('createArtist')) {
+              this.createArtist(artistsList[i])
+            }
+          }
+        }
+        return data
+      },
+      /**
+       * @param {string} name
+       * @return {Object|boolean}
+       */
+      searchArtistName (name) {
+        for (let i = 0; i < this.artists.length; i++) {
+          const artistObj = this.artists[i]
+          if (artistObj.hasOwnProperty('fullName')) {
+            if (artistObj.fullName === name) return artistObj
+
+            const nameParts = name.split(/\s+/)
+            const artistNameParts = artistObj.fullName.split(/\s+/)
+            if (nameParts.length !== artistNameParts.length) return false
+
+            let matched = false
+            for (let n = 0; n < nameParts.length; n++) {
+              const regx = new RegExp('(\\s' + nameParts[n] + '\\$)||(^' + nameParts[n] + '\\s)||(\\s' + nameParts[n] + '\\s)')
+              matched = artistObj.fullName.test(regx)
+            }
+            if (matched) return artistObj
+          }
+        }
+        return false
+      },
+      /**
+       * @param {string} id
+       */
+      searchArtistId (id) {
+        for (let i = 0; i < this.artists.length; i++) {
+          const artistObj = this.artists[i]
+          if (artistObj.hasOwnProperty('.key')) {
+            if (artistObj['.key'] === id) return artistObj
+          }
+        }
+        return false
+      },
       addArtist () {
         if (this.source && this.artistId) {
           const data = this.accountArtwork.artists ? this.accountArtwork.artists : {}
@@ -217,6 +258,18 @@
             firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
           }
         }
+      },
+      convertArtistIDsToNames () {
+        let names = []
+        if (this.accountArtwork && this.accountArtwork.artists) {
+          for (let id in this.accountArtwork.artists) {
+            if (!this.accountArtwork.artists.hasOwnProperty(id)) continue
+            const artist = this.searchArtistId(id)
+            if (!artist) continue
+            names.push(artist.fullName)
+          }
+        }
+        return names
       }
     },
     watch: {
@@ -226,12 +279,23 @@
       'user' () {
         this.init()
       },
+      'artists' () {
+        const artworkNames = this.convertArtistIDsToNames()
+        this.availableArtistsNames = []
+        for (let i = 0; i < this.artists.length; i++) {
+          const artist = this.artists[i]
+          if (artworkNames.indexOf(artist.fullName) !== -1) continue
+          this.availableArtistsNames.push(artist.fullName)
+        }
+        this.artistsNamesStr = artworkNames.join(', ')
+      },
       'accountArtwork' () {
         this.title = this.accountArtwork.title
         this.url = this.accountArtwork.url
         this.thumbUrl = this.accountArtwork.thumbUrl
         this.year = this.accountArtwork.year
         this.description = this.accountArtwork.hasOwnProperty('description') ? this.accountArtwork.description : ''
+        this.$forceUpdate()
       }
     }
   }

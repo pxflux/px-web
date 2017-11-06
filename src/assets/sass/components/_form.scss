@@ -52,6 +52,14 @@ button {
     float: right;
     right: $outline-width;
   }
+
+  &.mini{
+    display: inline-block;
+    width: $header-height * 0.75;
+    min-width: $header-height * 0.75;
+    height: $header-height * 0.75;
+    padding: 0;
+  }
 }
 
 input[type=checkbox]{

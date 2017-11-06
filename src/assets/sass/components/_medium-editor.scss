@@ -279,7 +279,8 @@
 }
 
 
-.medium-editor-element {
+.medium-editor-element,
+.editor-section p{
   word-wrap: break-word;
   // min-height: 30px;
   margin-left: 110px;
