@@ -16,7 +16,7 @@
         :data-placeholder="placeholders.thumbUrl" :data-lable="labels.thumbUrl" :data-field-name="'thumbUrl'"
         v-on:edit='processEditOperation' custom-tag='p'>
       </medium-editor>
-      
+
       <div class="editor-section">
         <medium-editor
           :text='artistsNamesStr' :options='mediumSingleLineOptions'
@@ -29,13 +29,13 @@
           </select>
         </p>
       </div>
-      
+
       <medium-editor
         :text='year' :options='mediumSingleLineOptions'
         :data-placeholder="placeholders.year" :data-lable="labels.year" :data-field-name="'year'"
         v-on:edit='processEditOperation' custom-tag='p'>
       </medium-editor>
-      
+
       <medium-editor
         :text='description' :options='mediumMultiLineOptions'
         :data-placeholder="placeholders.description"
@@ -43,7 +43,18 @@
         v-on:edit='processEditOperation' custom-tag='div'>
       </medium-editor>
       <button v-on:click="updateArtwork()">Save</button>
+
+      <h2>Iterations</h2>
+      <ul>
+        <li v-for="iteration in iterations" :key="iteration.__key">
+          <router-link :to="'/account/artwork/' + $route.params.id + '/iterations/' + iteration.__key">
+            {{ iteration.title }}
+          </router-link>&nbsp;<button v-on:click="removeIteration(iteration.__key)">X</button>
+        </li>
+      </ul>
+      <button v-on:click="createIteration()">Create</button>
       <!---->
+      <hr/>
       <iframe :src="accountArtwork.url"></iframe>
     </div>
   </main>
@@ -53,7 +64,8 @@
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { cloneArtwork } from '../../models/artwork'
   import { log } from '../../helper'
-  import firebase from '../../firebase-app'
+  import Firebase from 'firebase'
+  import firebaseApp from '../../firebase-app'
   import vueMediumEditor from 'vue2-medium-editor'
 
   export default {
@@ -98,13 +110,24 @@
           disableReturn: true,
           disableExtraSpaces: true
         },
-        mediumMultiLineOptions: {}
+        mediumMultiLineOptions: {},
+        iterationTitle: ''
       }
     },
     computed: {
       ...mapState(['user', 'accountArtwork', 'artists']),
       thumbUrlText () {
         return this.thumbUrl
+      },
+      iterations () {
+        return Object.keys(this.accountArtwork.iterations || {}).map(id => {
+          const iteration = this.accountArtwork.iterations[id]
+          if (id === 'draft') {
+            return null
+          }
+          iteration.__key = id
+          return iteration
+        }).filter(_ => _)
       }
     },
     methods: {
@@ -133,9 +156,9 @@
 
       init () {
         if (this.user && this.user.uid) {
-          this.source = firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
-          this.setRef({ key: 'accountArtwork', ref: this.source })
-          this.setRef({ key: 'artists', ref: firebase.database().ref('artists') })
+          this.source = firebaseApp.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
+          this.setRef({key: 'accountArtwork', ref: this.source})
+          this.setRef({key: 'artists', ref: firebaseApp.database().ref('artists')})
         } else {
           this.source = null
           this.REMOVE_ACCOUNT_ARTWORK()
@@ -155,14 +178,14 @@
           }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
-            firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
           }
         }
       },
       publishArtwork () {
         if (this.source && this.accountArtwork.publicId === '') {
           const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
-          const id = firebase.database().ref('artworks').push(value, log).key
+          const id = firebaseApp.database().ref('artworks').push(value, log).key
           this.source.update({
             'publicId': id
           })
@@ -170,14 +193,14 @@
       },
       unPublishArtwork () {
         if (this.source && this.accountArtwork.publicId !== '') {
-          firebase.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
-          this.source.update({ 'publicId': '' }, log)
+          firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
+          this.source.update({'publicId': ''}, log)
         }
       },
       removeArtwork () {
         if (this.source) {
           if (this.accountArtwork.publicId) {
-            firebase.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
+            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
           }
           this.source.remove(log)
           this.REMOVE_ACCOUNT_ARTWORK()
@@ -241,10 +264,10 @@
         if (this.source && this.artistId) {
           const data = this.accountArtwork.artists ? this.accountArtwork.artists : {}
           data[this.artistId] = true
-          this.source.update({ 'artists': data }, log)
+          this.source.update({'artists': data}, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
-            firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
           }
         }
       },
@@ -252,10 +275,10 @@
         if (this.source && this.accountArtwork.artists) {
           const data = this.accountArtwork.artists
           delete data[artist]
-          this.source.update({ 'artists': data }, log)
+          this.source.update({'artists': data}, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
-            firebase.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
           }
         }
       },
@@ -270,6 +293,23 @@
           }
         }
         return names
+      },
+      createIteration () {
+        if (this.accountArtwork && this.source) {
+          this.source.update({'iterations/draft/lastmodified': Firebase.database.ServerValue.TIMESTAMP}, function (error) {
+            log(error)
+            if (!error) {
+              this.$router.push('/account/artwork/' + this.$route.params.id + '/iterations/draft')
+            }
+          }.bind(this))
+        }
+      },
+      removeIteration (iteration) {
+        if (this.source && this.accountArtwork.iterations) {
+          const data = this.accountArtwork.iterations
+          delete data[iteration]
+          this.source.update({'iterations': data}, log)
+        }
       }
     },
     watch: {

@@ -18,6 +18,7 @@ import PublicationDetail from '@/components/public/Publication'
 
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
+import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
 import AccountArtistList from '@/components/account/ArtistList'
 import AccountArtistDetail from '@/components/account/ArtistDetail'
 import AccountShowList from '@/components/account/ShowList'
@@ -46,6 +47,7 @@ export function createRouter () {
       {path: '/publication/:id', component: PublicationDetail, name: 'publication-detail'},
 
       {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
+      {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail, name: 'account-artwork-iteration-detail'},
       {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},
       {path: '/account/artists', component: AccountArtistList, name: 'account-artists'},
       {path: '/account/artist/:id', component: AccountArtistDetail, name: 'account-artist-detail'},

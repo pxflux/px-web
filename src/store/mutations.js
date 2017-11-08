@@ -29,6 +29,9 @@ export default {
   REMOVE_ACCOUNT_PLACE (state) {
     state.accountPlace = null
   },
+  REMOVE_ACCOUNT_ITERATION (state) {
+    state.accountIteration = null
+  },
   ...firebaseMutations,
 
   SET_ITEMS: (state, {items}) => {

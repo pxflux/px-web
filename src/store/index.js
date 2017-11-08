@@ -32,6 +32,8 @@ export function createStore () {
       accountPlaces: [],
       accountPlace: null,
 
+      accountIteration: null,
+
       items: {/* [id: string]: {} */}
     },
     actions,
