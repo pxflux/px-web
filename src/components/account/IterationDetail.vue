@@ -1,8 +1,9 @@
 <template>
   <main>
     <div v-if="user && accountIteration" class="wrap-content text-block">
-      <input type="text" v-model="title">
-      <button @click="saveIteration" class="button">Save</button>
+      <span v-show="!title.edit" @click="toggleTitle()">{{ title.val }}</span>
+      <input v-show="title.edit" type="text" ref="inputTitle" v-model="title.val" @blur="saveTitle()">
+
       <button v-if="accountIteration['.key'] === 'draft'" @click="publishIteration" class="button">Publish</button>
     </div>
   </main>
@@ -23,7 +24,10 @@
     },
     data () {
       return {
-        title: ''
+        title: {
+          val: '',
+          edit: false
+        }
       }
     },
     methods: {
@@ -39,17 +43,24 @@
           this.REMOVE_ACCOUNT_ITERATION()
         }
       },
-      saveIteration () {
-        if (this.source) {
-          const o = {
-            'title': this.title
-          }
-          this.source.update(o, function (error) {
-            this.$router.push('/account/artwork/' + this.$route.params.artworkId)
-            log(error)
-          }.bind(this))
+
+      toggleTitle: function () {
+        this.$set(this.title, 'edit', !this.title.edit)
+        // Focus input field
+        if (this.title.edit) {
+          this.$nextTick(function () {
+            this.$refs.inputTitle.focus()
+          })
         }
       },
+
+      saveTitle: function () {
+        this.toggleTitle()
+        if (this.source) {
+          this.source.update({'title': this.title.val}, log)
+        }
+      },
+
       publishIteration () {
         if (this.source && this.accountIteration['.key'] === 'draft') {
           const path = 'users/' + this.user.uid + '/artworks/' + this.$route.params.artworkId + '/iterations'
@@ -73,7 +84,7 @@
         this.init()
       },
       'accountIteration' () {
-        this.title = this.accountIteration.title || 'Untitled'
+        this.title.val = this.accountIteration.title || 'Untitled'
       }
     }
   }
