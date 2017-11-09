@@ -1,4 +1,7 @@
 {
+  "storage": {
+    "rules": "firebase.storage.json"
+  },
   "hosting": {
     "public": "dist",
     "rewrites": [
