@@ -1,6 +1,6 @@
 {
   "storage": {
-    "rules": "firebase.storage.json"
+    "rules": "firebase.storage"
   },
   "hosting": {
     "public": "dist",

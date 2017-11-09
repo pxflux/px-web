@@ -84,8 +84,10 @@
           this.source.update({photoUrl: '/static/img/spin-32.gif'}).then(function () {
             const filePath = '/artists/' + this.$route.params.id + '.' + this.fileExtension
             return firebase.storage().ref(filePath).put(this.uploadedFile).then(function (snapshot) {
-              const fullPath = snapshot.metadata.fullPath
-              return this.source.update({photoUrl: firebase.storage().ref(fullPath).toString()})
+              return this.source.update({
+                photoUrl: snapshot.metadata.downloadURLs[0],
+                storageUri: firebase.storage().ref(snapshot.metadata.fullPath).toString()
+              })
             }.bind(this))
           }.bind(this)).then(function () {
             this.loading = false
