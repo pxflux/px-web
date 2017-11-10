@@ -1,61 +1,77 @@
 <template>
   <main>
-    <div v-if="user && accountArtwork" class="wrap-content text-block">
-      <medium-editor
-        :text='title' :options='mediumSingleLineOptions'
-        :data-placeholder="defaultTitle" :data-lable="labels.title" :data-field-name="'title'"
-        v-on:edit="processEditOperation" custom-tag='h1'>
-      </medium-editor>
-      <medium-editor
-        :text='url' :options='mediumSingleLineOptions'
-        :data-placeholder="placeholders.url" :data-lable="labels.url" :data-field-name="'url'"
-        v-on:edit='processEditOperation' custom-tag='p'>
-      </medium-editor>
-      <medium-editor
-        :text='thumbUrlText' :options='mediumSingleLineOptions'
-        :data-placeholder="placeholders.thumbUrl" :data-lable="labels.thumbUrl" :data-field-name="'thumbUrl'"
-        v-on:edit='processEditOperation' custom-tag='p'>
-      </medium-editor>
-
-      <div class="editor-section">
-        <medium-editor
-          :text='artistsNamesStr' :options='mediumSingleLineOptions'
-          :data-placeholder="placeholders.artists" :data-lable="labels.artists" :data-field-name="''"
-          v-on:edit='' custom-tag='p'></medium-editor>
-        <p>
-          <!--<button class="mini">+</button>-->
-          <select @change="addArtistNameToString" v-model="artistName">
-            <option v-for="fullName in availableArtistsNames" v-bind:value="fullName">{{ fullName }}</option>
-          </select>
-        </p>
+    <div v-if="user && accountArtwork" class="wrap-content text-block editor">
+      <div class="editor-sidebar">
+        <div class="preview-box">
+          <div class="thumbnail-cell">
+            <div class="item-image-wrap"><img :src="thumbUrlText" class="item-image"/></div>
+          </div>
+          <iframe :src="accountArtwork.url"></iframe>
+        </div>
       </div>
-
-      <medium-editor
-        :text='year' :options='mediumSingleLineOptions'
-        :data-placeholder="placeholders.year" :data-lable="labels.year" :data-field-name="'year'"
-        v-on:edit='processEditOperation' custom-tag='p'>
-      </medium-editor>
-
-      <medium-editor
-        :text='description' :options='mediumMultiLineOptions'
-        :data-placeholder="placeholders.description"
-        :data-lable="labels.description" :data-field-name="'description'"
-        v-on:edit='processEditOperation' custom-tag='div'>
-      </medium-editor>
-      <button v-on:click="updateArtwork()">Save</button>
-
-      <h2>Iterations</h2>
-      <ul>
-        <li v-for="iteration in iterations" :key="iteration.__key">
-          <router-link :to="'/account/artwork/' + $route.params.id + '/iterations/' + iteration.__key">
-            {{ iteration.title }}
-          </router-link>&nbsp;<button v-on:click="removeIteration(iteration.__key)">X</button>
-        </li>
-      </ul>
-      <button v-on:click="createIteration()">Create</button>
-      <!---->
-      <hr/>
-      <iframe :src="accountArtwork.url"></iframe>
+      <div class="editor-body">
+        <div class="editor-section">
+          <medium-editor
+            :text='title' :options='mediumSingleLineOptions'
+            :data-placeholder="defaultTitle" :data-label="labels.title" :data-field-name="'title'"
+            v-on:edit="processEditOperation" custom-tag='h1'>
+          </medium-editor>
+          <medium-editor
+            :text='url' :options='mediumSingleLineOptions'
+            :data-placeholder="placeholders.url" :data-label="labels.url" :data-field-name="'url'"
+            v-on:edit='processEditOperation' custom-tag='p'>
+          </medium-editor>
+          <medium-editor
+            :text='thumbUrlText' :options='mediumSingleLineOptions'
+            :data-placeholder="placeholders.thumbUrl" :data-label="labels.thumbUrl" :data-field-name="'thumbUrl'"
+            v-on:edit='processEditOperation' custom-tag='p'>
+          </medium-editor>
+          
+          <div class="editor-section">
+            <medium-editor
+              :text='namesString' :options='mediumSingleLineOptions'
+              :data-placeholder="placeholders.artists" :data-label="labels.artists" :data-field-name="''"
+              v-on:edit='' custom-tag='p'></medium-editor>
+            <p>
+              <!--<button class="mini">+</button>-->
+              <select @change="addArtistNameToString" v-model="artistName">
+                <option v-for="fullName in availableNames" v-bind:value="fullName">{{ fullName }}</option>
+              </select>
+            </p>
+          </div>
+          
+          <medium-editor
+            :text='year' :options='mediumSingleLineOptions'
+            :data-placeholder="placeholders.year" :data-label="labels.year" :data-field-name="'year'"
+            v-on:edit='processEditOperation' custom-tag='p'>
+          </medium-editor>
+          
+          <medium-editor
+            :text='description' :options='mediumMultiLineOptions'
+            :data-placeholder="placeholders.description"
+            :data-label="labels.description" :data-field-name="'description'"
+            :class="'text'"
+            v-on:edit='processEditOperation' custom-tag='div'>
+          </medium-editor>
+          
+          <remote-control-editor :class="'with-label'" :data-label="labels.remoteControl">
+          </remote-control-editor>
+          
+          <button v-on:click="updateArtwork()">Save</button>
+        </div>
+        
+        <div class="editor-section">
+          <h2>Iterations</h2>
+          <ul>
+            <li v-for="iteration in iterations" :key="iteration.__key">
+              <router-link :to="'/account/artwork/' + $route.params.id + '/iterations/' + iteration.__key">
+                {{ iteration.title }}
+              </router-link>&nbsp;<button v-on:click="removeIteration(iteration.__key)">X</button>
+            </li>
+          </ul>
+          <button v-on:click="createIteration()">Create</button>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -66,6 +82,7 @@
   import { log } from '../../helper'
   import Firebase from 'firebase'
   import firebaseApp from '../../firebase-app'
+  import RemoteControlEditor from './RemoteControlEditor'
   import vueMediumEditor from 'vue2-medium-editor'
 
   export default {
@@ -73,7 +90,8 @@
       this.init()
     },
     components: {
-      'medium-editor': vueMediumEditor
+      'medium-editor': vueMediumEditor,
+      'remote-control-editor': RemoteControlEditor
     },
     data () {
       return {
@@ -85,12 +103,13 @@
           year: 'Year',
           artist: 'Author',
           artists: 'Authors',
-          description: 'Description'
+          description: 'Description',
+          remoteControl: 'Remote Control'
         },
         placeholders: {
           url: 'Enter work URL',
           thumbUrl: 'Enter thumbnail URL',
-          year: 'Enter year of production',
+          year: 'Enter the year of production',
           artists: 'Type the name of the author(s) here or select it from the list',
           description: 'Type your text'
         },
@@ -99,11 +118,11 @@
         thumbUrl: '',
         year: '',
         description: '',
-        artistsList: [],
-        artistsNamesStr: '',
-        availableArtistsNames: [],
+        namesString: '',
+        availableNames: [],
         artistId: '',
         artistName: '',
+        initialAuthorsLst: [],
         showForm: false,
         mediumSingleLineOptions: {
           toolbar: false,
@@ -131,18 +150,22 @@
       }
     },
     methods: {
+      ...mapActions(['setRef']),
+      ...mapMutations(['REMOVE_ACCOUNT_ARTWORK']),
+
       addArtistNameToString () {
         if (this.artistName) {
-          if (this.artistsNamesStr) this.artistsNamesStr += ', '
-          this.artistsNamesStr += this.artistName
-          this.removeArtistNameFromAvailableNames(this.artistName)
+          if (this.namesString) this.namesString += ', '
+          this.namesString += this.artistName
+          this.removeNameFromAvailableNames(this.artistName)
           this.artistName = ''
         }
+        this.$nextTick(this.clickEditorsToRemovePlaceholders)
       },
-      removeArtistNameFromAvailableNames (name) {
-        const index = this.availableArtistsNames.indexOf(name)
+      removeNameFromAvailableNames (name) {
+        const index = this.availableNames.indexOf(name)
         if (index !== -1) {
-          this.availableArtistsNames.splice(index, 1)
+          this.availableNames.splice(index, 1)
         }
       },
       processEditOperation: function (operation) {
@@ -151,19 +174,32 @@
           this[field] = operation.api.origElements.innerHTML
         }
       },
-      ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT_ARTWORK']),
 
       init () {
         if (this.user && this.user.uid) {
           this.source = firebaseApp.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
-          this.setRef({key: 'accountArtwork', ref: this.source})
-          this.setRef({key: 'artists', ref: firebaseApp.database().ref('artists')})
+          this.setRef({ key: 'accountArtwork', ref: this.source })
+          this.setRef({ key: 'artists', ref: firebaseApp.database().ref('artists') })
         } else {
           this.source = null
           this.REMOVE_ACCOUNT_ARTWORK()
         }
       },
+
+      clickEditorsToRemovePlaceholders (el) {
+        // TODO remove placeholder on load/update text inside medium-editors
+        // Just a hack... it has to be a better/ proper way to do this?
+        // simulate click on medium-editors to remove placeholders when we update text
+        if (el) {
+          if (el.innerHTML !== '') el.click()
+        } else {
+          const editors = document.getElementsByClassName('medium-editor-element')
+          for (let i = 0; i < editors.length; i++) {
+            if (editors[i].innerHTML !== '') editors[i].click()
+          }
+        }
+      },
+
       updateArtwork () {
         this.showForm = false
         if (this.source) {
@@ -194,7 +230,7 @@
       unPublishArtwork () {
         if (this.source && this.accountArtwork.publicId !== '') {
           firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
-          this.source.update({'publicId': ''}, log)
+          this.source.update({ 'publicId': '' }, log)
         }
       },
       removeArtwork () {
@@ -209,7 +245,7 @@
       },
       parseArtistsString () {
         let data = {}
-        const artistsList = this.artistsNamesStr.split(/\s*,\s*/)
+        const artistsList = this.namesString.split(/\s*,\s*/)
         for (let i = 0; i < artistsList.length; i++) {
           const artist = this.searchArtistName(artistsList[i])
           if (artist) {
@@ -264,7 +300,7 @@
         if (this.source && this.artistId) {
           const data = this.accountArtwork.artists ? this.accountArtwork.artists : {}
           data[this.artistId] = true
-          this.source.update({'artists': data}, log)
+          this.source.update({ 'artists': data }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
             firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
@@ -275,14 +311,14 @@
         if (this.source && this.accountArtwork.artists) {
           const data = this.accountArtwork.artists
           delete data[artist]
-          this.source.update({'artists': data}, log)
+          this.source.update({ 'artists': data }, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
             firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
           }
         }
       },
-      convertArtistIDsToNames () {
+      getNamesByIDs () {
         let names = []
         if (this.accountArtwork && this.accountArtwork.artists) {
           for (let id in this.accountArtwork.artists) {
@@ -296,7 +332,7 @@
       },
       createIteration () {
         if (this.accountArtwork && this.source) {
-          this.source.update({'iterations/draft/lastmodified': Firebase.database.ServerValue.TIMESTAMP}, function (error) {
+          this.source.update({ 'iterations/draft/lastmodified': Firebase.database.ServerValue.TIMESTAMP }, function (error) {
             log(error)
             if (!error) {
               this.$router.push('/account/artwork/' + this.$route.params.id + '/iterations/draft')
@@ -308,7 +344,7 @@
         if (this.source && this.accountArtwork.iterations) {
           const data = this.accountArtwork.iterations
           delete data[iteration]
-          this.source.update({'iterations': data}, log)
+          this.source.update({ 'iterations': data }, log)
         }
       }
     },
@@ -320,14 +356,15 @@
         this.init()
       },
       'artists' () {
-        const artworkNames = this.convertArtistIDsToNames()
-        this.availableArtistsNames = []
+        const artworkNames = this.getNamesByIDs()
+        this.availableNames = []
         for (let i = 0; i < this.artists.length; i++) {
           const artist = this.artists[i]
           if (artworkNames.indexOf(artist.fullName) !== -1) continue
-          this.availableArtistsNames.push(artist.fullName)
+          this.availableNames.push(artist.fullName)
         }
-        this.artistsNamesStr = artworkNames.join(', ')
+        this.namesString = artworkNames.join(', ')
+        this.$nextTick(this.clickEditorsToRemovePlaceholders)
       },
       'accountArtwork' () {
         this.title = this.accountArtwork.title
@@ -335,7 +372,7 @@
         this.thumbUrl = this.accountArtwork.thumbUrl
         this.year = this.accountArtwork.year
         this.description = this.accountArtwork.hasOwnProperty('description') ? this.accountArtwork.description : ''
-        this.$forceUpdate()
+        this.$nextTick(this.clickEditorsToRemovePlaceholders)
       }
     }
   }

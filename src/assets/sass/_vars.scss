@@ -1,8 +1,15 @@
-$normal-font-wight: 400;
+//
+$font-size-body: 1.6rem;
+$font-normal-wight: 400;
 
 $bg-color: #fff;
 
-$header-height: 48px;
+$header-height: 4.8rem;
+$thumb-size: $header-height * 5;
+$keypad-button-size: $header-height * 2;
 
 $outline-color: rgba(200, 200, 200, 0.3);
-$outline-width: 1px;
+$outline-width: 0.1rem;
+
+$form-label-width: 11.5rem;
+$form-padding-left: 2rem;

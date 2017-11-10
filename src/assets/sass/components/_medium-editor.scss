@@ -278,42 +278,76 @@
   display: table;
 }
 
+.editor-section {
+  & > *:not(.editor-section) {
+    margin-left: $form-label-width;
+    position: relative;
+  }
+  & > *:first-child{
+    margin-top: 0;
+  }
 
+  h1, h2, h3{
+    margin-bottom: $font-size-body;
+  }
+
+  .button, button {
+    &:not(.center, .grid-cell) {
+      margin: $font-size-body 0;
+    }
+  }
+}
+
+.medium-editor-element.text{
+  max-width: 45em;
+}
 .medium-editor-element,
 .editor-section p{
   word-wrap: break-word;
-  // min-height: 30px;
-  margin-left: 110px;
-  padding-left: 10px;
+  hyphens: auto;
   position: relative;
-  // padding: 5px 10px;
+  margin-bottom: $font-size-body
 }
+
 .medium-editor-element:focus {
   outline: none;
-  // background: rgb(248, 248, 248);
-  box-shadow: -1px 0 0 0 #aaa;
 
   &:before{
-    // box-shadow: 1px 0 0 0 #aa6f75;
+    color: #000;
   }
 }
-.medium-editor-element:before {
-  content: attr(data-lable) !important;
+.medium-editor-element:before,
+.with-label:before{
+  content: attr(data-label) !important;
   display: block;
   position: absolute;
-  font-size: 13px;
-  left: -115px;
+  font-size: 1.3rem;
+  left: - $form-label-width;
   top: 50%;
   transform: translate(0, -50%);
-  width: 8em;
+  width: $form-label-width;
   height: 100%;
   text-align: right;
-  padding: 0 10px 0 0;
+  padding: 0 $form-padding-left 0 0;
   box-sizing: border-box;
   white-space: nowrap;
   color: #aaa;
-  // box-shadow: 1px 0 0 0 #aaa;
 }
+
+.keypad .button-box {
+  .medium-editor-element,
+  .with-label {
+    margin-left: 5rem;
+    white-space: normal;
+    &:before {
+      //position: relative;
+      left: -5rem;
+      //text-align: start;
+      width: 5rem;
+    }
+  }
+}
+
 h1, h2, h3 {
   &.medium-editor-element:before {
     height: auto;

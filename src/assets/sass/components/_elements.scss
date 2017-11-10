@@ -10,7 +10,7 @@
   background: #fcfcfc;
   //@include grey-outline();
 }
-@mixin button-plus( $size: $header-height, $line-w: 2px) {
+@mixin button-plus( $size: $header-height, $line-w: 0.2rem, $rotate: 0) {
   $plus-size: $size;
   $plus-line-w: $line-w;
   $plus-shift-x: ($header-height - $plus-size)/2;
@@ -31,11 +31,13 @@
   }
   &:before{
     border-top: $plus-line-w solid $plus-color;
-    transform: translate($plus-shift-x, $plus-shift-y);
+    transform: translate($plus-shift-x, $plus-shift-y) rotate($rotate);
+    transform-origin: top;
   }
   &:after{
     border-left: $plus-line-w solid $plus-color;
-    transform: translate($plus-shift-y, $plus-shift-x);
+    transform: translate($plus-shift-y, $plus-shift-x) rotate($rotate);
+    transform-origin: left;
   }
 }
 
@@ -43,5 +45,75 @@
   @include button-plus();
 }
 .button.plus.medium{
-  @include button-plus(20px, 1px);
+  @include button-plus(2rem, 0.1rem);
+}
+.button.cancel{
+  @include button-plus(2rem, 0.1rem, 45deg);
+}
+
+.dialog{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  &>*{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  .bg{
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,0.8);
+  }
+  .dialog-box{
+    background: $bg-color;
+    max-width: 30rem;
+    max-height: 30rem;
+    @include centered();
+    @include grey-outline();
+  }
+
+  .dialog-header{
+    display: flex;
+    justify-content: space-between;
+    height: $header-height;
+    width: 100%;
+
+    .button{
+      background: $bg-color;
+    }
+  }
+
+  .dialog-body{
+    width: 100%;
+    @include centered(0, -3%);
+
+    &.button-editor{
+      .medium-editor-element{
+        margin-left: $form-label-width;
+      }
+    }
+  }
+
+  .dialog-buttons{
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    height: $header-height;
+    bottom: 0;
+
+    //button{  }
+    /* one item */
+    button:first-child:nth-last-child(1) {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
 }

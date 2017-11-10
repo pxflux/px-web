@@ -1,8 +1,10 @@
 <template>
   <main>
     <div v-if="user" class="wrap-content grid" id="main-grid">
-      <ArtworkItem v-for="artwork in accountArtworks" :artwork="artwork" :key="artwork['.key']"
-                   :uri="'/account/artwork/' + artwork['.key']"></ArtworkItem>
+      <ArtworkItem v-for="artwork in accountArtworks"
+                   :artwork="artwork" :key="artwork['.key']"
+                   :uri="'/account/artwork/' + artwork['.key']">
+      </ArtworkItem>
       <a @click="createArtwork" class="grid-cell button" title="Add Artwork">
         <div class="button plus center"></div>
       </a>

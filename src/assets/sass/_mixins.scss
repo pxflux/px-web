@@ -1,3 +1,10 @@
 @mixin grey-outline(){
   box-shadow: 0 0 0 $outline-width $outline-color;
 }
+
+@mixin centered($x-shift:0, $y-shift:0){
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50% + $x-shift, -50% + $y-shift);
+}

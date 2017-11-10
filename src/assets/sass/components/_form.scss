@@ -1,5 +1,39 @@
 $form-padding: $header-height;
 
+.wrap-content.editor{
+  display: flex;
+
+
+  .editor-sidebar{
+    order: 2;
+    min-width: $header-height * 7;
+
+    .preview-box{
+      width: $header-height * 6;
+      height: $header-height * 10;
+
+      //background: #000;
+      position: fixed;
+      z-index: 5;
+      top: $header-height * 2;
+      right: $header-height;
+      overflow: hidden;
+      box-shadow: 0 0 0 $header-height white;
+      margin: 0;
+
+      .thumbnail-cell{
+        width: $header-height * 6;
+        height: $header-height * 6;
+        //margin-bottom: $header-height/2;
+      }
+    }
+  }
+  .editor-body{
+    min-width: 50%;
+    flex-basis: 100%
+    //flex-grow: 1;
+  }
+}
 
 
 .wrap-forms, form {
@@ -11,7 +45,7 @@ $form-padding: $header-height;
     padding: 0;
   }
 
-  *:first-child{
+  *:first-child {
     margin-top: 0;
   }
 }
@@ -44,8 +78,8 @@ button {
   position: relative;
   min-width: $header-height * 2;
   box-shadow: none;
-  top: $outline-width;
-  left: - $outline-width;
+  //top: $outline-width;
+  //left: - $outline-width;
   background: #f5f5f5;
 
   &.right {
@@ -53,7 +87,7 @@ button {
     right: $outline-width;
   }
 
-  &.mini{
+  &.mini {
     display: inline-block;
     width: $header-height * 0.75;
     min-width: $header-height * 0.75;
@@ -62,11 +96,11 @@ button {
   }
 }
 
-input[type=checkbox]{
+input[type=checkbox] {
   width: $header-height;
   position: relative;
 
-  &[checked]:after{
+  &[checked]:after {
     content: '';
     display: block;
     //border-radius: 50%;
