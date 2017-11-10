@@ -59,15 +59,16 @@
             reversed_full_name: latinize(this.fullName.toLowerCase().split(' ').reverse().join(' '))
           }
         }
-        searchArtists(this.source, newArtist.fullName, 1).then(artists => {
+        searchArtists(this.source, newArtist.fullName, 1).then(function (artists) {
           const artistIds = Object.keys(artists)
           if (artistIds.length === 0) {
-            const key = firebase.database().ref('artists').push(newArtist, log).key
-            this.$router.push('/account/artist/' + key)
+            firebase.database().ref('artists').push(newArtist).then(function (data) {
+              this.$router.push('/account/artist/' + data.key)
+            }.bind(this)).catch(log)
           } else {
             this.showForm = false
           }
-        })
+        }.bind(this))
       }
     },
     watch: {
