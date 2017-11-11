@@ -1,13 +1,24 @@
+export const artworkDefaultFields = {
+  ownerId: '',
+  sourceId: '',
+  publicId: '',
+  title: 'Untitled',
+  url: '',
+  thumbUrl: '',
+  artists: [],
+  year: '',
+  description: '',
+  controls: [],
+  iterations: []
+}
+
 export function cloneArtwork (uid, artworkId, artwork) {
-  const newArtwork = {
-    ownerId: uid,
-    sourceId: artworkId,
-    title: artwork.title,
-    url: artwork.url,
-    actors: artwork.actors || [],
-    controls: []
-  }
+  const newArtwork = { ...artworkDefaultFields, ...artwork }
+  newArtwork.ownerId = uid
+  newArtwork.sourceId = artworkId
+
   if (artwork.imageUrl) {
+    // TODO it's should be removed.. is it ever used??
     newArtwork.imageUrl = artwork.imageUrl
   }
   if (artwork.controls) {

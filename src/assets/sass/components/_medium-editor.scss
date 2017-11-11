@@ -279,6 +279,9 @@
 }
 
 .editor-section {
+  &:not(:first-child){
+    margin-top: $header-height;
+  }
   & > *:not(.editor-section) {
     margin-left: $form-label-width;
     position: relative;

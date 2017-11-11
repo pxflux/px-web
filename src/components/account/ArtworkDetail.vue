@@ -4,25 +4,25 @@
       <div class="editor-sidebar">
         <div class="preview-box">
           <div class="thumbnail-cell">
-            <div class="item-image-wrap"><img :src="thumbUrlText" class="item-image"/></div>
+            <div class="item-image-wrap"><img :src="artworkData.thumbUrl" class="item-image"/></div>
           </div>
-          <iframe :src="accountArtwork.url"></iframe>
+          <iframe :src="artworkData.url"></iframe>
         </div>
       </div>
       <div class="editor-body">
         <div class="editor-section">
           <medium-editor
-            :text='title' :options='mediumSingleLineOptions'
+            :text='artworkData.title' :options='mediumSingleLineOptions'
             :data-placeholder="defaultTitle" :data-label="labels.title" :data-field-name="'title'"
             v-on:edit="processEditOperation" custom-tag='h1'>
           </medium-editor>
           <medium-editor
-            :text='url' :options='mediumSingleLineOptions'
+            :text='artworkData.url' :options='mediumSingleLineOptions'
             :data-placeholder="placeholders.url" :data-label="labels.url" :data-field-name="'url'"
             v-on:edit='processEditOperation' custom-tag='p'>
           </medium-editor>
           <medium-editor
-            :text='thumbUrlText' :options='mediumSingleLineOptions'
+            :text='artworkData.thumbUrl' :options='mediumSingleLineOptions'
             :data-placeholder="placeholders.thumbUrl" :data-label="labels.thumbUrl" :data-field-name="'thumbUrl'"
             v-on:edit='processEditOperation' custom-tag='p'>
           </medium-editor>
@@ -41,13 +41,13 @@
           </div>
           
           <medium-editor
-            :text='year' :options='mediumSingleLineOptions'
+            :text='artworkData.year' :options='mediumSingleLineOptions'
             :data-placeholder="placeholders.year" :data-label="labels.year" :data-field-name="'year'"
             v-on:edit='processEditOperation' custom-tag='p'>
           </medium-editor>
           
           <medium-editor
-            :text='description' :options='mediumMultiLineOptions'
+            :text='artworkData.description' :options='mediumMultiLineOptions'
             :data-placeholder="placeholders.description"
             :data-label="labels.description" :data-field-name="'description'"
             :class="'text'"
@@ -57,7 +57,7 @@
           <remote-control-editor :class="'with-label'" :data-label="labels.remoteControl">
           </remote-control-editor>
           
-          <button v-on:click="updateArtwork()">Save</button>
+          <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
         </div>
         
         <div class="editor-section">
@@ -71,6 +71,13 @@
           </ul>
           <button v-on:click="createIteration()">Create</button>
         </div>
+        <div class="editor-section">
+          <button v-if="accountArtwork.publicId" @click="unpublishArtwork">{{uiStrings.unpublish}}</button>
+          <button v-else @click="publishArtwork">{{uiStrings.publish}}</button>
+        </div>
+        <div class="editor-section">
+          <button @click="removeArtwork">{{uiStrings.remove}}</button>
+        </div>
       </div>
     </div>
   </main>
@@ -78,7 +85,7 @@
 
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import { cloneArtwork } from '../../models/artwork'
+  import { cloneArtwork, artworkDefaultFields } from '../../models/artwork'
   import { log } from '../../helper'
   import Firebase from 'firebase'
   import firebaseApp from '../../firebase-app'
@@ -113,11 +120,13 @@
           artists: 'Type the name of the author(s) here or select it from the list',
           description: 'Type your text'
         },
-        title: '',
-        url: '',
-        thumbUrl: '',
-        year: '',
-        description: '',
+        uiStrings: {
+          save: 'Save',
+          publish: 'Publish',
+          unpublish: 'Unpublish',
+          remove: 'Delete the artwork'
+        },
+        artworkData: { ...artworkDefaultFields },
         namesString: '',
         availableNames: [],
         artistId: '',
@@ -170,8 +179,8 @@
       },
       processEditOperation: function (operation) {
         const field = operation.api.origElements.dataset.fieldName
-        if (this.hasOwnProperty(field)) {
-          this[field] = operation.api.origElements.innerHTML
+        if (this.artworkData.hasOwnProperty(field)) {
+          this.artworkData[field] = operation.api.origElements.innerHTML
         }
       },
 
@@ -203,31 +212,25 @@
       updateArtwork () {
         this.showForm = false
         if (this.source) {
-          const artistsData = this.parseArtistsString()
-          this.source.update({
-            'title': this.title || this.defaultTitle,
-            'url': this.url,
-            'thumbUrl': this.thumbUrl || '',
-            'year': this.year || '',
-            'description': this.description || '',
-            'artists': artistsData
-          }, log)
+          this.artworkData.artists = this.parseArtistsString()
+
+          this.source.update(this.artworkData, log)
           if (this.accountArtwork.publicId) {
-            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
+            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.artworkData)
             firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
           }
         }
       },
       publishArtwork () {
         if (this.source && this.accountArtwork.publicId === '') {
-          const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
+          const value = cloneArtwork(this.user.uid, this.$route.params.id, this.artworkData)
           const id = firebaseApp.database().ref('artworks').push(value, log).key
           this.source.update({
             'publicId': id
           })
         }
       },
-      unPublishArtwork () {
+      unpublishArtwork () {
         if (this.source && this.accountArtwork.publicId !== '') {
           firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
           this.source.update({ 'publicId': '' }, log)
@@ -276,8 +279,9 @@
 
             let matched = false
             for (let n = 0; n < nameParts.length; n++) {
+              if (!nameParts[n]) continue
               const regx = new RegExp('(\\s' + nameParts[n] + '\\$)||(^' + nameParts[n] + '\\s)||(\\s' + nameParts[n] + '\\s)')
-              matched = artistObj.fullName.test(regx)
+              matched = regx.test(artistObj.fullName)
             }
             if (matched) return artistObj
           }
@@ -367,11 +371,13 @@
         this.$nextTick(this.clickEditorsToRemovePlaceholders)
       },
       'accountArtwork' () {
-        this.title = this.accountArtwork.title
-        this.url = this.accountArtwork.url
-        this.thumbUrl = this.accountArtwork.thumbUrl
-        this.year = this.accountArtwork.year
-        this.description = this.accountArtwork.hasOwnProperty('description') ? this.accountArtwork.description : ''
+        this.artworkData = { ...artworkDefaultFields } //, ...this.accountArtwork}
+        for (let prop in this.artworkData) {
+          if (!this.artworkData.hasOwnProperty(prop)) continue
+          if (this.accountArtwork.hasOwnProperty(prop)) {
+            this.artworkData[prop] = this.accountArtwork[prop]
+          }
+        }
         this.$nextTick(this.clickEditorsToRemovePlaceholders)
       }
     }

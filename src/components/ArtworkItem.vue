@@ -15,6 +15,11 @@
 
 <script>
   export default {
-    props: ['artwork', 'uri']
+    props: ['artwork', 'uri'],
+    watch: {
+      'artwork' () {
+        console.log(this.artwork)
+      }
+    }
   }
 </script>

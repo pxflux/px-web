@@ -42,7 +42,7 @@ function ColorFlicker (saturation) {
       perlinOffsets = perlinOffsets.map(function (a, i) {
         return a + perlinSteps[i]
       })
-      requestAnimationFrame(this.draw)
+     // requestAnimationFrame(this.draw)
     }
   }
 }

@@ -62,7 +62,9 @@ button, .button {
 iframe{
   border: 0;
 }
-
+button{
+  border-radius: 0;
+}
 .center{
   position: absolute;
   left: 50%;
