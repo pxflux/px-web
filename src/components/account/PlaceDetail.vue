@@ -34,7 +34,6 @@
           this.setRef({key: 'accountPlace', ref: this.source})
         } else {
           this.source = null
-          this.REMOVE_ACCOUNT_PLACE()
         }
       },
       publishPlace () {

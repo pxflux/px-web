@@ -16,6 +16,8 @@ import CollectorDetail from '@/components/public/Collector'
 import CuratorDetail from '@/components/public/Curator'
 import PublicationDetail from '@/components/public/Publication'
 
+import AccountList from '@/components/account/AccountList'
+import AccountDetail from '@/components/account/AccountDetail'
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
 import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
@@ -46,6 +48,8 @@ export function createRouter () {
       {path: '/curator/:id', component: CuratorDetail, name: 'curator-detail'},
       {path: '/publication/:id', component: PublicationDetail, name: 'publication-detail'},
 
+      {path: '/account/accounts', component: AccountList, name: 'accounts'},
+      {path: '/account/account/:id', component: AccountDetail, name: 'account-detail'},
       {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail, name: 'account-artwork-iteration-detail'},
       {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},

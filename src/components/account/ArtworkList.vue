@@ -16,7 +16,7 @@
 <script>
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase-app'
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import GridHelper from '../../helpers/grid'
   import { log } from '../../helper'
 
@@ -31,7 +31,6 @@
     },
     methods: {
       ...mapActions([ 'setRef' ]),
-      ...mapMutations([ 'REMOVE_ACCOUNT_ARTWORKS' ]),
 
       init () {
         if (this.user && this.user.uid) {
@@ -39,8 +38,6 @@
             key: 'accountArtworks',
             ref: firebase.database().ref('users/' + this.user.uid + '/artworks')
           })
-        } else {
-          this.REMOVE_ACCOUNT_ARTWORKS()
         }
       },
       createArtwork () {

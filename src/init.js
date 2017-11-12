@@ -5,7 +5,6 @@ import App from './App'
 import { sync } from 'vuex-router-sync'
 import { createStore } from './store'
 import { createRouter } from './router'
-import firebaseApp from './firebase-app'
 
 Vue.config.productionTip = false
 
@@ -18,16 +17,6 @@ export function createApp () {
    * (https://github.com/vuejs/vuex-router-sync/tree/next)
    */
   sync(store, router)
-
-  /**
-   * Sync store.state.user with firebase.auth().currentUser
-   *
-   * This callback is called when firebase.auth() detects user changes,
-   * so just update the vuex store with the new user object.
-   */
-  firebaseApp.auth().onAuthStateChanged((user) => {
-    store.commit('UPDATE_USER', user)
-  })
 
   /* eslint-disable no-new */
   const app = new Vue({

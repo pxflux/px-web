@@ -10,7 +10,7 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import firebase from '../../firebase-app'
   import { cloneIteration } from '../../models/iteration'
   import { log } from '../../helper'
@@ -32,7 +32,6 @@
     },
     methods: {
       ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT_ITERATION']),
 
       init () {
         if (this.user.uid) {
@@ -40,7 +39,6 @@
           this.setRef({key: 'accountIteration', ref: this.source})
         } else {
           this.source = null
-          this.REMOVE_ACCOUNT_ITERATION()
         }
       },
 

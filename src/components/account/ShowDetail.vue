@@ -34,7 +34,6 @@
           this.setRef({key: 'accountShow', ref: this.source})
         } else {
           this.source = null
-          this.REMOVE_ACCOUNT_SHOW()
         }
       },
       publishShow () {

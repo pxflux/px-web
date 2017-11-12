@@ -19,7 +19,7 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase from '../../firebase-app'
 
@@ -38,7 +38,6 @@
     },
     methods: {
       ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT_PLACES']),
 
       init () {
         if (this.user.uid) {
@@ -46,8 +45,6 @@
             key: 'accountPlaces',
             ref: firebase.database().ref('users/' + this.user.uid + '/places')
           })
-        } else {
-          this.REMOVE_ACCOUNT_PLACES()
         }
       },
       createPlace () {
