@@ -31,8 +31,6 @@
             key: 'shows',
             ref: firebase.database().ref('shows')
           })
-        } else {
-          this.REMOVE_ACCOUNT_SHOWS()
         }
       }
     },

@@ -44,6 +44,7 @@
                     {{ user.displayName }}
                   </span>
                 </div>
+                <router-link to="/account/accounts" class="button flick">Teams</router-link>
                 <router-link to="/user/update" class="button flick">Account</router-link>
                 <a @click="logOut" class="button flick">Logout</a>
               </div>

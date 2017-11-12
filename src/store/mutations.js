@@ -4,33 +4,29 @@ import { firebaseMutations } from 'vuexfire'
 export default {
   UPDATE_USER (state, user) {
     state.user = user
-  },
-  REMOVE_ACCOUNT_ARTWORKS (state) {
-    state.accountArtworks = []
+    if (user === null) {
+      state.accountArtworks = []
+      state.accountArtwork = null
+      state.accountArtists = []
+      state.accountArtist = null
+      state.accountShows = []
+      state.accountShow = null
+      state.accountPlaces = []
+      state.accountPlace = null
+      state.accountIteration = null
+    }
   },
   REMOVE_ACCOUNT_ARTWORK (state) {
     state.accountArtwork = null
   },
-  REMOVE_ACCOUNT_ARTISTS (state) {
-    state.accountArtists = []
-  },
   REMOVE_ACCOUNT_ARTIST (state) {
     state.accountArtist = null
-  },
-  REMOVE_ACCOUNT_SHOWS (state) {
-    state.accountShows = []
   },
   REMOVE_ACCOUNT_SHOW (state) {
     state.accountShow = null
   },
-  REMOVE_ACCOUNT_PLACES (state) {
-    state.accountPlaces = []
-  },
   REMOVE_ACCOUNT_PLACE (state) {
     state.accountPlace = null
-  },
-  REMOVE_ACCOUNT_ITERATION (state) {
-    state.accountIteration = null
   },
   ...firebaseMutations,
 

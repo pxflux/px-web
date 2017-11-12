@@ -46,7 +46,6 @@
           this.setRef({key: 'accountArtist', ref: this.source})
         } else {
           this.source = null
-          this.REMOVE_ACCOUNT_ARTIST()
         }
       },
 

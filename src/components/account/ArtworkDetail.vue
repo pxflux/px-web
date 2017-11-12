@@ -26,7 +26,7 @@
             :data-placeholder="placeholders.thumbUrl" :data-label="labels.thumbUrl" :data-field-name="'thumbUrl'"
             v-on:edit='processEditOperation' custom-tag='p'>
           </medium-editor>
-          
+
           <div class="editor-section">
             <medium-editor
               :text='namesString' :options='mediumSingleLineOptions'
@@ -39,13 +39,13 @@
               </select>
             </p>
           </div>
-          
+
           <medium-editor
             :text='artworkData.year' :options='mediumSingleLineOptions'
             :data-placeholder="placeholders.year" :data-label="labels.year" :data-field-name="'year'"
             v-on:edit='processEditOperation' custom-tag='p'>
           </medium-editor>
-          
+
           <medium-editor
             :text='artworkData.description' :options='mediumMultiLineOptions'
             :data-placeholder="placeholders.description"
@@ -73,7 +73,7 @@
             <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
           </div>
         </div>
-        
+
         <div class="editor-section">
           <h2>Iterations</h2>
           <ul>
@@ -213,13 +213,12 @@
       },
 
       init () {
-        if (this.user && this.user.uid) {
+        if (this.user) {
           this.source = firebaseApp.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
           this.setRef({ key: 'accountArtwork', ref: this.source })
           this.setRef({ key: 'artists', ref: firebaseApp.database().ref('artists') })
         } else {
           this.source = null
-          this.REMOVE_ACCOUNT_ARTWORK()
         }
       },
 
