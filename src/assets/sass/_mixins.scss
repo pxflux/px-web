@@ -1,3 +1,24 @@
+/// Remove the unit of a length
+/// @param {Number} $number - Number to remove unit from
+/// @return {Number} - Unitless number
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+@function sqrt($r) {
+  $unitless: strip-unit($r);
+  $x0: 1;
+  $x1: $x0;
+  @for $i from 1 through 10 {
+    $x1: $x0 - ($x0 * $x0 - abs($unitless)) / (2 * $x0);
+    $x0: $x1;
+  }
+  @return $x1 * ($r/$r); // get back to units
+}
+
 @mixin grey-outline(){
   box-shadow: 0 0 0 $outline-width $outline-color;
 }
@@ -7,4 +28,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50% + $x-shift, -50% + $y-shift);
+}
+@mixin centeredVertical($y-shift:0){
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50% + $y-shift);
 }

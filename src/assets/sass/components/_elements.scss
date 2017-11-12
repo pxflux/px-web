@@ -1,21 +1,10 @@
-.button{
-  display: block;
-  min-width: $header-height;
-  min-height: $header-height;
-  line-height: $header-height;
-  text-align: center;
-  position: relative;
-  color: #292929;
-  padding: 0 1em;
-  background: #fcfcfc;
-  //@include grey-outline();
-}
+$button-icon-color: rgb(131, 131, 131);
+
 @mixin button-plus( $size: $header-height, $line-w: 0.2rem, $rotate: 0) {
   $plus-size: $size;
   $plus-line-w: $line-w;
   $plus-shift-x: ($header-height - $plus-size)/2;
   $plus-shift-y: $header-height/2 - $plus-line-w/2;
-  $plus-color: rgb(131, 131, 131);
 
   width: $header-height;
   position: relative;
@@ -30,25 +19,67 @@
     position: absolute;
   }
   &:before{
-    border-top: $plus-line-w solid $plus-color;
+    border-top: $plus-line-w solid $button-icon-color;
     transform: translate($plus-shift-x, $plus-shift-y) rotate($rotate);
     transform-origin: top;
   }
   &:after{
-    border-left: $plus-line-w solid $plus-color;
+    border-left: $plus-line-w solid $button-icon-color;
     transform: translate($plus-shift-y, $plus-shift-x) rotate($rotate);
     transform-origin: left;
   }
 }
 
-.button.plus{
-  @include button-plus();
+@mixin button-drop-down( $rotate: 0, $size: 1.4rem, $line-w: 0.1rem) {
+  $arr-size: sqrt($size * $size /2) * 1rem;
+  $arr-line-w: $line-w;
+  $x-shift: -75%;
+  $y-shift: -50%;
+  @if $rotate > 0 {
+    $x-shift: -50%;
+    $y-shift: -62.5%;
+  }
+  $rotate: $rotate + 45deg;
+
+  width: $header-height;
+  position: relative;
+  padding: 0;
+
+  &:before{
+    content: '';
+    display: block;
+    width: $arr-size;
+    height: $arr-size;
+    border-right: $arr-line-w solid $button-icon-color;
+    border-top: $arr-line-w solid $button-icon-color;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate($x-shift, $y-shift) rotate($rotate);
+    transition: transform 0.15s;
+  }
 }
-.button.plus.medium{
-  @include button-plus(2rem, 0.1rem);
-}
-.button.cancel{
-  @include button-plus(2rem, 0.1rem, 45deg);
+
+.button, button{
+  display: block;
+  min-width: $header-height;
+  min-height: $header-height;
+  line-height: $header-height;
+  text-align: center;
+  position: relative;
+  color: #292929;
+  padding: 0 1em;
+  background: #f9f9f9;
+  cursor: pointer;
+
+
+  &.plus{ @include button-plus() }
+  &.plus.medium{ @include button-plus(2rem, 0.1rem) }
+  &.cancel{ @include button-plus(2rem, 0.1rem, 45deg) }
+  &.drop-down{
+    @include button-drop-down();
+  }
+  &.drop-down.open{ @include button-drop-down(90deg) }
 }
 
 .dialog{
@@ -68,7 +99,7 @@
   .bg{
     top: 0;
     left: 0;
-    background: rgba(232, 232, 232, 0.3);
+    background: transparent;//transparentize($bg-color, 0.99);
   }
   .dialog-box{
     background: $bg-color;

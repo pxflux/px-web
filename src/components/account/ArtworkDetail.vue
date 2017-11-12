@@ -54,10 +54,24 @@
             v-on:edit='processEditOperation' custom-tag='div'>
           </medium-editor>
           
-          <remote-control-editor :class="'with-label'" :data-label="labels.remoteControl">
-          </remote-control-editor>
-          
           <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
+        </div>
+        
+        <div :class="'editor-section'">
+          <div class="editor-section-header with-label" :data-label="labels.remoteControl"
+               @click="toggleRemoteControlEditor">
+            <button :class="'drop-down ' + remoteControlEditorState"></button>
+            <div class="title" v-text="remoteControlSummary">
+              {{remoteControlSummary}}
+            </div>
+          </div>
+          <div class="editor-section-content with-grid" v-if="remoteControlEditorState == 'open'">
+            <remote-control-editor
+              v-on:updateRemoteControlData="updateRemoteControlData"
+              :controls="artworkData.controls">
+            </remote-control-editor>
+            <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
+          </div>
         </div>
         
         <div class="editor-section">
@@ -139,13 +153,17 @@
           disableExtraSpaces: true
         },
         mediumMultiLineOptions: {},
-        iterationTitle: ''
+        iterationTitle: '',
+        remoteControlEditorState: 'closed'
       }
     },
     computed: {
       ...mapState(['user', 'accountArtwork', 'artists']),
-      thumbUrlText () {
-        return this.thumbUrl
+      remoteControlSummary () {
+        if (this.remoteControlEditorState === 'open') return ''
+        const numButt = this.artworkData.controls.length
+        if (!numButt) return 'No controls'
+        return numButt + ' button' + (numButt > 1 ? 's' : '')
       },
       iterations () {
         return Object.keys(this.accountArtwork.iterations || {}).map(id => {
@@ -181,6 +199,16 @@
         const field = operation.api.origElements.dataset.fieldName
         if (this.artworkData.hasOwnProperty(field)) {
           this.artworkData[field] = operation.api.origElements.innerHTML
+        }
+      },
+      toggleRemoteControlEditor () {
+        this.remoteControlEditorState = this.remoteControlEditorState === 'closed' ? 'open' : 'closed'
+      },
+
+      updateRemoteControlData (data) {
+        this.artworkData.controls = []
+        for (let i = 0; i < data.length; i++) {
+          if (data[i]) this.artworkData.controls.push(data[i])
         }
       },
 

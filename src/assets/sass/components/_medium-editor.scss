@@ -337,6 +337,25 @@
   color: #aaa;
 }
 
+.editor-section-header{
+  height: $header-height;
+  min-height: 1em;
+
+  &>*{
+    @include centeredVertical()
+  }
+  &.with-label:before{
+    height: auto
+  }
+  .title{
+    margin-left: $header-height + 1rem;
+  }
+}
+
+.editor-section-content.with-grid{
+  padding: $outline-width 0 0 $outline-width;
+}
+
 .keypad .button-box {
   .medium-editor-element,
   .with-label {

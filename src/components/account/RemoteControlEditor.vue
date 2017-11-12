@@ -72,8 +72,7 @@
   import vueMediumEditor from 'vue2-medium-editor'
 
   export default {
-    created () {
-    },
+    props: ['controls'],
     components: {
       'medium-editor': vueMediumEditor
     },
@@ -109,9 +108,41 @@
           toolbar: false,
           disableReturn: true,
           disableExtraSpaces: true
+        },
+        buttonDefaultFields: {
+          order: -1,
+          icon: '',
+          label: '',
+          type: 'keyboard',
+          value: {
+            keyCode: '',
+            modifier: '',
+            type: 'keydown'
+          }
         }
       }
     },
+
+    created () {
+      if (this.controls) {
+        for (let i = 0; i < this.controls.length; i++) {
+          const b = this.controls[i]
+          const newB = { ...this.buttonDefaultFields }
+          for (let prop in b) {
+            if (!b.hasOwnProperty(prop)) continue
+            if (!newB.hasOwnProperty(prop)) continue
+            if (prop === 'value') {
+              newB.value = { ...newB.value, ...b.value }
+            } else {
+              newB[prop] = b[prop]
+            }
+          }
+          if (newB.order < 0) newB.order = b.hasOwnProperty('order') ? b.order : i
+          this.buttons[newB.order] = newB
+        }
+      }
+    },
+
     methods: {
       processEditOperation: function (operation) {
         const field = operation.api.origElements.dataset.fieldName
@@ -151,6 +182,7 @@
         this.closeDialog()
         this.x++
         console.log(this.buttons)
+        this.$emit('updateRemoteControlData', this.buttons)
       },
 
       removeButton (n) {
@@ -158,6 +190,7 @@
         this.closeDialog()
         this.x--
         console.log(this.buttons)
+        this.$emit('updateRemoteControlData', this.buttons)
       },
 
       closeDialog () {
