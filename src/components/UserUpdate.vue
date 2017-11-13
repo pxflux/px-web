@@ -98,7 +98,7 @@
           this.user.linkWithCredential(credential).then(function (user) {
             console.log('Account link', user)
             firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', user)
+            this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this), function (error) {
             console.log('Account linking error', error)
           })
@@ -110,7 +110,7 @@
           .then(function (user) {
             console.log('Account unlink', user)
             firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', user)
+            this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this))
           .catch(function (error) {
             console.log('Account unlink error', error)
@@ -123,7 +123,7 @@
           .then(function (result) {
             console.log('Account link', result)
             firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', result.user)
+            this.$store.commit('UPDATE_USER', {user: result.user})
           }.bind(this))
           .catch(function (error) {
             console.log('Account linking error', error)

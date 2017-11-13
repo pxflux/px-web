@@ -2,9 +2,12 @@ import Vue from 'vue'
 import { firebaseMutations } from 'vuexfire'
 
 export default {
-  UPDATE_USER (state, user) {
-    state.user = user
-    if (user === null) {
+  UPDATE_USER (state, payload) {
+    if (payload === null) {
+      state.user = null
+      state.userAccount = null
+      state.accounts = []
+      state.account = null
       state.accountArtworks = []
       state.accountArtwork = null
       state.accountArtists = []
@@ -14,7 +17,15 @@ export default {
       state.accountPlaces = []
       state.accountPlace = null
       state.accountIteration = null
+    } else {
+      state.user = payload.user
+      if (payload.account) {
+        state.userAccount = payload.account
+      }
     }
+  },
+  REMOVE_ACCOUNT (state) {
+    state.account = null
   },
   REMOVE_ACCOUNT_ARTWORK (state) {
     state.accountArtwork = null

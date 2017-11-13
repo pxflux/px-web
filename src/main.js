@@ -42,13 +42,27 @@ firebaseApp.auth().onAuthStateChanged(user => {
   if (user) {
     userRef = firebaseApp.database().ref('metadata/' + user.uid + '/refreshTime')
     callback = (snapshot) => {
-      if (store.user && store.user.token.accountId !== user.token.accountId) {
-        user.getIdToken(true)
-      }
+      user.getIdToken(true)
+        .then(function (token) {
+          return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
+        })
+        .then(function (payload) {
+          return firebaseApp.database().ref('accounts/' + payload['accountId']).once('value')
+        })
+        .then(function (snapshot) {
+          const account = snapshot.val()
+          account['.key'] = snapshot.key
+          store.commit('UPDATE_USER', {user: user, account: account})
+        })
+        .catch(function (error) {
+          console.log(error)
+          store.commit('UPDATE_USER', null)
+        })
     }
     userRef.on('value', callback)
+  } else {
+    store.commit('UPDATE_USER', null)
   }
-  store.commit('UPDATE_USER', user)
 })
 
 // wait until router has resolved all async before hooks and async components...
@@ -81,3 +95,9 @@ router.onReady(() => {
   // actually mount to DOM
   app.$mount('#app')
 })
+
+function b64DecodeUnicode (str) {
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  }).join(''))
+}

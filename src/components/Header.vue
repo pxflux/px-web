@@ -19,14 +19,18 @@
             <a class="button plus medium flick submenu-trigger" title="Add">
             </a>
             <div v-if="user" class="submenu">
-              <router-link to="/account/artworks" class="button flick">Add Artwork</router-link>
-              <router-link to="/account/artists" class="button flick">Add Collection</router-link>
-              <router-link to="/account/shows" class="button flick">Add Artist</router-link>
-              <router-link to="/account/places" class="button flick">Add Show</router-link>
+              <div v-on:click="goto('/account/new')" class="button flick">New team</div>
             </div>
           </div>
           <!-- -->
           <router-link v-if="user" to="/account/artworks" class="button flick">Collection</router-link>
+          <!-- -->
+          <div v-if="user" class="item-with-submenu">
+            <a class="button flick submenu-trigger">{{ userAccount.title }}</a>
+            <div class="submenu">
+              <div v-for="account in inactiveAccounts" :key="account['.key']" class="button flick" v-on:click="setAccount(account['.key'])">{{ account.title }}</div>
+            </div>
+          </div>
           <!-- -->
           <div v-if="user" class="item-with-submenu">
             <a class="button flick submenu-trigger">
@@ -39,13 +43,8 @@
               <router-link to="/account/shows" class="button flick">Shows</router-link>
               <router-link to="/account/places" class="button flick">Places</router-link>
               <div class="sub-section">
-                <div class="sub-header">
-                  <span>
-                    {{ user.displayName }}
-                  </span>
-                </div>
-                <router-link to="/account/accounts" class="button flick">Teams</router-link>
-                <router-link to="/user/update" class="button flick">Account</router-link>
+                <div v-on:click="goto('/account/update')" class="button flick">Team profile</div>
+                <div v-on:click="goto('/user/update')" class="button flick">Your profile</div>
                 <a @click="logOut" class="button flick">Logout</a>
               </div>
             </div>
@@ -57,31 +56,53 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import firebaseApp from '../firebase-app'
   import ScalableCanvasFromImage from '../assets/js/logo'
   import ColorFlicker from '../assets/js/color-flicker'
   import SubmenuHelper from '../helpers/submenu'
+  import { log } from '../helper'
 
   export default {
-    mixins: [ SubmenuHelper ],
+    mixins: [SubmenuHelper],
 
-    data () {
-      return {
-        loggedInMessage: 'logged in as'
+    created () {
+      this.init()
+    },
+    computed: {
+      ...mapState(['user', 'userAccount', 'accounts']),
+      inactiveAccounts () {
+        return this.accounts.filter(account => account['.key'] !== this.userAccount['.key'])
       }
     },
-
-    computed: {
-      ...mapState([ 'user' ])
-    },
-
     methods: {
-      logOut: () => {
-        firebaseApp.auth().signOut()
+      ...mapActions(['setRef']),
+
+      init () {
+        if (this.user) {
+          this.setRef({
+            key: 'accounts',
+            ref: firebaseApp.database().ref('users/' + this.user.uid + '/accounts')
+          })
+        }
       },
 
-      setFlicker: function () {
+      setAccount (accountId) {
+        this.closeSubmenus()
+        firebaseApp.database().ref('users/' + this.user.uid + '/accountId').set(accountId).catch(log)
+      },
+
+      goto (path) {
+        this.closeSubmenus()
+        this.$router.push(path)
+      },
+
+      logOut () {
+        firebaseApp.auth().signOut()
+        this.$router.push('/')
+      },
+
+      setFlicker () {
         this.$nextTick(function () {
           new ColorFlicker().flickElement()
         })
@@ -100,6 +121,11 @@
       this.$nextTick(function () {
         this.setupSubmenusWithClass('submenu', 'submenu-trigger')
       })
+    },
+    watch: {
+      'user' () {
+        this.init()
+      }
     }
   }
 </script>

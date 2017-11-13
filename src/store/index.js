@@ -9,7 +9,8 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
-      user: null, // Will be bound as an object
+      user: null,
+      userAccount: null,
 
       artworks: [],
       artwork: null,
