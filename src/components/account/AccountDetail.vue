@@ -1,8 +1,16 @@
 <template>
   <main>
     <div v-if="account" class="wrap-content text-block">
-      <h1>{{ account.title }}</h1>
-      <button v-on:click="leaveAccount(account['.key'])">Leave</button>
+      <h1 v-if="!showForm">
+        {{ account.title }}
+        <button @click="showForm = true">Update</button>
+      </h1>
+      <form v-if="showForm" id="form-account" @submit.prevent="updateAccount">
+        <input id="title" type="text" v-model="title" title="Team title" required="required">
+        <input type="submit" value="Save"/>
+        <button @click="showForm = false">Cancel</button>
+      </form>
+      <button @click="leaveAccount">Leave</button>
       <h2>People</h2>
       <ul>
         <li v-for="people in users" :key="user['.key']">{{ people.displayName }}</li>
@@ -31,6 +39,12 @@
         })
       }
     },
+    data () {
+      return {
+        title: '',
+        showForm: false
+      }
+    },
     methods: {
       ...mapActions(['setRef']),
       ...mapMutations(['REMOVE_ACCOUNT']),
@@ -46,8 +60,14 @@
         }
       },
 
-      leaveAccount (accountId) {
-        firebase.database().ref('accounts/' + accountId + '/users/' + this.user.uid).remove().catch(log)
+      updateAccount () {
+        this.showForm = false
+        firebase.database().ref('accounts/' + this.userAccount['.key'] + '/title').set(this.title).catch(log)
+      },
+
+      leaveAccount () {
+        this.showForm = false
+        firebase.database().ref('accounts/' + this.userAccount['.key'] + '/users/' + this.user.uid).remove().catch(log)
       }
     },
     watch: {
@@ -56,6 +76,9 @@
       },
       'userAccount' () {
         this.init()
+      },
+      'account' () {
+        this.title = this.account.title
       }
     }
   }

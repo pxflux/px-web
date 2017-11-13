@@ -42,7 +42,10 @@ firebaseApp.auth().onAuthStateChanged(user => {
   if (user) {
     userRef = firebaseApp.database().ref('metadata/' + user.uid + '/refreshTime')
     callback = (snapshot) => {
-      user.getIdToken(true)
+      if (!snapshot.exists()) {
+        store.commit('UPDATE_USER', null)
+      }
+      return user.getIdToken(true)
         .then(function (token) {
           return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
         })

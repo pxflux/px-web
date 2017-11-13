@@ -20,8 +20,6 @@
       }
     },
     credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-    // Opens IDP Providers sign-in flow in a popup
-    signInFlow: 'popup',
     signInOptions: [
       {
         provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
