@@ -45,6 +45,7 @@
               <div class="sub-section">
                 <div v-on:click="goto('/account/update')" class="button flick">Team profile</div>
                 <div v-on:click="goto('/user/update')" class="button flick">Your profile</div>
+                <div v-on:click="goto('/account/invitations')" class="button flick">Invitations</div>
                 <a @click="logOut" class="button flick">Logout</a>
               </div>
             </div>

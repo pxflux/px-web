@@ -12,6 +12,13 @@ export default {
     if (!userAccount) {
       return []
     }
-    return invitations.filter(invitation => invitation.accountId === userAccount['.key'])
+    return invitations.filter(invitation => invitation.account.id === userAccount['.key'])
+  },
+  userInvitations (state, getters) {
+    const {user, invitations} = state
+    if (!user) {
+      return []
+    }
+    return invitations.filter(invitation => invitation.email === user.email)
   }
 }

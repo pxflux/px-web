@@ -18,6 +18,8 @@ import PublicationDetail from '@/components/public/Publication'
 
 import AccountNew from '@/components/account/AccountNew'
 import AccountDetail from '@/components/account/AccountDetail'
+import AccountInvitationList from '@/components/account/InvitationList'
+
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
 import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
@@ -50,6 +52,8 @@ export function createRouter () {
 
       {path: '/account/new', component: AccountNew, name: 'account-new'},
       {path: '/account/update', component: AccountDetail, name: 'account-detail'},
+      {path: '/account/invitations', component: AccountInvitationList, name: 'account-invitations'},
+
       {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail, name: 'account-artwork-iteration-detail'},
       {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},

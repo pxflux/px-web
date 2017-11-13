@@ -77,7 +77,10 @@
       invite () {
         this.showInviteForm = false
         const invitation = {
-          'accountId': this.userAccount['.key'],
+          'account': {
+            'id': this.userAccount['.key'],
+            'title': this.userAccount.title
+          },
           'email': this.email
         }
         firebase.database().ref('invitations').push(invitation).catch(log)
