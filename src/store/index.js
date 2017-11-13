@@ -25,6 +25,7 @@ export function createStore () {
 
       accounts: [],
       account: null,
+      invitations: [],
 
       accountArtworks: [],
       accountArtwork: null,
@@ -36,7 +37,6 @@ export function createStore () {
       accountPlaces: [],
       accountPlace: null,
       accountIteration: null,
-      accountInvitations: [],
 
       items: {/* [id: string]: {} */}
     },

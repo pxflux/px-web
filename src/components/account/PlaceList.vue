@@ -30,7 +30,7 @@
     data () {
       return {
         title: '',
-        showForm: false
+        showUpdateForm: false
       }
     },
     computed: {

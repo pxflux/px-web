@@ -26,7 +26,7 @@
     },
     data () {
       return {
-        showForm: false,
+        showUpdateForm: false,
         email: ''
       }
     },
@@ -62,7 +62,7 @@
               this.$router.push('/account/invitation/' + data.key)
             }.bind(this)).catch(log)
           } else {
-            this.showForm = false
+            this.showUpdateForm = false
           }
         }.bind(this))
       }

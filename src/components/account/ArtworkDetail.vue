@@ -53,10 +53,10 @@
             :class="'text'"
             v-on:edit='processEditOperation' custom-tag='div'>
           </medium-editor>
-          
+
           <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
         </div>
-        
+
         <div :class="'editor-section'">
           <div class="editor-section-header with-label" :data-label="labels.remoteControl"
                @click="toggleRemoteControlEditor">
