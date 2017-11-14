@@ -13,7 +13,13 @@
       <button @click="leaveAccount">Leave team</button>
       <h2>People</h2>
       <ul>
-        <li v-for="people in peoples" :key="user['.key']">{{ people.displayName }}</li>
+        <li v-for="people in peoples" :key="user['.key']">
+          <img v-if="people.photoUrl" :src="people.photoUrl" :alt="people.displayName" class="user-photo" width="48" height="48">
+          {{ people.displayName }}
+        </li>
+      </ul>
+      <h2>Invitations</h2>
+      <ul>
         <li v-for="invitation in accountInvitations" :key="invitation['.key']">
           {{ invitation.email }}
           <button @click="removeInvitation(invitation['.key'])">Remove</button>

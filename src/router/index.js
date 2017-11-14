@@ -29,6 +29,7 @@ import AccountShowList from '@/components/account/ShowList'
 import AccountShowDetail from '@/components/account/ShowDetail'
 import AccountPlaceList from '@/components/account/PlaceList'
 import AccountPlaceDetail from '@/components/account/PlaceDetail'
+import AccountPlaceUpdate from '@/components/account/PlaceUpdate'
 
 Vue.use(Router)
 
@@ -62,6 +63,7 @@ export function createRouter () {
       {path: '/account/shows', component: AccountShowList, name: 'account-shows'},
       {path: '/account/show/:id', component: AccountShowDetail, name: 'account-show-detail'},
       {path: '/account/places', component: AccountPlaceList, name: 'account-places'},
+      {path: '/account/place/:id/update', component: AccountPlaceUpdate, name: 'account-place-update'},
       {path: '/account/place/:id', component: AccountPlaceDetail, name: 'account-place-detail'}
     ]
   })

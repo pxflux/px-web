@@ -18,6 +18,7 @@ export function createStore () {
       artist: null,
       shows: [],
       show: null,
+      places: [],
       place: null,
       collector: null,
       curator: null,
@@ -30,12 +31,10 @@ export function createStore () {
       accountArtworks: [],
       accountArtwork: null,
 
-      accountArtists: [],
       accountArtist: null,
-      accountShows: [],
       accountShow: null,
-      accountPlaces: [],
       accountPlace: null,
+      accountPlaces: [],
       accountIteration: null,
 
       items: {/* [id: string]: {} */}

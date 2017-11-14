@@ -1,18 +1,17 @@
 <template>
   <main>
-    <div v-if="user" class="wrap-content grid">
+    <div v-if="userAccount" class="wrap-content grid">
       <ul>
         <li v-for="show in accountShows" :key="show['.key']">
           <router-link :to="'/account/show/' + show['.key']">{{ show.title }}</router-link>
         </li>
       </ul>
       <span class="nothing-found" v-if="accountShows.length == 0">Shows not found.</span>
-      <ul v-if="showForm === false">
-        <li><a @click="showForm = true" class="button">Add Show</a></li>
-      </ul>
+      <button v-if="showForm === false" @click="showForm = true">Add Show</button>
       <form v-if="showForm" id="form-show" @submit.prevent="createShow">
         <input id="title" type="text" v-model="title" title="Show title" required="required">
-        <button class="right">Create</button>
+        <input type="submit" value="Create"/>
+        <button @click.prevent="showForm = false">Cancel</button>
       </form>
     </div>
   </main>
@@ -29,38 +28,45 @@
     },
     data () {
       return {
-        title: '',
-        showUpdateForm: false
+        showForm: false,
+        title: ''
       }
     },
     computed: {
-      ...mapState(['user', 'accountShows'])
+      ...mapState(['userAccount', 'shows']),
+
+      accountShows () {
+        if (!this.userAccount || !this.shows) {
+          return []
+        }
+        return this.shows.filter(show => show.accountId === this.userAccount['.key'])
+      }
     },
     methods: {
       ...mapActions(['setRef']),
 
       init () {
-        if (this.user.uid) {
-          this.setRef({
-            key: 'accountShows',
-            ref: firebase.database().ref('users/' + this.user.uid + '/shows')
-          })
-        }
+        this.source = firebase.database().ref('shows')
+        this.setRef({key: 'shows', ref: this.source})
       },
       createShow () {
-        const newShow = {
-          title: this.title,
-          publicId: ''
+        this.showForm = false
+        if (this.source && this.userAccount) {
+          const account = {
+            accountId: this.userAccount['.key'],
+            title: this.title
+          }
+          this.source.push(account).then(function (data) {
+            this.$router.push('/account/show/' + data.key)
+          }.bind(this)).catch(log)
         }
-        const key = firebase.database().ref('users/' + this.user.uid + '/shows').push(newShow, log).key
-        this.$router.push('/account/show/' + key)
       }
     },
     watch: {
       $route () {
         this.init()
       },
-      'user' () {
+      'userAccount' () {
         this.init()
       }
     }

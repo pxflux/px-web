@@ -10,12 +10,8 @@ export default {
       state.account = null
       state.accountArtworks = []
       state.accountArtwork = null
-      state.accountArtists = []
       state.accountArtist = null
-      state.accountShows = []
       state.accountShow = null
-      state.accountPlaces = []
-      state.accountPlace = null
       state.accountIteration = null
     } else {
       state.user = payload.user
@@ -35,9 +31,6 @@ export default {
   },
   REMOVE_ACCOUNT_SHOW (state) {
     state.accountShow = null
-  },
-  REMOVE_ACCOUNT_PLACE (state) {
-    state.accountPlace = null
   },
   ...firebaseMutations,
 

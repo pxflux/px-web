@@ -1,19 +1,19 @@
 <template>
   <main>
-    <div v-if="user && accountPlace" class="wrap-content text-block">
+    <div v-if="userAccount && accountPlace" class="wrap-content text-block">
+      <router-link to="/account/places/">Places</router-link>
       <h1>{{ accountPlace.title }}</h1>
-      <ul>
-        <li><a @click="removePlace" class="button">Remove</a></li>
-        <li v-if=" ! accountPlace.publicId"><a @click="publishPlace" class="button">Publish</a></li>
-        <li v-if="accountPlace.publicId"><a @click="unPublishPlace" class="button">Un publish</a></li>
-      </ul>
+      <img v-show="accountPlace.iconUrl" :src="accountPlace.iconUrl" width="100" height="100">
+      <router-link :to="'/account/place/' + placeId + '/update'" class="button">Update</router-link>
+      <button @click="removePlace">Remove</button>
+      <button v-if=" ! accountPlace.publicId"><a @click="publishPlace">Publish</a></button>
+      <button v-if="accountPlace.publicId"><a @click="unPublishPlace">Un publish</a></button>
     </div>
   </main>
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
-  import { clonePlace } from '../../models/place'
+  import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase from '../../firebase-app'
 
@@ -22,38 +22,67 @@
       this.init()
     },
     computed: {
-      ...mapState(['user', 'accountPlace'])
+      ...mapState(['userAccount', 'accountPlace']),
+
+      accountId () {
+        if (!this.userAccount) {
+          return null
+        }
+        return this.userAccount['.key']
+      },
+      placeId () {
+        return this.$route.params.id
+      }
     },
     methods: {
       ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT_PLACE']),
 
       init () {
-        if (this.user.uid) {
-          this.source = firebase.database().ref('users/' + this.user.uid + '/places/' + this.$route.params.id)
+        if (this.accountId) {
+          this.source = firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId)
           this.setRef({key: 'accountPlace', ref: this.source})
         } else {
           this.source = null
         }
       },
       publishPlace () {
-        if (this.source && this.accountPlace.publicId === '') {
-          const id = firebase.database().ref('/places').push(clonePlace(this.accountPlace), log).key
-          this.source.update({
-            'publicId': id
-          }, log)
+        if (!this.source || !this.accountPlace) {
+          return
+        }
+        const place = {
+          accountId: this.accountId,
+          title: this.accountPlace.title
+        }
+        if (this.accountPlace.publicId) {
+          firebase.database().ref('places').set(place).catch(log)
+        } else {
+          firebase.database().ref('places').push(place).then(function (data) {
+            return this.source.update({'publicId': data.key})
+          }.bind(this)).catch(log)
         }
       },
       unPublishPlace () {
-        if (this.source && this.accountPlace.publicId !== '') {
-          firebase.database().ref('/places/' + this.accountPlace.publicId).remove()
-          this.source.update({publicId: ''}, log)
+        if (this.source && this.accountPlace.publicId) {
+          firebase.database().ref('shows/' + this.accountPlace.publicId).remove().then(function () {
+            return this.source.update({publicId: null})
+          }.bind(this)).catch(log)
         }
       },
       removePlace () {
-        if (this.source) {
-          this.source.remove(log)
-          this.$router.push('/account/places')
+        if (this.source && this.accountPlace) {
+          const publicId = this.accountPlace.publicId
+          const imageUri = this.accountPlace.storageUri
+          this.source.remove().then(function () {
+            if (publicId) {
+              return firebase.database().ref('places/' + publicId).remove()
+            }
+          }).then(function () {
+            if (imageUri && imageUri.startsWith('gs://')) {
+              return firebase.storage().refFromURL(imageUri)
+            }
+          }).then(function () {
+            this.$router.push('/account/places')
+          }.bind(this)).catch(log)
         }
       }
     },
@@ -61,7 +90,7 @@
       $route () {
         this.init()
       },
-      'user' () {
+      'userAccount' () {
         this.init()
       }
     }

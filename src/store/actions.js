@@ -5,6 +5,9 @@ export default {
   setRef: firebaseAction(({bindFirebaseRef}, payload) => {
     bindFirebaseRef(payload.key, payload.ref, {wait: true})
   }),
+  unsetRef: firebaseAction(({unbindFirebaseRef}, key) => {
+    unbindFirebaseRef(key)
+  }),
 
   FETCH_ITEMS: ({commit, state}, {ids}) => {
     // only fetch items that we do not already have, or has expired (3 minutes)
