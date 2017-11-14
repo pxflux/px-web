@@ -33,6 +33,7 @@ export function createStore () {
 
       accountArtist: null,
       accountShow: null,
+      accountShows: [],
       accountPlace: null,
       accountPlaces: [],
       accountIteration: null,

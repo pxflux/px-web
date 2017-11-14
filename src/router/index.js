@@ -27,6 +27,7 @@ import AccountArtistList from '@/components/account/ArtistList'
 import AccountArtistDetail from '@/components/account/ArtistDetail'
 import AccountShowList from '@/components/account/ShowList'
 import AccountShowDetail from '@/components/account/ShowDetail'
+import AccountShowUpdate from '@/components/account/ShowUpdate'
 import AccountPlaceList from '@/components/account/PlaceList'
 import AccountPlaceDetail from '@/components/account/PlaceDetail'
 import AccountPlaceUpdate from '@/components/account/PlaceUpdate'
@@ -61,6 +62,7 @@ export function createRouter () {
       {path: '/account/artists', component: AccountArtistList, name: 'account-artists'},
       {path: '/account/artist/:id', component: AccountArtistDetail, name: 'account-artist-detail'},
       {path: '/account/shows', component: AccountShowList, name: 'account-shows'},
+      {path: '/account/show/:id/update', component: AccountShowUpdate, name: 'account-show-update'},
       {path: '/account/show/:id', component: AccountShowDetail, name: 'account-show-detail'},
       {path: '/account/places', component: AccountPlaceList, name: 'account-places'},
       {path: '/account/place/:id/update', component: AccountPlaceUpdate, name: 'account-place-update'},
