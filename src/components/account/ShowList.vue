@@ -7,7 +7,7 @@
         </li>
       </ul>
       <span class="nothing-found" v-if="accountShows.length == 0">Shows not found.</span>
-      <router-link to="/account/show/new/update">Add Show</router-link>
+      <router-link to="/account/show/new">Add Show</router-link>
     </div>
   </main>
 </template>

@@ -20,6 +20,7 @@
             </a>
             <div v-if="user" class="submenu">
               <div v-on:click="goto('/account/new')" class="button flick">New team</div>
+              <div v-on:click="goto('/account/artwork/new')" class="button flick">New artwork</div>
             </div>
           </div>
           <!-- -->

@@ -3,7 +3,7 @@
     <div v-if="userAccount && accountShow" class="wrap-content text-block">
       <router-link to="/account/shows/">Shows</router-link>
       <h1>{{ accountShow.title }}</h1>
-      <img v-show="accountShow.iconUrl" :src="accountShow.iconUrl" width="100" height="100">
+      <img v-show="image.displayUrl" :src="image.displayUrl" width="100" height="100">
       <router-link :to="'/place/' + accountShow.place.id">{{ accountShow.place.title }}</router-link>
       <router-link :to="'/account/show/' + showId + '/update'" class="button">Update</router-link>
       <button @click="removeShow">Remove</button>
@@ -16,7 +16,7 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
-  import firebase from '../../firebase-app'
+  import firebase, { publish } from '../../firebase-app'
 
   export default {
     created () {
@@ -33,6 +33,12 @@
       },
       showId () {
         return this.$route.params.id
+      },
+      image () {
+        return this.accountShow && this.accountShow.image ? this.accountShow.image : {
+          displayUrl: null,
+          storageUri: null
+        }
       }
     },
     methods: {
@@ -47,20 +53,10 @@
         }
       },
       publishShow () {
-        if (!this.source || !this.accountShow) {
+        if (!this.accountId) {
           return
         }
-        const show = {
-          accountId: this.accountId,
-          title: this.accountShow.title
-        }
-        if (this.accountShow.publicId) {
-          firebase.database().ref('shows').set(show).catch(log)
-        } else {
-          firebase.database().ref('shows').push(show).then(function (data) {
-            return this.source.update({'publicId': data.key})
-          }.bind(this)).catch(log)
-        }
+        publish(this.accountId, 'accounts/' + this.accountId + '/shows/' + this.showId, 'shows').catch(log)
       },
       unPublishShow () {
         if (this.source && this.accountShow.publicId) {

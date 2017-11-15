@@ -15,7 +15,7 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
-  import firebase from '../../firebase-app'
+  import firebase, { publish } from '../../firebase-app'
 
   export default {
     created () {
@@ -46,20 +46,10 @@
         }
       },
       publishArtist () {
-        if (!this.source || !this.accountArtist) {
+        if (!this.accountId) {
           return
         }
-        const artist = {
-          accountId: this.accountId,
-          title: this.accountArtist.title
-        }
-        if (this.accountArtist.publicId) {
-          firebase.database().ref('artists').set(artist).catch(log)
-        } else {
-          firebase.database().ref('artists').push(artist).then(function (data) {
-            return this.source.update({'publicId': data.key})
-          }.bind(this)).catch(log)
-        }
+        publish(this.accountId, 'accounts/' + this.accountId + '/artists/' + this.showId, 'artists').catch(log)
       },
       unPublishArtist () {
         if (this.source && this.accountArtist.publicId) {

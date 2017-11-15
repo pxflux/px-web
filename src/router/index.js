@@ -23,6 +23,7 @@ import AccountInvitationList from '@/components/account/InvitationList'
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
 import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
+import AccountArtworkUpdate from '@/components/account/ArtworkUpdate'
 import AccountArtistList from '@/components/account/ArtistList'
 import AccountArtistDetail from '@/components/account/ArtistDetail'
 import AccountArtistUpdate from '@/components/account/ArtistUpdate'
@@ -53,22 +54,30 @@ export function createRouter () {
       {path: '/curator/:id', component: CuratorDetail, name: 'curator-detail'},
       {path: '/publication/:id', component: PublicationDetail, name: 'publication-detail'},
 
-      {path: '/account/new', component: AccountNew, name: 'account-new'},
-      {path: '/account/update', component: AccountDetail, name: 'account-detail'},
-      {path: '/account/invitations', component: AccountInvitationList, name: 'account-invitations'},
+      {path: '/account/new', component: AccountNew},
+      {path: '/account/update', component: AccountDetail},
+      {path: '/account/invitations', component: AccountInvitationList},
 
-      {path: '/account/artworks', component: AccountArtworkList, name: 'account-artworks'},
-      {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail, name: 'account-artwork-iteration-detail'},
-      {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},
-      {path: '/account/artists', component: AccountArtistList, name: 'account-artists'},
-      {path: '/account/artist/:id/update', component: AccountArtistUpdate, name: 'account-artist-update'},
-      {path: '/account/artist/:id', component: AccountArtistDetail, name: 'account-artist-detail'},
-      {path: '/account/shows', component: AccountShowList, name: 'account-shows'},
-      {path: '/account/show/:id/update', component: AccountShowUpdate, name: 'account-show-update'},
-      {path: '/account/show/:id', component: AccountShowDetail, name: 'account-show-detail'},
-      {path: '/account/places', component: AccountPlaceList, name: 'account-places'},
-      {path: '/account/place/:id/update', component: AccountPlaceUpdate, name: 'account-place-update'},
-      {path: '/account/place/:id', component: AccountPlaceDetail, name: 'account-place-detail'}
+      {path: '/account/artworks', component: AccountArtworkList},
+      {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail},
+      {path: '/account/artwork/new', component: AccountArtworkUpdate, props: {isNew: true}},
+      {path: '/account/artwork/:id/update', component: AccountArtworkUpdate, props: {isNew: false}},
+      {path: '/account/artwork/:id', component: AccountArtworkDetail},
+
+      {path: '/account/artists', component: AccountArtistList},
+      {path: '/account/artist/new', component: AccountArtistUpdate, props: {isNew: true}},
+      {path: '/account/artist/:id/update', component: AccountArtistUpdate, props: {isNew: false}},
+      {path: '/account/artist/:id', component: AccountArtistDetail},
+
+      {path: '/account/shows', component: AccountShowList},
+      {path: '/account/show/new', component: AccountShowUpdate, props: {isNew: true}},
+      {path: '/account/show/:id/update', component: AccountShowUpdate, props: {isNew: false}},
+      {path: '/account/show/:id', component: AccountShowDetail},
+
+      {path: '/account/places', component: AccountPlaceList},
+      {path: '/account/place/new', component: AccountPlaceUpdate, props: {isNew: true}},
+      {path: '/account/place/:id/update', component: AccountPlaceUpdate, props: {isNew: false}},
+      {path: '/account/place/:id', component: AccountPlaceDetail}
     ]
   })
 }

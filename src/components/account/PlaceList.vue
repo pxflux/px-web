@@ -7,7 +7,7 @@
         </li>
       </ul>
       <span class="nothing-found" v-if="accountPlaces.length == 0">Places not found.</span>
-      <router-link to="/account/place/new/update">Add Place</router-link>
+      <router-link to="/account/place/new">Add Place</router-link>
     </div>
   </main>
 </template>

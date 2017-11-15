@@ -7,7 +7,7 @@
         </li>
       </ul>
       <span class="nothing-found" v-if="accountArtists.length == 0">Artists not found.</span>
-      <router-link to="/account/artist/new/update">Add Artist</router-link>
+      <router-link to="/account/artist/new">Add Artist</router-link>
     </div>
   </main>
 </template>

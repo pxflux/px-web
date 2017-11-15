@@ -54,7 +54,7 @@
             v-on:edit='processEditOperation' custom-tag='div'>
           </medium-editor>
 
-          <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
+          <button @click="updateArtwork">{{uiStrings.save}}</button>
         </div>
 
         <div :class="'editor-section'">
@@ -91,6 +91,7 @@
         </div>
         <div class="editor-section">
           <button @click="removeArtwork">{{uiStrings.remove}}</button>
+          <router-link :to="'/account/artwork/' + artworkId + '/update'" class="button">Update</router-link>
         </div>
       </div>
     </div>
@@ -159,6 +160,17 @@
     },
     computed: {
       ...mapState(['user', 'accountArtwork', 'artists']),
+
+      accountId () {
+        if (!this.userAccount) {
+          return null
+        }
+        return this.userAccount['.key']
+      },
+      artworkId () {
+        return this.$route.params.id
+      },
+
       remoteControlSummary () {
         if (this.remoteControlEditorState === 'open') return ''
         const numButt = this.artworkData.controls.length

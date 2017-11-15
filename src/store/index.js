@@ -31,12 +31,12 @@ export function createStore () {
       accountArtworks: [],
       accountArtwork: null,
 
-      accountArtist: null,
       accountArtists: [],
-      accountShow: null,
+      accountArtist: null,
       accountShows: [],
-      accountPlace: null,
+      accountShow: null,
       accountPlaces: [],
+      accountPlace: null,
       accountIteration: null,
 
       items: {/* [id: string]: {} */}
