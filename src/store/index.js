@@ -32,6 +32,7 @@ export function createStore () {
       accountArtwork: null,
 
       accountArtist: null,
+      accountArtists: [],
       accountShow: null,
       accountShows: [],
       accountPlace: null,

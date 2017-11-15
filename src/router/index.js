@@ -25,6 +25,7 @@ import AccountArtworkDetail from '@/components/account/ArtworkDetail'
 import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
 import AccountArtistList from '@/components/account/ArtistList'
 import AccountArtistDetail from '@/components/account/ArtistDetail'
+import AccountArtistUpdate from '@/components/account/ArtistUpdate'
 import AccountShowList from '@/components/account/ShowList'
 import AccountShowDetail from '@/components/account/ShowDetail'
 import AccountShowUpdate from '@/components/account/ShowUpdate'
@@ -60,6 +61,7 @@ export function createRouter () {
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail, name: 'account-artwork-iteration-detail'},
       {path: '/account/artwork/:id', component: AccountArtworkDetail, name: 'account-artwork-detail'},
       {path: '/account/artists', component: AccountArtistList, name: 'account-artists'},
+      {path: '/account/artist/:id/update', component: AccountArtistUpdate, name: 'account-artist-update'},
       {path: '/account/artist/:id', component: AccountArtistDetail, name: 'account-artist-detail'},
       {path: '/account/shows', component: AccountShowList, name: 'account-shows'},
       {path: '/account/show/:id/update', component: AccountShowUpdate, name: 'account-show-update'},

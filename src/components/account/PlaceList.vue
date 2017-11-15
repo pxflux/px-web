@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content grid">
+    <div v-if="userAccount" class="wrap-content">
       <ul>
         <li v-for="place in accountPlaces" :key="place['.key']">
           <router-link :to="'/account/place/' + place['.key']">{{ place.title }}</router-link>
