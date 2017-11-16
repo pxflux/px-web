@@ -9,35 +9,21 @@ const app = Firebase.initializeApp({
   messagingSenderId: '434021624365'
 })
 
-export function publish (accountId, from, to) {
-  return app.database().ref(from).once('value').then(function (snapshot) {
-    const data = snapshot.toJSON()
-    data['accountId'] = accountId
-    if (data.publicId) {
-      return app.database().ref(to + '/' + data.publicId).set(data)
-    } else {
-      return app.database().ref(to).push(data).then(function (data) {
-        return snapshot.ref.update({'publicId': data.key})
-      })
-    }
-  })
-}
-
-export function store (id, data, path, imageRemoved, imageFile) {
-  const promise = save(id, data, path)
+export function store (accountId, id, path, data, imageRemoved, imageFile) {
+  const promise = save(id, 'accounts/' + accountId + '/' + path, data)
   if (imageRemoved) {
     promise.then(function (ref) {
       return removeFile(ref)
     })
   } else if (imageFile) {
     promise.then(function (ref) {
-      return uploadFile(ref, path, imageFile)
+      return uploadFile(ref, '/accounts/' + accountId + '/' + path, imageFile)
     })
   }
   return promise
 }
 
-function save (id, data, path) {
+function save (id, path, data) {
   if (id) {
     const source = app.database().ref(path + '/' + id)
     return source.update(data).then(function () {

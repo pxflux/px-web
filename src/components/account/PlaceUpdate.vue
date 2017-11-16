@@ -23,9 +23,13 @@
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
+  import ImageUpload from '../elements/ImageUpload'
 
   export default {
     props: ['isNew'],
+    components: {
+      ImageUpload
+    },
     created () {
       this.init()
     },
@@ -40,6 +44,9 @@
       },
       placeId () {
         return this.$route.params.id
+      },
+      published () {
+        return this.accountPlace && this.accountPlace.published ? this.accountPlace.published : false
       },
       image () {
         return this.accountPlace && this.accountPlace.image ? this.accountPlace.image : {
@@ -60,10 +67,10 @@
 
       init () {
         if (!this.isNew && this.accountId) {
-          this.source = firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId)
-          this.setRef({key: 'accountPlace', ref: this.source})
-        } else {
-          this.source = null
+          this.setRef({
+            key: 'accountPlace',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId)
+          })
         }
       },
 
@@ -79,10 +86,10 @@
           return
         }
         const place = {
+          published: this.published,
           title: this.title
         }
-        const path = '/accounts/' + this.accountId + '/places'
-        store(this.placeId, place, path, this.imageRemoved, this.imageFile).then(function (ref) {
+        store(this.accountId, this.placeId, 'places', place, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/place/' + ref.key)
         }.bind(this)).catch(log())
       }

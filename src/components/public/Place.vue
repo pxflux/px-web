@@ -2,6 +2,10 @@
   <main>
     <div v-if="place" class="wrap-content text-block">
       <h1>{{ place.title }}</h1>
+      <h2>Shows</h2>
+      <ul v-for="show in shows" :key="show['__key']">
+        <li><router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link></li>
+      </ul>
     </div>
   </main>
 </template>
@@ -15,7 +19,12 @@
       this.init()
     },
     computed: {
-      ...mapState(['place'])
+      ...mapState(['place']),
+      shows () {
+        return Object.keys(this.place.shows || {}).map(id => {
+          return {...this.place.shows[id], ...{'.key': id}}
+        })
+      }
     },
     methods: {
       ...mapActions(['setRef']),

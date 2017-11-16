@@ -1,6 +1,6 @@
 service firebase.storage {
   match /b/{bucket}/o {
-    match /accounts/{accountId}/artworks/{artworkId}/{fileName} {
+    match /accounts/{accountId}/artworks/{fileName} {
       allow read, write: if request.auth.token.accountId == accountId;
     }
     match /accounts/{accountId}/artists/{fileName} {

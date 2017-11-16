@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div v-if="accountShow" class="wrap-content text-block">
+    <div v-if="userAccount" class="wrap-content text-block">
       <router-link to="/account/shows/">Shows</router-link>
       <template v-if="! isNew">
         &gt;
@@ -10,11 +10,9 @@
                     @remove-image="setImageRemoved"></image-upload>
       <form id="form-show" @submit.prevent="submitShow">
         <input type="text" v-model.trim="title" title="Show title" required="required">
-        <select v-model="placeId">
-          <option disabled value="">Выберите один из вариантов</option>
+        <select v-model="selectedPlaceIds" multiple required>
           <option v-for="place in places" v-bind:value="place['.key']">{{ place.title }}</option>
         </select>
-
         <router-link v-if="isNew" to="/account/shows">Cancel</router-link>
         <router-link v-if="! isNew" :to="'/account/show/' + showId">Cancel</router-link>
         <input v-if="isNew" type="submit" value="Create"/>
@@ -32,11 +30,11 @@
 
   export default {
     props: ['isNew'],
-    created () {
-      this.init()
-    },
     components: {
       ImageUpload
+    },
+    created () {
+      this.init()
     },
     computed: {
       ...mapState(['userAccount', 'accountShow', 'places']),
@@ -50,6 +48,9 @@
       showId () {
         return this.$route.params.id
       },
+      published () {
+        return this.accountShow && this.accountShow.published ? this.accountShow.published : false
+      },
       image () {
         return this.accountShow && this.accountShow.image ? this.accountShow.image : {
           displayUrl: null,
@@ -62,7 +63,7 @@
         imageFile: null,
         imageRemoved: false,
         title: '',
-        placeId: null
+        selectedPlaceIds: []
       }
     },
     methods: {
@@ -70,10 +71,10 @@
 
       init () {
         if (!this.isNew && this.accountId) {
-          this.source = firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId)
-          this.setRef({key: 'accountShow', ref: this.source})
-        } else {
-          this.source = null
+          this.setRef({
+            key: 'accountShow',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId)
+          })
         }
         this.setRef({key: 'places', ref: firebase.database().ref('places')})
       },
@@ -89,22 +90,15 @@
         if (!this.accountId) {
           return
         }
-        if (!this.placeId) {
-          return
-        }
-        const items = this.places.filter(place => place['.key'] === this.placeId)
-        if (items.length === 0) {
-          return
-        }
         const show = {
+          published: this.published,
           title: this.title,
-          place: {
-            id: items[0]['.key'],
-            title: items[0].title
-          }
+          places: {}
         }
-        const path = '/accounts/' + this.accountId + '/shows'
-        store(this.showId, show, path, this.imageRemoved, this.imageFile).then(function (ref) {
+        this.places.filter(place => this.selectedPlaceIds.includes(place['.key'])).forEach(place => {
+          show.places[place['.key']] = {title: place.title}
+        })
+        store(this.accountId, this.showId, 'shows', show, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/show/' + ref.key)
         }.bind(this)).catch(log())
       }
@@ -118,7 +112,7 @@
       },
       'accountShow' () {
         this.title = this.accountShow.title
-        this.placeId = this.accountShow.place ? this.accountShow.place.id : null
+        this.selectedPlaceIds = Object.keys(this.accountShow.places || {})
       }
     }
   }

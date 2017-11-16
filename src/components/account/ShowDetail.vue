@@ -4,11 +4,16 @@
       <router-link to="/account/shows/">Shows</router-link>
       <h1>{{ accountShow.title }}</h1>
       <img v-show="image.displayUrl" :src="image.displayUrl" width="100" height="100">
-      <router-link :to="'/place/' + accountShow.place.id">{{ accountShow.place.title }}</router-link>
+      <h2>Places</h2>
+      <ul>
+        <li v-for="place in places" :key="place['.key']">
+          <router-link :to="'/places/' + place['.key']">{{ place.title }}</router-link>
+        </li>
+      </ul>
       <router-link :to="'/account/show/' + showId + '/update'" class="button">Update</router-link>
       <button @click="removeShow">Remove</button>
-      <button v-if=" ! accountShow.publicId"><a @click="publishShow">Publish</a></button>
-      <button v-if="accountShow.publicId"><a @click="unPublishShow">Un publish</a></button>
+      <button v-if=" ! accountShow.published"><a @click="togglePublished(true)">Publish</a></button>
+      <button v-if="accountShow.published"><a @click="togglePublished(false)">Un publish</a></button>
     </div>
   </main>
 </template>
@@ -16,7 +21,7 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
-  import firebase, { publish } from '../../firebase-app'
+  import firebase, { store } from '../../firebase-app'
 
   export default {
     created () {
@@ -39,6 +44,11 @@
           displayUrl: null,
           storageUri: null
         }
+      },
+      places () {
+        return Object.keys(this.accountShow.places || {}).map(id => {
+          return {...this.accountShow.places[id], ...{'.key': id}}
+        })
       }
     },
     methods: {
@@ -46,41 +56,25 @@
 
       init () {
         if (this.accountId) {
-          this.source = firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId)
-          this.setRef({key: 'accountShow', ref: this.source})
-        } else {
-          this.source = null
+          this.setRef({
+            key: 'accountShow',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId)
+          })
         }
       },
-      publishShow () {
+      togglePublished (published) {
         if (!this.accountId) {
           return
         }
-        publish(this.accountId, 'accounts/' + this.accountId + '/shows/' + this.showId, 'shows').catch(log)
-      },
-      unPublishShow () {
-        if (this.source && this.accountShow.publicId) {
-          firebase.database().ref('shows/' + this.accountShow.publicId).remove().then(function () {
-            return this.source.update({publicId: null})
-          }.bind(this)).catch(log)
-        }
+        store(this.accountId, this.showId, 'shows', {published: published}).catch(log)
       },
       removeShow () {
-        if (this.source && this.accountShow) {
-          const publicId = this.accountShow.publicId
-          const imageUri = this.accountShow.storageUri
-          this.source.remove().then(function () {
-            if (publicId) {
-              return firebase.database().ref('shows/' + publicId).remove()
-            }
-          }).then(function () {
-            if (imageUri && imageUri.startsWith('gs://')) {
-              return firebase.storage().refFromURL(imageUri)
-            }
-          }).then(function () {
-            this.$router.push('/account/shows')
-          }.bind(this)).catch(log)
+        if (!this.accountId) {
+          return
         }
+        firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId).remove().then(function () {
+          this.$router.push('/account/shows')
+        }.bind(this)).catch(log)
       }
     },
     watch: {

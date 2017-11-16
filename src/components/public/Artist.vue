@@ -3,8 +3,17 @@
     <div v-if="artist" class="wrap-content text-block">
       <h1>{{ artist.fullName }}</h1>
       <h2>Works</h2>
-      <h2>Curriculum Vitae</h2>
+      <ul>
+        <li v-for="artwork in artworks" :key="artwork['.key']">
+          <router-link :to="'/artwork/' + artwork['.key']">{{ artwork.title }}</router-link>
+        </li>
+      </ul>
       <h2>Shows</h2>
+      <ul>
+        <li v-for="show in shows" :key="show['.key']">
+          <router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link>
+        </li>
+      </ul>
     </div>
   </main>
 </template>
@@ -18,7 +27,17 @@
       this.init()
     },
     computed: {
-      ...mapState(['artist'])
+      ...mapState(['artist']),
+      artworks () {
+        return Object.keys(this.artist.artworks || {}).map(id => {
+          return {...this.artist.artworks[id], ...{'.key': id}}
+        })
+      },
+      shows () {
+        return Object.keys(this.artist.shows || {}).map(id => {
+          return {...this.artist.shows[id], ...{'.key': id}}
+        })
+      }
     },
     methods: {
       ...mapActions(['setRef']),

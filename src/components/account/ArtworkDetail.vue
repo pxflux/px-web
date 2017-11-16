@@ -1,10 +1,12 @@
 <template>
   <main>
-    <div v-if="user && accountArtwork" class="wrap-content text-block editor">
+    <div v-if="userAccount && accountArtwork" class="wrap-content text-block editor">
       <div class="editor-sidebar">
         <div class="preview-box">
           <div class="thumbnail-cell">
-            <div class="item-image-wrap"><img :src="artworkData.thumbUrl" class="item-image"/></div>
+            <div class="item-image-wrap">
+              <img v-show="image.displayUrl" :src="image.displayUrl" width="100" height="100">
+            </div>
           </div>
           <iframe :src="artworkData.url"></iframe>
         </div>
@@ -86,10 +88,8 @@
           <button v-on:click="createIteration()">Create</button>
         </div>
         <div class="editor-section">
-          <button v-if="accountArtwork.publicId" @click="unpublishArtwork">{{uiStrings.unpublish}}</button>
-          <button v-else @click="publishArtwork">{{uiStrings.publish}}</button>
-        </div>
-        <div class="editor-section">
+          <button v-if="accountArtwork.published" @click="togglePublished(false)">{{uiStrings.unpublish}}</button>
+          <button v-else @click="togglePublished(true)">{{uiStrings.publish}}</button>
           <button @click="removeArtwork">{{uiStrings.remove}}</button>
           <router-link :to="'/account/artwork/' + artworkId + '/update'" class="button">Update</router-link>
         </div>
@@ -103,7 +103,7 @@
   import { cloneArtwork, artworkDefaultFields } from '../../models/artwork'
   import { log } from '../../helper'
   import Firebase from 'firebase'
-  import firebaseApp from '../../firebase-app'
+  import firebaseApp, { store } from '../../firebase-app'
   import RemoteControlEditor from './RemoteControlEditor'
   import vueMediumEditor from 'vue2-medium-editor'
 
@@ -159,7 +159,7 @@
       }
     },
     computed: {
-      ...mapState(['user', 'accountArtwork', 'artists']),
+      ...mapState(['userAccount', 'accountArtwork', 'artists']),
 
       accountId () {
         if (!this.userAccount) {
@@ -169,6 +169,12 @@
       },
       artworkId () {
         return this.$route.params.id
+      },
+      image () {
+        return this.accountArtwork && this.accountArtwork.image ? this.accountArtwork.image : {
+          displayUrl: null,
+          storageUri: null
+        }
       },
 
       remoteControlSummary () {
@@ -191,6 +197,16 @@
     methods: {
       ...mapActions(['setRef']),
       ...mapMutations(['REMOVE_ACCOUNT_ARTWORK']),
+
+      init () {
+        if (this.accountId) {
+          this.source = firebaseApp.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
+          this.setRef({ key: 'accountArtwork', ref: this.source })
+          this.setRef({ key: 'artists', ref: firebaseApp.database().ref('artists') })
+        } else {
+          this.source = null
+        }
+      },
 
       addArtistNameToString () {
         if (this.artistName) {
@@ -224,16 +240,6 @@
         }
       },
 
-      init () {
-        if (this.user) {
-          this.source = firebaseApp.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.id)
-          this.setRef({ key: 'accountArtwork', ref: this.source })
-          this.setRef({ key: 'artists', ref: firebaseApp.database().ref('artists') })
-        } else {
-          this.source = null
-        }
-      },
-
       clickEditorsToRemovePlaceholders (el) {
         // TODO remove placeholder on load/update text inside medium-editors
         // Just a hack... it has to be a better/ proper way to do this?
@@ -249,41 +255,30 @@
       },
 
       updateArtwork () {
-        this.showForm = false
-        if (this.source) {
-          this.artworkData.artists = this.parseArtistsString()
-
-          this.source.update(this.artworkData, log)
-          if (this.accountArtwork.publicId) {
-            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.artworkData)
-            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
-          }
-        }
+//        this.showForm = false
+//        if (this.source) {
+//          this.artworkData.artists = this.parseArtistsString()
+//
+//          this.source.update(this.artworkData, log)
+//          if (this.accountArtwork.publicId) {
+//            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.artworkData)
+//            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
+//          }
+//        }
       },
-      publishArtwork () {
-        if (this.source && this.accountArtwork.publicId === '') {
-          const value = cloneArtwork(this.user.uid, this.$route.params.id, this.artworkData)
-          const id = firebaseApp.database().ref('artworks').push(value, log).key
-          this.source.update({
-            'publicId': id
-          })
+      togglePublished (published) {
+        if (!this.accountId) {
+          return
         }
-      },
-      unpublishArtwork () {
-        if (this.source && this.accountArtwork.publicId !== '') {
-          firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
-          this.source.update({ 'publicId': '' }, log)
-        }
+        store(this.accountId, this.artworkId, 'artworks', {published: published}).catch(log)
       },
       removeArtwork () {
-        if (this.source) {
-          if (this.accountArtwork.publicId) {
-            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).remove(log)
-          }
-          this.source.remove(log)
-          this.REMOVE_ACCOUNT_ARTWORK()
-          this.$router.push('/account/artworks')
+        if (!this.accountId) {
+          return
         }
+        firebaseApp.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId).remove().then(function () {
+          this.$router.push('/account/artworks')
+        }.bind(this)).catch(log)
       },
       parseArtistsString () {
         let data = {}
@@ -395,7 +390,7 @@
       $route () {
         this.init()
       },
-      'user' () {
+      'userAccount' () {
         this.init()
       },
       'artists' () {

@@ -4,12 +4,12 @@
       <router-link to="/account/artists/">Artists</router-link>
       <template v-if="! isNew">
         &gt;
-        <router-link :to="'/account/artist/' + artistId">{{ accountArtist.title }}</router-link>
+        <router-link :to="'/account/artist/' + artistId">{{ accountArtist.fullName }}</router-link>
       </template>
       <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile"
                     @remove-image="setImageRemoved"></image-upload>
       <form id="form-artist" @submit.prevent="submitArtist">
-        <input type="text" v-model.trim="title" title="Artist title" required="required">
+        <input type="text" v-model.trim="fullName" title="Artist name" required="required">
         <router-link v-if="isNew" to="/account/artists">Cancel</router-link>
         <router-link v-if="! isNew" :to="'/account/artist/' + artistId">Cancel</router-link>
         <input v-if="isNew" type="submit" value="Create"/>
@@ -23,9 +23,14 @@
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
+  import ImageUpload from '../elements/ImageUpload'
+  import latinize from 'latinize'
 
   export default {
     props: ['isNew'],
+    components: {
+      ImageUpload
+    },
     created () {
       this.init()
     },
@@ -41,6 +46,9 @@
       artistId () {
         return this.$route.params.id
       },
+      published () {
+        return this.accountArtist && this.accountArtist.published ? this.accountArtist.published : false
+      },
       image () {
         return this.accountArtist && this.accountArtist.image ? this.accountArtist.image : {
           displayUrl: null,
@@ -52,7 +60,7 @@
       return {
         imageFile: null,
         imageRemoved: false,
-        title: ''
+        fullName: ''
       }
     },
     methods: {
@@ -60,10 +68,10 @@
 
       init () {
         if (!this.isNew && this.accountId) {
-          this.source = firebase.database().ref('accounts/' + this.accountId + '/artists/' + this.artistId)
-          this.setRef({key: 'accountArtist', ref: this.source})
-        } else {
-          this.source = null
+          this.setRef({
+            key: 'accountArtist',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/artists/' + this.artistId)
+          })
         }
       },
 
@@ -79,10 +87,14 @@
           return
         }
         const artist = {
-          title: this.title
+          published: this.published,
+          fullName: this.fullName,
+          _search_index: {
+            full_name: latinize(this.fullName.toLowerCase()),
+            reversed_full_name: latinize(this.fullName.toLowerCase().split(' ').reverse().join(' '))
+          }
         }
-        const path = '/accounts/' + this.accountId + '/artists'
-        store(this.artistId, artist, path, this.imageRemoved, this.imageFile).then(function (ref) {
+        store(this.accountId, this.artistId, 'artists', artist, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/artist/' + ref.key)
         }.bind(this)).catch(log())
       }
@@ -95,7 +107,7 @@
         this.init()
       },
       'accountArtist' () {
-        this.title = this.accountArtist.title
+        this.fullName = this.accountArtist.fullName
       }
     }
   }

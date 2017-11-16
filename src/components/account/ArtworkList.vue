@@ -1,13 +1,13 @@
 <template>
   <main>
-    <div v-if="user" class="wrap-content grid" id="main-grid">
+    <div v-if="userAccount" class="wrap-content grid" id="main-grid">
       <ArtworkItem v-for="artwork in accountArtworks"
                    :artwork="artwork" :key="artwork['.key']"
                    :uri="'/account/artwork/' + artwork['.key']">
       </ArtworkItem>
-      <a @click="createArtwork" class="grid-cell button" title="Add Artwork">
+      <router-link to="/account/artwork/new" class="grid-cell button" title="Add Artwork">
         <div class="button plus center"></div>
-      </a>
+      </router-link>
     </div>
     <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
   </main>
@@ -18,47 +18,43 @@
   import firebase from '../../firebase-app'
   import { mapState, mapActions } from 'vuex'
   import GridHelper from '../../helpers/grid'
-  import { log } from '../../helper'
 
   export default {
-    mixins: [ GridHelper ],
+    mixins: [GridHelper],
 
+    components: {
+      ArtworkItem
+    },
     created () {
       this.init()
     },
     computed: {
-      ...mapState([ 'user', 'accountArtworks' ])
-    },
-    methods: {
-      ...mapActions([ 'setRef' ]),
+      ...mapState(['userAccount', 'accountArtworks']),
 
-      init () {
-        if (this.user && this.user.uid) {
-          this.setRef({
-            key: 'accountArtworks',
-            ref: firebase.database().ref('users/' + this.user.uid + '/artworks')
-          })
+      accountId () {
+        if (!this.userAccount) {
+          return null
         }
-      },
-      createArtwork () {
-        const newArtwork = {
-          url: '',
-          thumbUrl: '',
-          publicId: '',
-          title: 'Untitled'
-        }
-        const key = firebase.database().ref('users/' + this.user.uid + '/artworks').push(newArtwork, log).key
-        this.$router.push('/account/artwork/' + key)
+        return this.userAccount['.key']
       }
     },
-    components: {
-      ArtworkItem
+    methods: {
+      ...mapActions(['setRef']),
+
+      init () {
+        if (this.accountId) {
+          this.setRef({
+            key: 'accountArtworks',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/artworks')
+          })
+        }
+      }
     },
     watch: {
       $route () {
         this.init()
       },
-      'user' () {
+      'userAccount' () {
         this.init()
       },
       accountArtworks () {

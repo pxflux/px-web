@@ -21,6 +21,9 @@
             <div v-if="user" class="submenu">
               <div v-on:click="goto('/account/new')" class="button flick">New team</div>
               <div v-on:click="goto('/account/artwork/new')" class="button flick">New artwork</div>
+              <div v-on:click="goto('/account/artist/new')" class="button flick">New artist</div>
+              <div v-on:click="goto('/account/show/new')" class="button flick">New show</div>
+              <div v-on:click="goto('/account/place/new')" class="button flick">New place</div>
             </div>
           </div>
           <!-- -->

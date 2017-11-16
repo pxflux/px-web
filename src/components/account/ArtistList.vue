@@ -3,7 +3,7 @@
     <div v-if="userAccount" class="wrap-content">
       <ul>
         <li v-for="artist in accountArtists" :key="artist['.key']">
-          <router-link :to="'/account/artist/' + artist['.key']">{{ artist.title }}</router-link>
+          <router-link :to="'/account/artist/' + artist['.key']">{{ artist.fullName }}</router-link>
         </li>
       </ul>
       <span class="nothing-found" v-if="accountArtists.length == 0">Artists not found.</span>

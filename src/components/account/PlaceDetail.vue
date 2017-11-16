@@ -3,11 +3,11 @@
     <div v-if="userAccount && accountPlace" class="wrap-content text-block">
       <router-link to="/account/places/">Places</router-link>
       <h1>{{ accountPlace.title }}</h1>
-      <img v-show="accountPlace.iconUrl" :src="accountPlace.iconUrl" width="100" height="100">
+      <img v-show="image.displayUrl" :src="image.displayUrl" width="100" height="100">
       <router-link :to="'/account/place/' + placeId + '/update'" class="button">Update</router-link>
       <button @click="removePlace">Remove</button>
-      <button v-if=" ! accountPlace.publicId"><a @click="publishPlace">Publish</a></button>
-      <button v-if="accountPlace.publicId"><a @click="unPublishPlace">Un publish</a></button>
+      <button v-if=" ! accountPlace.published"><a @click="togglePublished(true)">Publish</a></button>
+      <button v-if="accountPlace.published"><a @click="togglePublished(false)">Un publish</a></button>
     </div>
   </main>
 </template>
@@ -15,7 +15,7 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
-  import firebase, { publish } from '../../firebase-app'
+  import firebase, { store } from '../../firebase-app'
 
   export default {
     created () {
@@ -32,6 +32,12 @@
       },
       placeId () {
         return this.$route.params.id
+      },
+      image () {
+        return this.accountPlace && this.accountPlace.image ? this.accountPlace.image : {
+          displayUrl: null,
+          storageUri: null
+        }
       }
     },
     methods: {
@@ -39,41 +45,25 @@
 
       init () {
         if (this.accountId) {
-          this.source = firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId)
-          this.setRef({key: 'accountPlace', ref: this.source})
-        } else {
-          this.source = null
+          this.setRef({
+            key: 'accountPlace',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId)
+          })
         }
       },
-      publishPlace () {
+      togglePublished (published) {
         if (!this.accountId) {
           return
         }
-        publish(this.accountId, 'accounts/' + this.accountId + '/places/' + this.showId, 'places').catch(log)
-      },
-      unPublishPlace () {
-        if (this.source && this.accountPlace.publicId) {
-          firebase.database().ref('shows/' + this.accountPlace.publicId).remove().then(function () {
-            return this.source.update({publicId: null})
-          }.bind(this)).catch(log)
-        }
+        store(this.accountId, this.placeId, 'places', {published: published}).catch(log())
       },
       removePlace () {
-        if (this.source && this.accountPlace) {
-          const publicId = this.accountPlace.publicId
-          const imageUri = this.accountPlace.storageUri
-          this.source.remove().then(function () {
-            if (publicId) {
-              return firebase.database().ref('places/' + publicId).remove()
-            }
-          }).then(function () {
-            if (imageUri && imageUri.startsWith('gs://')) {
-              return firebase.storage().refFromURL(imageUri)
-            }
-          }).then(function () {
-            this.$router.push('/account/places')
-          }.bind(this)).catch(log)
+        if (!this.accountId) {
+          return
         }
+        firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId).remove().then(function () {
+          this.$router.push('/account/places')
+        }.bind(this)).catch(log)
       }
     },
     watch: {

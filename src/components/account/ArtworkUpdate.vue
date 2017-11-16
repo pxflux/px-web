@@ -33,9 +33,13 @@
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
+  import ImageUpload from '../elements/ImageUpload'
 
   export default {
     props: ['isNew'],
+    components: {
+      ImageUpload
+    },
     created () {
       this.init()
     },
@@ -50,6 +54,9 @@
       },
       artworkId () {
         return this.$route.params.id
+      },
+      published () {
+        return this.accountArtwork && this.accountArtwork.published ? this.accountArtwork.published : false
       },
       image () {
         return this.accountArtwork && this.accountArtwork.image ? this.accountArtwork.image : {
@@ -93,6 +100,7 @@
           return
         }
         const artwork = {
+          published: this.published,
           title: this.title,
           artists: {},
           shows: {}
@@ -107,8 +115,7 @@
         this.shows.filter(show => this.selectedShowIds.includes(show['.key'])).forEach(show => {
           artwork.shows[show['.key']] = {title: show.title}
         })
-        const path = '/accounts/' + this.accountId + '/artworks'
-        store(this.artworkId, artwork, path, this.imageRemoved, this.imageFile).then(function (ref) {
+        store(this.accountId, this.artworkId, 'artworks', artwork, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/artwork/' + ref.key)
         }.bind(this)).catch(log())
       }
