@@ -60,17 +60,14 @@
         </div>
 
         <div :class="'editor-section'">
-          <div class="editor-section-header with-label" :data-label="labels.remoteControl"
-               @click="toggleRemoteControlEditor">
-            <button :class="'drop-down ' + remoteControlEditorState"></button>
-            <div class="title" v-text="remoteControlSummary">
-              {{remoteControlSummary}}
-            </div>
+          <div class="section-header with-label" :data-label="labels.remoteControl" @click="toggleRemoteControlEditor">
+            <button :class="'drop-down ' + rcEditorState"></button>
+            <div class="title" v-text="remoteControlSummary">{{remoteControlSummary}}</div>
           </div>
-          <div class="editor-section-content with-grid" v-if="remoteControlEditorState == 'open'">
+          <div :class="'section-body with-grid drop-down '+rcEditorState"
+               v-if="rcEditorState == 'open'">
             <remote-control-editor
-              v-on:updateRemoteControlData="updateRemoteControlData"
-              :controls="artworkData.controls">
+              :controls="artworkData.controls" v-on:updateRemoteControlData="updateRemoteControlData">
             </remote-control-editor>
             <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
           </div>
@@ -155,7 +152,7 @@
         },
         mediumMultiLineOptions: {},
         iterationTitle: '',
-        remoteControlEditorState: 'closed'
+        rcEditorState: 'closed'
       }
     },
     computed: {
@@ -178,7 +175,7 @@
       },
 
       remoteControlSummary () {
-        if (this.remoteControlEditorState === 'open') return ''
+        if (this.rcEditorState === 'open') return ''
         const numButt = this.artworkData.controls.length
         if (!numButt) return 'No controls'
         return numButt + ' button' + (numButt > 1 ? 's' : '')
@@ -230,7 +227,7 @@
         }
       },
       toggleRemoteControlEditor () {
-        this.remoteControlEditorState = this.remoteControlEditorState === 'closed' ? 'open' : 'closed'
+        this.rcEditorState = this.rcEditorState === 'closed' ? 'open' : 'closed'
       },
 
       updateRemoteControlData (data) {
