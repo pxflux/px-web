@@ -13,12 +13,19 @@
   import firebase from '../../firebase-app'
   import { mapState, mapActions } from 'vuex'
   import GridHelper from '../../helpers/grid'
-
+  import {IterationModel} from '../../models/iteration'
+  
   export default {
     mixins: [GridHelper],
 
     created () {
       this.init()
+      console.log(this.iterationTest)
+    },
+    data () {
+      return {
+        iterationTest: new IterationModel()
+      }
     },
     computed: {
       ...mapState(['artworks'])

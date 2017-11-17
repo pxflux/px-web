@@ -103,6 +103,7 @@
   import firebaseApp, { store } from '../../firebase-app'
   import RemoteControlEditor from './RemoteControlEditor'
   import vueMediumEditor from 'vue2-medium-editor'
+  import {IterationModel} from '../../models/iteration'
 
   export default {
     created () {
@@ -114,6 +115,7 @@
     },
     data () {
       return {
+        iterationTest: new IterationModel(),
         defaultTitle: 'Untitled',
         labels: {
           title: 'Title',
