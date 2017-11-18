@@ -29,12 +29,17 @@ import {
   DisplayEquipment,
   PlaybackEquipment
 } from './iteration-data-types'
+import {getValueFromObj} from '../helper'
 
-export function IterationModel () {
+/**
+ * @param {object=} data
+ * @constructor
+ */
+export function IterationModel (data) {
   this.data = {
-    id: field('string'),
-    name: field('string'),
-    thumbUrl: field('url'),
+    id: getValueFromObj(data, 'id', ''),
+    name: getValueFromObj(data, 'name', ''),
+    thumbUrl: getValueFromObj(data, 'thumbUrl', ''),
     date: field('date'),
     exhibitions: field('Show[]'),
     /** @type Contributor[] */
@@ -46,23 +51,23 @@ export function IterationModel () {
       withArtist: field('boolean'),
       artistInfluence: field('Note')
     }),
-    documentation: fieldsGroup({
-      images: field('url[]', []),
-      video: field('url[]'),
+    documentation: {
+      images: getValueFromObj(data, 'documentation/images', []),
+      video: getValueFromObj(data, 'documentation/video', []),
       technicalDrawings: field('url[]'),
       notes: field('Note[]'),
       artistInterview: field('Note'),
       assistantInterview: field('Note'),
       other: field('url[]')
-    }),
+    },
     evaluation: fieldsGroup({
       notes: field('Note[]'),
-      approvedByArtist: field('boolean'),
+      approvedByArtist: false,
       warnings: field('Note[]')
     }),
     comments: field('Comment[]'),
     publications: field('Publication[]'),
-    space: fieldsGroup({
+    space: {
       context: new IterationComponent(),
       floorPlan: new IterationComponent(),
       dimensions: new IterationComponent(),
@@ -82,7 +87,7 @@ export function IterationModel () {
       imageSize: new IterationComponent(),
       imagePlacement: new IterationComponent(),
       projectionSurface: new IterationComponent()
-    }),
+    },
     exhibitionCopies: fieldsGroup({ /* we probably don't need this */ }),
     equipment: {
       visual: [new DisplayEquipment()],
