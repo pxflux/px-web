@@ -23,16 +23,16 @@ import AccountInvitationList from '@/components/account/InvitationList'
 import AccountArtworkList from '@/components/account/ArtworkList'
 import AccountArtworkDetail from '@/components/account/ArtworkDetail'
 import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
-import AccountArtworkUpdate from '@/components/account/ArtworkUpdate'
+import AccountArtworkEditor from '@/components/account/ArtworkEditor'
 import AccountArtistList from '@/components/account/ArtistList'
 import AccountArtistDetail from '@/components/account/ArtistDetail'
-import AccountArtistUpdate from '@/components/account/ArtistUpdate'
+import AccountArtistEditor from '@/components/account/ArtistEditor'
 import AccountShowList from '@/components/account/ShowList'
 import AccountShowDetail from '@/components/account/ShowDetail'
-import AccountShowUpdate from '@/components/account/ShowUpdate'
+import AccountShowEditor from '@/components/account/ShowEditor'
 import AccountPlaceList from '@/components/account/PlaceList'
 import AccountPlaceDetail from '@/components/account/PlaceDetail'
-import AccountPlaceUpdate from '@/components/account/PlaceUpdate'
+import AccountPlaceEditor from '@/components/account/PlaceEditor'
 
 Vue.use(Router)
 
@@ -60,23 +60,23 @@ export function createRouter () {
 
       {path: '/account/artworks', component: AccountArtworkList},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail},
-      {path: '/account/artwork/new', component: AccountArtworkUpdate, props: {isNew: true}},
-      {path: '/account/artwork/:id/update', component: AccountArtworkUpdate, props: {isNew: false}},
+      {path: '/account/artwork/new', component: AccountArtworkEditor, props: {isNew: true}},
+      {path: '/account/artwork/:id/edit', component: AccountArtworkEditor, props: {isNew: false}},
       {path: '/account/artwork/:id', component: AccountArtworkDetail},
 
       {path: '/account/artists', component: AccountArtistList},
-      {path: '/account/artist/new', component: AccountArtistUpdate, props: {isNew: true}},
-      {path: '/account/artist/:id/update', component: AccountArtistUpdate, props: {isNew: false}},
+      {path: '/account/artist/new', component: AccountArtistEditor, props: {isNew: true}},
+      {path: '/account/artist/:id/edit', component: AccountArtistEditor, props: {isNew: false}},
       {path: '/account/artist/:id', component: AccountArtistDetail},
 
       {path: '/account/shows', component: AccountShowList},
-      {path: '/account/show/new', component: AccountShowUpdate, props: {isNew: true}},
-      {path: '/account/show/:id/update', component: AccountShowUpdate, props: {isNew: false}},
+      {path: '/account/show/new', component: AccountShowEditor, props: {isNew: true}},
+      {path: '/account/show/:id/edit', component: AccountShowEditor, props: {isNew: false}},
       {path: '/account/show/:id', component: AccountShowDetail},
 
       {path: '/account/places', component: AccountPlaceList},
-      {path: '/account/place/new', component: AccountPlaceUpdate, props: {isNew: true}},
-      {path: '/account/place/:id/update', component: AccountPlaceUpdate, props: {isNew: false}},
+      {path: '/account/place/new', component: AccountPlaceEditor, props: {isNew: true}},
+      {path: '/account/place/:id/edit', component: AccountPlaceEditor, props: {isNew: false}},
       {path: '/account/place/:id', component: AccountPlaceDetail}
     ]
   })

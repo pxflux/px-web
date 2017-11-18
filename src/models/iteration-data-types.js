@@ -7,7 +7,13 @@ import { getValueFromObj } from '../helper'
  * @constructor
  */
 export class User {
+  constructor (data) {
+    /** @type  string */
+    this.id = getValueFromObj(data, 'id', '')
 
+    /** @type  string */
+    this.fullName = getValueFromObj(data, 'fullName', '')
+  }
 }
 
 /**
@@ -17,12 +23,6 @@ export class User {
 export class Contributor extends User {
   constructor (data) {
     super(data)
-
-    /** @type  string */
-    this.userId = getValueFromObj(data, 'userId', '')
-
-    /** @type  string */
-    this.fullName = getValueFromObj(data, 'fullName', '')
 
     /** @type  string */
     this.role = getValueFromObj(data, 'role', '')
