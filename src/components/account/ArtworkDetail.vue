@@ -96,13 +96,12 @@
 
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import { cloneArtwork, artworkDefaultFields } from '../../models/artwork'
+  import { cloneArtwork } from '../../models/artwork'
   import { log } from '../../helper'
   import Firebase from 'firebase'
   import firebaseApp, { store } from '../../firebase-app'
   import RemoteControlEditor from './RemoteControlEditor'
   import vueMediumEditor from 'vue2-medium-editor'
-  import {IterationModel} from '../../models/iteration'
 
   export default {
     created () {
@@ -114,7 +113,6 @@
     },
     data () {
       return {
-        iterationTest: new IterationModel(),
         defaultTitle: 'Untitled',
         labels: {
           title: 'Title',
@@ -139,7 +137,6 @@
           unpublish: 'Unpublish',
           remove: 'Delete the artwork'
         },
-        artworkData: { ...artworkDefaultFields },
         namesString: '',
         availableNames: [],
         artistId: '',
@@ -403,13 +400,6 @@
         this.$nextTick(this.clickEditorsToRemovePlaceholders)
       },
       'accountArtwork' () {
-        this.artworkData = { ...artworkDefaultFields } //, ...this.accountArtwork}
-        for (let prop in this.artworkData) {
-          if (!this.artworkData.hasOwnProperty(prop)) continue
-          if (this.accountArtwork.hasOwnProperty(prop)) {
-            this.artworkData[prop] = this.accountArtwork[prop]
-          }
-        }
         this.$nextTick(this.clickEditorsToRemovePlaceholders)
       }
     }

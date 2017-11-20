@@ -17,6 +17,7 @@
   export default {
     props: ['artwork', 'uri'],
     computed: {
+      authorsNames () {},
       image () {
         return this.artwork && this.artwork.image ? this.artwork.image : {
           displayUrl: null,

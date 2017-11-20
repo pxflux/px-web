@@ -12,7 +12,6 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import firebase from '../../firebase-app'
-  import { cloneIteration } from '../../models/iteration'
   import { log } from '../../helper'
 
   export default {
@@ -60,18 +59,6 @@
       },
 
       publishIteration () {
-        if (this.source && this.accountIteration['.key'] === 'draft') {
-          const path = 'users/' + this.user.uid + '/artworks/' + this.$route.params.artworkId + '/iterations'
-          firebase.database().ref(path).push(cloneIteration(this.accountIteration), function (error) {
-            if (!error) {
-              this.source.remove(function (error) {
-                this.$router.push('/account/artwork/' + this.$route.params.artworkId)
-                log(error)
-              }.bind(this))
-            }
-            log(error)
-          }.bind(this))
-        }
       }
     },
     watch: {
