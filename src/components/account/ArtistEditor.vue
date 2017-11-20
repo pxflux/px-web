@@ -6,14 +6,20 @@
         &gt;
         <router-link :to="'/account/artist/' + artistId">{{ accountArtist.fullName }}</router-link>
       </template>
-      <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile"
-                    @remove-image="setImageRemoved"></image-upload>
-      <form id="form-artist" @submit.prevent="submitArtist">
-        <input type="text" v-model.trim="fullName" title="Artist name" required="required">
+      <form id="form-artist">
+        <fieldset>
+          <label>Image</label>
+          <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+        </fieldset>
+        <fieldset>
+          <label>Full name</label>
+          <input type="text" v-model.trim="fullName" title="Artist name" required="required">
+        </fieldset>
+
         <router-link v-if="isNew" to="/account/artists">Cancel</router-link>
         <router-link v-if="! isNew" :to="'/account/artist/' + artistId">Cancel</router-link>
-        <input v-if="isNew" type="submit" value="Create"/>
-        <input v-if="! isNew" type="submit" value="Update"/>
+        <button v-if="isNew" @click.prevent="submitArtist">Create</button>
+        <button v-if="! isNew" @click.prevent="submitArtist">Save</button>
       </form>
     </div>
   </main>

@@ -6,14 +6,20 @@
         &gt;
         <router-link :to="'/account/place/' + placeId">{{ accountPlace.title }}</router-link>
       </template>
-      <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile"
-                    @remove-image="setImageRemoved"></image-upload>
-      <form id="form-place" @submit.prevent="submitPlace">
-        <input type="text" v-model.trim="title" title="Place title" required="required">
+      <form id="form-place">
+        <fieldset>
+          <label>Image</label>
+          <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+        </fieldset>
+        <fieldset>
+          <label>Title</label>
+          <input type="text" v-model.trim="title" title="Place title" required="required">
+        </fieldset>
+
         <router-link v-if="isNew" to="/account/places">Cancel</router-link>
         <router-link v-if="! isNew" :to="'/account/place/' + placeId">Cancel</router-link>
-        <input v-if="isNew" type="submit" value="Create"/>
-        <input v-if="! isNew" type="submit" value="Update"/>
+        <button v-if="isNew" @click.prevent="submitPlace">Create</button>
+        <button v-if="! isNew" @click.prevent="submitPlace">Save</button>
       </form>
     </div>
   </main>

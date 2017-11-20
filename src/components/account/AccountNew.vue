@@ -2,7 +2,10 @@
   <main>
     <div v-if="user && userAccount" class="wrap-content grid">
       <form id="form-account" @submit.prevent="createAccount">
-        <input id="title" type="text" v-model.trim="title" title="Title" required="required">
+        <fieldset>
+          <label>Title</label>
+          <input id="title" type="text" v-model.trim="title" title="Title" required="required">
+        </fieldset>
         <button>Create</button>
       </form>
     </div>

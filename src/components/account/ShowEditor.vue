@@ -6,17 +6,26 @@
         &gt;
         <router-link :to="'/account/show/' + showId">{{ accountShow.title }}</router-link>
       </template>
-      <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile"
-                    @remove-image="setImageRemoved"></image-upload>
-      <form id="form-show" @submit.prevent="submitShow">
-        <input type="text" v-model.trim="title" title="Show title" required="required">
-        <select v-model="selectedPlaceIds" multiple required>
-          <option v-for="place in places" v-bind:value="place['.key']">{{ place.title }}</option>
-        </select>
+      <form id="form-show">
+        <fieldset>
+          <label>Image</label>
+          <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+        </fieldset>
+        <fieldset>
+          <label>Title</label>
+          <input type="text" v-model.trim="title" title="Show title" required="required">
+        </fieldset>
+        <fieldset>
+          <label>Places</label>
+          <select v-model="selectedPlaceIds" multiple required>
+            <option v-for="place in places" v-bind:value="place['.key']">{{ place.title }}</option>
+          </select>
+        </fieldset>
+
         <router-link v-if="isNew" to="/account/shows">Cancel</router-link>
         <router-link v-if="! isNew" :to="'/account/show/' + showId">Cancel</router-link>
-        <input v-if="isNew" type="submit" value="Create"/>
-        <input v-if="! isNew" type="submit" value="Update"/>
+        <button v-if="isNew" @click.prevent="submitShow">Create</button>
+        <button v-if="! isNew" @click.prevent="submitShow">Save</button>
       </form>
     </div>
   </main>
