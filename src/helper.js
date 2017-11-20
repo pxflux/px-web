@@ -4,6 +4,10 @@ export function log (error) {
   }
 }
 
+export function isNumeric (n) {
+  return !isNaN(parseFloat(n)) && isFinite(n)
+}
+
 /**
  * @param {object} parentObj
  * @param {string} propPath - Could be like: 'parentPropName/propName' or 'propName'

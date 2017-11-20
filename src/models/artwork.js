@@ -1,19 +1,67 @@
-export const artworkDefaultFields = {
-  ownerId: '',
-  sourceId: '',
-  publicId: '',
-  title: 'Untitled',
-  url: '',
-  thumbUrl: '',
-  artists: [],
-  year: '',
-  description: '',
-  controls: [],
-  iterations: []
+import { ArrayOfType, ArtworkContributorsList, BasicData } from './data-types'
+
+export class ArtworkData extends BasicData {
+  constructor (data) {
+    super()
+
+    /** @type string */
+    this.ownerId = this.getValueFrom(data, 'ownerId', '')
+
+    /** @type string */
+    this.sourceId = this.getValueFrom(data, 'sourceId', '')
+
+    /** @type string */
+    this.published = this.getValueFrom(data, 'published', '')
+
+    /** @type string */
+    this.title = this.getValueFrom(data, 'title', 'Untitled')
+
+    /** @type string */
+    this.url = this.getValueFrom(data, 'url', '')
+
+    /** @type UrlSet */
+    this.thumbnail = this.getValueFrom(data, 'thumbnail', '')
+
+    /** @type UrlSet */
+    this.preview = this.getValueFrom(data, 'preview', '')
+
+    /** @type ArtworkContributorsList */
+    this.artists = new ArtworkContributorsList(this.getValueFrom(data, 'artists'))
+
+    /** @type string */
+    this.year = this.getValueFrom(data, 'year', '')
+
+    /** @type string */
+    this.description = this.getValueFrom(data, 'description', '')
+
+    /** @type ControlsList */
+    this.controls = []
+
+    /** @type IterationsList */
+    this.iterations = []
+  }
+
+  get artistNames () {
+    let names = []
+    for (let id in this.artists) {
+      if (!this.artists.hasOwnProperty(id)) continue
+      const name = this.artists[id].hasOwnProperty('fullName') ? this.artists[id].fullName : id
+      names.push(name)
+    }
+    return names.join(', ')
+  }
+
+  castFrom (data) {
+    for (let prop in data) {
+      if (data.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
+        this[prop] = data[prop]
+      }
+    }
+  }
 }
 
 export function cloneArtwork (uid, artworkId, artwork) {
-  const newArtwork = { ...artworkDefaultFields, ...artwork }
+  const newArtwork = { ...ArtworkData, ...artwork }
   newArtwork.ownerId = uid
   newArtwork.sourceId = artworkId
 
@@ -55,4 +103,12 @@ export function cloneArtwork (uid, artworkId, artwork) {
     })
   }
   return newArtwork
+}
+
+export class ArtworksList extends ArrayOfType {
+  constructor () {
+    super()
+    this.DataType = ArtworkData
+    if (arguments.length) super.setup(arguments)
+  }
 }

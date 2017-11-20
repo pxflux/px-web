@@ -18,12 +18,12 @@ $button-icon-color: rgb(131, 131, 131);
     height: $plus-size;
     position: absolute;
   }
-  &:before{
+  &:before {
     border-top: $plus-line-w solid $button-icon-color;
     transform: translate($plus-shift-x, $plus-shift-y) rotate($rotate);
     transform-origin: top;
   }
-  &:after{
+  &:after {
     border-left: $plus-line-w solid $button-icon-color;
     transform: translate($plus-shift-y, $plus-shift-x) rotate($rotate);
     transform-origin: left;
@@ -45,7 +45,7 @@ $button-icon-color: rgb(131, 131, 131);
   position: relative;
   padding: 0;
 
-  &:before{
+  &:before {
     content: '';
     display: block;
     width: $arr-size;
@@ -60,7 +60,7 @@ $button-icon-color: rgb(131, 131, 131);
   }
 }
 
-.button, button{
+.button, button {
   display: block;
   min-width: $header-height;
   min-height: $header-height;
@@ -72,79 +72,116 @@ $button-icon-color: rgb(131, 131, 131);
   background: #f9f9f9;
   cursor: pointer;
 
-
-  &.plus{ @include button-plus() }
-  &.plus.medium{ @include button-plus(2rem, 0.1rem) }
-  &.cancel{ @include button-plus(2rem, 0.1rem, 45deg) }
-  &.drop-down{
+  &.plus {
+    @include button-plus()
+  }
+  &.plus.medium {
+    @include button-plus(2rem, 0.1rem)
+  }
+  &.cancel {
+    @include button-plus(2rem, 0.1rem, 45deg)
+  }
+  &.drop-down {
     @include button-drop-down();
   }
-  &.drop-down.open{ @include button-drop-down(90deg) }
+  &.drop-down.open {
+    @include button-drop-down(90deg)
+  }
 }
 
-.dialog{
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: transparent;
-  top: 0;
-  left: 0;
-  z-index: 10;
+.badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
 
-  &>*{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-  .bg{
-    top: 0;
-    left: 0;
-    background: transparent;//transparentize($bg-color, 0.99);
-  }
-  .dialog-box{
-    background: $bg-color;
-    max-width: 30rem;
-    max-height: 30rem;
-    @include centered();
-    @include grey-outline();
-  }
+  &.published {
+    background: #42ff00;
 
-  .dialog-header{
-    display: flex;
-    justify-content: space-between;
-    height: $header-height;
-    width: 100%;
-
-    .button{
-      background: $bg-color;
+    &:before {
+      content: "";
+      color: #fff;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+      text-align: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    &.my {
+      background: #c6ff00;
     }
   }
 
-  .dialog-body{
-    width: 100%;
-    @include centered(0, -3%);
+  .dialog {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    top: 0;
+    left: 0;
+    z-index: 10;
 
-    &.button-editor{
-      .medium-editor-element{
-        margin-left: $form-label-width;
+    & > * {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .bg {
+      top: 0;
+      left: 0;
+      background: transparent; //transparentize($bg-color, 0.99);
+    }
+    .dialog-box {
+      background: $bg-color;
+      max-width: 30rem;
+      max-height: 30rem;
+      @include centered();
+      @include grey-outline();
+    }
+
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      height: $header-height;
+      width: 100%;
+
+      .button {
+        background: $bg-color;
+      }
+    }
+
+    .dialog-body {
+      width: 100%;
+      @include centered(0, -3%);
+
+      &.button-editor {
+        .medium-editor-element {
+          margin-left: $form-label-width;
+        }
+      }
+    }
+
+    .dialog-buttons {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      width: 100%;
+      height: $header-height;
+      bottom: 0;
+
+      //button{  }
+      /* one item */
+      button:first-child:nth-last-child(1) {
+        position: absolute;
+        right: 0;
+        top: 0;
       }
     }
   }
 
-  .dialog-buttons{
-    display: flex;
-    justify-content: space-between;
-    position: absolute;
-    width: 100%;
-    height: $header-height;
-    bottom: 0;
-
-    //button{  }
-    /* one item */
-    button:first-child:nth-last-child(1) {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-  }
 }

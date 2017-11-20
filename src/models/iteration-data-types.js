@@ -1,52 +1,6 @@
 import { getValueFromObj } from '../helper'
 
 /**
- * @typedef {string} Url
- */
-/**
- * @constructor
- */
-export class User {
-  constructor (data) {
-    /** @type  string */
-    this.id = getValueFromObj(data, 'id', '')
-
-    /** @type  string */
-    this.fullName = getValueFromObj(data, 'fullName', '')
-  }
-}
-
-/**
- * @param {object=} data
- * @constructor
- */
-export class Contributor extends User {
-  constructor (data) {
-    super(data)
-
-    /** @type  string */
-    this.role = getValueFromObj(data, 'role', '')
-  }
-
-  get roles () {
-    return [
-      'Artist',
-      'Artist Assistant',
-      'Interpreter',
-      'Curator',
-      'Exhibition Designer',
-      'Media Technician',
-      'Conservator',
-      'Registrar',
-      'Fabricator',
-      'Art Handler',
-      'External Company',
-      'Other'
-    ]
-  }
-}
-
-/**
  * @param {object=} data
  * @constructor
  */
