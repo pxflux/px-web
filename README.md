@@ -21,15 +21,15 @@ npm run build --report
 
 #### ArtworkBasic:
 ```javascript
-accountId: string
+accountId: String
 published: boolean
-title: string - *required, default: 'Untitled'
+title: String - *required, default: 'Untitled'
 thumbnail: Attachment
 preview:{
     type: 'video'|'gif'|'slideshow'
-    url: string
+    url: String
 }
-year: string
+year: String
 credits: Contributor[]
 ```
 #### Artwork:
@@ -37,21 +37,21 @@ credits: Contributor[]
 /**
  * inherited from ArtworkBasic
  * 
- accountId: string
+ accountId: String
  published: boolean
- title: string - *required, default: 'Untitled'
+ title: String - *required, default: 'Untitled'
  thumbnail: Attachment
  preview:{
      type: 'video'|'gif'|'slideshow'
-     url: string
+     url: String
  }
- year: string
+ year: String
  credits: Contributor[]
 */
-description: string - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
+description: String - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
 source: {
     type: 'video'|'html'
-    url: string
+    url: String
 }
 controls: Control[]
 iterations: Iteration[]
@@ -65,8 +65,8 @@ Based on Iteration Report by Guggenheim Conservation Department
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
  
 ```javascript
-id: string
-name: string
+id: String
+name: String
 thumbnail: Attachment
 date: Date,
 exhibitions: ShowBasic[]
@@ -117,7 +117,7 @@ space: {
 exhibitionCopies: { 
   /* we probably don't need this.. 
   Or maybe this is the place to store alterations to the Artwork.source. 
-  Like other url, number of screens etc. */ 
+  Like other url, Number of screens etc. */ 
 }
 equipment: {
   visual: DisplayEquipment
@@ -140,14 +140,14 @@ technicalSetup: {
 ```
 #### ShowBase:
 ```javascript
-id: string
-title: string
+id: String
+title: String
 date: {
     start: Date
     end: Date
 }
 thumbnail: Attachment
-url: string
+url: String
 place: Place
 ```
 #### Show:
@@ -155,21 +155,21 @@ place: Place
 /**
  * inherited from ShowBase
  *
- id: string
- title: string
+ id: String
+ title: String
  date: {
      start: Date
      end: Date
  }
  thumbnail: Attachment
- url: string
+ url: String
  place: Place
 */
 artists: ArtistBase[]
 curators: Contributor[]
 artworks: ArtworkBase[]
-synopsis: string
-description: string - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
+synopsis: String
+description: String - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
 publications: Publication[]
 attachments: Attachment[]
 ```
@@ -180,8 +180,8 @@ attachments: Attachment[]
 
 #### User:
 ```javascript
-userId: string
-fullName: string
+userId: String
+fullName: String
 image: Attachment
 ```
 #### ArtistBase:
@@ -189,8 +189,8 @@ image: Attachment
 /**
  * inherited from User
  * 
- userId: string
- fullName: string
+ userId: String
+ fullName: String
  image: Attachment 
  */
 artworks: ArtworkBase[]
@@ -201,15 +201,15 @@ shows: ShowBase[]
 /**
  * inherited from ArtistBase
  * 
- userId: string
- fullName: string
+ userId: String
+ fullName: String
  image: Attachment 
  artworks: ArtworkBase[]
  shows: ShowBase[]
  */
 publications: PublicationBase[]
 inCollections: CollectionBase[]
-cv: string - formated text
+cv: String - formated text
 ```
 
 #### Contributor:
@@ -217,31 +217,31 @@ cv: string - formated text
 /**
  * inherited from User
  * 
- userId: string
- fullName: string
+ userId: String
+ fullName: String
  image: Attachment 
  */
-role: string - One of the predifined options.
+role: String - One of the predifined options.
 ```
 _The role options depend on the context where Contributor type is used (inside Artwork, Iteration, Account etc.)_
 
 #### Attachment:
 ```javascript
-displayUrl: string
-storageUri: string
-mimeType: string
+displayUrl: String
+storageUri: String
+mimeType: String
 ```
 
 #### Control:
 ```javascript
-order: number
-icon: string|Attachment
-label: string
-type: string - 'keyboard'|'mouse'|'function'|'custom'
+order: Number
+icon: String|Attachment
+label: String
+type: String - 'keyboard'|'mouse'|'function'|'custom'
 value: {
-  keyCode: string 
-  modifier: string - 'shiftKey'|'ctrlKey'|'altKey'|'metaKey'
-  type: string - 'keydown'|'keyup'|'keypress'
+  keyCode: String 
+  modifier: String - 'shiftKey'|'ctrlKey'|'altKey'|'metaKey'
+  type: String - 'keydown'|'keyup'|'keypress'
 }
 ```
 _It's a draft yet_
@@ -251,10 +251,10 @@ _It's a draft yet_
 created: Date
 modified: Date
 author: Contributor
-text : string
+text : String
 attachments : {
-  displayUrl: string
-  storageUri: string
+  displayUrl: String
+  storageUri: String
 }[]
 ```
 #### Note:
@@ -265,10 +265,10 @@ attachments : {
   created: Date
   modified: Date
   author: Contributor
-  text : string
+  text : String
   attachments : {
-    displayUrl: string
-    storageUri: string
+    displayUrl: String
+    storageUri: String
   }[]
 */
 onBehalfOf: Contributor
@@ -282,16 +282,16 @@ onBehalfOf: Contributor
   created: Date
   modified: Date
   author: Contributor
-  text : string
+  text : String
   attachments : {
-    displayUrl: string
-    storageUri: string
+    displayUrl: String
+    storageUri: String
   }[]
 */
-type: string - one of predifined options
-reason: string
+type: String - one of predifined options
+reason: String
 decidedBy: Contributor
-necessity: string - One of 'possible'|'recommended'|'important'|'critical'
+necessity: String - One of 'possible'|'recommended'|'important'|'critical'
 ```
 #### Equipment:
 ```javascript
@@ -301,19 +301,19 @@ necessity: string - One of 'possible'|'recommended'|'important'|'critical'
   created: Date
   modified: Date
   author: Contributor
-  text : string
+  text : String
   attachments : {
-    displayUrl: string
-    storageUri: string
+    displayUrl: String
+    storageUri: String
   }[]
-  type: string - one of predifined options
-  reason: string
+  type: String - one of predifined options
+  reason: String
   decidedBy: Contributor
-  necessity: string - One of 'possible'|'recommended'|'important'|'critical'
+  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
 */
-dimensions: [number, number, number]
-appearance: string - text
-weight: number
+dimensions: [Number, Number, Number]
+appearance: String - text
+weight: Number
 ```
 #### DisplayEquipment
 
@@ -325,38 +325,38 @@ _Taken partly from http://www.projectorcentral.com_
   created: Date
   modified: Date
   author: Contributor
-  text : string
+  text : String
   attachments : {
-    displayUrl: string
-    storageUri: string
+    displayUrl: String
+    storageUri: String
   }[]
-  type: string - one of predifined options
-  reason: string
+  type: String - one of predifined options
+  reason: String
   decidedBy: Contributor
-  necessity: string - One of 'possible'|'recommended'|'important'|'critical'
-  dimensions: [number, number, number]
-  appearance: string - text
-  weight: number
+  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  dimensions: [Number, Number, Number]
+  appearance: String - text
+  weight: Number
 */
-resolution: [number, number]
-pixelDensity: number
-brightness: number
-contrastRatio: number
-colorDepth: number
-colorProfile: string
-modes3D: string
-displayType: string
-screenDimensions: [number, number]
-screenDiagonal: number
-aspectRatio: string
-responseTime: number
+resolution: [Number, Number]
+pixelDensity: Number
+brightness: Number
+contrastRatio: Number
+colorDepth: Number
+colorProfile: String
+modes3D: String
+displayType: String
+screenDimensions: [Number, Number]
+screenDiagonal: Number
+aspectRatio: String
+responseTime: Number
 lens: {
-  focalLength: number
+  focalLength: Number
   shift: boolean
-  throwRatio: number
+  throwRatio: Number
 }
-speakers: string
-audibleNoise: number
+speakers: String
+audibleNoise: Number
 ```
 #### AudioEquipment
 ```javascript
@@ -366,22 +366,22 @@ audibleNoise: number
   created: Date
   modified: Date
   author: Contributor
-  text : string
+  text : String
   attachments : {
-    displayUrl: string
-    storageUri: string
+    displayUrl: String
+    storageUri: String
   }[]
-  type: string - one of predifined options
-  reason: string
+  type: String - one of predifined options
+  reason: String
   decidedBy: Contributor
-  necessity: string - One of 'possible'|'recommended'|'important'|'critical'
-  dimensions: [number, number, number]
-  appearance: string - text
-  weight: number
+  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  dimensions: [Number, Number, Number]
+  appearance: String - text
+  weight: Number
 */
-sensitivity: string
-frequencyResponse: string
-impedance: number
+sensitivity: String
+frequencyResponse: String
+impedance: Number
 ```
 #### PlaybackEquipment
 ```javascript
@@ -391,30 +391,30 @@ impedance: number
   created: Date
   modified: Date
   author: Contributor
-  text : string
+  text : String
   attachments : {
-    displayUrl: string
-    storageUri: string
+    displayUrl: String
+    storageUri: String
   }[]
-  type: string - one of predifined options
-  reason: string
+  type: String - one of predifined options
+  reason: String
   decidedBy: Contributor
-  necessity: string - One of 'possible'|'recommended'|'important'|'critical'
-  dimensions: [number, number, number]
-  appearance: string - text
-  weight: number
+  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  dimensions: [Number, Number, Number]
+  appearance: String - text
+  weight: Number
 */
-processorCores: number
-processorSpeed: number
-processorArchitecture: string
-memoryAmount: number
-memoryType: string
-graphicsMemoryAmount: number
-graphicsMemoryType: string
-storageAmount: string
-storageType: string
-os: string
-osVersion: number
+processorCores: Number
+processorSpeed: Number
+processorArchitecture: String
+memoryAmount: Number
+memoryType: String
+graphicsMemoryAmount: Number
+graphicsMemoryType: String
+storageAmount: String
+storageType: String
+os: String
+osVersion: Number
 ```
 
 ______
