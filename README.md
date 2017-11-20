@@ -17,9 +17,35 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-## Data Types:
+# Data Types:
+[**Artwork**](#artwork)
+>[_ArtworkBase_](#artworkBase)  
+>[_Artwork_](#artworkMain)  
+>[_**Iteration**_](#iteration)  
 
-#### ArtworkBasic:
+[**Show**](#show)
+>[_ShowBase_](#showBase)  
+>[_Show_](#showMain)  
+
+[**Show**](#show)
+>[_ShowBase_](#showBase)  
+>[_Show_](#showMain)  
+
+[**Show**](#show)
+>[_ShowBase_](#showBase)  
+>[_Show_](#showMain)  
+
+[**Show**](#show)
+>[_ShowBase_](#showBase)  
+>[_Show_](#showMain)  
+
+<a name="artworkBase"/>
+<a name="artworkMain"/>
+<a name="iteration"/>
+
+## Artwork
+
+#### ArtworkBase:
 ```javascript
 accountId: String
 published: boolean
@@ -35,7 +61,7 @@ credits: Contributor[]
 #### Artwork:
 ```javascript
 /**
- * inherited from ArtworkBasic
+ * inherited from ArtworkBase
  * 
  accountId: String
  published: boolean
@@ -48,19 +74,19 @@ credits: Contributor[]
  year: String
  credits: Contributor[]
 */
-description: String /* allowed html tags: <a><p><b><i><h1><h2><h3> */
+description: String /* Multi-line, allowed html tags: <a> <p> <b> <i> <h> */
 source: {
     type: 'video'|'html'
     url: String
 }
 controls: Control[]
 iterations: Iteration[]
-shows: ShowBasic[]
+shows: ShowBase[]
 ```
-          
-#### Iteration:
-
-Based on Iteration Report by Guggenheim Conservation Department...
+       
+## Iteration:
+**It's a property of an Artwork**  
+Based on Iteration Report by Guggenheim Conservation Department  
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
  
 ```javascript
@@ -68,7 +94,7 @@ id: String
 name: String
 thumbnail: Attachment
 date: Date,
-exhibitions: ShowBasic[]
+exhibitions: ShowBase[]
 contributors: Contributor[]
 supervisedBy: Contributor
 installation: {
@@ -137,6 +163,7 @@ technicalSetup: {
   other: IterationComponent
 }
 ```
+## Show
 #### ShowBase:
 ```javascript
 id: String
@@ -169,8 +196,13 @@ curators: Contributor[]
 artworks: ArtworkBase[]
 synopsis: String
 description: String - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
-publications: Publication[]
+publications: PublicationBase[]
 attachments: Attachment[]
+```
+## Publication
+#### PublicationBase:
+```javascript
+
 ```
 #### Publication:
 ```javascript
