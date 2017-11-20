@@ -6,14 +6,23 @@
         &gt;
         <router-link :to="'/account/artwork/' + artworkId">{{ accountArtwork.title }}</router-link>
       </template>
+
       <form id="form-artwork">
         <fieldset>
           <label>Image</label>
           <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
         </fieldset>
         <fieldset>
+          <label>Work URL</label>
+          <input type="text" v-model.trim="url" title="Work URL" required="required">
+        </fieldset>
+        <fieldset>
           <label>Title</label>
           <input type="text" v-model.trim="title" title="Artwork title" required="required">
+        </fieldset>
+        <fieldset>
+          <label>Year</label>
+          <input type="text" v-model.trim="year" title="year" required="required">
         </fieldset>
         <fieldset>
           <label>Artists</label>
@@ -78,7 +87,9 @@
       return {
         imageFile: null,
         imageRemoved: false,
+        url: '',
         title: '',
+        year: '',
         selectedArtistIds: [],
         selectedShowIds: []
       }
@@ -110,7 +121,9 @@
         }
         const artwork = {
           published: this.published,
+          url: this.url,
           title: this.title,
+          year: this.year,
           artists: {},
           shows: {}
         }
@@ -137,7 +150,9 @@
         this.init()
       },
       'accountArtwork' () {
+        this.url = this.accountArtwork.url
         this.title = this.accountArtwork.title
+        this.year = this.accountArtwork.year
         this.selectedArtistIds = Object.keys(this.accountArtwork.artists || {})
         this.selectedShowIds = Object.keys(this.accountArtwork.shows || {})
       }

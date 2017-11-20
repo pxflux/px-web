@@ -2,8 +2,7 @@
   <transition mode="out-in" name="fade">
     <router-link :to="uri" class="item-wrap grid-cell">
       <div class="item-image-wrap">
-        <img v-if="artwork.thumbUrl" :src="artwork.thumbUrl" class="item-image">
-        <!--<iframe v-else-if="artwork.url" :src="artwork.url" class="work-preview"></iframe>-->
+        <img v-if="image.displayUrl" :src="image.displayUrl" class="item-image">
         <img v-else src="/static/img/no-preview.png" class="item-image">
       </div>
       <div class="item-description">
@@ -16,9 +15,12 @@
 <script>
   export default {
     props: ['artwork', 'uri'],
-    watch: {
-      'artwork' () {
-        console.log(this.artwork)
+    computed: {
+      image () {
+        return this.artwork && this.artwork.image ? this.artwork.image : {
+          displayUrl: null,
+          storageUri: null
+        }
       }
     }
   }

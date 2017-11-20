@@ -8,10 +8,6 @@
         </div>
       </router-link>
       <template v-if="$route.name != 'auth'">
-        <router-link to="/artists" class="button flick">Artists</router-link>
-        <router-link to="/artworks" class="button flick">Artworks</router-link>
-        <router-link to="/shows" class="button flick">Shows</router-link>
-        <!-- -->
         <div class="right">
           <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
           <!-- -->
