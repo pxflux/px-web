@@ -7,6 +7,7 @@
       </div>
       <div class="item-description">
         <span :title="artwork.title" class="item-title">{{ artwork.title }}</span>
+        <span v-if="artists" class="item-genre">{{ artists }}</span>
       </div>
     </router-link>
   </transition>
@@ -21,6 +22,9 @@
           displayUrl: null,
           storageUri: null
         }
+      },
+      artists () {
+        return Object.keys(this.artwork.artists || {}).map(id => this.artwork.artists[id].fullName).join(', ')
       }
     }
   }
