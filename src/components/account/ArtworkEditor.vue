@@ -6,24 +6,42 @@
         &gt;
         <router-link :to="'/account/artwork/' + artworkId">{{ accountArtwork.title }}</router-link>
       </template>
-      <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile"
-                    @remove-image="setImageRemoved"></image-upload>
+
       <form id="form-artwork">
-        <input type="text" v-model.trim="title" title="Artwork title" required="required">
-
-        <select v-model="selectedArtistIds" multiple required>
-          <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
-        </select>
-
-        <select v-model="selectedShowIds" multiple>
-          <option v-for="show in shows" v-bind:value="show['.key']">{{ show.title }}</option>
-        </select>
-        <button v-show="selectedShowIds.length > 0" @click="selectedShowIds = []">Clear</button>
+        <fieldset>
+          <label>Image</label>
+          <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+        </fieldset>
+        <fieldset>
+          <label>Work URL</label>
+          <input type="text" v-model.trim="url" title="Work URL" required="required">
+        </fieldset>
+        <fieldset>
+          <label>Title</label>
+          <input type="text" v-model.trim="title" title="Artwork title" required="required">
+        </fieldset>
+        <fieldset>
+          <label>Year</label>
+          <input type="text" v-model.trim="year" title="year" required="required">
+        </fieldset>
+        <fieldset>
+          <label>Artists</label>
+          <select v-model="selectedArtistIds" multiple required>
+            <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <label>Shows</label>
+          <select v-model="selectedShowIds" multiple>
+            <option v-for="show in shows" v-bind:value="show['.key']">{{ show.title }}</option>
+          </select>
+          <button v-show="selectedShowIds.length > 0" @click="selectedShowIds = []">Clear</button>
+        </fieldset>
 
         <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
         <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
         <button v-if="isNew" @click.prevent="submitArtwork">Create</button>
-        <button v-if="! isNew" @click.prevent="submitArtwork">Update</button>
+        <button v-if="! isNew" @click.prevent="submitArtwork">Save</button>
       </form>
     </div>
   </main>
@@ -69,7 +87,9 @@
       return {
         imageFile: null,
         imageRemoved: false,
+        url: '',
         title: '',
+        year: '',
         selectedArtistIds: [],
         selectedShowIds: []
       }
@@ -101,7 +121,9 @@
         }
         const artwork = {
           published: this.published,
+          url: this.url,
           title: this.title,
+          year: this.year,
           artists: {},
           shows: {}
         }
@@ -128,7 +150,9 @@
         this.init()
       },
       'accountArtwork' () {
+        this.url = this.accountArtwork.url
         this.title = this.accountArtwork.title
+        this.year = this.accountArtwork.year
         this.selectedArtistIds = Object.keys(this.accountArtwork.artists || {})
         this.selectedShowIds = Object.keys(this.accountArtwork.shows || {})
       }

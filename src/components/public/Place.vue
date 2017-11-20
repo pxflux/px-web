@@ -2,10 +2,14 @@
   <main>
     <div v-if="place" class="wrap-content text-block">
       <h1>{{ place.title }}</h1>
-      <h2>Shows</h2>
-      <ul v-for="show in shows" :key="show['__key']">
-        <li><router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link></li>
-      </ul>
+      <template v-if="shows.length">
+        <h2>Shows</h2>
+        <ul v-for="show in shows" :key="show['__key']">
+          <li>
+            <router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link>
+          </li>
+        </ul>
+      </template>
     </div>
   </main>
 </template>
@@ -20,6 +24,10 @@
     },
     computed: {
       ...mapState(['place']),
+
+      placeId () {
+        return this.$route.params.id
+      },
       shows () {
         return Object.keys(this.place.shows || {}).map(id => {
           return {...this.place.shows[id], ...{'.key': id}}
@@ -30,7 +38,7 @@
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({key: 'place', ref: firebase.database().ref('places/' + this.$route.params.id)})
+        this.setRef({key: 'place', ref: firebase.database().ref('places/' + this.placeId)})
       }
     },
     watch: {

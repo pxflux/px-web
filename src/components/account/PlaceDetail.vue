@@ -4,7 +4,7 @@
       <router-link to="/account/places/">Places</router-link>
       <h1>{{ accountPlace.title }}</h1>
       <img v-show="image.displayUrl" :src="image.displayUrl" width="100" height="100">
-      <router-link :to="'/account/place/' + placeId + '/update'" class="button">Update</router-link>
+      <router-link :to="'/account/place/' + placeId + '/edit'" class="button">Update</router-link>
       <button @click="removePlace">Remove</button>
       <button v-if=" ! accountPlace.published"><a @click="togglePublished(true)">Publish</a></button>
       <button v-if="accountPlace.published"><a @click="togglePublished(false)">Un publish</a></button>
