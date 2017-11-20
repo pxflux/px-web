@@ -23,10 +23,10 @@ npm run build --report
 ```javascript
 accountId: String
 published: boolean
-title: String - *required, default: 'Untitled'
+title: String /* required, default: 'Untitled' */
 thumbnail: Attachment
 preview:{
-    type: 'video'|'gif'|'slideshow'
+    type: String /* 'video'|'gif'|'slideshow' */
     url: String
 }
 year: String
@@ -48,7 +48,7 @@ credits: Contributor[]
  year: String
  credits: Contributor[]
 */
-description: String - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
+description: String /* allowed html tags: <a><p><b><i><h1><h2><h3> */
 source: {
     type: 'video'|'html'
     url: String
@@ -60,8 +60,7 @@ shows: ShowBasic[]
           
 #### Iteration:
 
-Based on Iteration Report by Guggenheim Conservation Department
-
+Based on Iteration Report by Guggenheim Conservation Department...
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
  
 ```javascript
