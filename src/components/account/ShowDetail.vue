@@ -10,7 +10,7 @@
           <router-link :to="'/places/' + place['.key']">{{ place.title }}</router-link>
         </li>
       </ul>
-      <router-link :to="'/account/show/' + showId + '/update'" class="button">Update</router-link>
+      <router-link :to="'/account/show/' + showId + '/edit'" class="button">Update</router-link>
       <button @click="removeShow">Remove</button>
       <button v-if=" ! accountShow.published"><a @click="togglePublished(true)">Publish</a></button>
       <button v-if="accountShow.published"><a @click="togglePublished(false)">Un publish</a></button>

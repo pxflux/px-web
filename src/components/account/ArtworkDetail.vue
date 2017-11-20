@@ -88,7 +88,7 @@
           <button v-if="accountArtwork.published" @click="togglePublished(false)">{{uiStrings.unpublish}}</button>
           <button v-else @click="togglePublished(true)">{{uiStrings.publish}}</button>
           <button @click="removeArtwork">{{uiStrings.remove}}</button>
-          <router-link :to="'/account/artwork/' + artworkId + '/update'" class="button">Update</router-link>
+          <router-link :to="'/account/artwork/' + artworkId + '/edit'" class="button">Update</router-link>
         </div>
       </div>
     </div>
