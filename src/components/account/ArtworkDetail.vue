@@ -8,7 +8,6 @@
               <img v-show="image.displayUrl" :src="image.displayUrl" width="100" height="100">
             </div>
           </div>
-          <iframe :src="artworkData.url"></iframe>
         </div>
       </div>
       <div class="editor-body">
