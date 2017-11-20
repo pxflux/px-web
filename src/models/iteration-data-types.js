@@ -17,9 +17,6 @@ export class Record {
 
     /** @type  string */
     this.text = getValueFromObj(data, 'text', '')
-
-    /** @type {Url[]} */
-    this.attachments = getValueFromObj(data, 'attachments', [])
   }
 }
 
@@ -34,6 +31,9 @@ export class Note extends Record {
 
     /** @type  Contributor */
     this.onBehalfOf = getValueFromObj(data, 'onBehalfOf', null)
+
+    /** @type {Url[]} */
+    this.attachments = getValueFromObj(data, 'attachments', [])
   }
 }
 
