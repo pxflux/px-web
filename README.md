@@ -17,8 +17,8 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-##Data Types:
-###Artwork:
+## Data Types:
+### Artwork:
     
     accountId: string
     published: boolean
@@ -54,7 +54,7 @@ npm run build --report
         place: Place
     }[]
           
-###Iteration:
+### Iteration:
 
 Based on Iteration Report by Guggenheim Conservation Department
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
