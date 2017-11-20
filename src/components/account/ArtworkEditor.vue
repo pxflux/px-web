@@ -123,9 +123,11 @@
           published: this.published,
           url: this.url,
           title: this.title,
-          year: this.year,
           artists: {},
           shows: {}
+        }
+        if (this.year) {
+          artwork.year = this.year
         }
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
           const data = {fullName: artist.fullName}
