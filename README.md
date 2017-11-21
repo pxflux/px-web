@@ -100,9 +100,9 @@ npm run build --report
 
 ```javascript
 title: String
-organisationType: String /* One of predefined options */ 
+organisationType: String // One of predefined options  
 location: Place
-description: String /* Multi-line, with allowed html tags */
+description: String // Multi-line, with allowed html tags 
 members: Contributor[]
 artworks: ArtworkBase[]
 collections: Collection[]
@@ -110,7 +110,7 @@ artists: ArtistBase[]
 shows: ShowBase[]
 publications: PublicationBase[]
 places: PlaceBase[]
-invitations: {}[] /* ~ Invitation type */
+invitations: {}[] // ~ Invitation type 
 ```
 
 ## Artwork 
@@ -121,10 +121,10 @@ invitations: {}[] /* ~ Invitation type */
 id: String
 accountId: String
 published: boolean
-title: String /* required, default: 'Untitled' */
+title: String // required, default: 'Untitled' 
 thumbnail: Attachment
 preview:{
-    type: String /* 'video'|'gif'|'slideshow' */
+    type: String // 'video'|'gif'|'slideshow' 
     url: String
 }
 year: String
@@ -154,7 +154,7 @@ statisticsShort: {}
  tags: String[]
  statisticsShort: {}
 */
-description: String /* Multi-line, allowed html tags: <a> <p> <b> <i> <h> */
+description: String // Multi-line, allowed html tags 
 source: {
     type: 'video'|'html'
     url: String
@@ -260,7 +260,7 @@ name: String
 public: Boolean
 artworks: ArtworkBase[]
 curators: Contributor[]
-description: String /* Multi-line with allowed html tags */
+description: String // Multi-line with allowed html tags 
 category: String[]
 tags: String[]
 ```
@@ -303,7 +303,7 @@ artists: ArtistBase[]
 curators: Contributor[]
 artworks: ArtworkBase[]
 synopsis: String
-description: String /* Multi-line with allowed html tags */
+description: String // Multi-line with allowed html tags 
 publications: PublicationBase[]
 attachments: Attachment[]
 ```
@@ -323,7 +323,7 @@ attachments: Attachment[]
 
 ```javascript
 name: String
-type: String /* one of predefined options e.g. 'museum'|'gallery'|etc. */
+type: String // one of predefined options e.g. 'museum'|'gallery'|etc. 
 url: String
 shows: ShowBase[]
 artists: Artist[]
@@ -346,7 +346,7 @@ tags: String[]
  * inherited from PlaceBase
  * 
  name: String
- type: String /* one of predefined options e.g. 'museum'|'gallery'|etc. * /
+ type: String // one of predefined options e.g. 'museum'|'gallery'|etc. 
  url: String
  shows: ShowBase[]
  artists: Artist[]
@@ -364,7 +364,7 @@ contact:{
   email: String  
   phone: String
 }
-description: String /* Multi-line with allowed html tags */
+description: String // Multi-line with allowed html tags 
 publications: PublicationBase[]
 attachments: Attachment[]
 ```
@@ -412,8 +412,9 @@ statisticsShort: {}
  tags: String[]
  statisticsShort: {}
  */
-cv: String - formated text
-description: String /* Multi-line with allowed html tags */
+url: String
+cv: String // Multi-line with allowed html tags. Auto-formatted text 
+description: String // Multi-line with allowed html tags 
 publications: PublicationBase[]
 inCollections: CollectionBase[]
 statistics: {}
@@ -430,7 +431,7 @@ statistics: {}
  fullName: String
  image: Attachment 
  */
-role: String - One of the predifined options.
+role: String // One of the predefined options. 
 ```
 _The role options depend on the context where Contributor type is used (inside Artwork, Iteration, Account etc.)_
 
@@ -453,11 +454,11 @@ _Draft_
 order: Number
 icon: String|Attachment
 label: String
-type: String /* 'keyboard'|'mouse'|'function'|'custom' */
+type: String // 'keyboard'|'mouse'|'function'|'custom' 
 value: {
   keyCode: String 
-  modifier: String /* 'shiftKey'|'ctrlKey'|'altKey'|'metaKey' */
-  type: String /* 'keydown'|'keyup'|'keypress' */
+  modifier: String // 'shiftKey'|'ctrlKey'|'altKey'|'metaKey' 
+  type: String // 'keydown'|'keyup'|'keypress' 
 }
 ```
 
@@ -503,10 +504,10 @@ onBehalfOf: Contributor
   attachments : Attachment[]
   onBehalfOf: Contributor
 */
-type: String - one of predifined options
+type: String - one of predefined options
 reason: String
 decidedBy: Contributor
-necessity: String /* One of 'possible'|'recommended'|'important'|'critical' */
+necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
 ```
 #### Equipment:
 [[Data Types︎]](#data-types)
@@ -521,13 +522,13 @@ necessity: String /* One of 'possible'|'recommended'|'important'|'critical' */
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String - one of predifined options
+  type: String // One of predefined options 
   reason: String
   decidedBy: Contributor
-  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
 */
 dimensions: [Number, Number, Number]
-appearance: String - text
+appearance: String // Multi-line 
 weight: Number
 ```
 #### DisplayEquipment
@@ -544,12 +545,12 @@ weight: Number
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String - one of predifined options
+  type: String // One of predefined options 
   reason: String
   decidedBy: Contributor
-  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
   dimensions: [Number, Number, Number]
-  appearance: String - text
+  appearance: String // Multi-line 
   weight: Number
 */
 resolution: [Number, Number]
@@ -585,12 +586,12 @@ audibleNoise: Number
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String - one of predefined options
+  type: String // One of predefined options 
   reason: String
   decidedBy: Contributor
-  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
   dimensions: [Number, Number, Number]
-  appearance: String - text
+  appearance: String // Multi-line 
   weight: Number
 */
 sensitivity: String
@@ -610,12 +611,12 @@ impedance: Number
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String - one of predifined options
+  type: String // One of predefined options 
   reason: String
   decidedBy: Contributor
-  necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+  necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
   dimensions: [Number, Number, Number]
-  appearance: String - text
+  appearance: String // Multi-line 
   weight: Number
 */
 cpu:{
