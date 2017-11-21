@@ -18,35 +18,98 @@ npm run build
 npm run build --report
 ```
 # Data Types:
-[**Artwork**](#artwork)
->[_ArtworkBase_](#artworkBase)  
->[_Artwork_](#artworkMain)  
->[_**Iteration**_](#iteration)  
+[**Account**](#Account)  
+
+[**Artwork**](#artwork)  
+* [_ArtworkBase_](#artworkBase)  
+* [_Artwork_](#artworkMain)  
+* [_**Iteration**_](#iteration)  
+
+[**Collection**](#Collection)
 
 [**Show**](#show)
->[_ShowBase_](#showBase)  
->[_Show_](#showMain)  
+* [_ShowBase_](#showBase)  
+* [_Show_](#showMain)  
 
-[**Show**](#show)
->[_ShowBase_](#showBase)  
->[_Show_](#showMain)  
+[**Publication**](#publication)  
+*  [_PublicationBase_](#PublicationBase)  
+*  [_Publication_](#PublicationMain)  
 
-[**Show**](#show)
->[_ShowBase_](#showBase)  
->[_Show_](#showMain)  
+[**Place**](#place)  
+*  [_PlaceBase_](#PlaceBase)  
+*  [_Place_](#PlaceMain)  
 
-[**Show**](#show)
->[_ShowBase_](#showBase)  
->[_Show_](#showMain)  
+[**User/Person**](#userperson)
+*  [_User_](#User)
+*  [_ArtistBase_](#ArtistBase)
+*  [_Artist_](#Artist)
+*  [_Contributor_](#Contributor)
 
+[**"Primitive" Types**](#primitive)
+*  [_Attachment_](#Attachment)
+*  [_Control_](#Control)
+*  [_Record_](#Record)
+
+[**Iteration Specific**](#iterationSpecific)
+*  [_Note_](#Note)
+*  [_IterationComponent_](#IterationComponent)
+*  [_Equipment_](#Equipment)
+*  [_DisplayEquipment_](#DisplayEquipment)
+*  [_AudioEquipment_](#AudioEquipment)
+*  [_PlaybackEquipment_](#PlaybackEquipment)
+
+<a name="Account"/>
+<a name="artwork"/>
 <a name="artworkBase"/>
 <a name="artworkMain"/>
 <a name="iteration"/>
+<a name="Collection"/>
+<a name="show"/>
+<a name="showBase"/>
+<a name="showMain"/>
+<a name="publication"/>
+<a name="PublicationBase"/>
+<a name="PublicationMain"/>
+<a name="place"/>
+<a name="PlaceBase"/>
+<a name="PlaceMain"/>
+<a name="userperson"/>
+<a name="User"/>
+<a name="ArtistBase"/>
+<a name="Artist"/>
+<a name="Contributor"/>
+<a name="primitive"/>
+<a name="Attachment"/>
+<a name="Control"/>
+<a name="Record"/>
+<a name="iterationSpecific"/>
+<a name="Note"/>
+<a name="IterationComponent"/>
+<a name="Equipment"/>
+<a name="DisplayEquipment"/>
+<a name="AudioEquipment"/>
+<a name="PlaybackEquipment"/>
+
+## Account
+```javascript
+title: String
+organisationType: String /* One of predefined options */ 
+organisationPlace: Place
+description: String /* Multi-line, with allowed html tags */
+contributors: Contributor[]
+artworks: ArtworkBase[]
+collections: Collection[]
+artists: ArtistBase[]
+shows: ShowBase[]
+publications: PublicationBase[]
+places: PlaceBase[]
+```
 
 ## Artwork
 
 #### ArtworkBase:
 ```javascript
+id: String
 accountId: String
 published: boolean
 title: String /* required, default: 'Untitled' */
@@ -57,6 +120,8 @@ preview:{
 }
 year: String
 credits: Contributor[]
+category: String[]
+tags: String[]
 ```
 #### Artwork:
 ```javascript
@@ -85,8 +150,8 @@ shows: ShowBase[]
 ```
        
 ## Iteration:
-**It's a property of an Artwork**  
-Based on Iteration Report by Guggenheim Conservation Department  
+**Iterations are properties of an Artwork.**  
+Based on Iteration Report by Guggenheim Conservation Department:  
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
  
 ```javascript
@@ -163,6 +228,19 @@ technicalSetup: {
   other: IterationComponent
 }
 ```
+
+## Collection
+**Collections are properties of an Account.**  
+```javascript
+accountId: String
+name: String
+artworks: ArtworkBase[]
+contributors: Contributor[]
+description: String /* Multi-line with allowed html tags */
+category: String[]
+tags: String[]
+```
+
 ## Show
 #### ShowBase:
 ```javascript
@@ -175,6 +253,8 @@ date: {
 thumbnail: Attachment
 url: String
 place: Place
+category: String[]
+tags: String[]
 ```
 #### Show:
 ```javascript
@@ -208,7 +288,53 @@ attachments: Attachment[]
 ```javascript
 
 ```
+## Place  
+#### PlaceBase:
+```javascript
+name: String
+type: String /* one of predefined options e.g. 'museum'|'gallery'|etc. */
+url: String
+shows: ShowBase[]
+artists: Artist[]
+address: {
+  streetHouse: String
+  zip: String
+  city: String
+  province: String 
+  country: String 
+}
+category: String[]
+tags: String[]
+```
 
+#### Place:
+```javascript
+/**
+ * inherited from PlaceBase
+ * 
+ name: String
+ type: String /* one of predefined options e.g. 'museum'|'gallery'|etc. * /
+ url: String
+ shows: ShowBase[]
+ artists: Artist[]
+ address: {
+   streetHouse: String
+   zip: String
+   city: String
+   province: String 
+   country: String 
+ }
+*/
+contact:{
+  email: String  
+  phone: String
+}
+description: String /* Multi-line with allowed html tags */
+publications: PublicationBase[]
+attachments: Attachment[]
+```
+
+## User/Person
 #### User:
 ```javascript
 userId: String
@@ -241,6 +367,9 @@ shows: ShowBase[]
 publications: PublicationBase[]
 inCollections: CollectionBase[]
 cv: String - formated text
+description: String /* Multi-line with allowed html tags */
+category: String[]
+tags: String[]
 ```
 
 #### Contributor:
@@ -256,6 +385,7 @@ role: String - One of the predifined options.
 ```
 _The role options depend on the context where Contributor type is used (inside Artwork, Iteration, Account etc.)_
 
+## "Primitive" Types
 #### Attachment:
 ```javascript
 displayUrl: String
@@ -288,6 +418,8 @@ attachments : {
   storageUri: String
 }[]
 ```
+
+## Iteration Specific
 #### Note:
 ```javascript
 /**
@@ -447,7 +579,6 @@ storageType: String
 os: String
 osVersion: Number
 ```
-
 ______
 account
  artworks
