@@ -504,7 +504,8 @@ onBehalfOf: Contributor
   attachments : Attachment[]
   onBehalfOf: Contributor
 */
-type: String - one of predefined options
+type: String /* One of predefined options */
+quantity: Number
 reason: String
 decidedBy: Contributor
 necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
@@ -522,11 +523,12 @@ necessity: String // One of 'possible'|'recommended'|'important'|'critical'
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String // One of predefined options 
+  quantity: Number
   reason: String
   decidedBy: Contributor
   necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
 */
+type: String // @override One of predefined options (equipment specific) 
 dimensions: [Number, Number, Number]
 appearance: String // Multi-line 
 weight: Number
@@ -545,7 +547,7 @@ weight: Number
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String // One of predefined options 
+  quantity: Number
   reason: String
   decidedBy: Contributor
   necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
@@ -553,6 +555,7 @@ weight: Number
   appearance: String // Multi-line 
   weight: Number
 */
+type: String // @override One of monitor|projector|oculus 
 resolution: [Number, Number]
 pixelDensity: Number
 brightness: Number
@@ -586,7 +589,7 @@ audibleNoise: Number
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String // One of predefined options 
+  quantity: Number
   reason: String
   decidedBy: Contributor
   necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
@@ -594,6 +597,7 @@ audibleNoise: Number
   appearance: String // Multi-line 
   weight: Number
 */
+type: String // @override One of loudspeakers|headphones|... 
 sensitivity: String
 frequencyResponse: String
 impedance: Number
@@ -611,7 +615,7 @@ impedance: Number
   text : String
   attachments : Attachment[]
   onBehalfOf: Contributor
-  type: String // One of predefined options 
+  quantity: Number
   reason: String
   decidedBy: Contributor
   necessity: String // One of 'possible'|'recommended'|'important'|'critical' 
@@ -619,6 +623,7 @@ impedance: Number
   appearance: String // Multi-line 
   weight: Number
 */
+type: String // @override One of desktop|handheld|single board|... 
 cpu:{
   cores: Number
   speed: Number
