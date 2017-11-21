@@ -25,70 +25,71 @@ npm run build --report
 * [_Artwork_](#artworkMain)  
 * [_**Iteration**_](#iteration)  
 
-[**Collection**](#Collection)
+[**Collection**](#collection)
 
 [**Show**](#show)
 * [_ShowBase_](#showBase)  
 * [_Show_](#showMain)  
 
 [**Publication**](#publication)  
-*  [_PublicationBase_](#PublicationBase)  
-*  [_Publication_](#PublicationMain)  
+*  [_PublicationBase_](#publicationbase)  
+*  [_Publication_](#publicationmain)  
 
 [**Place**](#place)  
-*  [_PlaceBase_](#PlaceBase)  
-*  [_Place_](#PlaceMain)  
+*  [_PlaceBase_](#placebase)  
+*  [_Place_](#placemain)  
 
 [**User/Person**](#userperson)
-*  [_User_](#User)
-*  [_ArtistBase_](#ArtistBase)
-*  [_Artist_](#Artist)
-*  [_Contributor_](#Contributor)
+*  [_User_](#user)
+*  [_ArtistBase_](#artistbase)
+*  [_Artist_](#artist)
+*  [_Contributor_](#contributor)
 
 [**"Primitive" Types**](#primitive)
-*  [_Attachment_](#Attachment)
-*  [_Control_](#Control)
-*  [_Record_](#Record)
+*  [_Attachment_](#attachment)
+*  [_Control_](#control)
+*  [_Record_](#record)
 
-[**Iteration Specific**](#iterationSpecific)
-*  [_Note_](#Note)
-*  [_IterationComponent_](#IterationComponent)
-*  [_Equipment_](#Equipment)
-*  [_DisplayEquipment_](#DisplayEquipment)
-*  [_AudioEquipment_](#AudioEquipment)
-*  [_PlaybackEquipment_](#PlaybackEquipment)
+[**Iteration Specific**](#iterationspecific)
+*  [_Note_](#note)
+*  [_IterationComponent_](#iterationcomponent)
+*  [_Equipment_](#equipment)
+*  [_DisplayEquipment_](#displayequipment)
+*  [_AudioEquipment_](#audioequipment)
+*  [_PlaybackEquipment_](#playbackequipment)
 
-<a name="Account"/>
+<a name="account"/>
 <a name="artwork"/>
-<a name="artworkBase"/>
-<a name="artworkMain"/>
+<a name="artworkbase"/>
+<a name="artworkmain"/>
 <a name="iteration"/>
-<a name="Collection"/>
+<a name="collection"/>
 <a name="show"/>
-<a name="showBase"/>
-<a name="showMain"/>
+<a name="showbase"/>
+<a name="showmain"/>
 <a name="publication"/>
-<a name="PublicationBase"/>
-<a name="PublicationMain"/>
+<a name="publicationbase"/>
+<a name="publicationmain"/>
 <a name="place"/>
-<a name="PlaceBase"/>
-<a name="PlaceMain"/>
+<a name="placebase"/>
+<a name="placemain"/>
 <a name="userperson"/>
-<a name="User"/>
-<a name="ArtistBase"/>
-<a name="Artist"/>
-<a name="Contributor"/>
+<a name="user"/>
+<a name="artistbase"/>
+<a name="artist"/>
+<a name="contributor"/>
 <a name="primitive"/>
-<a name="Attachment"/>
-<a name="Control"/>
-<a name="Record"/>
-<a name="iterationSpecific"/>
-<a name="Note"/>
-<a name="IterationComponent"/>
-<a name="Equipment"/>
-<a name="DisplayEquipment"/>
-<a name="AudioEquipment"/>
-<a name="PlaybackEquipment"/>
+<a name="attachment"/>
+<a name="control"/>
+<a name="record"/>
+<a name="iterationspecific"/>
+<a name="note"/>
+<a name="iterationcomponent"/>
+<a name="equipment"/>
+<a name="displayequipment"/>
+<a name="audioequipment"/>
+<a name="playbackequipment"/>
+___
 
 ## Account
 ```javascript
