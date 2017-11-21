@@ -143,6 +143,8 @@ tags: String[]
  }
  year: String
  credits: Contributor[]
+ category: String[]
+ tags: String[]
 */
 description: String /* Multi-line, allowed html tags: <a> <p> <b> <i> <h> */
 source: {
@@ -279,6 +281,8 @@ tags: String[]
  thumbnail: Attachment
  url: String
  place: Place
+ category: String[]
+ tags: String[]
 */
 artists: ArtistBase[]
 curators: Contributor[]
@@ -427,10 +431,7 @@ created: Date
 modified: Date
 author: Contributor
 text : String
-attachments : {
-  displayUrl: String
-  storageUri: String
-}[]
+attachments : Attachment[]
 ```
 
 ## Iteration Specific
@@ -444,10 +445,7 @@ attachments : {
   modified: Date
   author: Contributor
   text : String
-  attachments : {
-    displayUrl: String
-    storageUri: String
-  }[]
+  attachments : Attachment[]
 */
 onBehalfOf: Contributor
 ```
@@ -461,10 +459,7 @@ onBehalfOf: Contributor
   modified: Date
   author: Contributor
   text : String
-  attachments : {
-    displayUrl: String
-    storageUri: String
-  }[]
+  attachments : Attachment[]
 */
 type: String - one of predifined options
 reason: String
@@ -481,10 +476,7 @@ necessity: String - One of 'possible'|'recommended'|'important'|'critical'
   modified: Date
   author: Contributor
   text : String
-  attachments : {
-    displayUrl: String
-    storageUri: String
-  }[]
+  attachments : Attachment[]
   type: String - one of predifined options
   reason: String
   decidedBy: Contributor
@@ -506,10 +498,7 @@ _Taken partly from http://www.projectorcentral.com_
   modified: Date
   author: Contributor
   text : String
-  attachments : {
-    displayUrl: String
-    storageUri: String
-  }[]
+  attachments : Attachment[]
   type: String - one of predifined options
   reason: String
   decidedBy: Contributor
@@ -549,11 +538,8 @@ audibleNoise: Number
   modified: Date
   author: Contributor
   text : String
-  attachments : {
-    displayUrl: String
-    storageUri: String
-  }[]
-  type: String - one of predifined options
+  attachments : Attachment[]
+  type: String - one of predefined options
   reason: String
   decidedBy: Contributor
   necessity: String - One of 'possible'|'recommended'|'important'|'critical'
@@ -576,10 +562,7 @@ impedance: Number
   modified: Date
   author: Contributor
   text : String
-  attachments : {
-    displayUrl: String
-    storageUri: String
-  }[]
+  attachments : Attachment[]
   type: String - one of predifined options
   reason: String
   decidedBy: Contributor
