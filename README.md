@@ -109,7 +109,7 @@ places: PlaceBase[]
 ```
 
 ## Artwork 
-[**[⬆︎]**](#datatypes)
+[[Data Types︎]](#datatypes)  
 #### ArtworkBase:
 ```javascript
 id: String
@@ -153,7 +153,7 @@ shows: ShowBase[]
 ```
        
 ## Iteration:
-[**[⬆︎]**](#datatypes)
+[[Data Types︎]](#datatypes)  
 
 **Iterations are properties of an Artwork.**  
 Based on Iteration Report by Guggenheim Conservation Department:  
@@ -235,7 +235,7 @@ technicalSetup: {
 ```
 
 ## Collection
-[**[⬆︎]**](#datatypes)  
+[[Data Types︎]](#datatypes)  
 **Collections are properties of an Account.**  
 ```javascript
 accountId: String
@@ -248,7 +248,7 @@ tags: String[]
 ```
 
 ## Show
-[**[⬆︎]**](#datatypes)  
+[[Data Types︎]](#datatypes)  
 #### ShowBase:
 ```javascript
 id: String
@@ -287,7 +287,7 @@ publications: PublicationBase[]
 attachments: Attachment[]
 ```
 ## Publication
-[**[⬆︎]**](#datatypes)  
+[[Data Types︎]](#datatypes)  
 #### PublicationBase:
 ```javascript
 
@@ -296,7 +296,9 @@ attachments: Attachment[]
 ```javascript
 
 ```
-## Place  
+## Place 
+[[Data Types︎]](#datatypes)  
+
 #### PlaceBase:
 ```javascript
 name: String
@@ -343,7 +345,7 @@ attachments: Attachment[]
 ```
 
 ## User/Person
-[**[⬆︎]**](#datatypes)  
+[[Data Types︎]](#datatypes)  
 #### User:
 ```javascript
 userId: String
@@ -395,7 +397,7 @@ role: String - One of the predifined options.
 _The role options depend on the context where Contributor type is used (inside Artwork, Iteration, Account etc.)_
 
 ## "Primitive" Types
-[**[⬆︎]**](#datatypes)  
+[[Data Types︎]](#datatypes)  
 #### Attachment:
 ```javascript
 displayUrl: String
@@ -430,7 +432,7 @@ attachments : {
 ```
 
 ## Iteration Specific
-[**[⬆︎]**](#datatypes)  
+[[Data Types︎]](#datatypes)  
 #### Note:
 ```javascript
 /**
@@ -468,6 +470,7 @@ decidedBy: Contributor
 necessity: String - One of 'possible'|'recommended'|'important'|'critical'
 ```
 #### Equipment:
+[[Data Types︎]](#datatypes)  
 ```javascript
 /**
  * inherited from IterationComponent
@@ -490,6 +493,7 @@ appearance: String - text
 weight: Number
 ```
 #### DisplayEquipment
+[[Data Types︎]](#datatypes)  
 
 _Taken partly from http://www.projectorcentral.com_
 ```javascript
@@ -533,6 +537,8 @@ speakers: String
 audibleNoise: Number
 ```
 #### AudioEquipment
+[[Data Types︎]](#datatypes)  
+
 ```javascript
 /**
  * inherited from IterationComponent
@@ -558,6 +564,8 @@ frequencyResponse: String
 impedance: Number
 ```
 #### PlaybackEquipment
+[[Data Types︎]](#datatypes)  
+
 ```javascript
 /**
  * inherited from IterationComponent
