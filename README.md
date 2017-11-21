@@ -96,22 +96,26 @@ npm run build --report
 ###
 
 ## Account
+[[Data Types︎]](#data-types)  
+
 ```javascript
 title: String
 organisationType: String /* One of predefined options */ 
-organisationPlace: Place
+location: Place
 description: String /* Multi-line, with allowed html tags */
-contributors: Contributor[]
+members: Contributor[]
 artworks: ArtworkBase[]
 collections: Collection[]
 artists: ArtistBase[]
 shows: ShowBase[]
 publications: PublicationBase[]
 places: PlaceBase[]
+invitations: {}[] /* ~ Invitation type */
 ```
 
 ## Artwork 
 [[Data Types︎]](#data-types)  
+
 #### ArtworkBase:
 ```javascript
 id: String
@@ -127,8 +131,11 @@ year: String
 credits: Contributor[]
 category: String[]
 tags: String[]
+statisticsShort: {}
 ```
 #### Artwork:
+[[Data Types︎]](#data-types)  
+
 ```javascript
 /**
  * inherited from ArtworkBase
@@ -145,6 +152,7 @@ tags: String[]
  credits: Contributor[]
  category: String[]
  tags: String[]
+ statisticsShort: {}
 */
 description: String /* Multi-line, allowed html tags: <a> <p> <b> <i> <h> */
 source: {
@@ -154,6 +162,7 @@ source: {
 controls: Control[]
 iterations: Iteration[]
 shows: ShowBase[]
+statistics: {}
 ```
        
 ## Iteration:
@@ -222,7 +231,7 @@ equipment: {
   visual: DisplayEquipment
   audio: AudioEquipment
   playback: PlaybackEquipment
-  other: IterationComponent[]
+  other: Equipment[]
 }
 otherComponents: field('IterationComponentList')
 technicalSetup: {
@@ -244,9 +253,11 @@ technicalSetup: {
 **Collections are properties of an Account.**  
 ```javascript
 accountId: String
+accountName: String
 name: String
+public: Boolean
 artworks: ArtworkBase[]
-contributors: Contributor[]
+curators: Contributor[]
 description: String /* Multi-line with allowed html tags */
 category: String[]
 tags: String[]
@@ -254,6 +265,7 @@ tags: String[]
 
 ## Show
 [[Data Types︎]](#data-types)  
+
 #### ShowBase:
 ```javascript
 id: String
@@ -282,7 +294,8 @@ tags: String[]
  thumbnail: Attachment
  url: String
  place: Place
- 
+ category: String[]
+ tags: String[]
 */
 artists: ArtistBase[]
 curators: Contributor[]
@@ -303,9 +316,9 @@ attachments: Attachment[]
 
 ```
 ## Place 
+#### PlaceBase:
 [[Data Types︎]](#data-types)  
 
-#### PlaceBase:
 ```javascript
 name: String
 type: String /* one of predefined options e.g. 'museum'|'gallery'|etc. */
@@ -324,6 +337,8 @@ tags: String[]
 ```
 
 #### Place:
+[[Data Types︎]](#data-types) 
+
 ```javascript
 /**
  * inherited from PlaceBase
@@ -340,6 +355,8 @@ tags: String[]
    province: String 
    country: String 
  }
+ category: String[]
+ tags: String[]
 */
 contact:{
   email: String  
@@ -351,14 +368,18 @@ attachments: Attachment[]
 ```
 
 ## User/Person
-[[Data Types︎]](#data-types)  
+
 #### User:
+[[Data Types︎]](#data-types)  
+
 ```javascript
 userId: String
 fullName: String
 image: Attachment
 ```
 #### ArtistBase:
+[[Data Types︎]](#data-types) 
+
 ```javascript
 /**
  * inherited from User
@@ -369,8 +390,13 @@ image: Attachment
  */
 artworks: ArtworkBase[]
 shows: ShowBase[]
+category: String[]
+tags: String[]
+statisticsShort: {}
 ```
 #### Artist:
+[[Data Types︎]](#data-types) 
+
 ```javascript
 /**
  * inherited from ArtistBase
@@ -380,16 +406,20 @@ shows: ShowBase[]
  image: Attachment 
  artworks: ArtworkBase[]
  shows: ShowBase[]
+ category: String[]
+ tags: String[]
+ statisticsShort: {}
  */
-publications: PublicationBase[]
-inCollections: CollectionBase[]
 cv: String - formated text
 description: String /* Multi-line with allowed html tags */
-category: String[]
-tags: String[]
+publications: PublicationBase[]
+inCollections: CollectionBase[]
+statistics: {}
 ```
 
 #### Contributor:
+[[Data Types︎]](#data-types) 
+
 ```javascript
 /**
  * inherited from User
@@ -403,8 +433,10 @@ role: String - One of the predifined options.
 _The role options depend on the context where Contributor type is used (inside Artwork, Iteration, Account etc.)_
 
 ## "Primitive" Types
-[[Data Types︎]](#data-types)  
+
 #### Attachment:
+[[Data Types︎]](#data-types)  
+
 ```javascript
 displayUrl: String
 storageUri: String
@@ -412,6 +444,8 @@ mimeType: String
 ```
 
 #### Control:
+[[Data Types︎]](#data-types)  
+
 ```javascript
 order: Number
 icon: String|Attachment
@@ -426,6 +460,8 @@ value: {
 _It's a draft yet_
 
 #### Record:
+[[Data Types︎]](#data-types) 
+
 ```javascript
 created: Date
 modified: Date
@@ -436,10 +472,11 @@ attachments : Attachment[]
 
 ## Iteration Specific
 [[Data Types︎]](#data-types)  
+
 #### Note:
 ```javascript
 /**
- * inherited from Comment
+ * inherited from Record
  *
   created: Date
   modified: Date
@@ -451,6 +488,8 @@ onBehalfOf: Contributor
 ```
 
 #### IterationComponent:
+[[Data Types︎]](#data-types) 
+
 ```javascript
 /**
  * inherited from Note
@@ -460,6 +499,7 @@ onBehalfOf: Contributor
   author: Contributor
   text : String
   attachments : Attachment[]
+  onBehalfOf: Contributor
 */
 type: String - one of predifined options
 reason: String
@@ -467,7 +507,8 @@ decidedBy: Contributor
 necessity: String - One of 'possible'|'recommended'|'important'|'critical'
 ```
 #### Equipment:
-[[Data Types︎]](#data-types)  
+[[Data Types︎]](#data-types)
+  
 ```javascript
 /**
  * inherited from IterationComponent
@@ -477,6 +518,7 @@ necessity: String - One of 'possible'|'recommended'|'important'|'critical'
   author: Contributor
   text : String
   attachments : Attachment[]
+  onBehalfOf: Contributor
   type: String - one of predifined options
   reason: String
   decidedBy: Contributor
@@ -492,13 +534,14 @@ weight: Number
 _Taken partly from http://www.projectorcentral.com_
 ```javascript
 /**
- * inherited from IterationComponent
+ * inherited from Equipment
  *
   created: Date
   modified: Date
   author: Contributor
   text : String
   attachments : Attachment[]
+  onBehalfOf: Contributor
   type: String - one of predifined options
   reason: String
   decidedBy: Contributor
@@ -532,13 +575,14 @@ audibleNoise: Number
 
 ```javascript
 /**
- * inherited from IterationComponent
+ * inherited from Equipment
  *
   created: Date
   modified: Date
   author: Contributor
   text : String
   attachments : Attachment[]
+  onBehalfOf: Contributor
   type: String - one of predefined options
   reason: String
   decidedBy: Contributor
@@ -556,13 +600,14 @@ impedance: Number
 
 ```javascript
 /**
- * inherited from IterationComponent
+ * inherited from Equipment
  *
   created: Date
   modified: Date
   author: Contributor
   text : String
   attachments : Attachment[]
+  onBehalfOf: Contributor
   type: String - one of predifined options
   reason: String
   decidedBy: Contributor
