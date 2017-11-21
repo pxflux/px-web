@@ -91,7 +91,7 @@ npm run build --report
 <a name="displayequipment"/>
 <a name="audioequipment"/>
 <a name="playbackequipment"/>
-<a name="datatypes"/>
+<a name="data-types"/>
 
 ##
 
@@ -240,6 +240,7 @@ technicalSetup: {
 
 ## Collection
 [[Data Types︎]](#data-types)  
+
 **Collections are properties of an Account.**  
 ```javascript
 accountId: String
