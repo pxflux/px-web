@@ -89,6 +89,7 @@ npm run build --report
 <a name="displayequipment"/>
 <a name="audioequipment"/>
 <a name="playbackequipment"/>
+<a name="datatypes"/>
 
 ##
 
@@ -107,8 +108,8 @@ publications: PublicationBase[]
 places: PlaceBase[]
 ```
 
-## Artwork
-
+## Artwork 
+[**[⬆︎]**](#datatypes)
 #### ArtworkBase:
 ```javascript
 id: String
@@ -152,6 +153,8 @@ shows: ShowBase[]
 ```
        
 ## Iteration:
+[**[⬆︎]**](#datatypes)
+
 **Iterations are properties of an Artwork.**  
 Based on Iteration Report by Guggenheim Conservation Department:  
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
@@ -232,6 +235,7 @@ technicalSetup: {
 ```
 
 ## Collection
+[**[⬆︎]**](#datatypes)  
 **Collections are properties of an Account.**  
 ```javascript
 accountId: String
@@ -244,6 +248,7 @@ tags: String[]
 ```
 
 ## Show
+[**[⬆︎]**](#datatypes)  
 #### ShowBase:
 ```javascript
 id: String
@@ -282,6 +287,7 @@ publications: PublicationBase[]
 attachments: Attachment[]
 ```
 ## Publication
+[**[⬆︎]**](#datatypes)  
 #### PublicationBase:
 ```javascript
 
@@ -337,6 +343,7 @@ attachments: Attachment[]
 ```
 
 ## User/Person
+[**[⬆︎]**](#datatypes)  
 #### User:
 ```javascript
 userId: String
@@ -388,6 +395,7 @@ role: String - One of the predifined options.
 _The role options depend on the context where Contributor type is used (inside Artwork, Iteration, Account etc.)_
 
 ## "Primitive" Types
+[**[⬆︎]**](#datatypes)  
 #### Attachment:
 ```javascript
 displayUrl: String
@@ -422,6 +430,7 @@ attachments : {
 ```
 
 ## Iteration Specific
+[**[⬆︎]**](#datatypes)  
 #### Note:
 ```javascript
 /**
