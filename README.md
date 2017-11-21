@@ -18,18 +18,18 @@ npm run build
 npm run build --report
 ```
 # Data Types:
-[**Account**](#Account)  
+[**Account**](#account)  
 
 [**Artwork**](#artwork)  
-* [_ArtworkBase_](#artworkBase)  
-* [_Artwork_](#artworkMain)  
+* [_ArtworkBase_](#artworkbase)  
+* [_Artwork_](#artworkmain)  
 * [_**Iteration**_](#iteration)  
 
 [**Collection**](#collection)
 
 [**Show**](#show)
-* [_ShowBase_](#showBase)  
-* [_Show_](#showMain)  
+* [_ShowBase_](#showbase)  
+* [_Show_](#showmain)  
 
 [**Publication**](#publication)  
 *  [_PublicationBase_](#publicationbase)  
