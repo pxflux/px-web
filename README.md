@@ -1,7 +1,8 @@
 # pxflux [![Build Status](https://travis-ci.org/pxflux/px-dashboard-web.svg?branch=master)](https://travis-ci.org/pxflux/px-dashboard-web)
-<img src="static/img/pxlogo-1200x340px.png" width="1200" height="340" style="width:600px;height:auto;max-width:100%">
+<img src="static/img/pxlogo-1200x340px.png" style="width:600px;height:auto;max-width:100%">
 
-> Platform for the exhibition, distribution and collection of time based, computational art
+>An online platform and toolset for the exhibition, promotion, distribution and collection of time based, computational, digital art
+
 
 ## Build Setup
 
