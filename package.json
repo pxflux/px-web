@@ -11,12 +11,13 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "firebase": "^4.6.1",
+    "firebase": "^4.6.2",
     "firebaseui": "^2.4.1",
     "latinize": "^0.4.0",
     "medium-editor": "^5.23.2",
     "vue": "^2.5.3",
     "vue-router": "^3.0.1",
+    "vue-vimeo-player": "0.0.6",
     "vue2-medium-editor": "^1.1.2",
     "vuex": "^3.0.1",
     "vuex-router-sync": "^5.0.0",

@@ -54,8 +54,6 @@
             :class="'text'"
             v-on:edit='processEditOperation' custom-tag='div'>
           </medium-editor>
-
-          <button @click="updateArtwork">{{uiStrings.save}}</button>
         </div>
 
         <div :class="'editor-section'">
@@ -68,7 +66,6 @@
             <remote-control-editor
               :controls="artworkData.controls" v-on:updateRemoteControlData="updateRemoteControlData">
             </remote-control-editor>
-            <button v-on:click="updateArtwork">{{uiStrings.save}}</button>
           </div>
         </div>
 
@@ -150,7 +147,8 @@
         },
         mediumMultiLineOptions: {},
         iterationTitle: '',
-        rcEditorState: 'closed'
+        rcEditorState: 'closed',
+        artworkData: {controls: []}
       }
     },
     computed: {
@@ -196,8 +194,8 @@
       init () {
         if (this.accountId) {
           this.source = firebaseApp.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.setRef({ key: 'accountArtwork', ref: this.source })
-          this.setRef({ key: 'artists', ref: firebaseApp.database().ref('artists') })
+          this.setRef({key: 'accountArtwork', ref: this.source})
+          this.setRef({key: 'artists', ref: firebaseApp.database().ref('artists')})
         } else {
           this.source = null
         }
@@ -247,19 +245,6 @@
             if (editors[i].innerHTML !== '') editors[i].click()
           }
         }
-      },
-
-      updateArtwork () {
-//        this.showForm = false
-//        if (this.source) {
-//          this.artworkData.artists = this.parseArtistsString()
-//
-//          this.source.update(this.artworkData, log)
-//          if (this.accountArtwork.publicId) {
-//            const value = cloneArtwork(this.user.uid, this.$route.params.id, this.artworkData)
-//            firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
-//          }
-//        }
       },
       togglePublished (published) {
         if (!this.accountId) {
@@ -333,7 +318,7 @@
         if (this.source && this.artistId) {
           const data = this.accountArtwork.artists ? this.accountArtwork.artists : {}
           data[this.artistId] = true
-          this.source.update({ 'artists': data }, log)
+          this.source.update({'artists': data}, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
             firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
@@ -344,7 +329,7 @@
         if (this.source && this.accountArtwork.artists) {
           const data = this.accountArtwork.artists
           delete data[artist]
-          this.source.update({ 'artists': data }, log)
+          this.source.update({'artists': data}, log)
           if (this.accountArtwork.publicId) {
             const value = cloneArtwork(this.user.uid, this.$route.params.id, this.accountArtwork)
             firebaseApp.database().ref('artworks/' + this.accountArtwork.publicId).update(value, log)
@@ -365,7 +350,7 @@
       },
       createIteration () {
         if (this.accountArtwork && this.source) {
-          this.source.update({ 'iterations/draft/lastmodified': Firebase.database.ServerValue.TIMESTAMP }, function (error) {
+          this.source.update({'iterations/draft/lastmodified': Firebase.database.ServerValue.TIMESTAMP}, function (error) {
             log(error)
             if (!error) {
               this.$router.push('/account/artwork/' + this.$route.params.id + '/iterations/draft')
@@ -377,7 +362,7 @@
         if (this.source && this.accountArtwork.iterations) {
           const data = this.accountArtwork.iterations
           delete data[iteration]
-          this.source.update({ 'iterations': data }, log)
+          this.source.update({'iterations': data}, log)
         }
       }
     },

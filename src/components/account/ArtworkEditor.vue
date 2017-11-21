@@ -9,39 +9,49 @@
 
       <form id="form-artwork">
         <fieldset>
-          <label>Image</label>
-          <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+          <label for="image">Image</label>
+          <image-upload id="image" :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
         </fieldset>
         <fieldset>
-          <label>Work URL</label>
-          <input type="text" v-model.trim="url" title="Work URL" required="required">
+          <label for="url">Work URL</label>
+          <input id="url" type="text" v-model.trim="url" required="required">
         </fieldset>
         <fieldset>
-          <label>Title</label>
-          <input type="text" v-model.trim="title" title="Artwork title" required="required">
+          <label for="title">Title</label>
+          <input id="title" type="text" v-model.trim="title" required="required">
         </fieldset>
         <fieldset>
-          <label>Year</label>
-          <input type="text" v-model.trim="year" title="year" required="required">
+          <label for="description">Description</label>
+          <textarea id="description" v-model.trim="description"></textarea>
         </fieldset>
         <fieldset>
-          <label>Artists</label>
-          <select v-model="selectedArtistIds" multiple required>
+          <label for="year">Year</label>
+          <input id="year" type="text" v-model.trim="year" required="required">
+        </fieldset>
+        <fieldset>
+          <label for="vimeoId">Vimeo Id</label>
+          <input id="vimeoId" type="text" v-model.trim="vimeoId" required="required">
+        </fieldset>
+        <fieldset>
+          <label for="artistIds">Artists</label>
+          <select id="artistIds" v-model="selectedArtistIds" multiple required>
             <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
           </select>
         </fieldset>
         <fieldset>
-          <label>Shows</label>
-          <select v-model="selectedShowIds" multiple>
+          <label for="showIds">Shows</label>
+          <select id="showIds" v-model="selectedShowIds" multiple>
             <option v-for="show in shows" v-bind:value="show['.key']">{{ show.title }}</option>
           </select>
           <button v-show="selectedShowIds.length > 0" @click="selectedShowIds = []">Clear</button>
         </fieldset>
 
-        <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
-        <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
-        <button v-if="isNew" @click.prevent="submitArtwork">Create</button>
-        <button v-if="! isNew" @click.prevent="submitArtwork">Save</button>
+        <fieldset>
+          <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
+          <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
+          <button v-if="isNew" @click.prevent="submitArtwork">Create</button>
+          <button v-if="! isNew" @click.prevent="submitArtwork">Save</button>
+        </fieldset>
       </form>
     </div>
   </main>
@@ -89,7 +99,9 @@
         imageRemoved: false,
         url: '',
         title: '',
+        description: '',
         year: '',
+        vimeoId: '',
         selectedArtistIds: [],
         selectedShowIds: []
       }
@@ -126,8 +138,14 @@
           artists: {},
           shows: {}
         }
+        if (this.description) {
+          artwork.description = this.description
+        }
         if (this.year) {
           artwork.year = this.year
+        }
+        if (this.vimeoId) {
+          artwork.vimeoId = this.vimeoId
         }
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
           const data = {fullName: artist.fullName}
@@ -154,7 +172,9 @@
       'accountArtwork' () {
         this.url = this.accountArtwork.url
         this.title = this.accountArtwork.title
+        this.description = this.accountArtwork.description
         this.year = this.accountArtwork.year
+        this.vimeoId = this.accountArtwork.vimeoId
         this.selectedArtistIds = Object.keys(this.accountArtwork.artists || {})
         this.selectedShowIds = Object.keys(this.accountArtwork.shows || {})
       }
