@@ -169,8 +169,10 @@ statistics: {}
 [[Data Types︎]](#data-types)  
 
 **Iterations are properties of an Artwork.**  
+<small>
 Based on Iteration Report by Guggenheim Conservation Department:  
 https://www.guggenheim.org/wp-content/uploads/2015/11/guggenheim-conservation-iteration-report-2012.pdf
+</small>
  
 ```javascript
 id: String
@@ -301,7 +303,7 @@ artists: ArtistBase[]
 curators: Contributor[]
 artworks: ArtworkBase[]
 synopsis: String
-description: String - /* allowed html tags: <a><p><b><i><h1><h2><h3> */
+description: String /* Multi-line with allowed html tags */
 publications: PublicationBase[]
 attachments: Attachment[]
 ```
@@ -446,18 +448,18 @@ mimeType: String
 #### Control:
 [[Data Types︎]](#data-types)  
 
+_Draft_
 ```javascript
 order: Number
 icon: String|Attachment
 label: String
-type: String - 'keyboard'|'mouse'|'function'|'custom'
+type: String /* 'keyboard'|'mouse'|'function'|'custom' */
 value: {
   keyCode: String 
-  modifier: String - 'shiftKey'|'ctrlKey'|'altKey'|'metaKey'
-  type: String - 'keydown'|'keyup'|'keypress'
+  modifier: String /* 'shiftKey'|'ctrlKey'|'altKey'|'metaKey' */
+  type: String /* 'keydown'|'keyup'|'keypress' */
 }
 ```
-_It's a draft yet_
 
 #### Record:
 [[Data Types︎]](#data-types) 
@@ -504,7 +506,7 @@ onBehalfOf: Contributor
 type: String - one of predifined options
 reason: String
 decidedBy: Contributor
-necessity: String - One of 'possible'|'recommended'|'important'|'critical'
+necessity: String /* One of 'possible'|'recommended'|'important'|'critical' */
 ```
 #### Equipment:
 [[Data Types︎]](#data-types)
@@ -531,7 +533,7 @@ weight: Number
 #### DisplayEquipment
 [[Data Types︎]](#data-types)  
 
-_Taken partly from http://www.projectorcentral.com_
+<small>Taken partly from http://www.projectorcentral.com</small>
 ```javascript
 /**
  * inherited from Equipment
