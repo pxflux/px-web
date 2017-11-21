@@ -590,26 +590,3 @@ storageType: String
 os: String
 osVersion: Number
 ```
-______
-account
- artworks
- artists
- shows
-
- collections
- places
- collectors
- curators
- publications
-
- artworks >-< artists
- artworks >- iteration -< shows
- shows >-< places
- artworks >-< collectors
-
-
-artworks.{artworkId}.artists.{artistId}
-artworks.{artworkId}.shows.{showId}
-
-artists.{artistId}.artworks.{artworkId}
-
