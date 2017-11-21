@@ -17,7 +17,9 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-# Data Types:
+# Data Types:  
+###### Table Of Content
+
 [**Account**](#account)  
 
 [**Artwork**](#artwork)  
@@ -586,15 +588,28 @@ impedance: Number
   appearance: String - text
   weight: Number
 */
-processorCores: Number
-processorSpeed: Number
-processorArchitecture: String
-memoryAmount: Number
-memoryType: String
-graphicsMemoryAmount: Number
-graphicsMemoryType: String
-storageAmount: String
-storageType: String
+cpu:{
+  cores: Number
+  speed: Number
+  architecture: String
+}
+memory:{
+  amount: Number
+  type: String
+}
+graphics:{
+  memoryAmount: Number
+  memoryType: String
+}
+storage:{
+  amount: String
+  type: String
+}
+connectivity:{
+  bluetoothType: String
+  wifiType: String
+  ethernetType: String
+}
 os: String
 osVersion: Number
 ```
