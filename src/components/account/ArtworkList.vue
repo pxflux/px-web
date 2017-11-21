@@ -3,8 +3,7 @@
     <div v-if="userAccount" class="wrap-content grid" id="main-grid">
       <ArtworkItem v-for="artwork in accountArtworks"
                    :artwork="artwork" :key="artwork['.key']"
-                   :uri="'/account/artwork/' + artwork['.key']"
-                   :private="true">
+                   :uri="'/account/artwork/' + artwork['.key']">
       </ArtworkItem>
       <router-link to="/account/artwork/new" class="grid-cell button" title="Add Artwork">
         <div class="button plus center"></div>
@@ -19,8 +18,7 @@
   import firebase from '../../firebase-app'
   import { mapState, mapActions } from 'vuex'
   import GridHelper from '../../helpers/grid'
-  import { ArtworkData } from '../../models/artwork'
-  
+
   export default {
     mixins: [GridHelper],
     components: {
@@ -28,14 +26,6 @@
     },
     created () {
       this.init()
-      console.log(this.artworks)
-    },
-    data () {
-      return {
-        // TODO: Check if it is possible to use accountArtworks directly without making this copy..
-        // this will be an array of objects casted to ArtworkData type..
-        artworks: []
-      }
     },
     computed: {
       ...mapState(['userAccount', 'accountArtworks']),
@@ -64,20 +54,9 @@
         this.init()
       },
       'userAccount' () {
-        console.log('::userAccount::')
-        console.log(this.userAccount)
         this.init()
       },
       accountArtworks () {
-        console.log(':::accountArtworks::: ' + (Array.isArray(this.accountArtworks) ? 'array' : typeof this.accountArtworks))
-        console.log(this.accountArtworks)
-        const _this = this
-        this.accountArtworks.forEach(function (data) {
-          // FIX IT this doesn't work because of inheritance.. Vue doesn't recognise methods of classes?
-          _this.artworks.push(new ArtworkData(data))
-        })
-        console.log(':::this.artworks::::: ')
-        console.log(this.artworks)
         this.$nextTick(function () {
           this.fillEmptySpaceInGrid('grid')
         })
