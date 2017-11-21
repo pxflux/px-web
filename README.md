@@ -56,7 +56,7 @@ npm run build --report
 *  [_Equipment_](#equipment)
 *  [_DisplayEquipment_](#displayequipment)
 *  [_AudioEquipment_](#audioequipment)
-*  [_PlaybackEquipment_](#playbackequipment)
+*  [_PlaybackEquipment_](#playbackequipment)  
 
 <a name="account"/>
 <a name="artwork"/>
@@ -89,7 +89,8 @@ npm run build --report
 <a name="displayequipment"/>
 <a name="audioequipment"/>
 <a name="playbackequipment"/>
-___
+
+#
 
 ## Account
 ```javascript
