@@ -1,7 +1,7 @@
 <template>
   <main v-if="artwork">
     <div v-if="artwork.vimeoId">
-      <vimeo :video-id='artwork.vimeoId' :options="{background:false}"></vimeo>
+      <vimeo :video-id='artwork.vimeoId' :options="{background:true}"></vimeo>
     </div>
     <div class="wrap-content text-block">
       <h1 :title="artwork.title">{{ artwork.title }}</h1>
