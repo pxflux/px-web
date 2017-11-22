@@ -8,13 +8,13 @@
       </template>
 
       <form id="form-artwork">
-        <fieldset>
+        <div class="editor-section">
           <label for="image">Image</label>
           <image-upload id="image" :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
-        </fieldset>
-        <fieldset>
           <label for="url">Work URL</label>
           <input id="url" type="text" v-model.trim="url" required="required">
+        </div>
+        <fieldset>
         </fieldset>
         <fieldset>
           <label for="title">Title</label>

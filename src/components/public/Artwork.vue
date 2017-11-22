@@ -1,5 +1,8 @@
 <template>
   <main v-if="artwork">
+    <div v-if="artwork.vimeoId">
+      <vimeo :videoID='artwork.vimeoId'></vimeo>
+    </div>
     <div class="wrap-content text-block">
       <h1 :title="artwork.title">{{ artwork.title }}</h1>
       <img v-show="image.displayUrl" :src="image.displayUrl" width="200" height="200">
@@ -21,10 +24,6 @@
           </li>
         </ul>
       </template>
-
-      <template v-if="artwork.vimeoId">
-        <vimeo :video-id='artwork.vimeoId'></vimeo>
-      </template>
     </div>
   </main>
 </template>
@@ -32,11 +31,12 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import firebase from '../../firebase-app'
-  import { vueVimeoPlayer } from 'vue-vimeo-player'
+//  import { vueVimeoPlayer } from 'vue-vimeo-player'
+  import VimeoPlayer from '../VimeoPlayer'
 
   export default {
     components: {
-      vimeo: vueVimeoPlayer
+      vimeo: VimeoPlayer // vueVimeoPlayer
     },
     created () {
       this.init()
