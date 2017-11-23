@@ -135,17 +135,11 @@
           published: this.published,
           url: this.url,
           title: this.title,
+          description: this.description || '',
+          year: this.year || '',
+          vimeoId: this.vimeoId || '',
           artists: {},
           shows: {}
-        }
-        if (this.description) {
-          artwork.description = this.description
-        }
-        if (this.year) {
-          artwork.year = this.year
-        }
-        if (this.vimeoId) {
-          artwork.vimeoId = this.vimeoId
         }
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
           const data = {fullName: artist.fullName}

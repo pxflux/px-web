@@ -28,6 +28,8 @@ export function createStore () {
       account: null,
       invitations: [],
 
+      accountPlayers: [],
+
       accountArtworks: [],
       accountArtwork: null,
 
