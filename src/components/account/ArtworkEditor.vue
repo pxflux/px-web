@@ -2,15 +2,18 @@
   <main>
     <div v-if="userAccount" class="wrap-content text-block">
       <router-link to="/account/artworks/">Artworks</router-link>
-      <template v-if="! isNew">
+      <template v-if="! isNew && accountArtwork">
         &gt;
         <router-link :to="'/account/artwork/' + artworkId">{{ accountArtwork.title }}</router-link>
       </template>
 
-      <form id="form-artwork">
+      <form id="form-artwork" v-on:submit.prevent>
+        <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"></remote-control-editor>
+
         <div class="editor-section">
           <label for="image">Image</label>
-          <image-upload id="image" :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+          <image-upload id="image" :imageUrl="image.displayUrl" @input-file="setImageFile"
+                        @remove-image="setImageRemoved"></image-upload>
           <label for="url">Work URL</label>
           <input id="url" type="text" v-model.trim="url" required="required">
         </div>
@@ -49,8 +52,8 @@
         <fieldset>
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
-          <button v-if="isNew" @click.prevent="submitArtwork">Create</button>
-          <button v-if="! isNew" @click.prevent="submitArtwork">Save</button>
+          <button v-if="isNew" @click="submitArtwork">Create</button>
+          <button v-if="! isNew" @click="submitArtwork">Save</button>
         </fieldset>
       </form>
     </div>
@@ -62,11 +65,12 @@
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
   import ImageUpload from '../elements/ImageUpload'
+  import RemoteControlEditor from '../elements/RemoteControlEditor'
 
   export default {
     props: ['isNew'],
     components: {
-      ImageUpload
+      ImageUpload, RemoteControlEditor
     },
     created () {
       this.init()
@@ -103,7 +107,8 @@
         year: '',
         vimeoId: '',
         selectedArtistIds: [],
-        selectedShowIds: []
+        selectedShowIds: [],
+        selectedControls: []
       }
     },
     methods: {
@@ -126,6 +131,9 @@
       setImageRemoved (flag) {
         this.imageRemoved = flag
       },
+      setControls (value) {
+        this.selectedControls = value
+      },
 
       submitArtwork () {
         if (!this.accountId) {
@@ -139,7 +147,8 @@
           year: this.year || '',
           vimeoId: this.vimeoId || '',
           artists: {},
-          shows: {}
+          shows: {},
+          controls: this.selectedControls
         }
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
           const data = {fullName: artist.fullName}
@@ -164,13 +173,15 @@
         this.init()
       },
       'accountArtwork' () {
-        this.url = this.accountArtwork.url
-        this.title = this.accountArtwork.title
-        this.description = this.accountArtwork.description
-        this.year = this.accountArtwork.year
-        this.vimeoId = this.accountArtwork.vimeoId
-        this.selectedArtistIds = Object.keys(this.accountArtwork.artists || {})
-        this.selectedShowIds = Object.keys(this.accountArtwork.shows || {})
+        const item = this.accountArtwork || {}
+        this.url = item.url
+        this.title = item.title
+        this.description = item.description
+        this.year = item.year
+        this.vimeoId = item.vimeoId
+        this.selectedArtistIds = Object.keys(item.artists || {})
+        this.selectedShowIds = Object.keys(item.shows || {})
+        this.selectedControls = item.controls || []
       }
     }
   }

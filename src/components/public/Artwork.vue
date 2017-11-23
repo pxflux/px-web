@@ -10,7 +10,10 @@
       <ul v-if="accountPlayers.length">
         <li v-for="player in accountPlayers" :key="player['__key']">
           <button v-if="!launched(player)" @click="launch(player)">Launch on {{ player.pin }}</button>
-          <button v-if="launched(player)" @click="stop(player)">Stop from {{ player.pin }}</button>
+          <template v-if="launched(player)">
+            <button @click="stop(player)">Stop from {{ player.pin }}</button>
+            <remote-control :controls="controls" v-on:select="sendControl(player, $event)"></remote-control>
+          </template>
         </li>
       </ul>
       <h2 v-if="artists.length">Artists</h2>
@@ -33,11 +36,13 @@
   import { mapState, mapActions } from 'vuex'
   import firebase from '../../firebase-app'
   import { vueVimeoPlayer } from 'vue-vimeo-player'
+  import RemoteControl from '../elements/RemoteControl'
   import { log } from '../../helper'
 
   export default {
     components: {
-      vimeo: vueVimeoPlayer
+      vimeo: vueVimeoPlayer,
+      RemoteControl
     },
     created () {
       this.init()
@@ -69,6 +74,12 @@
         return Object.keys(this.artwork.shows || {}).map(id => {
           return {...this.artwork.shows[id], ...{'.key': id}}
         })
+      },
+      controls () {
+        if (this.artwork) {
+          return this.artwork.controls || []
+        }
+        return []
       }
     },
     methods: {
@@ -81,10 +92,10 @@
         }
       },
       launched (player) {
-        if (!this.accountId || !this.artwork) {
+        if (!this.accountId || !this.artwork || !player.artwork) {
           return false
         }
-        return this.artwork['.key'] === (player.artwork || {}).key
+        return this.artworkId === player.artwork.key
       },
       launch (player) {
         if (!this.accountId || !this.artwork) {
@@ -95,7 +106,8 @@
             key: this.artwork['.key'],
             url: this.artwork.url,
             title: this.artwork.title,
-            author: this.artists.map(artist => artist.fullName).join(', ')
+            author: this.artists.map(artist => artist.fullName).join(', '),
+            controls: this.artwork.controls
           }
         }
         firebase.database().ref('accounts/' + this.accountId + '/players/' + player['.key']).update(data).catch(log)
@@ -105,6 +117,9 @@
           return
         }
         firebase.database().ref('accounts/' + this.accountId + '/players/' + player['.key'] + '/artwork').remove().catch(log)
+      },
+      sendControl (player, position) {
+        firebase.database().ref('commands/' + player.pin).push({controlId: '' + position}).catch(log)
       }
     },
     watch: {
