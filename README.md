@@ -28,7 +28,7 @@ npm run build --report
 
 [**Artwork**](#artwork)  
 * [_ArtworkBase_](#artworkbase)  
-* [_Artwork_](#artworkmain)  
+* [_Artwork_](#artwork-1)  
 * [_**Iteration**_](#iteration)  
 
 [**Collection**](#collection)
@@ -67,7 +67,7 @@ npm run build --report
 <a name="account"/>
 <a name="artwork"/>
 <a name="artworkbase"/>
-<a name="artworkmain"/>
+<a name="artwork-1"/>
 <a name="iteration"/>
 <a name="collection"/>
 <a name="show"/>
