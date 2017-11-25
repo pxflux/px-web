@@ -1,6 +1,7 @@
 <template>
   <div>
-    <img v-show="showUrl" :src="showUrl" width="100" height="100">
+    <img v-if="showUrl" :src="showUrl" width="100" height="100">
+    <div v-else="" class="no-image" style="width:100px; height:100px"></div>
     <input ref="inputImage" type="file" accept="image/*" @change="uploadImage">
     <button v-show="!this.removed && (previewUrl || imageUrl)" @click="removeImage">Remove</button>
     <button v-show="this.removed" @click="removed = false">Undo</button>

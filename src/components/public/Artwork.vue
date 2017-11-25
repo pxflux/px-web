@@ -1,8 +1,9 @@
 <template>
   <main v-if="artwork">
-    <div v-if="artwork.vimeoId">
-      <vimeo :video-id='artwork.vimeoId' :options="{background:true}"></vimeo>
-    </div>
+    <video-player v-if="preview"
+                  :videoUrl="preview.displayUrl"
+                  :ratio="preview.ratio">
+    </video-player>
     <div class="wrap-content text-block">
       <h1 :title="artwork.title">{{ artwork.title }}</h1>
       <img v-show="image.displayUrl" :src="image.displayUrl" width="200" height="200">
@@ -31,18 +32,22 @@
 <script>
   import { mapState, mapActions } from 'vuex'
   import firebase from '../../firebase-app'
-  import { vueVimeoPlayer } from 'vue-vimeo-player'
+  import VideoPlayer from '../VideoPlayer'
 
   export default {
     components: {
-      vimeo: vueVimeoPlayer
+      'video-player': VideoPlayer
     },
     created () {
       this.init()
     },
     computed: {
       ...mapState(['artwork']),
-
+      preview () {
+        console.log('this.artwork: >>>>>>')
+        console.log(this.artwork)
+        return this.artwork && this.artwork.preview ? this.artwork.preview : null
+      },
       artworkId () {
         return this.$route.params.id
       },
@@ -54,12 +59,12 @@
       },
       artists () {
         return Object.keys(this.artwork.artists || {}).map(id => {
-          return {...this.artwork.artists[id], ...{'.key': id}}
+          return { ...this.artwork.artists[id], ...{ '.key': id } }
         })
       },
       shows () {
         return Object.keys(this.artwork.shows || {}).map(id => {
-          return {...this.artwork.shows[id], ...{'.key': id}}
+          return { ...this.artwork.shows[id], ...{ '.key': id } }
         })
       }
     },
@@ -67,7 +72,7 @@
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({key: 'artwork', ref: firebase.database().ref('artworks/' + this.artworkId)})
+        this.setRef({ key: 'artwork', ref: firebase.database().ref('artworks/' + this.artworkId) })
       }
     },
     watch: {

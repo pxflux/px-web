@@ -279,10 +279,13 @@
 }
 
 .editor-section {
+  *{
+    margin-bottom: $outline-width;
+  }
   &:not(:first-child) {
     margin-top: $header-height;
   }
-  & > *:not(.editor-section) {
+  & > *:not(.editor-section, label) {
     margin-left: $form-label-width;
     position: relative;
   }
@@ -291,7 +294,8 @@
   }
 
   h1, h2, h3 {
-    margin-bottom: $font-size-body;
+    //margin-bottom: $font-size-body;
+    margin: 0;
   }
 
   .button, button {

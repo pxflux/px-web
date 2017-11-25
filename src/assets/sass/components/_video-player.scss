@@ -1,0 +1,30 @@
+.video-box{
+  position: relative;
+  background: $outline-color;
+  height: 100%;
+  max-height: $header-height * 8;
+
+  iframe{
+    margin: 0;
+    border: none;
+    display: block;
+    width: 100%;
+  }
+
+  button{
+    @include centered();
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+
+    $ico-size: 2.8rem;
+    $ico-line-w: 0.3rem;
+    $ico-color: #000;
+
+    &.play{
+      @include button-arrowhead(0, $ico-size, $ico-line-w, $ico-color);
+    }
+    &.pause{
+      @include button-pause($ico-size, $ico-line-w, $ico-color);
+    };
+  }
+}

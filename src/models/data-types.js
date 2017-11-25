@@ -1,22 +1,86 @@
+/* eslint-disable valid-typeof */
 import { isNumeric } from '../helper'
 
-export class BasicData {}
+export function BasicData () {}
 
 /**
  * @param {object} obj
- * @param {string} prop
- * @param {*} [defaultValue]
- * @return {*}
+ * @param {function=} elementConstructor
+ * @return {void}
  */
-BasicData.prototype.getValueFrom = function (obj, prop, defaultValue) {
-  if (typeof obj !== 'object') return defaultValue
-  if (obj.hasOwnProperty(prop)) {
-    const value = obj[prop]
-    if (!defaultValue || typeof value === typeof defaultValue) return value
-    if (typeof defaultValue === 'number' && isNumeric(value)) return value * 1
-    return defaultValue
+BasicData.prototype.castFrom = function (obj, elementConstructor) {
+  if (typeof obj !== 'object') return
+  for (let prop in obj) {
+    if (obj.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
+      const value = obj[prop]
+      let defaultValue = this[prop]
+      const type = typeof defaultValue
+      if (Array.isArray(defaultValue) && typeof value === 'object') {
+        // defaultValue = defaultValue[0]
+        // let valueArray = []
+        // for(let el in value){
+        //   if(value.hasOwnProperty(el))
+        // }
+      }
+      if (typeof value === 'object' && typeof defaultValue.castFrom === 'function') {
+        defaultValue.castFrom(value)
+      } else {
+        if (typeof value === type) this[prop] = value
+        if (type === 'number' && isNumeric(value)) this[prop] = value * 1
+        if (type === 'boolean') this[prop] = this.convertToBoolean(value, defaultValue)
+      }
+    }
   }
 }
+BasicData.prototype.convertToBoolean = function (value, defaultValue) {
+  return (value === 'true' || value === '1') || (value === 'false' || value === '0') ? false : defaultValue
+}
+
+BasicData.prototype.convertToArrayOfType = function (obj) {
+
+}
+
+export function AttachmentData (data) {
+  BasicData.call(this)
+
+  this.displayUrl = ''
+  this.storageUri = ''
+  this.type = '' // image|video|file|...
+  this.ratio = 0 // 1.7777777778 - 16:9
+
+  this.castFrom(data)
+}
+
+AttachmentData.prototype = BasicData.prototype
+AttachmentData.prototype.constructor = AttachmentData
+
+/**
+ * @typedef {{
+   *   displayUrl: string
+   *   storageUri: string
+   *   type: string
+   *   ratio: number
+   *   type: 'video',
+   *   thumbnail: AttachmentData,
+   *   duration: number
+   * }} AttachmentVideoData
+ */
+/**
+ * @param {object=} data
+ * @constructor
+ */
+export function AttachmentVideoData (data) {
+  AttachmentData.call(this)
+
+  this.type = 'video'
+  this.thumbnail = new AttachmentData()
+  this.duration = 0
+
+  this.castFrom(data)
+}
+
+AttachmentVideoData.prototype = AttachmentData.prototype
+AttachmentVideoData.prototype.constructor = AttachmentVideoData
 
 /**
  * @typedef {string} Url
@@ -43,37 +107,57 @@ export class BasicUser extends BasicData {
  * @constructor
  * @extends BasicUser
  */
-export class Contributor extends BasicUser {
-  constructor (data) {
-    super(data)
+export function Contributor (data) {
+  /** @type  string */
+  this.id = ''
 
-    /** @type  string */
-    this.role = this.getValueFrom(data, 'role', '')
-  }
+  /** @type  string */
+  this.fullName = ''
 
-  get hasMainRole () {
+  /** @type  string */
+  this.role = ''
+
+  this.image = new AttachmentData()
+
+  this.hasMainRole = function () {
     return this.constructor.roles.indexOf(this.role) === 0
   }
 
-  get hasImportantRole () {
+  this.hasImportantRole = function () {
     return this.constructor.roles.indexOf(this.role) < 2
   }
 
-  static get roles () {
-    return [
-      'artist',
-      'interpreter',
-      'artistAssistant',
-      'curator',
-      'exhibitionDesigner',
-      'mediaTechnician',
-      'conservator',
-      'registrar',
-      'fabricator',
-      'art handler',
-      'externalCompany',
-      'other'
-    ]
+  this.roles = [
+    'artist',
+    'interpreter',
+    'artistAssistant',
+    'curator',
+    'exhibitionDesigner',
+    'mediaTechnician',
+    'conservator',
+    'registrar',
+    'fabricator',
+    'art handler',
+    'externalCompany',
+    'other'
+  ]
+}
+
+/**
+ * @param {object} obj
+ * @return {void}
+ */
+Contributor.prototype.castFrom = function (obj) {
+  if (typeof obj !== 'object') return
+  for (let prop in obj) {
+    if (obj.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
+      const value = obj[prop]
+      const defaultValue = this[prop]
+      if (Array.isArray(defaultValue)) {}
+      if (typeof value === typeof defaultValue) this[prop] = value
+      if (typeof defaultValue === 'number' && isNumeric(value)) return value * 1
+      return defaultValue
+    }
   }
 }
 

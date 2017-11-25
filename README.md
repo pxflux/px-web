@@ -127,10 +127,7 @@ accountId: String
 published: boolean
 title: String // required, default: 'Untitled' 
 thumbnail: Attachment
-preview:{
-    type: String // 'video'|'gif'|'slideshow' 
-    url: String
-}
+preview: Attachment
 year: String
 credits: Contributor[]
 category: String[]
@@ -148,10 +145,7 @@ statisticsShort: {}
  published: boolean
  title: String - *required, default: 'Untitled'
  thumbnail: Attachment
- preview:{
-     type: 'video'|'gif'|'slideshow'
-     url: String
- }
+ preview: Attachment
  year: String
  credits: Contributor[]
  category: String[]
@@ -447,7 +441,23 @@ _The role options depend on the context where Contributor type is used (inside A
 ```javascript
 displayUrl: String
 storageUri: String
-mimeType: String
+type: String // image|video|file|...
+ratio: Number
+```
+#### Video:
+[[Data Types︎]](#data-types)  
+
+```javascript
+/**
+ * inherited from User
+ * 
+ displayUrl: String
+ storageUri: String
+ ratio: number
+ */
+type: 'video' // @override
+thumbnail: Attachment
+duration: Number
 ```
 
 #### Control:

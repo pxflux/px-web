@@ -30,7 +30,7 @@ $button-icon-color: rgb(131, 131, 131);
   }
 }
 
-@mixin button-drop-down( $rotate: 0, $size: 1.4rem, $line-w: 0.1rem) {
+@mixin button-arrowhead( $rotate: 0, $size: 1.4rem, $line-w: 0.1rem, $color:$button-icon-color) {
   $arr-size: sqrt($size * $size /2) * 1rem;
   $arr-line-w: $line-w;
   $x-shift: -75%;
@@ -50,12 +50,35 @@ $button-icon-color: rgb(131, 131, 131);
     display: block;
     width: $arr-size;
     height: $arr-size;
-    border-right: $arr-line-w solid $button-icon-color;
-    border-top: $arr-line-w solid $button-icon-color;
+    border-right: $arr-line-w solid $color;
+    border-top: $arr-line-w solid $color;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate($x-shift, $y-shift) rotate($rotate);
+    transition: transform 0.15s;
+  }
+}
+
+@mixin button-pause( $size: 1.4rem, $line-w: 0.1rem, $color:$button-icon-color) {
+  $x-shift: -50%;
+  $y-shift: -50%;
+
+  width: $header-height;
+  position: relative;
+  padding: 0;
+
+  &:before {
+    content: '';
+    display: block;
+    width: $size / 2 - $line-w * 2;
+    height: $size;
+    border-right: $line-w solid $color;
+    border-left: $line-w solid $color;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate($x-shift, $y-shift);
     transition: transform 0.15s;
   }
 }
@@ -82,10 +105,10 @@ $button-icon-color: rgb(131, 131, 131);
     @include button-plus(2rem, 0.1rem, 45deg)
   }
   &.drop-down {
-    @include button-drop-down();
+    @include button-arrowhead();
   }
   &.drop-down.open {
-    @include button-drop-down(90deg)
+    @include button-arrowhead(90deg)
   }
 }
 

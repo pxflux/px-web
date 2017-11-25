@@ -61,14 +61,14 @@ input, button, label {
 }
 
 label {
-  width: 20%;
+  //width: 20%;
   float: left;
   line-height: $header-height;
   background: darken($bg-color, 1);
 }
 
 input {
-  width: 80%;
+  //width: 80%;
 }
 
 input[type=submit],
