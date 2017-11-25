@@ -63,9 +63,8 @@
           </div>
           <div :class="'section-body with-grid drop-down '+rcEditorState"
                v-if="rcEditorState == 'open'">
-            <remote-control-editor
-              :controls="artworkData.controls" v-on:updateRemoteControlData="updateRemoteControlData">
-            </remote-control-editor>
+            <remote-control-editor :controls="accountArtwork.controls"
+                                   v-on:update="updateRemoteControlData"></remote-control-editor>
           </div>
         </div>
 
@@ -97,7 +96,7 @@
   import { log } from '../../helper'
   import Firebase from 'firebase'
   import firebaseApp, { store } from '../../firebase-app'
-  import RemoteControlEditor from './RemoteControlEditor'
+  import RemoteControlEditor from '../elements/RemoteControlEditor'
   import vueMediumEditor from 'vue2-medium-editor'
 
   export default {

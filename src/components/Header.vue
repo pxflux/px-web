@@ -16,6 +16,7 @@
             </a>
             <div v-if="user" class="submenu">
               <div v-on:click="goto('/account/new')" class="button flick">New team</div>
+              <div v-on:click="goto('/account/player/new')" class="button flick">Add player</div>
               <div v-on:click="goto('/account/artwork/new')" class="button flick">New artwork</div>
               <div v-on:click="goto('/account/artist/new')" class="button flick">New artist</div>
               <div v-on:click="goto('/account/show/new')" class="button flick">New show</div>
@@ -28,7 +29,9 @@
           <div v-if="user" class="item-with-submenu">
             <a class="button flick submenu-trigger">{{ userAccount.title }}</a>
             <div class="submenu">
-              <div v-for="account in inactiveAccounts" :key="account['.key']" class="button flick" v-on:click="setAccount(account['.key'])">{{ account.title }}</div>
+              <div v-for="account in inactiveAccounts" :key="account['.key']" class="button flick"
+                   v-on:click="setAccount(account['.key'])">{{ account.title }}
+              </div>
             </div>
           </div>
           <!-- -->
@@ -43,6 +46,7 @@
               <router-link to="/account/shows" class="button flick">Shows</router-link>
               <router-link to="/account/places" class="button flick">Places</router-link>
               <div class="sub-section">
+                <router-link to="/account/players" class="button flick">Players</router-link>
                 <div v-on:click="goto('/account/update')" class="button flick">Team profile</div>
                 <div v-on:click="goto('/user/update')" class="button flick">Your profile</div>
                 <div v-on:click="goto('/account/invitations')" class="button flick">Invitations</div>

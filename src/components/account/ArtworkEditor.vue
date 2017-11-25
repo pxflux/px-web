@@ -6,8 +6,8 @@
         •
         <router-link :to="'/account/artwork/' + artworkId">{{ title }}</router-link>
       </p>
-      
-      <form id="form-artwork">
+      <form id="form-artwork" v-on:submit.prevent>
+        <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"></remote-control-editor>
         <div class="editor-section">
           <label for="title">Title</label>
           <h1>
@@ -51,8 +51,8 @@
         <div class="editor-section">
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
-          <button v-if="isNew" @click.prevent="submitArtwork">Create</button>
-          <button v-if="! isNew" @click.prevent="submitArtwork">Save</button>
+          <button v-if="isNew" @click="submitArtwork">Create</button>
+          <button v-if="! isNew" @click="submitArtwork">Save</button>
         </div>
       </form>
     </div>
@@ -64,6 +64,7 @@
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
   import ImageUpload from '../elements/ImageUpload'
+  import RemoteControlEditor from '../elements/RemoteControlEditor'
   import Attachment from './data-type-editors/Attachment'
 
   // import axios from 'axios'
@@ -100,7 +101,8 @@
     props: ['isNew'],
     components: {
       'image-upload': ImageUpload,
-      'attachment': Attachment
+      'attachment': Attachment,
+      RemoteControlEditor
     },
     created () {
       this.init()
@@ -140,7 +142,8 @@
         preview: { type: 'video' },
         vimeoBasic: false,
         selectedArtistIds: [],
-        selectedShowIds: []
+        selectedShowIds: [],
+        selectedControls: []
       }
     },
     methods: {
@@ -168,6 +171,10 @@
         console.log('previewData >>>>')
         console.log(previewData)
       },
+      setControls (value) {
+        this.selectedControls = value
+      },
+
       submitArtwork () {
         if (!this.accountId) {
           return
@@ -179,16 +186,13 @@
           url: this.url,
           title: this.title,
           preview: this.preview,
+          description: this.description || '',
+          year: this.year || '',
+          vimeoId: this.vimeoId || '',
           artists: {},
-          shows: {}
+          shows: {},
+          controls: this.selectedControls
         }
-        if (this.description) {
-          artwork.description = this.description
-        }
-        if (this.year) {
-          artwork.year = this.year
-        }
-
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
           const data = { fullName: artist.fullName }
           if (artist.photoUrl) {
@@ -224,14 +228,16 @@
         this.init()
       },
       'accountArtwork' () {
-        this.url = this.accountArtwork.url
-        this.title = this.accountArtwork.title
-        this.description = this.accountArtwork.description
-        this.year = this.accountArtwork.year
-        this.vimeoId = this.accountArtwork.vimeoId
+        const item = this.accountArtwork || {}
+        this.url = item.url
+        this.title = item.title
+        this.description = item.description
+        this.year = item.year
         this.preview = this.accountArtwork.preview ? this.accountArtwork.preview : { type: 'video' }
-        this.selectedArtistIds = Object.keys(this.accountArtwork.artists || {})
-        this.selectedShowIds = Object.keys(this.accountArtwork.shows || {})
+        this.vimeoId = item.vimeoId
+        this.selectedArtistIds = Object.keys(item.artists || {})
+        this.selectedShowIds = Object.keys(item.shows || {})
+        this.selectedControls = item.controls || []
       }
     }
   }

@@ -1,0 +1,51 @@
+<template>
+  <main>
+    <div v-if="userAccount" class="wrap-content grid">
+      <form id="form-player" @submit.prevent="accept">
+        <label for="pin">Pin</label>
+        <input id="pin" type="text" v-model.trim="pin" required="required">
+        <button>Add</button>
+      </form>
+    </div>
+  </main>
+</template>
+
+<script>
+  import { mapState } from 'vuex'
+  import firebase from '../../firebase-app'
+  import { log } from '../../helper'
+
+  export default {
+    computed: {
+      ...mapState(['userAccount']),
+
+      accountId () {
+        if (!this.userAccount) {
+          return null
+        }
+        return this.userAccount['.key']
+      }
+    },
+    data () {
+      return {
+        pin: ''
+      }
+    },
+    methods: {
+      accept () {
+        if (this.accountId) {
+          const account = {
+            accountId: this.accountId
+          }
+          firebase.database().ref('player-pins/' + this.pin).once('value').then(function (snapshot) {
+            if (snapshot.exists()) {
+              return snapshot.ref.update(account)
+            }
+          }).then(function () {
+            this.$router.push('/')
+          }.bind(this)).catch(log)
+        }
+      }
+    }
+  }
+</script>
