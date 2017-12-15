@@ -56,7 +56,7 @@ export class IterationComponent extends Record {
     this.decidedBy = getValueFromObj(data, 'decidedBy', null)
 
     /** @type {string} */
-    this.necessity = getValueFromObj(data, 'necessity', this.necessityOptions[1])
+    this.status = getValueFromObj(data, 'status', this.necessityOptions[1])
   }
 
   get necessityOptions () {

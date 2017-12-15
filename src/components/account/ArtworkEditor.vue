@@ -11,28 +11,28 @@
         <div class="editor-section">
           <label for="title">Title</label>
           <h1>
-            <input id="title" type="text" v-model.trim="title" required="required">
+            <input id="title" type="text" v-model.trim="artwork.title" required="required">
           </h1>
           <label for="url">Work URL</label>
-          <input id="url" type="text" v-model.trim="artwork.url" required="required">
+          <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
         </div>
         <div class="editor-section">
           <label for="image">Image</label>
-          <image-upload id="image" :imageUrl="image.displayUrl" @input-file="setImageFile"
+          <image-upload id="image" :imageUrl="artwork.thumbnail.displayUrl" @input-file="setImageFile"
                         @remove-image="setImageRemoved"></image-upload>
         </div>
         <div class="editor-section">
           <div>Video Preview</div>
-          <attachment v-model="preview" :attachmentData="preview"
+          <attachment v-model="artwork.preview" :attachmentData="artwork.preview"
                       @changed="updatePreview">
           </attachment>
         </div>
         <div class="editor-section">
           <label for="description">Description</label>
-          <textarea id="description" v-model.trim="description"></textarea>
+          <textarea id="description" v-model.trim="artwork.description"></textarea>
           <br>
           <label for="year">Year</label>
-          <input id="year" type="text" v-model.trim="year" required="required">
+          <input id="year" type="text" v-model.trim="artwork.year" required="required">
         </div>
         <div class="editor-section">
           <label for="artistIds">Artists</label>
@@ -66,36 +66,7 @@
   import ImageUpload from '../elements/ImageUpload'
   import RemoteControlEditor from '../elements/RemoteControlEditor'
   import Attachment from './data-type-editors/Attachment'
-
-  // import axios from 'axios'
-  function ArtworkDataStruct () { return ArtworkData }
-
-  const ArtworkData = {
-    accountId: '',
-    published: false,
-    title: 'Untitled',
-    url: '', // TODO: url should be stored in 'source':{url:'', type:''}.. and this could be just a shortcut
-    /** @type Attachment */
-    thumbnail: null,
-    /** @type Attachment */
-    preview: null,
-    year: '',
-    /** @type Contributor[] */
-    credits: [],
-    artists: this.credits, // TODO: has to be removed.. it is now just for a backward compatibility
-    statisticsShort: null,
-    description: '',
-    source: {
-      url: '',
-      type: 'video' | 'html'
-    },
-    controls: [],
-    iterations: [],
-    shows: [],
-    category: [],
-    tags: [],
-    statistics: null
-  }
+  import {ArtworkDataStruct} from '../../models/artwork'
 
   export default {
     props: ['isNew'],
@@ -131,8 +102,7 @@
     },
     data () {
       return {
-        /** @type ArtworkDataStruct */
-        artwork: { ...ArtworkDataStruct },
+        artwork: new ArtworkDataStruct(),
         imageFile: null,
         imageRemoved: false,
         url: '',
@@ -167,9 +137,9 @@
         this.imageRemoved = flag
       },
       updatePreview (previewData) {
-        this.preview = previewData
-        console.log('previewData >>>>')
-        console.log(previewData)
+        this.artwork.preview = previewData
+        console.log('this.artwork.preview >>>>')
+        console.log(this.artwork.preview)
       },
       setControls (value) {
         this.selectedControls = value
@@ -179,20 +149,7 @@
         if (!this.accountId) {
           return
         }
-        console.log('this.preview: >>>>>>')
-        console.log(this.preview)
-        const artwork = {
-          published: this.published,
-          url: this.url,
-          title: this.title,
-          preview: this.preview,
-          description: this.description || '',
-          year: this.year || '',
-          vimeoId: this.vimeoId || '',
-          artists: {},
-          shows: {},
-          controls: this.selectedControls
-        }
+        const artwork = this.artwork
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
           const data = { fullName: artist.fullName }
           if (artist.photoUrl) {
@@ -206,29 +163,29 @@
         store(this.accountId, this.artworkId, 'artworks', artwork, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/artwork/' + ref.key)
         }.bind(this)).catch(log())
-      },
-      upgradeToNewDataStruct () {
-        /** @type ArtworkDataStruct */
-        let artwork = this.artwork
-        artwork = { ...ArtworkDataStruct, ...this.accountArtwork }
-        artwork.url = this.accountArtwork.url
-        this.title = this.accountArtwork.title
-        this.description = this.accountArtwork.description
-        this.year = this.accountArtwork.year
-        this.vimeoId = this.accountArtwork.vimeoId
-        this.selectedArtistIds = Object.keys(this.accountArtwork.artists || {})
-        this.selectedShowIds = Object.keys(this.accountArtwork.shows || {})
       }
     },
     watch: {
       $route () {
         this.init()
       },
+      'artists' () {
+        console.log('this.artists: >>>>>>')
+        console.log(this.artists)
+      },
       'userAccount' () {
         this.init()
       },
       'accountArtwork' () {
+        console.log('this.accountArtwork: >>>>>>')
+        console.log(this.accountArtwork)
         const item = this.accountArtwork || {}
+        this.artwork.castFrom(item)
+        // Backward compatibility
+        if (item.url) this.artwork.source.url = item.url
+        if (item.image) this.artwork.thumbnail.castFrom(item.image)
+        console.log('this.artwork: >>>>>>')
+        console.log(this.artwork)
         this.url = item.url
         this.title = item.title
         this.description = item.description

@@ -1,33 +1,33 @@
 /* eslint-disable valid-typeof */
-import { isNumeric } from '../helper'
+import { isNumeric, setupProtoInheritance } from '../helper'
 
 export function BasicData () {}
 
 /**
  * @param {object} obj
- * @param {function=} elementConstructor
  * @return {void}
  */
-BasicData.prototype.castFrom = function (obj, elementConstructor) {
+BasicData.prototype.castFrom = function (obj) {
   if (typeof obj !== 'object') return
   for (let prop in obj) {
     if (obj.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
-      const value = obj[prop]
-      let defaultValue = this[prop]
-      const type = typeof defaultValue
-      if (Array.isArray(defaultValue) && typeof value === 'object') {
-        // defaultValue = defaultValue[0]
-        // let valueArray = []
-        // for(let el in value){
-        //   if(value.hasOwnProperty(el))
-        // }
-      }
-      if (typeof value === 'object' && typeof defaultValue.castFrom === 'function') {
-        defaultValue.castFrom(value)
+      const candidateValue = obj[prop]
+      const defaultValue = this[prop]
+      const defaultType = typeof defaultValue
+      if (typeof candidateValue === 'object' && typeof defaultValue.castFrom === 'function') {
+        defaultValue.castFrom(candidateValue)
       } else {
-        if (typeof value === type) this[prop] = value
-        if (type === 'number' && isNumeric(value)) this[prop] = value * 1
-        if (type === 'boolean') this[prop] = this.convertToBoolean(value, defaultValue)
+        let value = null
+        if (Array.isArray(defaultValue) && defaultValue.length) {
+          value = this.convertToArrayOfType(defaultValue[0].constructor, candidateValue)
+        } else if (typeof candidateValue === defaultType) {
+          value = candidateValue
+        } else if (defaultType === 'number' && isNumeric(candidateValue)) {
+          value = parseFloat(candidateValue)
+        } else if (defaultType === 'boolean') {
+          value = this.convertToBoolean(candidateValue, defaultValue)
+        }
+        if (value) this[prop] = value
       }
     }
   }
@@ -36,9 +36,41 @@ BasicData.prototype.convertToBoolean = function (value, defaultValue) {
   return (value === 'true' || value === '1') || (value === 'false' || value === '0') ? false : defaultValue
 }
 
-BasicData.prototype.convertToArrayOfType = function (obj) {
-
+/**
+ * Converts object into Array of specific type
+ * @param {constructor} TypeConstructor
+ * @param {object} obj
+ * @return {Array}
+ */
+BasicData.prototype.convertToArrayOfType = function (TypeConstructor, obj) {
+  const arr = []
+  if (typeof obj !== 'object') return arr
+  if (typeof TypeConstructor !== 'function') return arr
+  for (let key in obj) {
+    if (!obj.hasOwnProperty(key)) continue
+    const item = new TypeConstructor(obj[key])
+    item['.key'] = key
+    arr.push(item)
+  }
+  return arr
 }
+
+/**
+ * @param {object=} data
+ * @param {string} unit
+ * @constructor
+ * @extends BasicData
+ */
+export function Dimensions (data, unit) {
+  BasicData.call(this)
+
+  this.w = 0
+  this.h = 0
+  this.unit = 'px'
+
+  this.castFrom(data)
+}
+setupProtoInheritance(Dimensions, BasicData)
 
 export function AttachmentData (data) {
   BasicData.call(this)
@@ -51,20 +83,8 @@ export function AttachmentData (data) {
   this.castFrom(data)
 }
 
-AttachmentData.prototype = BasicData.prototype
-AttachmentData.prototype.constructor = AttachmentData
+setupProtoInheritance(AttachmentData, BasicData)
 
-/**
- * @typedef {{
-   *   displayUrl: string
-   *   storageUri: string
-   *   type: string
-   *   ratio: number
-   *   type: 'video',
-   *   thumbnail: AttachmentData,
-   *   duration: number
-   * }} AttachmentVideoData
- */
 /**
  * @param {object=} data
  * @constructor
@@ -79,219 +99,180 @@ export function AttachmentVideoData (data) {
   this.castFrom(data)
 }
 
-AttachmentVideoData.prototype = AttachmentData.prototype
-AttachmentVideoData.prototype.constructor = AttachmentVideoData
+setupProtoInheritance(AttachmentVideoData, AttachmentData)
 
-/**
- * @typedef {string} Url
- */
 /**
  * @param {object=} data
  * @constructor
  * @extends BasicData
  */
-export class BasicUser extends BasicData {
-  constructor (data) {
-    super()
+export function ArtworkSourceData (data) {
+  BasicData.call(this)
 
-    /** @type  string */
-    this.id = this.getValueFrom(data, 'id', '')
+  this.type = 'html' // video|html|...
+  this.version = ''
+  this.url = ''
 
-    /** @type  string */
-    this.fullName = this.getValueFrom(data, 'fullName', '')
-  }
+  this.castFrom(data)
 }
+setupProtoInheritance(ArtworkSourceData, BasicData)
 
 /**
  * @param {object=} data
  * @constructor
- * @extends BasicUser
+ * @extends BasicData
  */
-export function Contributor (data) {
-  /** @type  string */
+export function ArtworkSpecifications (data) {
+  BasicData.call(this)
+
+  this.numberScreens = 1
+  this.screenResolutionns = []
+
+  this.castFrom(data)
+}
+
+setupProtoInheritance(ArtworkSpecifications, BasicData)
+
+/**
+ * Control Data Type
+ * @param {object=} data
+ * @constructor
+ * @extends BasicData
+ */
+export function Control (data) {
+  BasicData.call(this)
+
+  this.order = 0
+  this.icon = '' // Unicode Character or Attachment TODO: it should be of type Icon
+  this.label = ''
+  this.type = '' // 'keyboard'|'mouse'|'function'|'custom'
+  this.value = {
+    keyCode: '',
+    modifier: '', // 'shiftKey'|'ctrlKey'|'altKey'|'metaKey'
+    type: '' // 'keydown'|'keyup'|'keypress'
+  }
+
+  this.castFrom(data)
+}
+
+setupProtoInheritance(Control, BasicData)
+
+/**
+ * @param {object=} data
+ * @constructor
+ * @extends BasicData
+ */
+export function User (data) {
+  BasicData.call(this)
+
+  /** @type string */
   this.id = ''
 
-  /** @type  string */
-  this.fullName = ''
+  /** @type string */
+  this.displayName = ''
+
+  /** @type string - default user photo came from authorisation with google */
+  this.photoUrl = ''
+
+  /** @type AttachmentData - custom user photo */
+  this.photo = new AttachmentData()
+
+  this.castFrom(data)
+}
+
+setupProtoInheritance(User, BasicData)
+
+/**
+ * @param {object=} data
+ * @constructor
+ * @extends User
+ */
+export function Contributor (data) {
+  User.call(this)
 
   /** @type  string */
   this.role = ''
 
-  this.image = new AttachmentData()
+  this.castFrom(data)
+}
 
-  this.hasMainRole = function () {
-    return this.constructor.roles.indexOf(this.role) === 0
-  }
+setupProtoInheritance(Contributor, User)
 
-  this.hasImportantRole = function () {
-    return this.constructor.roles.indexOf(this.role) < 2
-  }
+Contributor.prototype.hasMainRole = function () {
+  return this.constructor.roles.indexOf(this.role) === 0
+}
+
+Contributor.prototype.hasImportantRole = function () {
+  return this.constructor.roles.indexOf(this.role) < 2
+}
+
+/**
+ * @param {...object=} data
+ * @constructor
+ */
+export function ContributorsList (data) {
+  BasicData.call(this)
+
+  this.contributors = []
 
   this.roles = [
     'artist',
-    'interpreter',
     'artistAssistant',
+    'interpreter',
     'curator',
     'exhibitionDesigner',
     'mediaTechnician',
     'conservator',
     'registrar',
     'fabricator',
-    'art handler',
+    'artHandler',
     'externalCompany',
     'other'
   ]
-}
 
-/**
- * @param {object} obj
- * @return {void}
- */
-Contributor.prototype.castFrom = function (obj) {
-  if (typeof obj !== 'object') return
-  for (let prop in obj) {
-    if (obj.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
-      const value = obj[prop]
-      const defaultValue = this[prop]
-      if (Array.isArray(defaultValue)) {}
-      if (typeof value === typeof defaultValue) this[prop] = value
-      if (typeof defaultValue === 'number' && isNumeric(value)) return value * 1
-      return defaultValue
-    }
-  }
-}
-
-/**
- * @param {object=} data
- * @constructor
- * @extends Contributor
- */
-export class ArtworkContributor extends Contributor {
-  constructor (data) {
-    super(data)
-
-    /** @type  string */
-    this.role = this.getValueFrom(data, 'role', ArtworkContributor.roles[0])
+  this.listMainContributors = function () {
+    return this.listWithRank(1)
   }
 
-  static get roles () {
-    return [
-      'artist',
-      'interpreter',
-      'artistAssistant',
-      'curator',
-      'exhibitionDesigner',
-      'mediaTechnician',
-      'conservator',
-      'registrar',
-      'fabricator',
-      'art handler',
-      'externalCompany',
-      'other'
-    ]
-  }
-}
-
-export class ArrayOfType extends Array {
-  /**
-   * @parameter {...castFrom} - An object whose properties will be casted to the given type and set into an Array,
-   *                            Or number of objects, which will be casted to the given type and set into an Array..
-   */
-  constructor (castFrom) {
-    super()
-    this.DataType = BasicData
-    if (arguments.length) this.setup(arguments)
-  }
-
-  /**
-   * @param {Arguments} args
-   */
-  setup (args) {
-    if (args.length) {
-      const argsArr = this.convertArgumentsToArray(args)
-      for (let i = 0; i < argsArr.length; i++) { this.push(argsArr[i]) }
-    }
-  }
-
-  /**
-   * @param {*} thing
-   */
-  push (thing) {
-    const objectOfType = thing instanceof this.DataType ? thing : new this.DataType(thing)
-    super.push(objectOfType)
-  }
-
-  /**
-   * @param {Arguments} args
-   * @return {Array}
-   */
-  convertArgumentsToArray (args) {
-    let ar = []
-    if (args.length === 1 && typeof args[0] === 'object') {
-      const arg = args[0]
-      for (let prop in arg) {
-        if (!arg.hasOwnProperty(prop)) continue
-        arg[prop]['.key'] = prop
-        ar.push(arg[prop])
+  this.listWithRank = function (rank) {
+    let list = []
+    for (let i = 0; i < this.contributors.length; i++) {
+      const contributor = this.contributors[i]
+      if (this.roles.indexOf(contributor.role) < rank) {
+        list.push(contributor)
       }
-    } else if (args.length > 1) {
-      ar = [...args]
     }
-    return ar
+    return list
   }
-}
 
-export class ContributorsList extends Array {
-  constructor () {
-    super()
-    const args = [...arguments]
-    args.forEach(function (obj) {
-      this.push(new Contributor(obj))
+  /**
+   * @param {Contributor[]=} list
+   * @return {string}
+   */
+  this.toString = function (list) {
+    if (!list.length) list = this.contributors
+    if (!list.length) return ''
+    let str = ''
+    let separator = list.length > 2 ? ', ' : ' & '
+    list.forEach((member) => {
+      if (str) str += separator
+      str += member.displayName
     })
+    return str
   }
 
-  toString (rank) {
-    let rankedContributors = []
-    for (let i = 0; i < this.length; i++) {
-      const contributor = this[i]
-      if (contributor.constructor.roles.indexOf(contributor.role) < rank) {
-        rankedContributors.push(contributor.fullName)
-      }
-    }
-    if (rankedContributors.length > 2) return rankedContributors.join(', ')
-    if (rankedContributors.length) return rankedContributors.join(' & ')
-    return ''
+  this.stringMainContributors = function () {
+    return this.toString(this.listMainContributors())
+  }
+
+  this.stringWithRank = function (rank) {
+    return this.toString(this.listWithRank(rank))
   }
 }
 
-/**
- * An Array, which makes sure that all it's items are of type ArtworkContributor
- */
-export class ArtworkContributorsList extends ArrayOfType {
-  constructor () {
-    super()
+setupProtoInheritance(ContributorsList, BasicData)
 
-    this.DataType = ArtworkContributor
-    const argsArr = this.convertArgumentsToArray(arguments)
-    for (let i = 0; i < argsArr.length; i++) { this.push(argsArr[i]) }
-  }
-
-  rankedList (rank) {
-    if (!rank) rank = this.length
-    let rankedContributors = []
-    for (let i = 0; i < this.length; i++) {
-      const contributor = this[i]
-      if (ArtworkContributor.roles.indexOf(contributor.role) < rank) {
-        rankedContributors.push(contributor.fullName)
-      }
-    }
-    return rankedContributors
-  }
-
-  toStringWithRank (rank) {
-    let rankedContributors = this.rankedList(rank)
-    if (rankedContributors.length > 2) return rankedContributors.join(', ')
-    if (rankedContributors.length) return rankedContributors.join(' & ')
-    return ''
-  }
+ContributorsList.prototype.castFrom = function (data) {
+  if (arguments.length > 1) data = { ...arguments }
+  this.contributors = this.convertToArrayOfType(Contributor, data)
 }

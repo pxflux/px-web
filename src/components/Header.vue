@@ -4,7 +4,7 @@
       <router-link to="/">
         <div id="px-logo-box" class="px-logo button flick">
           <canvas id="px-logo"></canvas>
-          <span class="label beta">beta</span>
+          <span class="label beta">prototype</span>
         </div>
       </router-link>
       <template v-if="$route.name != 'auth'">

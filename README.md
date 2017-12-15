@@ -374,8 +374,8 @@ attachments: Attachment[]
 
 ```javascript
 userId: String
-fullName: String
-image: Attachment
+displayName: String
+photo: Attachment
 ```
 #### ArtistBase:
 [[Data Types︎]](#data-types) 
@@ -385,7 +385,7 @@ image: Attachment
  * inherited from User
  * 
  userId: String
- fullName: String
+ displayName: String
  image: Attachment 
  */
 artworks: ArtworkBase[]
@@ -402,7 +402,7 @@ statisticsShort: {}
  * inherited from ArtistBase
  * 
  userId: String
- fullName: String
+ displayName: String
  image: Attachment 
  artworks: ArtworkBase[]
  shows: ShowBase[]
@@ -426,7 +426,7 @@ statistics: {}
  * inherited from User
  * 
  userId: String
- fullName: String
+ displayName: String
  image: Attachment 
  */
 role: String // One of the predefined options. 

@@ -35,10 +35,10 @@ export function getValueFromObj (parentObj, propPath, defaultValue) {
 }
 
 /**
- * @param {Object} thatClass
+ * @param {Object} theClass
  * @param {Object} parentClass
  */
-export function setupProtoInheritance (thatClass, parentClass) {
-  thatClass.prototype = Object.create(parentClass.prototype)
-  thatClass.prototype.constructor = thatClass
+export function setupProtoInheritance (theClass, parentClass) {
+  theClass.prototype = Object.create(parentClass.prototype)
+  theClass.prototype.constructor = theClass
 }

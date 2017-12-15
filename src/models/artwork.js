@@ -1,78 +1,56 @@
-import { ArrayOfType } from './data-types'
+import {
+  ArtworkSourceData,
+  AttachmentData,
+  AttachmentVideoData,
+  BasicData,
+  Contributor,
+  Control
+} from './data-types'
 
 export function ArtworkDataStruct (data) {
-  /** @type string */
-  this.ownerId = this.getValueFrom(data, 'ownerId', '')
+  BasicData.call(this)
 
   /** @type string */
-  this.sourceId = this.getValueFrom(data, 'sourceId', '')
+  this.ownerId = ''
 
   /** @type string */
-  this.published = this.getValueFrom(data, 'published', '')
+  this.sourceId = ''
+
+  /** @type boolean */
+  this.published = false
 
   /** @type string */
-  this.title = this.getValueFrom(data, 'title', 'Untitled')
+  this.title = 'Untitled'
+
+  /** @type ArtworkSourceData */
+  this.source = new ArtworkSourceData()
+
+  /** @type AttachmentData */
+  this.thumbnail = new AttachmentData()
+
+  /** @type AttachmentVideoData */
+  this.preview = new AttachmentVideoData()
+
+  /** @type Contributor[] */
+  this.artists = [new Contributor()]
 
   /** @type string */
-  this.url = this.getValueFrom(data, 'url', '')
-
-  /** @type UrlSet */
-  this.thumbnail = this.getValueFrom(data, 'thumbnail', '')
-
-  /** @type UrlSet */
-  this.preview = this.getValueFrom(data, 'preview', '')
-
-  /** @type ArtworkContributorsList */
-  this.artists = [] // [new Contributor()]
+  this.year = ''
 
   /** @type string */
-  this.year = this.getValueFrom(data, 'year', '')
+  this.description = ''
 
-  /** @type string */
-  this.description = this.getValueFrom(data, 'description', '')
+  /** @type Control[] */
+  this.controls = [new Control()]
 
-  /** @type ControlsList */
-  this.controls = []
-
-  /** @type IterationsList */
+  /** @type Iteration[] */
   this.iterations = []
 
-  this.artistNames = function () {
-    let names = []
-    for (let id in this.artists) {
-      if (!this.artists.hasOwnProperty(id)) continue
-      const name = this.artists[id].hasOwnProperty('fullName') ? this.artists[id].fullName : id
-      names.push(name)
-    }
-    return names.join(', ')
-  }
-
-  this.castFrom = function (data) {
-    for (let prop in data) {
-      if (data.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
-        this[prop] = data[prop]
-      }
-    }
-  }
+  this.castFrom(data)
 }
 
-/**
- * @param {object} obj
- * @return {void}
- */
-ArtworkDataStruct.prototype.castFrom = function (obj) {
-  if (typeof obj !== 'object') return
-  for (let prop in obj) {
-    if (obj.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
-      const value = obj[prop]
-      const defaultValue = this[prop]
-      if (Array.isArray(defaultValue)) {}
-      if (typeof value === typeof defaultValue) this[prop] = value
-      // if (typeof defaultValue === 'number' && isNumeric(value)) return value * 1
-      return defaultValue
-    }
-  }
-}
+ArtworkDataStruct.prototype = BasicData.prototype
+ArtworkDataStruct.prototype.constructor = ArtworkDataStruct
 
 export function cloneArtwork (uid, artworkId, artwork) {
   const newArtwork = { ...ArtworkDataStruct, ...artwork }
@@ -117,12 +95,4 @@ export function cloneArtwork (uid, artworkId, artwork) {
     })
   }
   return newArtwork
-}
-
-export class ArtworksList extends ArrayOfType {
-  constructor () {
-    super()
-    // this.DataType = ArtworkData
-    if (arguments.length) super.setup(arguments)
-  }
 }
