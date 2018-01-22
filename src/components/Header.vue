@@ -9,48 +9,51 @@
       </router-link>
       <template v-if="$route.name != 'auth'">
         <div class="right">
-          <router-link v-if=" ! user" to="/auth" class="button flick">Login</router-link>
+          <router-link v-if=" ! user" to="/auth" class="button">Login</router-link>
           <!-- -->
           <div v-if="user" class="item-with-submenu">
-            <a class="button plus medium flick submenu-trigger" title="Add">
+            <a class="button submenu-trigger" title="Add">
+              <div class="icon plus medium"></div>
             </a>
             <div v-if="user" class="submenu">
-              <div v-on:click="goto('/account/new')" class="button flick">New team</div>
-              <div v-on:click="goto('/account/player/new')" class="button flick">Add player</div>
-              <div v-on:click="goto('/account/artwork/new')" class="button flick">New artwork</div>
-              <div v-on:click="goto('/account/artist/new')" class="button flick">New artist</div>
-              <div v-on:click="goto('/account/show/new')" class="button flick">New show</div>
-              <div v-on:click="goto('/account/place/new')" class="button flick">New place</div>
+              <div v-on:click="goto('/account/new')" class="button">New team</div>
+              <div v-on:click="goto('/account/player/new')" class="button">Add player</div>
+              <div v-on:click="goto('/account/artwork/new')" class="button">New artwork</div>
+              <div v-on:click="goto('/account/artist/new')" class="button">New artist</div>
+              <div v-on:click="goto('/account/show/new')" class="button">New show</div>
+              <div v-on:click="goto('/account/place/new')" class="button">New place</div>
             </div>
           </div>
           <!-- -->
-          <router-link v-if="user" to="/account/artworks" class="button flick">Collection</router-link>
+          <router-link v-if="user" to="/account/artworks" class="button">
+            <img src="/static/img/collection-a@2x.png" width="24" height="24" class="center">
+          </router-link>
           <!-- -->
           <div v-if="user" class="item-with-submenu">
-            <a class="button flick submenu-trigger">{{ userAccount.title }}</a>
+            <a class="button submenu-trigger">{{ userAccount.title }}</a>
             <div class="submenu">
-              <div v-for="account in inactiveAccounts" :key="account['.key']" class="button flick"
+              <div v-for="account in inactiveAccounts" :key="account['.key']" class="button"
                    v-on:click="setAccount(account['.key'])">{{ account.title }}
               </div>
             </div>
           </div>
           <!-- -->
           <div v-if="user" class="item-with-submenu">
-            <a class="button flick submenu-trigger">
+            <a class="button submenu-trigger">
               <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" class="user-photo">
               <span v-else>{{ user.displayName }}</span>
             </a>
             <div class="submenu">
-              <router-link to="/account/artworks" class="button flick">Artworks</router-link>
-              <router-link to="/account/artists" class="button flick">Artists</router-link>
-              <router-link to="/account/shows" class="button flick">Shows</router-link>
-              <router-link to="/account/places" class="button flick">Places</router-link>
+              <router-link to="/account/artworks" class="button">Artworks</router-link>
+              <router-link to="/account/artists" class="button">Artists</router-link>
+              <router-link to="/account/shows" class="button">Shows</router-link>
+              <router-link to="/account/places" class="button">Places</router-link>
               <div class="sub-section">
-                <router-link to="/account/players" class="button flick">Players</router-link>
-                <div v-on:click="goto('/account/update')" class="button flick">Team profile</div>
-                <div v-on:click="goto('/user/update')" class="button flick">Your profile</div>
-                <div v-on:click="goto('/account/invitations')" class="button flick">Invitations</div>
-                <a @click="logOut" class="button flick">Logout</a>
+                <router-link to="/account/players" class="button">Players</router-link>
+                <div v-on:click="goto('/account/update')" class="button">Team profile</div>
+                <div v-on:click="goto('/user/update')" class="button">Your profile</div>
+                <div v-on:click="goto('/account/invitations')" class="button">Invitations</div>
+                <a @click="logOut" class="button">Logout</a>
               </div>
             </div>
           </div>
@@ -61,7 +64,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
   import firebaseApp from '../firebase-app'
   import ScalableCanvasFromImage from '../assets/js/logo'
   import ColorFlicker from '../assets/js/color-flicker'
@@ -115,7 +118,7 @@
     },
 
     mounted: function () {
-      const logoURL = './static/img/pxflux-logo-8.png'
+      const logoURL = './static/img/pxflux-logo-9.png'
       const canvasID = 'px-logo'
       new ScalableCanvasFromImage(logoURL, canvasID).setup()
       this.setFlicker()

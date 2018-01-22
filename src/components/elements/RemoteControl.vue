@@ -7,7 +7,7 @@
           <span v-if="button.label">{{ button.label }}</span>
         </div>
         <div v-else="" class="grid-cell button">
-          <div class="button medium center"></div>
+          <!--<div class="button medium center"></div>-->
         </div>
       </div>
     </div>

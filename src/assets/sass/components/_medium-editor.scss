@@ -283,7 +283,7 @@
     margin-bottom: $outline-width;
   }
   &:not(:first-child) {
-    margin-top: $header-height;
+    margin-top: $module-size;
   }
   & > *:not(.editor-section, label) {
     margin-left: $form-label-width;
@@ -345,7 +345,7 @@
 
 .editor-section {
   .section-header {
-    height: $header-height;
+    height: $module-size;
     min-height: 1em;
 
     & > * {
@@ -355,7 +355,7 @@
       height: auto
     }
     .title {
-      margin-left: $header-height + 1rem;
+      margin-left: $module-size + 1rem;
     }
   }
 

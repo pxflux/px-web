@@ -1,14 +1,16 @@
 .video-box{
   position: relative;
-  background: $outline-color;
+  //background: $outline-color;
   height: 100%;
-  max-height: $header-height * 8;
+  //max-height: $module-size * 8;
+  width: 100%;
 
   iframe{
     margin: 0;
     border: none;
     display: block;
     width: 100%;
+    @include centered();
   }
 
   button{

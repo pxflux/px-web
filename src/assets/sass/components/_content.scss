@@ -1,55 +1,101 @@
 main {
-  margin-top: $header-height + $outline-width;
+  margin-top: $module-size; // + $outline-width;
 }
 
 .text-block {
-  padding: $header-height;
+  padding: $module-size;
 }
 
-.grid {
+.row{
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: row nowrap;
 
-  a {
-    color: #292929;
+  .row-header{
+    flex-grow: 1;
+  }
+}
+.cell{
+  @include hairline-border();
+  background: $bg-color;
+}
+
+.wrap-content {
+  display: flex;
+
+  &:not(.grid) {
+    flex-flow: row nowrap;
+  }
+
+  &.grid {
+    display: flex;
+    flex-flow: row wrap;
+    @include on-retina() {
+      transform: translate(0, 0.5px); // compensate hairline borders
+    }
+
+    a {
+      color: #292929;
+    }
+  }
+
+  .content {
+    flex-grow: 1;
+    padding: 0 $module-size/2 $module-size $module-size;
+
+    h1{
+      margin: 0;
+    }
+
+    .by-string li{
+        display: inline-block;
+        &:not(:last-child):after{
+          content: " \0026\00a0";
+        }
+      }
+    .work-meta{
+      color: #000;
+
+      span:not(:last-child):after{
+        content: "\2002|\2002";
+      }
+    }
+  }
+  .sidebar {
+    width: 5 * $module-size;
   }
 }
 
 .item-wrap,
 .grid-cell,
 .grid-cell-placeholder {
-  width: 25vw;
-  height: 25vw;
+  width: 100vw;
+  height: 100vw;
   position: relative;
-  overflow: hidden;
   background: $bg-color;
-  //@media(-webkit-min-device-pixel-ratio: 1), (min-resolution: 72dpi){
+
   @include grey-outline();
-  //}
-  // @media(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  //   //box-sizing: content-box;
-  //   border: 0.5px solid $outline-color;
-  //   border-left: none;
-  //   border-bottom: none;
-  // }
-  @media (max-width: 1000px) {
-    width: 33.333vw;
-    height: 33.333vw;
-  }
-  @media (max-width: 750px) {
+
+  @media (min-width: 500px) {
     width: 50vw;
     height: 50vw;
   }
-  @media (max-width: 500px) {
-    width: 100vw;
-    height: 100vw;
+  @media (min-width: 750px) {
+    width: 33.333vw;
+    height: 33.333vw;
+  }
+  @media (min-width: 1000px) {
+    width: 20vw;
+    height: 20vw;
   }
 }
 
 .item-image-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  width: calc(100% - #{$module-size});
+  height: calc(100% - #{$module-size*1.5});
+  @include centered(0, 50%);
+  top: $module-size/2;
 
   img {
     height: 100%;
@@ -77,10 +123,10 @@ main {
   color: black;
   padding: 0.5em 0.5em;
 
-  span{
+  span {
     font-size: 0.7em;
   }
-  span.item-title{
+  span.item-title {
     font-size: 1em;
     display: block;
   }
@@ -92,24 +138,24 @@ iframe.work-preview {
   height: 100%;
 }
 
-.proportional-height{
+.proportional-height {
   position: relative;
   height: 0;
   padding: 50% 0 0 0;
-  &>*{
+  & > * {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
   }
-  iframe, img{
+  iframe, img {
     width: 100%;
     height: 100%;
   }
 }
 
-.overlay{
+*:not(button).overlay {
   display: block;
   position: absolute;
   top: 0;
@@ -117,3 +163,6 @@ iframe.work-preview {
   width: 100%;
   height: 100%;
 }
+
+@import "attachments";
+@import "sidebar";

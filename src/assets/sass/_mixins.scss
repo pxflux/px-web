@@ -20,7 +20,8 @@
 }
 
 @mixin grey-outline(){
-  box-shadow: 0 0 0 $outline-width $outline-color;
+  @include hairline-border();
+  //box-shadow: 0 0 0 $outline-width $outline-color;
 }
 
 @mixin centered($x-shift:0, $y-shift:0){
@@ -34,4 +35,9 @@
   top: 50%;
   left: 0;
   transform: translate(0, -50% + $y-shift);
+}
+
+@mixin checker-bg{
+  background: #1a1a1a url("/static/img/checker-12-tr@1x.png") repeat right fixed;
+  background-size: 12px;
 }

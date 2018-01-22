@@ -1,0 +1,50 @@
+.sidebar{
+  margin-top: $module-size/2;
+  font-size: $font-size-caption;
+
+  .row{
+    //height: $module-size;
+    justify-content: flex-end;
+
+    .row-header{
+      padding: 0 $module-size/4;
+      text-align: end;
+      line-height: $module-size;
+
+      &.active{
+        background: #4bff93;
+      }
+    }
+  }
+  ul{
+    margin: 0;
+  }
+
+  .display-controls {
+    $module-qwarter: $module-size / 4;
+    padding:0 $module-qwarter $module-qwarter;
+    @include hairline-border();
+    @include checker-bg();
+
+    .header{
+      color: rgba(255, 255, 255, 0.8);
+      height: $module-size;
+      padding: 0;
+      line-height: $module-size;
+      .accent{
+        font-weight: inherit;
+        color: #fff;
+      }
+    }
+    .keypad {
+      margin: 0;
+      width: 3 * $module-size * 1.5;
+      height: 3 * $module-size * 1.5;
+
+      .button-box {
+        width: $module-size * 1.5;
+        height: $module-size * 1.5;
+      }
+    }
+  }
+}

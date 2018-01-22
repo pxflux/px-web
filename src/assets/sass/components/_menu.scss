@@ -1,5 +1,9 @@
 .item-with-submenu{
   position: relative;
+
+  &.open{
+    z-index: 1;
+  }
 }
 
 .submenu {
@@ -9,6 +13,8 @@
   max-width: 200px;
   transform: translate(0, -100%);
   z-index: -1;
+  //display: none;
+  opacity: 0;
   transition: all .25s ease-out;
 
   .button {
@@ -37,7 +43,9 @@
   }
 
   &.open {
-    top: $header-height;
+    opacity: 1;
+    top: $module-size;
     transform: translate(0, 0);
+    transition: all .25s ease-out
   }
 }

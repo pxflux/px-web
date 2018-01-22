@@ -1,7 +1,7 @@
 header {
   position: fixed;
   width: 100%;
-  height: $header-height;
+  height: $module-size;
   top: 0;
   padding: 0;
   background: transparent;
@@ -17,8 +17,8 @@ header {
   .px-logo {
     position: relative;
     display: block;
-    width: $header-height * 2;
-    height: $header-height;
+    width: $module-size * 2.5;
+    height: $module-size;
     padding: 0 !important;
 
     canvas {
@@ -31,10 +31,10 @@ header {
       display: block;
       position: absolute;
       bottom: 5px;
-      right: 15px;
+      right: 10px;
       font-size: 10px;
       line-height: 1;
-      color: rgba(0, 0, 0, 0.3);
+      color: rgba(0, 0, 0, 0.76);
       text-align: right;
     }
   }
@@ -50,7 +50,7 @@ header {
     justify-content: flex-end;
   }
   .user-photo {
-    $size: $header-height; // * 0.7;
+    $size: $module-size; // * 0.7;
     width: $size;
     height: $size;
     position: absolute;

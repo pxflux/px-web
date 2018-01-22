@@ -1,0 +1,62 @@
+.attachments {
+  width: 100.1vw; // fix for chrome, which sometimes kills hairline borders in the page header
+
+  .display {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    height: $module-size * 6;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    width: 100%;
+    @include checker-bg();
+
+    & > * {
+      flex-grow: 1;
+      flex-shrink: 0;
+      max-width: calc(100vw - 2 * #{$module-size});
+      height: 100%;
+      position: relative;
+      margin-right: $module-size;
+
+      &:last-child {
+        width: 100vw;
+        max-width: 100vw;
+      }
+    }
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+
+  .toolbar {
+    position: relative;
+    border-top: 0.5px solid;
+    display: flex;
+    flex-flow: row nowrap;
+
+    .controls {
+      display: flex;
+      flex-flow: row nowrap;
+      flex-grow: 2;
+
+      .caption {
+        padding: 0 0 0 $module-size/2;
+        line-height: $module-size;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .video-player {
+        display: flex;
+        flex-flow: row nowrap;
+
+        .button:before{
+          box-shadow: none!important;
+        }
+      }
+    }
+  }
+}

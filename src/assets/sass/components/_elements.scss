@@ -1,115 +1,11 @@
-$button-icon-color: rgb(131, 131, 131);
-
-@mixin button-plus( $size: $header-height, $line-w: 0.2rem, $rotate: 0) {
-  $plus-size: $size;
-  $plus-line-w: $line-w;
-  $plus-shift-x: ($header-height - $plus-size)/2;
-  $plus-shift-y: $header-height/2 - $plus-line-w/2;
-
-  width: $header-height;
-  position: relative;
-  padding: 0;
-
-  &:before,
-  &:after {
-    content: '';
-    display: block;
-    width: $plus-size;
-    height: $plus-size;
-    position: absolute;
-  }
-  &:before {
-    border-top: $plus-line-w solid $button-icon-color;
-    transform: translate($plus-shift-x, $plus-shift-y) rotate($rotate);
-    transform-origin: top;
-  }
-  &:after {
-    border-left: $plus-line-w solid $button-icon-color;
-    transform: translate($plus-shift-y, $plus-shift-x) rotate($rotate);
-    transform-origin: left;
-  }
-}
-
-@mixin button-arrowhead( $rotate: 0, $size: 1.4rem, $line-w: 0.1rem, $color:$button-icon-color) {
-  $arr-size: sqrt($size * $size /2) * 1rem;
-  $arr-line-w: $line-w;
-  $x-shift: -75%;
-  $y-shift: -50%;
-  @if $rotate > 0 {
-    $x-shift: -50%;
-    $y-shift: -62.5%;
-  }
-  $rotate: $rotate + 45deg;
-
-  width: $header-height;
-  position: relative;
-  padding: 0;
-
-  &:before {
-    content: '';
-    display: block;
-    width: $arr-size;
-    height: $arr-size;
-    border-right: $arr-line-w solid $color;
-    border-top: $arr-line-w solid $color;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate($x-shift, $y-shift) rotate($rotate);
-    transition: transform 0.15s;
-  }
-}
-
-@mixin button-pause( $size: 1.4rem, $line-w: 0.1rem, $color:$button-icon-color) {
-  $x-shift: -50%;
-  $y-shift: -50%;
-
-  width: $header-height;
-  position: relative;
-  padding: 0;
-
-  &:before {
-    content: '';
-    display: block;
-    width: $size / 2 - $line-w * 2;
-    height: $size;
-    border-right: $line-w solid $color;
-    border-left: $line-w solid $color;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate($x-shift, $y-shift);
-    transition: transform 0.15s;
-  }
-}
+@import "buttons";
 
 .button, button {
-  display: block;
-  min-width: $header-height;
-  min-height: $header-height;
-  line-height: $header-height;
-  text-align: center;
-  position: relative;
-  color: #292929;
-  padding: 0 1em;
-  background: #f9f9f9;
-  cursor: pointer;
+  &:not(.overlay) {
+    @include hairline-border();
+  }
 
-  &.plus {
-    @include button-plus()
-  }
-  &.plus.medium {
-    @include button-plus(2rem, 0.1rem)
-  }
-  &.cancel {
-    @include button-plus(2rem, 0.1rem, 45deg)
-  }
-  &.drop-down {
-    @include button-arrowhead();
-  }
-  &.drop-down.open {
-    @include button-arrowhead(90deg)
-  }
+
 }
 
 .badge {
@@ -170,7 +66,7 @@ $button-icon-color: rgb(131, 131, 131);
     .dialog-header {
       display: flex;
       justify-content: space-between;
-      height: $header-height;
+      height: $module-size;
       width: 100%;
 
       .button {
@@ -194,7 +90,7 @@ $button-icon-color: rgb(131, 131, 131);
       justify-content: space-between;
       position: absolute;
       width: 100%;
-      height: $header-height;
+      height: $module-size;
       bottom: 0;
 
       //button{  }

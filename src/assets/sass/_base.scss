@@ -7,15 +7,19 @@
 html {
   font-size: 62.5%; // 1rem = 10px
 }
-body {
-  font-size: $font-size-body;
+html {
+	-webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: 'Work Sans', sans-serif;
+  font-size: $font-size-body;
   font-weight: $font-normal-wight;
+  letter-spacing: 0.01em;
 	overflow-y: scroll;
+	overflow-x: hidden;
 	background: #fff;
+  color: $font-color;
 
 	&.dark {
 		background: #AAAA;
@@ -26,24 +30,23 @@ body {
 	}
 }
 
-html {
-	-webkit-text-size-adjust: 100%;
-}
-
 input {
 	-webkit-appearance: none !important;
 }
 
 h1, h2, h3, h4{
   display: block;
-  font-weight: $font-normal-wight;
+  font-weight: 400;
 }
 h2 {
   margin: 2em 0 0.5em;
 }
+
 input,
 a {
-	outline: 0
+	outline: none;
+  text-decoration: none;
+  color: $link-color;
 }
 
 ul, ol{
@@ -64,10 +67,24 @@ iframe{
 }
 button{
   border-radius: 0;
+  &:focus{
+    outline: none;
+  }
 }
 .center{
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.caption{
+  font-size: $font-size-caption;
+  font-weight: 300;
+  line-height: 2;
+  color: #696969;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+.accent{
+  font-weight: 600;
 }

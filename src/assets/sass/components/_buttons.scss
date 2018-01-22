@@ -1,0 +1,239 @@
+/*!
+ * Copyright (c) 2017.  Maxim Tyminko L@b1
+ */
+$button-icon-color: rgb(69, 69, 69);
+$button-height: 4.8rem;
+$ico-size: $button-height/4*1.5;
+$ico-line-w: 0.1rem;
+$ico-color: $button-icon-color;
+$diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a square root of 1*1+1*1)
+
+@mixin button-plus( $size: $button-height, $line-w: 0.2rem, $rotate: 0, $plus:'true') {
+  $plus-shift-x: ($button-height - $size)/2;
+  $plus-shift-y: $button-height/2 - $line-w/2;
+
+  width: $button-height;
+  position: relative;
+  padding: 0;
+
+  &:before,
+  &:after {
+    content: '';
+    display: block;
+    width: $size;
+    height: $size;
+    position: absolute;
+  }
+  &:before {
+    border-top: $line-w solid $button-icon-color;
+    transform: translate($plus-shift-x, $plus-shift-y) rotate($rotate);
+    transform-origin: top;
+  }
+  @if ($plus == 'true') {
+    &:after {
+      border-left: $line-w solid $button-icon-color;
+      transform: translate($plus-shift-y, $plus-shift-x) rotate($rotate);
+      transform-origin: left;
+    }
+  }
+}
+
+@mixin button-arrowhead( $rotate: 0, $size: $ico-size, $line-w: $ico-line-w, $color:$button-icon-color) {
+  $arr-size: $size / $diagonal-factor;
+  $arr-line-w: $line-w;
+  $x-shift: -75%;
+  $y-shift: -25%;
+  @if $rotate < 0 {
+    $x-shift: -50%;
+    $y-shift: -62.5%;
+  }
+  @if $rotate > 0 {
+    $x-shift: -50%;
+    $y-shift: -62.5%;
+  }
+  @if $rotate > 179 {
+    $x-shift: -37.5%;
+    $y-shift: -37.5%;
+  }
+  $rotate: $rotate + 45deg;
+
+  width: $button-height;
+  position: relative;
+  padding: 0;
+
+  &:before {
+    width: $arr-size;
+    height: $arr-size;
+    border-right: $arr-line-w solid $button-icon-color;
+    border-top: $arr-line-w solid $button-icon-color;
+    top: 50%;
+    left: 50%;
+    transform: translate($x-shift, $y-shift) rotate($rotate);
+    transition: transform 0.15s;
+  }
+}
+@mixin arrowhead( $direction: right, $size: $ico-size, $line-w: $ico-line-w, $color:$button-icon-color) {
+  $arr-size: $size / $diagonal-factor;
+  $offset : 35%;
+  $degree: 135deg;
+
+  @if $direction == left{
+    $degree: -45deg;
+  }@else if $direction == top{
+    $degree: 45deg;
+  }@else if $direction == bottom{
+    $degree: 225deg;
+  }
+
+  width: $button-height;
+  position: relative;
+  padding: 0;
+
+  &:before {
+    width: $arr-size;
+    height: $arr-size;
+    border-left: $line-w solid $button-icon-color;
+    border-top: $line-w solid $button-icon-color;
+    top: 50%;
+    left: 50%;
+    transform-origin: $offset $offset;
+    transform: translate(-$offset, -$offset) rotate($degree);
+    transition: transform 0.15s;
+  }
+}
+
+@mixin button-arrow( $size: $ico-size, $line-w: $ico-line-w, $color:$button-icon-color) {
+  $x-shift: -50%;
+  $y-shift: -50%;
+
+  @include button-arrowhead(-90deg, $size, $line-w);
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: $line-w;
+    height: $size;
+    border-left: $line-w solid $button-icon-color;
+    top: 50%;
+    left: 50%;
+    transform: translate($x-shift, $y-shift);
+  }
+}
+
+@mixin button-pause( $size: $ico-size, $line-w: $ico-line-w, $color:$button-icon-color) {
+  $x-shift: -50%;
+  $y-shift: -50%;
+
+  &:before {
+    width: $size / 2;
+    height: $size;
+    border-right: $line-w solid $color;
+    border-left: $line-w solid $color;
+    top: 50%;
+    left: 50%;
+    transform: translate($x-shift, $y-shift);
+  }
+}
+
+.button, button {
+  display: block;
+  box-sizing: border-box;
+  min-width: $button-height;
+  min-height: $button-height;
+  line-height: $button-height;
+  text-align: center;
+  position: relative;
+  color: #292929;
+  background: $bg-color;
+  padding: 0 $module-size/2;
+  cursor: pointer;
+
+  border-radius: 0;
+  border: none;
+  outline: none;
+
+  &.square{
+    width: $button-height;
+  }
+
+  .icon {
+    position: absolute !important;
+    width: 100%;
+    height: 100%;
+    font-size: $font-size-caption;
+    font-weight: 300;
+    @include centered();
+
+    &:before, &:after {
+      content: '';
+      display: block;
+      box-sizing: border-box;
+      position: absolute;
+    }
+
+    &.plus {
+      @include button-plus($ico-size, $ico-line-w)
+    }
+    &.plus.medium {
+      @include button-plus(2rem, 0.1rem)
+    }
+
+    &.minus {
+      @include button-plus($ico-size, $ico-line-w, 0, 'false')
+    }
+
+    &.up {
+      @include button-arrow($ico-size, $ico-line-w)
+    }
+    &.down {
+      @include button-arrow($ico-size, $ico-line-w);
+      transform: rotate(180deg);
+    }
+
+    &.cancel {
+      @include button-plus(2rem, 0.1rem, 45deg)
+    }
+    &.cancel.soft {
+      @include button-plus(2rem, 0.1rem, 45deg)
+
+    }
+    &.drop-down {
+      @include button-arrowhead()
+    }
+    &.drop-down.open {
+      @include button-arrowhead(90deg)
+    }
+
+    &.arrow-right, &.arrow-left {
+      width: $button-height;
+      height: $button-height;
+      position: absolute !important;
+      top: 50%;
+    }
+
+    &.arrow-right {
+      @include arrowhead(right, $module-size/4);
+    }
+    &.arrow-left {
+      @include arrowhead(left, $module-size/4);
+    }
+
+    &.play {
+      @include arrowhead(right, $ico-size, 0.3rem, rgb(145, 145, 145));
+    }
+    &.pause {
+      @include button-pause($ico-size, 0.3rem, rgb(145, 145, 145));
+    }
+    &.stop{
+      &:before {
+        width: $ico-size;
+        height: $ico-size;
+        background: $button-icon-color;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}

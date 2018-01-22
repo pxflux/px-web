@@ -1,6 +1,7 @@
 <template>
   <transition mode="out-in" name="fade">
     <router-link :to="uri" class="item-wrap grid-cell">
+      <div class="grid-cell-border"></div>
       <div class="item-image-wrap">
         <img v-if="image.displayUrl" :src="image.displayUrl" class="item-image">
         <img v-else src="/static/img/no-preview.png" class="item-image">

@@ -12,10 +12,10 @@
   import ArtworkItem from '../ArtworkItem'
   import firebase from '../../firebase-app'
   import { mapState, mapActions } from 'vuex'
-  import GridHelper from '../../helpers/grid'
+  // import GridHelper from '../../helpers/grid'
 
   export default {
-    mixins: [GridHelper],
+    // mixins: [GridHelper],
 
     created () {
       this.init()
