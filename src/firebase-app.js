@@ -25,9 +25,9 @@ export function store (accountId, id, path, data, imageRemoved, imageFile) {
 
 function save (id, path, data) {
   if (id) {
-    const source = app.database().ref(path + '/' + id)
-    return source.update(data).then(function () {
-      return source
+    const ref = app.database().ref(path + '/' + id)
+    return ref.update(data).then(function () {
+      return ref
     })
   } else {
     return app.database().ref(path).push(data).then(function (ref) {
