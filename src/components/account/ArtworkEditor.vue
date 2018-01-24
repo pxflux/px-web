@@ -170,12 +170,6 @@
       'accountArtwork' () {
         console.log('this.accountArtwork: >>>>>>')
         console.log(this.accountArtwork)
-        const item = this.accountArtwork || {}
-
-        // Backward compatibility
-        if (item.url) this.artwork.source.url = item.url
-        if (item.image) this.artwork.thumbnail.castFrom(item.image)
-
         this.artwork = Artwork.fromJson(this.accountArtwork) || Artwork.empty()
         const artwork = Artwork.fromJson(this.accountArtwork)
         if (artwork) {

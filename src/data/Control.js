@@ -68,7 +68,6 @@ export class Control {
 }
 
 export class Controls {
-
   static fromJson (value) {
     if (Array.isArray(value)) {
       return value.map(it => ControlValue.fromJson(it))
