@@ -7,36 +7,33 @@
         <router-link :to="'/account/artwork/' + artworkId">{{ title }}</router-link>
       </p>
       <form id="form-artwork" v-on:submit.prevent>
-        <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
+        <remote-control-editor v-bind:controls="artwork.controls" v-on:update="setControls"/>
         <div class="editor-section">
           <label for="title">Title</label>
           <h1>
-            <input id="title" type="text" v-model.trim="title" required="required">
+            <input id="title" type="text" v-model.trim="artwork.title" required="required">
           </h1>
           <label for="url">Work URL</label>
-          <input id="url" type="text" v-model.trim="url" required="required">
+          <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
         </div>
         <div class="editor-section">
           <label for="image">Image</label>
-          <image-upload id="image" :imageUrl="artwork.thumbnail.displayUrl" @input-file="setImageFile"
-                        @remove-image="setImageRemoved"></image-upload>
+          <image-upload id="image" :imageUrl="artwork.thumbnail.storage.displayUrl" @input-file="setImageFile"
+                        @remove-image="setImageRemoved"/>
         </div>
         <div class="editor-section">
           <div>Video Preview</div>
-          <attachment :attachmentData="preview" @changed="updatePreview"/>
+          <attachment :value="artwork.preview" @changed="updatePreview"/>
         </div>
         <div class="editor-section">
           <label for="description">Description</label>
-          <textarea id="description" v-model.trim="description"></textarea>
+          <textarea id="description" v-model.trim="artwork.description"></textarea>
           <br>
           <label for="year">Year</label>
-          <input id="year" type="text" v-model.trim="year" required="required">
+          <input id="year" type="text" v-model.trim="artwork.year" required="required">
         </div>
         <div class="editor-section">
-          <label for="artistIds">Artists</label>
-          <select id="artistIds" v-model="selectedArtistIds" multiple required>
-            <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
-          </select>
+          <contributors v-model="artwork.artists"/>
         </div>
 
         <div class="editor-section">
@@ -56,13 +53,14 @@
   import firebase, { store } from '../../firebase-app'
   import ImageUpload from '../elements/ImageUpload'
   import RemoteControlEditor from '../elements/RemoteControlEditor'
+  import Contributors from '../elements/Contributors'
   import Attachment from '../elements/VideoAttachment'
   import { Artwork } from '../../data/Artwork'
   import { VideoAttachment } from '../../data/VideoAttachment'
 
   export default {
     props: ['isNew'],
-    components: {ImageUpload, Attachment, RemoteControlEditor},
+    components: {ImageUpload, Attachment, RemoteControlEditor, Contributors},
     created () {
       this.init()
     },
@@ -170,17 +168,17 @@
       'accountArtwork' () {
         console.log('this.accountArtwork: >>>>>>')
         console.log(this.accountArtwork)
-        this.artwork = Artwork.fromJson(this.accountArtwork) || Artwork.empty()
-        const artwork = Artwork.fromJson(this.accountArtwork)
-        if (artwork) {
-          this.url = artwork.source.url
-          this.title = artwork.title
-          this.description = artwork.description
-          this.year = artwork.year
-          this.preview = artwork.preview
-          this.selectedArtistIds = artwork.artists.map(artist => artist.id)
-          this.selectedControls = artwork.controls
-        }
+        // this.artwork = JSON.parse(JSON.stringify(this.accountArtwork))
+        this.artwork = Artwork.fromJson(this.accountArtwork)
+        // if (artwork) {
+        //   this.url = artwork.source.url
+        //   this.title = artwork.title
+        //   this.description = artwork.description
+        //   this.year = artwork.year
+        //   this.preview = artwork.preview
+        //   this.selectedArtistIds = artwork.artists.map(artist => artist.id)
+        //   this.selectedControls = artwork.controls
+        // }
       }
     }
   }

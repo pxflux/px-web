@@ -10,9 +10,13 @@ export class ArtworkSource {
     this.version = version
   }
 
+  static empty () {
+    return new ArtworkSource(null, null, null)
+  }
+
   static fromJson (value) {
     if (typeof value !== 'object') {
-      return null
+      return this.empty()
     }
     return new ArtworkSource(value.type, value.url, value.version)
   }

@@ -29,7 +29,7 @@ export class VideoAttachment extends Attachment {
   static fromJson (value) {
     const attachment = Attachment.fromJson(value)
     if (attachment === null) {
-      return null
+      return this.empty()
     }
     return new VideoAttachment(attachment.storage, attachment.ratio, value.duration, ImageAttachment.fromJson(value.thumbnail))
   }

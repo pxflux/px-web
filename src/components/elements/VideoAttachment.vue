@@ -22,12 +22,12 @@
   export default {
     components: {VideoPlayer},
     props: {
-      attachment: VideoAttachment
+      value: VideoAttachment
     },
     data () {
       return {
-        displayUrl: this.attachment.storage.displayUrl,
-        ratio: this.attachment.ratio,
+        displayUrl: this.value.storage.displayUrl,
+        ratio: this.value.ratio,
         error: '',
         warning: ''
       }

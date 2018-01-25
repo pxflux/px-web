@@ -22,7 +22,7 @@ export class ImageAttachment extends Attachment {
   static fromJson (value) {
     const attachment = Attachment.fromJson(value)
     if (attachment === null) {
-      return null
+      return this.empty()
     }
     return new ImageAttachment(attachment.storage, attachment.ratio)
   }

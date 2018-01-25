@@ -43,8 +43,8 @@ export class ContributorRefs {
    * @returns {ContributorRef[]}
    */
   static fromJson (value) {
-    if (Array.isArray(value)) {
-      return value.map(it => ContributorRef.fromJson(it))
+    if (typeof value === 'object') {
+      return Object.keys(value).map(key => new ContributorRef(key, value[key].fullName))
     } else {
       return []
     }

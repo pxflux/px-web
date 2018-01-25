@@ -1,10 +1,11 @@
 import { Controls } from './Control'
 import { ArtworkSource } from './ArtworkSource'
 import { VideoAttachment } from './VideoAttachment'
-import { ContributorRef, ContributorRefs } from './ContributorRef'
+import { ContributorRefs } from './ContributorRef'
 import { ImageAttachment } from './ImageAttachment'
 
 /**
+ * @typedef {Object} Artwork
  * @property {boolean} published
  * @property {?string} title
  * @property {ArtworkSource} source
@@ -40,7 +41,7 @@ export class Artwork {
   }
 
   static empty () {
-    return new Artwork(false, null, null, ImageAttachment.empty(), VideoAttachment.empty(), [], null, null, [])
+    return new Artwork(false, null, ArtworkSource.empty(), ImageAttachment.empty(), VideoAttachment.empty(), [], null, null, [])
   }
 
   /**
@@ -49,7 +50,7 @@ export class Artwork {
   static fromJson (value) {
     return new Artwork(value.published, value.title,
       ArtworkSource.fromJson(value.source), ImageAttachment.fromJson(value.thumbnail),
-      VideoAttachment.fromJson(value.preview), ContributorRef.fromJson(value.artists),
+      VideoAttachment.fromJson(value.preview), ContributorRefs.fromJson(value.artists),
       value.year, value.description, Controls.fromJson(value.controls))
   }
 
