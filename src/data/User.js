@@ -1,4 +1,4 @@
-import { Attachment } from './attachment/Attachment'
+import { Attachment } from './Attachment'
 
 /**
  * @property {string} id

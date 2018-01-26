@@ -1,8 +1,8 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content wrap-forms">
-      <p v-if="! isNew">
-        <!--<router-link to="/account/artworks/">Artworks</router-link>
+      <!--<p v-if="! isNew">
+        <router-link to="/account/artworks/">Artworks</router-link>
         •
         <router-link :to="'/account/artwork/' + artworkId">{{ title }}</router-link>
       </p>-->
@@ -38,17 +38,18 @@
             </div>
           </div>
         </section>
-      <div class="editor-section">
-        <div class="row">
-          <label for="description">Description</label>
-          <div class="field">
-            <textarea id="description" v-model.trim="artwork.description"></textarea>
+        <div class="editor-section">
+          <div class="row">
+            <label for="description">Description</label>
+            <div class="field">
+              <textarea id="description" v-model.trim="artwork.description"></textarea>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <label for="year">Year</label>
-          <div class="field">
-            <input id="year" type="text" v-model.trim="artwork.year" required="required">
+          <div class="row">
+            <label for="year">Year</label>
+            <div class="field">
+              <input id="year" type="text" v-model.trim="artwork.year" required="required">
+            </div>
           </div>
         </div>
         <section>

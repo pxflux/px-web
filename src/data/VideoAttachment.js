@@ -1,10 +1,10 @@
 import { Attachment } from './Attachment'
-import { AttachmentLink } from './AttachmentLink'
+import { AttachmentStorage } from './AttachmentStorage'
 import { ImageAttachment } from './ImageAttachment'
 
 /**
  * @property {?string} type
- * @property {?AttachmentLink} link
+ * @property {?AttachmentStorage} link
  * @property {?string} caption
  * @property {?number} ratio
  * @property {number} duration
@@ -12,7 +12,7 @@ import { ImageAttachment } from './ImageAttachment'
  */
 export class VideoAttachment extends Attachment {
   /**
-   * @param {?AttachmentLink} link
+   * @param {?AttachmentStorage} link
    * @param {?string} caption
    * @param {?number} ratio
    * @param {number} duration
@@ -25,7 +25,7 @@ export class VideoAttachment extends Attachment {
   }
 
   static empty () {
-    return new VideoAttachment(AttachmentLink.empty(), '', null, 0, ImageAttachment.empty())
+    return new VideoAttachment(AttachmentStorage.empty(), '', null, 0, ImageAttachment.empty())
   }
 
   static fromJson (value) {

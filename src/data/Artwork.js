@@ -1,6 +1,6 @@
 import { ArtworkSource } from './ArtworkSource'
-import { VideoAttachment } from './attachment/VideoAttachment'
-import { ImageAttachment } from './attachment/ImageAttachment'
+import { VideoAttachment } from './VideoAttachment'
+import { ImageAttachment } from './ImageAttachment'
 import { ContributorRefs } from './ContributorRef'
 import { Controls } from './Control'
 
