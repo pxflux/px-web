@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
-@import 'normalize', 'mixins', 'vars', 'base';
+@import 'normalize', 'mixins', 'vars';
+@import 'megatype/megatype';
+@import 'base';
 @import 'hidpi';
 @import 'components/hairline';
 @import 'components/header';
@@ -9,7 +11,7 @@
 @import 'components/menu';
 @import 'components/form';
 @import 'components/elements';
-@import 'components/medium-editor';
+//@import 'components/medium-editor';
 @import 'components/remote-control-editor';
 @import 'components/video-player';
 @import 'components/work-attachments';

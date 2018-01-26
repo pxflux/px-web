@@ -1,8 +1,9 @@
 <template>
   <div class="attachment">
-    <label for="url">Vimeo Url</label>
-    <input id="url" type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
-    <div></div>
+    <div class="row">
+      <label for="url">Vimeo Url</label>
+      <input id="url" type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
+    </div>
     <videoPlayer v-if="displayUrl && !error" :videoUrl="displayUrl" :ratio="ratio"/>
     <div v-if="displayUrl && !error" class="attachment-info">
       {{'Aspect Ratio 1 : ' + Math.round((1 / ratio) * 100) / 100}}
@@ -13,11 +14,11 @@
 </template>
 
 <script>
-  import { VideoAttachment } from '../../data/VideoAttachment'
-  import VideoPlayer from '../VideoPlayer'
   import axios from 'axios'
-  import { AttachmentStorage } from '../../data/AttachmentStorage'
-  import { ImageAttachment } from '../../data/ImageAttachment'
+  import { AttachmentLink } from '../../data-type/attachment/AttachmentLink'
+  import { VideoAttachment } from '../../data-type/attachment/VideoAttachment'
+  import { ImageAttachment } from '../../data-type/attachment/ImageAttachment'
+  import VideoPlayer from '../VideoPlayer'
 
   export default {
     components: {VideoPlayer},
@@ -26,7 +27,7 @@
     },
     data () {
       return {
-        displayUrl: this.value.storage.displayUrl,
+        displayUrl: this.value.link.displayUrl,
         ratio: this.value.ratio,
         error: '',
         warning: ''
@@ -60,8 +61,8 @@
                */
               const data = response.data
               this.ratio = data.width / data.height
-              const thumbnail = new ImageAttachment(new AttachmentStorage(data.thumbnail_url), data.thumbnail_width / data.thumbnail_height)
-              const attachment = new VideoAttachment(new AttachmentStorage(this.displayUrl), this.ratio, data.duration, thumbnail)
+              const thumbnail = new ImageAttachment(new AttachmentLink(data.thumbnail_url), data.thumbnail_width / data.thumbnail_height)
+              const attachment = new VideoAttachment(new AttachmentLink(this.displayUrl), this.ratio, data.duration, thumbnail)
               this.$emit('changed', attachment)
 
               this.warning = (parseInt(data.is_plus) === 0) ? 'This video is from <b>Basic</b> Vimeo account.' : ''

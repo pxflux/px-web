@@ -1,39 +1,6 @@
 <template>
   <main v-if="artwork">
-    <div class="attachments">
-      <div class="display">
-        <video-player v-if="preview"
-                      :videoUrl="preview.displayUrl"
-                      :ratio="preview.ratio">
-        </video-player>
-        <div>
-          <img v-show="image.displayUrl" :src="image.displayUrl">
-        </div>
-      </div>
-      <div class="toolbar">
-        <div class="controls">
-          <div class="video-player">
-            <div class="button play">
-              <div class="icon play"></div>
-            </div>
-            <div class="button sound">
-              <div class="icon">
-                sound
-              </div>
-            </div>
-          </div>
-          <div class="caption">
-            Here is the caption for the above photograph or video
-          </div>
-        </div>
-        <a href="#" class="button">
-          <div class="icon arrow-left"></div>
-        </a>
-        <a class="button">
-          <div class="icon arrow-right"></div>
-        </a>
-      </div>
-    </div>
+    <attachment-panel v-if="preview" :preview="preview" :image="image"> </attachment-panel>
     <div class="wrap-content">
       <div class="content">
         <h1 :title="artwork.title">{{ artwork.title }}</h1>
@@ -42,14 +9,19 @@
             <router-link :to="'/artist/' + artist['.key']">{{ artist.fullName }}</router-link>
           </li>
         </ul>
-        <section class="work-meta caption">
+        <p class="work-meta caption">
           <span v-show="artwork.year">{{ artwork.year }}</span>
           <span>Here comes the short technical description</span>
           <span>no sound</span>
           <span>Javascript</span>
-        </section>
-        <section v-if="this.artwork.description" class="description">
+        </p>
+        <section class="description">
           {{ this.artwork.description }}
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod ipsum in dolor convallis viverra. Nam ut laoreet turpis, vitae dictum turpis. Etiam eu tellus sit amet enim porta blandit. Pellentesque cursus vehicula purus ac imperdiet. Nunc lacinia ipsum nec urna laoreet, id aliquam risus luctus. Praesent et sem aliquet, tincidunt nisl et, lobortis purus. Integer massa justo, pellentesque eget iaculis sed, sagittis eu urna. Quisque bibendum, quam vel iaculis pretium, nibh velit volutpat risus, eget pulvinar urna velit vel nunc. Donec lacinia sem non tellus pretium ultrices. Mauris tristique lacinia sollicitudin. Curabitur sed nibh eu nisi sollicitudin tristique eu eu sem. Suspendisse arcu quam, imperdiet ut posuere ut, suscipit non dolor. Nunc porta eu mi nec porttitor.</p>
+          <p>Donec sed justo vestibulum, tempor nulla eget, tempor dui. Quisque nec aliquam odio, ac consequat orci. Vivamus consectetur tortor id arcu viverra, at congue ante interdum. Donec ac lectus vitae felis laoreet euismod quis sed purus. Vivamus ut elementum lorem, sit amet congue sem. Mauris tempus bibendum mauris, nec malesuada nisl ornare ac. Quisque pellentesque, sem nec malesuada tempus, enim ligula aliquam ex, a ultricies velit dolor ut mauris. Sed finibus mi nec fermentum malesuada. Sed a molestie est. Sed vulputate, libero a pellentesque pellentesque, massa justo viverra odio, id tincidunt sapien lorem et lorem. Sed elementum libero sit amet ante scelerisque, scelerisque sodales dolor euismod. Ut sed euismod arcu. Praesent purus leo, elementum nec porttitor a, pharetra at risus. Mauris ultricies fermentum finibus. Pellentesque aliquet ex sit amet massa suscipit, eu mattis nibh auctor. Pellentesque mattis semper augue, eu egestas sapien blandit nec.</p>
+          <p>Praesent rhoncus semper orci at interdum. Morbi eu augue non augue aliquet ullamcorper. Etiam luctus gravida lorem vel accumsan. Cras rhoncus porttitor porttitor. Aenean tincidunt varius auctor. Proin arcu diam, lobortis vel ipsum non, rhoncus tincidunt risus. Sed non vulputate justo, at dapibus enim. Integer lobortis nibh ante. Aliquam condimentum ullamcorper sem. Vestibulum porttitor sit amet leo at tristique. Nullam ac mauris non orci lacinia imperdiet. Donec feugiat elit sit amet arcu consequat, eget tempor eros ornare. Vestibulum dapibus at orci at aliquet.</p>
+          <p>Fusce vehicula orci tortor, et hendrerit nisl aliquam eu. Donec bibendum sem id tellus congue viverra. Donec mattis tempus lectus, vel viverra augue malesuada vel. Suspendisse vitae mattis nibh. Integer erat turpis, suscipit in facilisis a, consectetur eget ante. Suspendisse lacinia interdum quam, ut ultricies arcu rutrum ac. Vestibulum non purus suscipit, consectetur erat id, ullamcorper nulla. Aenean sed est enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>Pellentesque quis purus a nisi vehicula blandit. Fusce at ex nisi. Nulla tristique nec dolor non finibus. Etiam porttitor posuere facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc faucibus eu elit ut aliquet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam at odio ut pharetra. Cras magna felis, fermentum ac augue eu, varius tempus augue. Aenean molestie quam eget erat elementum, sit amet elementum eros consectetur. In molestie placerat dolor lobortis interdum. Aliquam nec ligula mauris. Sed sit amet eleifend augue. Vivamus cursus sagittis sem, at tincidunt purus rhoncus sed. Praesent nec pulvinar erat, non tempor dui. Cras a eros felis.</p>
         </section>
       </div>
       
@@ -109,13 +81,13 @@
 <script>
   import { mapActions, mapState } from 'vuex'
   import firebase from '../../firebase-app'
-  import VideoPlayer from '../VideoPlayer'
+  import AttachmentPanel from '../elements/AttachmentsPanel'
   import RemoteControl from '../elements/RemoteControl'
   import { log } from '../../helper'
 
   export default {
     components: {
-      'video-player': VideoPlayer,
+      AttachmentPanel,
       RemoteControl
     },
     created () {

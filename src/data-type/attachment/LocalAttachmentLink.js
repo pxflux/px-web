@@ -1,10 +1,10 @@
-import { AttachmentStorage } from './AttachmentStorage'
+import { AttachmentLink } from './AttachmentLink'
 
 /**
  * @property {?string} displayUrl
  * @property {?string} storageUri
  */
-export class LocalAttachmentStorage extends AttachmentStorage {
+export class LocalAttachmentStorage extends AttachmentLink {
   /**
    * @param {?string} displayUrl
    * @param {?string} storageUri

@@ -2,7 +2,7 @@
  * Copyright (c) 2017.  Maxim Tyminko L@b1
  */
 $button-icon-color: rgb(69, 69, 69);
-$button-height: 4.8rem;
+$button-height: $module-size;
 $ico-size: $button-height/4*1.5;
 $ico-line-w: 0.1rem;
 $ico-color: $button-icon-color;

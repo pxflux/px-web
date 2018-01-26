@@ -1,7 +1,7 @@
 /**
  * @property {?string} displayUrl
  */
-export class AttachmentStorage {
+export class AttachmentLink {
   /**
    * @param {?string} displayUrl
    */
@@ -10,18 +10,18 @@ export class AttachmentStorage {
   }
 
   static empty () {
-    return new AttachmentStorage(null)
+    return new AttachmentLink(null)
   }
 
   static fromJson (value) {
     if (typeof value !== 'object') {
       return null
     }
-    return new AttachmentStorage(value.displayUrl)
+    return new AttachmentLink(value.displayUrl)
   }
 
   /**
-   * @param {AttachmentStorage} origin
+   * @param {AttachmentLink} origin
    * @return {Object}
    */
   updateValues (origin) {

@@ -1,33 +1,90 @@
 @import url('https://fonts.googleapis.com/css?family=Work+Sans:300,400,600&subset=latin-ext');
 
-* {
-	box-sizing: border-box;
-}
+// enable responsive baseline & type scaling.
+// increases root font size from each breakpoint, starting from the size specified in the rootsizes below
+$baseline-scaling: false;
+// enable formal baseline grid
+// snaps all type to the baseline grid
+$baseline-snap: true;
+
+// map for flexible retrieval of breakpoint info
+$breakpoint-map: (
+  0: (
+    start: 0px,
+    max: 420px,
+    rootsize: $baseline
+  ),
+  1: (
+    start: 480px,
+    max: 560px,
+    rootsize: $baseline
+  ),
+  2: (
+    start: 768px,
+    max: 840px,
+    rootsize: $baseline
+  ),
+  3: (
+    start: 980px,
+    max: 1080px,
+    rootsize: $baseline
+  ),
+  4: (
+    start: 1280px,
+    max: 1440px,
+    rootsize: $baseline
+  )
+);
+// Set cap height to set to the baseline.
+// Here are some cap-height sizes to get you started:
+// Georgia: 0.66, Times / Times New Roman: 0.65, Palatino: 0.52
+// Lucida Grande: 0.72, Helvetica: 0.65, Helvetica Neue: 0.71, Verdana: 0.76, Tahoma: 0.76
+$work-sans: (
+  font-family: '"Work Sans", sans-serif',
+  font-size: $font-size-body,
+  regular: $font-normal-wight,
+  cap-height: 0.66
+);
+
+// debug baseline grid
+$debug-grid: true;
+// debug typeset elements, their cap height, and baseline
+$debug-type: true;
+// show some information about the current breakpoint and it's config
+$debug-breakpoints: false;
+
+
+@include megatype();
 
 html {
-  font-size: 62.5%; // 1rem = 10px
+  //font-size: 62.5%; // 1rem = 10px
 }
 html {
-	-webkit-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Work Sans', sans-serif;
+  font-family: font-family-of($work-sans);
   font-size: $font-size-body;
   font-weight: $font-normal-wight;
+
   letter-spacing: 0.01em;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	background: #fff;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: #fff;
   color: $font-color;
 
-	&.dark {
-		background: #AAAA;
-	}
+  &.dark {
+    background: #AAAA;
+  }
 
-	&.open-modal {
-		overflow: hidden;
-	}
+  &.open-modal {
+    overflow: hidden;
+  }
 }
 
 input {
@@ -40,6 +97,42 @@ h1, h2, h3, h4{
 }
 h2 {
   margin: 2em 0 0.5em;
+}
+
+// Heading level 1.
+h1 {
+  // Set type settings
+  @include typeset($work-sans, $font-size-h1, $lineheight: 3rem, $leader: 1rem, $trailer: 1rem);
+}
+
+// Heading level 2.
+h2 {
+  //font-family: font-family-of($work-sans);
+  //@include typeset($work-sans, 26px, 28px, 2, 1);
+}
+
+.caption{
+  font-size: $font-size-caption;
+  font-weight: 300;
+  color: #696969;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+// Paragraph.
+p{
+  //font-family: font-family-of($work-sans);
+  @include typeset($work-sans, $font-size-body, 2, 1.5, 1rem);
+
+  &:first-child{
+    //@include typeset($work-sans, $font-size-body, $lineheight: 2, $leader: 0, $trailer: 1rem);
+  }
+  &.caption{
+    //font-family: font-family-of($work-sans);
+    @include typeset($work-sans, $font-size-caption, 1, 1.5, 1.5);
+  }
+}
+ul.by-string {
+  //font-family: font-family-of($work-sans);
+  @include typeset($work-sans, $font-size-body, $lineheight: 2, $leader: 1.5, $trailer: 0);
 }
 
 input,
@@ -78,13 +171,6 @@ button{
   transform: translate(-50%, -50%);
 }
 
-.caption{
-  font-size: $font-size-caption;
-  font-weight: 300;
-  line-height: 2;
-  color: #696969;
-  -webkit-font-smoothing: subpixel-antialiased;
-}
 .accent{
   font-weight: 600;
 }

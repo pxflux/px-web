@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <label for="artistIds">Artists</label>
     <select id="artistIds" v-model="selectedIds" v-on:change="updateValue" multiple required>
       <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
     </select>
-  </div>
 </template>
 
 <script>

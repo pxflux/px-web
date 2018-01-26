@@ -37,6 +37,7 @@
       transform: scale(0.5); // [9]
       transform-origin: 0 0;
       box-sizing: border-box;
+      pointer-events: none;
     }
   }
 }

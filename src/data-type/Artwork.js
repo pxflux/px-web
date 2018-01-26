@@ -1,8 +1,8 @@
-import { Controls } from './Control'
 import { ArtworkSource } from './ArtworkSource'
-import { VideoAttachment } from './VideoAttachment'
+import { VideoAttachment } from './attachment/VideoAttachment'
+import { ImageAttachment } from './attachment/ImageAttachment'
 import { ContributorRefs } from './ContributorRef'
-import { ImageAttachment } from './ImageAttachment'
+import { Controls } from './Control'
 
 /**
  * @typedef {Object} Artwork
@@ -48,10 +48,17 @@ export class Artwork {
    * @returns {Artwork}
    */
   static fromJson (value) {
-    return new Artwork(value.published, value.title,
-      ArtworkSource.fromJson(value.source), ImageAttachment.fromJson(value.thumbnail),
-      VideoAttachment.fromJson(value.preview), ContributorRefs.fromJson(value.artists),
-      value.year, value.description, Controls.fromJson(value.controls))
+    return new Artwork(
+      value.published,
+      value.title,
+      ArtworkSource.fromJson(value.source),
+      ImageAttachment.fromJson(value.thumbnail),
+      VideoAttachment.fromJson(value.preview),
+      ContributorRefs.fromJson(value.artists),
+      value.year,
+      value.description,
+      Controls.fromJson(value.controls)
+    )
   }
 
   /**

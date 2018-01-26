@@ -7,7 +7,9 @@
           <span v-if="button.label">{{ button.label }}</span>
         </a>
         <a v-else="" @click.stop="showKeyboardForm(n)" class="grid-cell button" title="Add Button">
-          <div class="button plus medium center"></div>
+          <!--<div class="center">-->
+            <div class="icon plus medium"></div>
+          <!--</div>-->
         </a>
       </div>
 
@@ -60,14 +62,9 @@
 </template>
 
 <script>
-  import { Control, ControlValue } from '../../data/Control'
-
   export default {
     props: ['controls'],
     computed: {
-      /**
-       * @returns {Control[]}
-       */
       buttons () {
         let list = new Array(9)
         if (this.controls) {
@@ -121,14 +118,19 @@
 
       addControl () {
         const list = this.buttons.slice()
-        list[this.index] = new Control(this.index, null, this.label, 'keyboard', new ControlValue(
-          this.keyboardType,
-          this.keyboardKeyCode,
-          this.keyboardAltKey,
-          this.keyboardCtrlKey,
-          this.keyboardShiftKey,
-          this.keyboardMetaKey
-        ))
+        list[this.index] = {
+          order: this.index,
+          label: this.label,
+          type: 'keyboard',
+          value: {
+            type: this.keyboardType,
+            keyCode: this.keyboardKeyCode,
+            altKey: this.keyboardAltKey,
+            ctrlKey: this.keyboardCtrlKey,
+            shiftKey: this.keyboardShiftKey,
+            metaKey: this.keyboardMetaKey
+          }
+        }
         this.submit(list)
       },
 

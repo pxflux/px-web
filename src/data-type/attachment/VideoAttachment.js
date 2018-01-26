@@ -1,29 +1,31 @@
 import { Attachment } from './Attachment'
-import { AttachmentStorage } from './AttachmentStorage'
+import { AttachmentLink } from './AttachmentLink'
 import { ImageAttachment } from './ImageAttachment'
 
 /**
  * @property {?string} type
- * @property {?AttachmentStorage} storage
+ * @property {?AttachmentLink} link
+ * @property {?string} caption
  * @property {?number} ratio
  * @property {number} duration
  * @property {ImageAttachment} thumbnail
  */
 export class VideoAttachment extends Attachment {
   /**
-   * @param {?AttachmentStorage} storage
+   * @param {?AttachmentLink} link
+   * @param {?string} caption
    * @param {?number} ratio
    * @param {number} duration
    * @param {ImageAttachment} thumbnail
    */
-  constructor (storage, ratio, duration, thumbnail) {
-    super('video', storage, ratio)
+  constructor (link, caption, ratio, duration, thumbnail) {
+    super('video', link, caption, ratio)
     this.duration = duration
     this.thumbnail = thumbnail
   }
 
   static empty () {
-    return new VideoAttachment(AttachmentStorage.empty(), null, 0, ImageAttachment.empty())
+    return new VideoAttachment(AttachmentLink.empty(), '', null, 0, ImageAttachment.empty())
   }
 
   static fromJson (value) {
@@ -31,7 +33,13 @@ export class VideoAttachment extends Attachment {
     if (attachment === null) {
       return this.empty()
     }
-    return new VideoAttachment(attachment.storage, attachment.ratio, value.duration, ImageAttachment.fromJson(value.thumbnail))
+    return new VideoAttachment(
+      attachment.link,
+      attachment.caption,
+      attachment.ratio,
+      value.duration,
+      ImageAttachment.fromJson(value.thumbnail)
+    )
   }
 
   /**

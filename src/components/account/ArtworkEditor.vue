@@ -1,41 +1,71 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content wrap-forms">
-      <p v-if="! isNew">
+      <!--<attachment-panel v-if="computedPreview" :preview="computedPreview" :image="image"></attachment-panel>-->
+      <!--<p v-if="! isNew">
         <router-link to="/account/artworks/">Artworks</router-link>
         •
         <router-link :to="'/account/artwork/' + artworkId">{{ title }}</router-link>
-      </p>
+      </p>-->
       <form id="form-artwork" v-on:submit.prevent>
-        <remote-control-editor v-bind:controls="artwork.controls" v-on:update="setControls"/>
+        <section class="editor-section">
+          <div class="row">
+            <label for="title">Title</label>
+            <div class="field">
+              <input id="title" type="text" v-model.trim="artwork.title" required="required">
+            </div>
+          </div>
+          <div class="row">
+            <label for="url">Work URL</label>
+            <div class="field">
+              <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
+            </div>
+          </div>
+          <div class="row">
+            <label>Credits</label>
+            <div class="field">
+              <contributors v-model="artwork.artists"/>
+            </div>
+          </div>
+        </section>
+        <section class="editor-section attachments">
+          <div class="row">
+            <label for="image">Image</label>
+            <div class="field">
+              <image-upload id="image" :imageUrl="artwork.thumbnail.link.displayUrl" @input-file="setImageFile"
+                            @remove-image="setImageRemoved"/>
+            </div>
+          </div>
+          <div class="row">
+            <label>Video Preview</label>
+            <div class="field">
+              <attachment :value="artwork.preview" @changed="updatePreview"/>
+            </div>
+          </div>
+        </section>
         <div class="editor-section">
-          <label for="title">Title</label>
-          <h1>
-            <input id="title" type="text" v-model.trim="artwork.title" required="required">
-          </h1>
-          <label for="url">Work URL</label>
-          <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
+          <div class="row">
+            <label for="description">Description</label>
+            <div class="field">
+              <textarea id="description" v-model.trim="artwork.description"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <label for="year">Year</label>
+            <div class="field">
+              <input id="year" type="text" v-model.trim="artwork.year" required="required">
+            </div>
+          </div>
         </div>
-        <div class="editor-section">
-          <label for="image">Image</label>
-          <image-upload id="image" :imageUrl="artwork.thumbnail.storage.displayUrl" @input-file="setImageFile"
-                        @remove-image="setImageRemoved"/>
-        </div>
-        <div class="editor-section">
-          <div>Video Preview</div>
-          <attachment :value="artwork.preview" @changed="updatePreview"/>
-        </div>
-        <div class="editor-section">
-          <label for="description">Description</label>
-          <textarea id="description" v-model.trim="artwork.description"></textarea>
-          <br>
-          <label for="year">Year</label>
-          <input id="year" type="text" v-model.trim="artwork.year" required="required">
-        </div>
-        <div class="editor-section">
-          <contributors v-model="artwork.artists"/>
-        </div>
-
+        <section>
+          <div class="row">
+            <label>Remote Control</label>
+            <div class="field">
+              <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
+            </div>
+          </div>
+        </section>
+        
         <div class="editor-section">
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
@@ -48,19 +78,32 @@
 </template>
 
 <script>
+  // SELECTs
+  // https://github.com/sagalbot/vue-select
+  // https://github.com/shentao/vue-multiselect
+  // SORTABLE
+  // https://github.com/Jexordexan/vue-slicksort
+
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
+  import AttachmentsPanel from '../elements/AttachmentsPanel'
   import ImageUpload from '../elements/ImageUpload'
   import RemoteControlEditor from '../elements/RemoteControlEditor'
   import Contributors from '../elements/Contributors'
   import Attachment from '../elements/VideoAttachment'
-  import { Artwork } from '../../data/Artwork'
-  import { VideoAttachment } from '../../data/VideoAttachment'
+  import { Artwork } from '../../data-type/Artwork'
+  import { VideoAttachment } from '../../data-type/attachment/VideoAttachment'
 
   export default {
     props: ['isNew'],
-    components: {ImageUpload, Attachment, RemoteControlEditor, Contributors},
+    components: {
+      AttachmentsPanel,
+      ImageUpload,
+      Attachment,
+      RemoteControlEditor,
+      Contributors
+    },
     created () {
       this.init()
     },
@@ -84,6 +127,9 @@
           displayUrl: null,
           storageUri: null
         }
+      },
+      computedPreview () {
+        return this.accountArtwork && this.accountArtwork.preview ? this.accountArtwork.preview : null
       }
     },
     data () {
@@ -106,11 +152,11 @@
       init () {
         if (!this.isNew && this.accountId) {
           this.source = firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.setRef({key: 'accountArtwork', ref: this.source})
+          this.setRef({ key: 'accountArtwork', ref: this.source })
         } else {
           this.source = null
         }
-        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
+        this.setRef({ key: 'artists', ref: firebase.database().ref('artists') })
       },
 
       setImageFile (file) {
@@ -142,7 +188,7 @@
         artwork.year = this.year
         artwork.preview = this.preview
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
-          const data = {fullName: artist.fullName}
+          const data = { fullName: artist.fullName }
           if (artist.photoUrl) {
             data.photoUrl = artist.photoUrl
           }

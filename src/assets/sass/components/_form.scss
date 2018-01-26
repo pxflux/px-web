@@ -1,115 +1,56 @@
-$form-padding: $module-size;
+form{
+  margin: $module-size;
+  flex-grow: 1;
 
-.wrap-content.editor{
-  display: flex;
+  section{
+    margin-bottom: $module-size / 2;
+  }
 
+  .row{
+    display: flex;
+    flex-flow: row nowrap;
+    min-height: $module-size;
+    background: $bg-color;
 
-  .editor-sidebar{
-    order: 2;
-    min-width: $module-size * 7;
-
-    .preview-box{
-      width: $module-size * 6;
-      height: $module-size * 10;
-
-      //background: #000;
-      position: fixed;
-      z-index: 5;
-      top: $module-size * 2;
-      right: $module-size;
-      overflow: hidden;
-      //box-shadow: 0 0 0 $module-size white;
+    & > *{
       margin: 0;
+      @include hairline-border();
+      background: $bg-color;
+    }
+    & > *:first-child{
+      width: $module-size * 1.5;
+      background: $bg-color;
+    }
 
-      .thumbnail-cell{
-        width: $module-size * 6;
-        height: $module-size * 6;
-        //margin-bottom: $module-size/2;
+    input#title{
+      font-size: $font-size-h1;
+    }
+    label{
+      padding: $module-size / 4 $module-size / 4;
+      text-align: right;
+      font-size: $font-size-caption;
+    }
+    .field{
+      padding: 0;
+      min-width: 10 * $module-size;
+      flex-grow: 1;
+
+      > *{
+        width: 100%;
+        padding: 0 $module-size / 4;
+        &.attachment{
+          padding: 0;
+        }
       }
     }
-  }
-  .editor-body{
-    min-width: 50%;
-    flex-basis: 100%
-    //flex-grow: 1;
-  }
-
-
-
-  .wrap-forms, form {
-    position: relative;
-    width: 100%;
-    padding: $form-padding;
-
-    form {
-      padding: 0;
-    }
-
-    *:first-child {
-      margin-top: 0;
-    }
-  }
-
-  input, button, label {
-    display: block;
-    height: $module-size;
-    padding: 0 1em;
-    outline: 0;
-    border: none;
-    //box-shadow: 0 0 0 $outline-width $outline-color;
-    background: $bg-color;
-  }
-
-  label {
-    //width: 20%;
-    float: left;
-    line-height: $module-size;
-    background: darken($bg-color, 1);
-  }
-
-  input {
-    //width: 80%;
-  }
-
-  input[type=submit],
-  input[type=cancel],
-  button {
-    width: auto;
-    position: relative;
-    min-width: $module-size * 2;
-    box-shadow: none;
-    //top: $outline-width;
-    //left: - $outline-width;
-    background: #f5f5f5;
-
-    &.right {
-      float: right;
-      right: $outline-width;
-    }
-
-    &.mini {
-      display: inline-block;
-      width: $module-size * 0.75;
-      min-width: $module-size * 0.75;
-      height: $module-size * 0.75;
-      padding: 0;
-    }
-  }
-
-  input[type=checkbox] {
-    width: $module-size;
-    position: relative;
-
-    &[checked]:after {
-      content: '';
+    input, textarea, select{
+      border: none;
+      box-shadow: none;
+      padding: 0 $module-size / 4;
+      margin: 0;
       display: block;
-      //border-radius: 50%;
-      width: 60%;
-      height: 60%;
-      position: absolute;
-      top: 20%;
-      left: 20%;
-      background: #292929;
+      height: 100%;
+      width: 100%;
     }
   }
 }

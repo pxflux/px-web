@@ -1,13 +1,19 @@
 //
-$font-size-body: 1.6rem;
-$font-size-caption: 1.2rem;
+$debug-allow: false;
+
+$baseline: 12px;
+$module-size: 4rem;
+
+$font-size-body: 1.33rem;
+$font-size-caption: 1rem;
+$font-size-h1: 3rem;
+
 $font-normal-wight: 400;
 
 $bg-color: #fff;
 $font-color: #323232;
-$link-color: hsl(198, 100%, 36%);
+$link-color: hsl(207, 100%, 38%);
 
-$module-size: 4.8rem;
 $thumb-size: $module-size * 5;
 $keypad-button-size: $module-size * 2;
 
