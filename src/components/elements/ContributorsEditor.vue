@@ -8,9 +8,7 @@
   import { mapState } from 'vuex'
 
   export default {
-    props: {
-      value: Array
-    },
+    props: ['value'],
     computed: {
       ...mapState(['artists'])
     },
@@ -26,6 +24,11 @@
           id: artist['.key'],
           fullName: artist.fullName
         })))
+      }
+    },
+    watch: {
+      value: function () {
+        this.selectedIds = this.value.map(it => it.id)
       }
     }
   }

@@ -1,26 +1,26 @@
-import { AttachmentLink } from './AttachmentLink'
+import { AttachmentStorage } from './AttachmentStorage'
 
 /**
  * @property {?string} type
- * @property {?AttachmentLink} attachmentUrl
+ * @property {?AttachmentStorage} storage
  * @property {?number} ratio
  */
 export class Attachment {
   /**
    * @param {?string} type
-   * @param {?AttachmentLink} link
+   * @param {?AttachmentStorage} storage
    * @param {?string} caption
    * @param {?number} ratio
    */
-  constructor (type, link, caption, ratio) {
+  constructor (type, storage, caption, ratio) {
     this.type = type
-    this.link = link
+    this.storage = storage
     this.caption = caption
     this.ratio = ratio
   }
 
   static empty () {
-    return new Attachment(null, AttachmentLink.empty(), '', null)
+    return new Attachment(null, AttachmentStorage.empty(), null, null)
   }
 
   /**
@@ -30,13 +30,7 @@ export class Attachment {
     if (typeof value !== 'object') {
       return null
     }
-    return new Attachment(
-      value.type,
-      value.caption,
-      AttachmentLink.fromJson(value.link),
-      value.caption,
-      value.ratio
-    )
+    return new Attachment(value.type, new AttachmentStorage(value.displayUrl, value.storageUrl), value.caption, value.ratio)
   }
 
   /**
@@ -48,11 +42,11 @@ export class Attachment {
     if (this.type !== origin.type) {
       data['type'] = this.type
     }
+    if (this.storage !== origin.storage) {
+      data['storage'] = this.storage.updateValues(origin.storage)
+    }
     if (this.caption !== origin.caption) {
       data['caption'] = this.caption
-    }
-    if (this.link !== origin.link) {
-      data['link'] = this.link.updateValues(origin.link)
     }
     if (this.ratio !== origin.ratio) {
       data['ratio'] = this.ratio

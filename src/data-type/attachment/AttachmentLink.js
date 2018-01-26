@@ -1,33 +1,35 @@
 /**
  * @property {?string} displayUrl
+ * @property {?string} storageUrl
+ * @property {?File} file
  */
-export class AttachmentLink {
+export class AttachmentStorage {
   /**
    * @param {?string} displayUrl
+   * @param {?string} storageUrl
+   * @param {?File} file
    */
-  constructor (displayUrl) {
+  constructor (displayUrl, storageUrl, file) {
     this.displayUrl = displayUrl
+    this.storageUrl = storageUrl
+    this.file = file
   }
 
   static empty () {
-    return new AttachmentLink(null)
-  }
-
-  static fromJson (value) {
-    if (typeof value !== 'object') {
-      return null
-    }
-    return new AttachmentLink(value.displayUrl)
+    return new AttachmentStorage(null, null, null)
   }
 
   /**
-   * @param {AttachmentLink} origin
+   * @param {AttachmentStorage} origin
    * @return {Object}
    */
   updateValues (origin) {
     const data = {}
     if (this.displayUrl !== origin.displayUrl) {
       data['displayUrl'] = this.displayUrl
+    }
+    if (this.storageUrl !== origin.storageUrl) {
+      data['storageUrl'] = this.storageUrl
     }
     return data
   }

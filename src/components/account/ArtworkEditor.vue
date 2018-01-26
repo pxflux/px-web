@@ -1,9 +1,8 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content wrap-forms">
-      <!--<attachment-panel v-if="computedPreview" :preview="computedPreview" :image="image"></attachment-panel>-->
-      <!--<p v-if="! isNew">
-        <router-link to="/account/artworks/">Artworks</router-link>
+      <p v-if="! isNew">
+        <!--<router-link to="/account/artworks/">Artworks</router-link>
         •
         <router-link :to="'/account/artwork/' + artworkId">{{ title }}</router-link>
       </p>-->
@@ -24,37 +23,32 @@
           <div class="row">
             <label>Credits</label>
             <div class="field">
-              <contributors v-model="artwork.artists"/>
+              <contributors-editor v-model="artwork.artists"/>
             </div>
           </div>
         </section>
         <section class="editor-section attachments">
           <div class="row">
-            <label for="image">Image</label>
-            <div class="field">
-              <image-upload id="image" :imageUrl="artwork.thumbnail.link.displayUrl" @input-file="setImageFile"
-                            @remove-image="setImageRemoved"/>
-            </div>
+            <image-attachment-editor v-model="artwork.thumbnail"/>
           </div>
           <div class="row">
             <label>Video Preview</label>
             <div class="field">
-              <attachment :value="artwork.preview" @changed="updatePreview"/>
+              <video-attachment-editor v-model="artwork.preview"/>
             </div>
           </div>
         </section>
-        <div class="editor-section">
-          <div class="row">
-            <label for="description">Description</label>
-            <div class="field">
-              <textarea id="description" v-model.trim="artwork.description"></textarea>
-            </div>
+      <div class="editor-section">
+        <div class="row">
+          <label for="description">Description</label>
+          <div class="field">
+            <textarea id="description" v-model.trim="artwork.description"></textarea>
           </div>
-          <div class="row">
-            <label for="year">Year</label>
-            <div class="field">
-              <input id="year" type="text" v-model.trim="artwork.year" required="required">
-            </div>
+        </div>
+        <div class="row">
+          <label for="year">Year</label>
+          <div class="field">
+            <input id="year" type="text" v-model.trim="artwork.year" required="required">
           </div>
         </div>
         <section>
@@ -65,7 +59,7 @@
             </div>
           </div>
         </section>
-        
+
         <div class="editor-section">
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
@@ -78,32 +72,19 @@
 </template>
 
 <script>
-  // SELECTs
-  // https://github.com/sagalbot/vue-select
-  // https://github.com/shentao/vue-multiselect
-  // SORTABLE
-  // https://github.com/Jexordexan/vue-slicksort
-
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
-  import AttachmentsPanel from '../elements/AttachmentsPanel'
-  import ImageUpload from '../elements/ImageUpload'
+  import { Artwork } from '../../data/Artwork'
+
   import RemoteControlEditor from '../elements/RemoteControlEditor'
-  import Contributors from '../elements/Contributors'
-  import Attachment from '../elements/VideoAttachment'
-  import { Artwork } from '../../data-type/Artwork'
-  import { VideoAttachment } from '../../data-type/attachment/VideoAttachment'
+  import ContributorsEditor from '../elements/ContributorsEditor'
+  import VideoAttachmentEditor from '../elements/VideoAttachmentEditor'
+  import ImageAttachmentEditor from '../elements/ImageAttachmentEditor'
 
   export default {
     props: ['isNew'],
-    components: {
-      AttachmentsPanel,
-      ImageUpload,
-      Attachment,
-      RemoteControlEditor,
-      Contributors
-    },
+    components: {ImageAttachmentEditor, VideoAttachmentEditor, RemoteControlEditor, ContributorsEditor},
     created () {
       this.init()
     },
@@ -127,23 +108,11 @@
           displayUrl: null,
           storageUri: null
         }
-      },
-      computedPreview () {
-        return this.accountArtwork && this.accountArtwork.preview ? this.accountArtwork.preview : null
       }
     },
     data () {
       return {
-        artwork: Artwork.empty(),
-        imageFile: null,
-        imageRemoved: false,
-        url: '',
-        title: '',
-        description: '',
-        year: '',
-        preview: VideoAttachment.empty(),
-        selectedArtistIds: [],
-        selectedControls: []
+        artwork: Artwork.empty()
       }
     },
     methods: {
@@ -152,24 +121,11 @@
       init () {
         if (!this.isNew && this.accountId) {
           this.source = firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.setRef({ key: 'accountArtwork', ref: this.source })
+          this.setRef({key: 'accountArtwork', ref: this.source})
         } else {
           this.source = null
         }
-        this.setRef({ key: 'artists', ref: firebase.database().ref('artists') })
-      },
-
-      setImageFile (file) {
-        this.imageFile = file
-      },
-      setImageRemoved (flag) {
-        this.imageRemoved = flag
-      },
-      /**
-       * @param {VideoAttachment} videoAttachment
-       */
-      updatePreview (videoAttachment) {
-        this.preview = videoAttachment
+        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
       },
       /**
        * @param {Control[]} controls
@@ -188,7 +144,7 @@
         artwork.year = this.year
         artwork.preview = this.preview
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
-          const data = { fullName: artist.fullName }
+          const data = {fullName: artist.fullName}
           if (artist.photoUrl) {
             data.photoUrl = artist.photoUrl
           }
@@ -214,17 +170,7 @@
       'accountArtwork' () {
         console.log('this.accountArtwork: >>>>>>')
         console.log(this.accountArtwork)
-        // this.artwork = JSON.parse(JSON.stringify(this.accountArtwork))
         this.artwork = Artwork.fromJson(this.accountArtwork)
-        // if (artwork) {
-        //   this.url = artwork.source.url
-        //   this.title = artwork.title
-        //   this.description = artwork.description
-        //   this.year = artwork.year
-        //   this.preview = artwork.preview
-        //   this.selectedArtistIds = artwork.artists.map(artist => artist.id)
-        //   this.selectedControls = artwork.controls
-        // }
       }
     }
   }

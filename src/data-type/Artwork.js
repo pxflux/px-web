@@ -5,7 +5,6 @@ import { ContributorRefs } from './ContributorRef'
 import { Controls } from './Control'
 
 /**
- * @typedef {Object} Artwork
  * @property {boolean} published
  * @property {?string} title
  * @property {ArtworkSource} source

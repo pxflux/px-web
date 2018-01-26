@@ -1,64 +1,48 @@
 <template>
   <div class="attachment">
-    <label for="url">Vimeo Url</label>
-    <input id="url" type="url"
-           v-model="attachment.displayUrl"
-           v-on:paste="update"
-           v-on:change="update"/>
-    <div></div>
-    <videoPlayer v-if="attachment.displayUrl && !error"
-                 :videoUrl="attachment.displayUrl"
-                 :ratio="attachment.ratio">
-    </videoPlayer>
-    <div v-if="attachment.displayUrl && !error" class="attachment-info">
-      {{'Aspect Ratio 1 : ' + Math.round((1 / attachment.ratio) * 100) / 100}}
+    <div class="row">
+      <label for="url">Vimeo Url</label>
+      <input id="url" type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
     </div>
-    <div v-if="error" class="warning">{{ error.message }}</div>
+    <videoPlayer v-if="displayUrl && !error" :videoUrl="displayUrl" :ratio="ratio"/>
+    <div v-if="displayUrl && !error" class="attachment-info">
+      {{'Aspect Ratio 1 : ' + Math.round((1 / ratio) * 100) / 100}}
+    </div>
+    <div v-if="error" class="warning">{{ error }}</div>
     <div v-if="warning" class="warning">{{ warning }}</div>
   </div>
 </template>
 
 <script>
-  import { AttachmentData, AttachmentVideoData } from '../../models/data-types'
-  import VideoPlayer from '../VideoPlayer'
   import axios from 'axios'
-  
+  import { VideoAttachment } from '../../data/VideoAttachment'
+  import { AttachmentStorage } from '../../data/AttachmentStorage'
+  import { ImageAttachment } from '../../data/ImageAttachment'
+  import VideoPlayer from '../VideoPlayer'
+
   export default {
-    props: ['attachmentData'],
-    components: {
-      'videoPlayer': VideoPlayer
+    components: {VideoPlayer},
+    props: {
+      value: VideoAttachment
     },
     data () {
       return {
+        displayUrl: this.value.storage.displayUrl,
+        ratio: this.value.ratio,
         error: '',
         warning: ''
       }
     },
-    computed: {
-      attachment () {
-        console.log('computed:attachment -> this.attachmentData: >>>>>>')
-        console.log(this.attachmentData)
-        if (this.attachmentData.hasOwnProperty('type') && this.attachmentData.type === 'video') {
-          return new AttachmentVideoData(this.attachmentData)
-        } else {
-          return new AttachmentData(this.attachmentData)
-        }
-      }
-    },
     methods: {
       update () {
-        if (this.attachment.displayUrl) {
+        if (this.displayUrl) {
           // Validate Vimeo url and retrieve info about the video
-          const match = this.attachment.displayUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
+          const match = this.displayUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
           if (!match) {
             this.error = 'It doesn\'t look like a correct Vimeo URL.'
           } else {
-            const _this = this
-            const attachment = this.attachment
-            const url = encodeURIComponent(this.attachment.displayUrl)
-            const oembedUrl = 'https://vimeo.com/api/oembed.json?url=' + url + '&maxwidth=10000'
-            axios.get(oembedUrl)
-            .then(function (response) {
+            const url = 'https://vimeo.com/api/oembed.json?url=' + encodeURIComponent(this.displayUrl) + '&maxwidth=10000'
+            axios.get(url).then(function (response) {
               /**
                * @type {{
                *   account_type: string
@@ -76,28 +60,25 @@
                * }}
                */
               const data = response.data
+              this.ratio = data.width / data.height
+              this.warning = (parseInt(data.is_plus) === 0) ? 'This video is from <b>Basic</b> Vimeo account.' : ''
+              this.error = ''
 
-              console.log(data)
-              attachment.type = 'video'
-              console.log('data.width: >>>>>>')
-              console.log(data.width)
-              console.log('data.height: >>>>>>')
-              console.log(data.height)
-              attachment.ratio = data.width / data.height
-              attachment.duration = data.duration
-              attachment.thumbnail.displayUrl = data.thumbnail_url
-              attachment.thumbnail.ratio = data.thumbnail_width / data.thumbnail_height
-
-              _this.warning = (parseInt(data.is_plus) === 0) ? 'This video is from <b>Basic</b> Vimeo account.' : ''
-              _this.error = ''
-            })
-            .catch(function (error) {
+              const thumbnail = new ImageAttachment(new AttachmentStorage(data.thumbnail_url), data.thumbnail_width / data.thumbnail_height)
+              const attachment = new VideoAttachment(new AttachmentStorage(this.displayUrl), this.ratio, data.duration, thumbnail)
+              this.$emit('input', attachment)
+            }.bind(this)).catch(function (error) {
               console.log(error)
-              _this.error = error
-            })
+              this.error = error.message
+            }.bind(this))
           }
         }
-        this.$emit('changed', this.attachment)
+      }
+    },
+    watch: {
+      value: function () {
+        this.displayUrl = this.value.storage.displayUrl
+        this.ratio = this.value.ratio
       }
     }
   }
