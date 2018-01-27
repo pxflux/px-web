@@ -4,8 +4,8 @@
 
 <script>
   import ImageUpload from '../elements/ImageUpload'
-  import { ImageAttachment } from '../../data/ImageAttachment'
-  import { AttachmentStorage } from '../../data/AttachmentStorage'
+  import { ImageAttachment } from '../../data-types/ImageAttachment'
+  import { AttachmentStorage } from '../../data-types/AttachmentStorage'
 
   export default {
     components: {ImageUpload},
