@@ -2,7 +2,7 @@
   <v-select multiple taggable
             v-model="value"
             label="displayName"
-            :options="artists"
+            :options="contributersList"
             class="px"/>
 </template>
 
@@ -18,7 +18,7 @@
     computed: {
       ...mapState(['artists']),
       contributersList () {
-        return []
+        return this.artists.map(artist => ({displayName: artist.fullName, id: artist['.key']}))
       }
     },
     data () {

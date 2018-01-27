@@ -132,5 +132,17 @@ form {
   ul.dropdown-menu{
     padding: $module-size/4 0 0 0;
     box-shadow: 1px 1px 0 0 #575757, -1px 1px 0 0 #575757;
+
+    li{
+      background: $bg-color;
+
+      &.active{ display: none }
+      &.highlight{
+        a {
+          background: darken($bg-color, 3%);
+          color: $font-color;
+        }
+      }
+    }
   }
 }
