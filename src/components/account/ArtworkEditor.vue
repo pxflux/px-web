@@ -80,7 +80,7 @@
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
-  import { Artwork } from '../../data/Artwork'
+  import { Artwork } from '../../data-types/Artwork'
 
   import RemoteControlEditor from '../elements/RemoteControlEditor'
   import ContributorsEditor from '../elements/ContributorsEditor'
@@ -166,7 +166,7 @@
         this.init()
       },
       'artists' () {
-        console.log('this.artists: >>>>>>')
+        console.log('this.artists: >>>>>> WATCHED:')
         console.log(this.artists)
       },
       'userAccount' () {

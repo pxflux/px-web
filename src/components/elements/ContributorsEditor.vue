@@ -1,6 +1,9 @@
 <template>
-  <v-select multiple v-model="value"
-    label="displayName" :options="artists" class="px"/>
+  <v-select multiple taggable
+            v-model="value"
+            label="displayName"
+            :options="artists"
+            class="px"/>
 </template>
 
 <script>
