@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <label for="image">Image</label>
     <image-upload id="image" :imageUrl="imageUrl" @input-file="setImageFile" @remove-image="setImageRemoved"/>
-  </div>
 </template>
 
 <script>

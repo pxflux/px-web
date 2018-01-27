@@ -96,8 +96,6 @@
     computed: {
       ...mapState(['userAccount', 'artwork', 'accountPlayers']),
       preview () {
-        console.log('this.artwork: >>>>>>')
-        console.log(this.artwork)
         return this.artwork && this.artwork.preview ? this.artwork.preview : null
       },
       accountId () {

@@ -42,7 +42,7 @@
   }
 }
 
-@mixin hairline-border($side: all, $color: rgb(35,35,35), $bg-color: #fff, $positionRelative: true) {
+@mixin hairline-border( $positionRelative: false, $side: all, $color: rgb(35,35,35), $bg-color: #fff ) {
   @include hairline-border-base($positionRelative);
 
   @include border-side($side, solid, mix($color, $bg-color, 30%)); // [1]

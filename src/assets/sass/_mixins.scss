@@ -33,7 +33,7 @@
 @mixin centeredVertical($y-shift:0){
   position: absolute;
   top: 50%;
-  left: 0;
+  //left: 0;
   transform: translate(0, -50% + $y-shift);
 }
 

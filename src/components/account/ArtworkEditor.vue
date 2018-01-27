@@ -1,11 +1,6 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content wrap-forms">
-      <!--<p v-if="! isNew">
-        <router-link to="/account/artworks/">Artworks</router-link>
-        •
-        <router-link :to="'/account/artwork/' + artworkId">{{ title }}</router-link>
-      </p>-->
       <form id="form-artwork" v-on:submit.prevent>
         <section class="editor-section">
           <div class="row">
@@ -29,7 +24,10 @@
         </section>
         <section class="editor-section attachments">
           <div class="row">
-            <image-attachment-editor v-model="artwork.thumbnail"/>
+            <label>Image</label>
+            <div class="field">
+              <image-attachment-editor v-model="artwork.thumbnail"/>
+            </div>
           </div>
           <div class="row">
             <label>Video Preview</label>
@@ -60,7 +58,7 @@
             </div>
           </div>
         </section>
-
+        
         <div class="editor-section">
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
@@ -73,6 +71,12 @@
 </template>
 
 <script>
+  // SELECTs
+  // https://github.com/sagalbot/vue-select
+  // https://github.com/shentao/vue-multiselect
+  // SORTABLE
+  // https://github.com/Jexordexan/vue-slicksort
+
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
@@ -85,7 +89,7 @@
 
   export default {
     props: ['isNew'],
-    components: {ImageAttachmentEditor, VideoAttachmentEditor, RemoteControlEditor, ContributorsEditor},
+    components: { ImageAttachmentEditor, VideoAttachmentEditor, RemoteControlEditor, ContributorsEditor },
     created () {
       this.init()
     },
@@ -122,11 +126,11 @@
       init () {
         if (!this.isNew && this.accountId) {
           this.source = firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.setRef({key: 'accountArtwork', ref: this.source})
+          this.setRef({ key: 'accountArtwork', ref: this.source })
         } else {
           this.source = null
         }
-        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
+        this.setRef({ key: 'artists', ref: firebase.database().ref('artists') })
       },
       /**
        * @param {Control[]} controls
@@ -145,7 +149,7 @@
         artwork.year = this.year
         artwork.preview = this.preview
         this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
-          const data = {fullName: artist.fullName}
+          const data = { fullName: artist.fullName }
           if (artist.photoUrl) {
             data.photoUrl = artist.photoUrl
           }

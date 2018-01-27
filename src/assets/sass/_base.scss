@@ -135,7 +135,6 @@ ul.by-string {
   @include typeset($work-sans, $font-size-body, $lineheight: 2, $leader: 1.5, $trailer: 0);
 }
 
-input,
 a {
 	outline: none;
   text-decoration: none;

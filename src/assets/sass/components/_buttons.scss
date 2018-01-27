@@ -1,12 +1,16 @@
 /*!
  * Copyright (c) 2017.  Maxim Tyminko L@b1
  */
+@function no-unit($n) { @return $n / ($n * 0 + 1) }
+
 $button-icon-color: rgb(69, 69, 69);
 $button-height: $module-size;
 $ico-size: $button-height/4*1.5;
-$ico-line-w: 0.1rem;
+$one-px: 1rem / no-unit($baseline);
+$ico-line-w: $one-px;
 $ico-color: $button-icon-color;
 $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a square root of 1*1+1*1)
+
 
 @mixin button-plus( $size: $button-height, $line-w: 0.2rem, $rotate: 0, $plus:'true') {
   $plus-shift-x: ($button-height - $size)/2;
@@ -72,16 +76,17 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
     transition: transform 0.15s;
   }
 }
+
 @mixin arrowhead( $direction: right, $size: $ico-size, $line-w: $ico-line-w, $color:$button-icon-color) {
   $arr-size: $size / $diagonal-factor;
-  $offset : 35%;
+  $offset: 35%;
   $degree: 135deg;
 
-  @if $direction == left{
+  @if $direction == left {
     $degree: -45deg;
-  }@else if $direction == top{
+  } @else if $direction == top {
     $degree: 45deg;
-  }@else if $direction == bottom{
+  } @else if $direction == bottom {
     $degree: 225deg;
   }
 
@@ -92,6 +97,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   &:before {
     width: $arr-size;
     height: $arr-size;
+    border: none;
     border-left: $line-w solid $button-icon-color;
     border-top: $line-w solid $button-icon-color;
     top: 50%;
@@ -136,7 +142,82 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   }
 }
 
-.button, button {
+@mixin button-content( $with-icon: true ){
+  position: absolute !important;
+  font-size: $font-size-caption;
+  font-weight: 300;
+  @if $with-icon == true{
+    width: 100%;
+    height: 100%;
+  }
+  @include centered();
+}
+
+@mixin button-icon($name:'', $size:$ico-size, $line-w:$ico-line-w){
+  &:before, &:after {
+    content: '';
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+  }
+
+  @if $name == plus{
+    @include button-plus($size, $line-w)
+
+  }@else if $name == plus-medium {
+    @include button-plus(2rem, $one-px)
+
+  }@else if $name == minus {
+    @include button-plus($size, $line-w, 0, 'false')
+
+  }@else if $name == up {
+    @include button-arrow($size, $line-w)
+
+  }@else if $name == down {
+    @include button-arrow($size, $line-w);
+    transform: rotate(180deg);
+
+  }@else if $name == cancel {
+    @include button-plus(2rem, 0.1rem, 45deg)
+
+  }@else if $name == drop-down {
+    @include arrowhead(bottom, $size)
+
+  }@else if $name == drop-down-open {
+    @include arrowhead(top, $size)
+
+  }@else if $name == play {
+    @include arrowhead(right, $size, 0.3rem, rgb(145, 145, 145));
+
+  }@else if $name == pause {
+    @include button-pause($size, 0.3rem, rgb(145, 145, 145));
+
+  }@else if $name == stop {
+    &:before {
+      width: $size;
+      height: $size;
+      background: $button-icon-color;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }@else if $name == arrow-right or $name = arrow-left {
+    width: $button-height;
+    height: $button-height;
+    position: absolute !important;
+    top: 50%;
+
+    @if $name == arrow-right {
+      @include arrowhead(right, $module-size/4);
+
+    } @else if $name == arrow-left {
+      @include arrowhead(left, $module-size/4);
+    }
+
+  }
+}
+
+@mixin button($w: $button-height, $h: $button-height, $ico-size: $ico-size) {
   display: block;
   box-sizing: border-box;
   min-width: $button-height;
@@ -153,87 +234,30 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   border: none;
   outline: none;
 
-  &.square{
+  .icon {
+    @include button-content();
+  }
+}
+
+.button, button {
+  @include button();
+
+  &.square {
     width: $button-height;
   }
-
   .icon {
-    position: absolute !important;
-    width: 100%;
-    height: 100%;
-    font-size: $font-size-caption;
-    font-weight: 300;
-    @include centered();
-
-    &:before, &:after {
-      content: '';
-      display: block;
-      box-sizing: border-box;
-      position: absolute;
-    }
-
-    &.plus {
-      @include button-plus($ico-size, $ico-line-w)
-    }
-    &.plus.medium {
-      @include button-plus(2rem, 0.1rem)
-    }
-
-    &.minus {
-      @include button-plus($ico-size, $ico-line-w, 0, 'false')
-    }
-
-    &.up {
-      @include button-arrow($ico-size, $ico-line-w)
-    }
-    &.down {
-      @include button-arrow($ico-size, $ico-line-w);
-      transform: rotate(180deg);
-    }
-
-    &.cancel {
-      @include button-plus(2rem, 0.1rem, 45deg)
-    }
-    &.cancel.soft {
-      @include button-plus(2rem, 0.1rem, 45deg)
-
-    }
-    &.drop-down {
-      @include button-arrowhead()
-    }
-    &.drop-down.open {
-      @include button-arrowhead(90deg)
-    }
-
-    &.arrow-right, &.arrow-left {
-      width: $button-height;
-      height: $button-height;
-      position: absolute !important;
-      top: 50%;
-    }
-
-    &.arrow-right {
-      @include arrowhead(right, $module-size/4);
-    }
-    &.arrow-left {
-      @include arrowhead(left, $module-size/4);
-    }
-
-    &.play {
-      @include arrowhead(right, $ico-size, 0.3rem, rgb(145, 145, 145));
-    }
-    &.pause {
-      @include button-pause($ico-size, 0.3rem, rgb(145, 145, 145));
-    }
-    &.stop{
-      &:before {
-        width: $ico-size;
-        height: $ico-size;
-        background: $button-icon-color;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
+    &.plus { @include button-icon( plus ) }
+    &.plus.medium { @include button-icon( plus-medium ) }
+    &.minus { @include button-icon( minus ) }
+    &.up { @include button-icon( up ) }
+    &.down { @include button-icon( down ) }
+    &.cancel { @include button-icon( cancel ) }
+    &.drop-down { @include button-icon( drop-down ) }
+    &.drop-down.open { @include button-icon( drop-down-open ) }
+    &.arrow-right { @include button-icon( arrow-right ) }
+    &.arrow-left { @include button-icon( arrow-left ) }
+    &.play { @include button-icon( play ) }
+    &.pause { @include button-icon( pause ) }
+    &.stop { @include button-icon( stop ) }
   }
 }

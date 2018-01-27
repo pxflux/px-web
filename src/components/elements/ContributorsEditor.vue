@@ -1,16 +1,22 @@
 <template>
-    <select id="artistIds" v-model="selectedIds" v-on:change="updateValue" multiple required>
-      <option v-for="artist in artists" v-bind:value="artist['.key']">{{ artist.fullName }}</option>
-    </select>
+  <v-select multiple v-model="value"
+    label="displayName" :options="artists" class="px"/>
 </template>
 
 <script>
   import { mapState } from 'vuex'
+  import vSelect from './Select/components/Select'
 
   export default {
     props: ['value'],
+    components: {
+      vSelect
+    },
     computed: {
-      ...mapState(['artists'])
+      ...mapState(['artists']),
+      contributersList () {
+        return []
+      }
     },
     data () {
       return {

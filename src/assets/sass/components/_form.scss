@@ -1,56 +1,136 @@
-form{
-  margin: $module-size;
+@import "buttons";
+@mixin focused(){
+  outline: none;
+  box-shadow: 0 0 0 1px #575757;
+  z-index: 300;
+}
+
+form {
+  margin: $module-size 0;
+  max-width: calc(100% - 5.5 * #{$module-size});
   flex-grow: 1;
 
-  section{
+  section {
     margin-bottom: $module-size / 2;
   }
 
-  .row{
+  .row {
     display: flex;
     flex-flow: row nowrap;
     min-height: $module-size;
     background: $bg-color;
 
-    & > *{
+    & > * {
       margin: 0;
-      @include hairline-border();
+      @include hairline-border(true, all, $color: rgb(197, 197, 197));
       background: $bg-color;
-    }
-    & > *:first-child{
-      width: $module-size * 1.5;
-      background: $bg-color;
+
+      &:first-child {
+        width: $module-size * 1.5;
+        flex-shrink: 0;
+        background: $bg-color;
+      }
     }
 
-    input#title{
-      font-size: $font-size-h1;
+    input#title {
+      font-size: $font-size-h1 * 0.75;
     }
-    label{
+    label {
       padding: $module-size / 4 $module-size / 4;
       text-align: right;
       font-size: $font-size-caption;
+
     }
-    .field{
+    .field {
       padding: 0;
       min-width: 10 * $module-size;
       flex-grow: 1;
 
-      > *{
-        width: 100%;
+      & > input,
+      & > textarea {
+        width: 100% !important;
+        height: 100%;
+        min-height: $module-size !important;
         padding: 0 $module-size / 4;
-        &.attachment{
+        &.attachment {
           padding: 0;
         }
       }
     }
-    input, textarea, select{
+    input, textarea, select {
+      position: relative;
       border: none;
       box-shadow: none;
       padding: 0 $module-size / 4;
       margin: 0;
       display: block;
-      height: 100%;
       width: 100%;
+
+      &:focus {
+        @include focused()
+      }
     }
+    textarea {
+      padding-top: $module-size / 4;
+    }
+  }
+}
+
+.v-select.px {
+  font-family: font-family-of($work-sans) !important;
+  max-width: 100%;
+
+  .dropdown-toggle,
+  .dropdown-menu,
+  .selected-tag {
+    border-radius: 0;
+    border: none;
+    min-height: $module-size;
+  }
+
+  &.open .open-indicator{
+    @include button-icon(drop-down-open, $module-size/4);
+  }
+  .open-indicator {
+    @include button();
+    @include button-icon(drop-down, $module-size/4);
+
+    position: absolute !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    pointer-events: all;
+  }
+
+  .selected-tag{
+    display: inline-block;
+    position: relative;
+
+    button{
+      display: inline-block;
+      width: auto !important;
+      height: auto !important;
+      min-height: 0;
+      min-width: 0;
+      font-weight: 300;
+
+      &:before{
+        content: none;
+      }
+    }
+  }
+
+  input,
+  input[type="search"],
+  input[type="search"]:focus,
+  .selected-tag{
+    min-height: auto;
+  }
+
+  .focused{
+    @include focused()
+  }
+  ul.dropdown-menu{
+    padding: $module-size/4 0 0 0;
+    box-shadow: 1px 1px 0 0 #575757, -1px 1px 0 0 #575757;
   }
 }
