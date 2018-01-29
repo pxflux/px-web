@@ -1,6 +1,8 @@
 export class ArtworkSpecifications {
   constructor (numberScreens, screenResolutions) {
+    this.sourse = null
     this.numberScreens = numberScreens
+    this.screenResolutions = screenResolutions
     this.screenResolutions = screenResolutions
   }
 

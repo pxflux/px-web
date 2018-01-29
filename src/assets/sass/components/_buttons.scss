@@ -1,7 +1,9 @@
 /*!
  * Copyright (c) 2017.  Maxim Tyminko L@b1
  */
-@function no-unit($n) { @return $n / ($n * 0 + 1) }
+@function no-unit($n) {
+  @return $n / ($n * 0 + 1)
+}
 
 $button-icon-color: rgb(69, 69, 69);
 $button-height: $module-size;
@@ -11,14 +13,9 @@ $ico-line-w: $one-px;
 $ico-color: $button-icon-color;
 $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a square root of 1*1+1*1)
 
-
 @mixin button-plus( $size: $button-height, $line-w: 0.2rem, $rotate: 0, $plus:'true') {
   $plus-shift-x: ($button-height - $size)/2;
   $plus-shift-y: $button-height/2 - $line-w/2;
-
-  width: $button-height;
-  position: relative;
-  padding: 0;
 
   &:before,
   &:after {
@@ -61,10 +58,6 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   }
   $rotate: $rotate + 45deg;
 
-  width: $button-height;
-  position: relative;
-  padding: 0;
-
   &:before {
     width: $arr-size;
     height: $arr-size;
@@ -89,10 +82,6 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   } @else if $direction == bottom {
     $degree: 225deg;
   }
-
-  width: $button-height;
-  position: relative;
-  padding: 0;
 
   &:before {
     width: $arr-size;
@@ -142,18 +131,18 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   }
 }
 
-@mixin button-content( $with-icon: true ){
+@mixin button-content( $with-icon: true ) {
   position: absolute !important;
   font-size: $font-size-caption;
   font-weight: 300;
-  @if $with-icon == true{
+  @if $with-icon == true {
     width: 100%;
     height: 100%;
   }
   @include centered();
 }
 
-@mixin button-icon($name:'', $size:$ico-size, $line-w:$ico-line-w){
+@mixin button-icon($name:'', $size:$ico-size, $line-w:$ico-line-w) {
   &:before, &:after {
     content: '';
     display: block;
@@ -161,38 +150,38 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
     position: absolute;
   }
 
-  @if $name == plus{
+  @if $name == plus {
     @include button-plus($size, $line-w)
 
-  }@else if $name == plus-medium {
+  } @else if $name == plus-medium {
     @include button-plus(2rem, $one-px)
 
-  }@else if $name == minus {
+  } @else if $name == minus {
     @include button-plus($size, $line-w, 0, 'false')
 
-  }@else if $name == up {
+  } @else if $name == up {
     @include button-arrow($size, $line-w)
 
-  }@else if $name == down {
+  } @else if $name == down {
     @include button-arrow($size, $line-w);
     transform: rotate(180deg);
 
-  }@else if $name == cancel {
+  } @else if $name == cancel {
     @include button-plus(2rem, 0.1rem, 45deg)
 
-  }@else if $name == drop-down {
+  } @else if $name == drop-down {
     @include arrowhead(bottom, $size)
 
-  }@else if $name == drop-down-open {
+  } @else if $name == drop-down-open {
     @include arrowhead(top, $size)
 
-  }@else if $name == play {
+  } @else if $name == play {
     @include arrowhead(right, $size, 0.3rem, rgb(145, 145, 145));
 
-  }@else if $name == pause {
+  } @else if $name == pause {
     @include button-pause($size, 0.3rem, rgb(145, 145, 145));
 
-  }@else if $name == stop {
+  } @else if $name == stop {
     &:before {
       width: $size;
       height: $size;
@@ -201,7 +190,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
       left: 50%;
       transform: translate(-50%, -50%);
     }
-  }@else if $name == arrow-right or $name = arrow-left {
+  } @else if $name == arrow-right or $name = arrow-left {
     width: $button-height;
     height: $button-height;
     position: absolute !important;
@@ -217,17 +206,25 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   }
 }
 
-@mixin button($w: $button-height, $h: $button-height, $ico-size: $ico-size) {
+@mixin button($w: auto, $h: $button-height) {
+  $min-w: $button-height;
+  @if ($w != auto) {
+    $min-w: $w;
+  }
   display: block;
   box-sizing: border-box;
-  min-width: $button-height;
-  min-height: $button-height;
-  line-height: $button-height;
+  min-width: $min-w;
+  min-height: $h;
+  width: $w;
+  height: $h;
+  line-height: $h;
   text-align: center;
   position: relative;
   color: #292929;
   background: $bg-color;
-  padding: 0 $module-size/2;
+  @if ($w == auto) {
+    padding: 0 $module-size/2;
+  }
   cursor: pointer;
 
   border-radius: 0;
@@ -243,21 +240,47 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   @include button();
 
   &.square {
-    width: $button-height;
+    //width: $button-height;
   }
   .icon {
-    &.plus { @include button-icon( plus ) }
-    &.plus.medium { @include button-icon( plus-medium ) }
-    &.minus { @include button-icon( minus ) }
-    &.up { @include button-icon( up ) }
-    &.down { @include button-icon( down ) }
-    &.cancel { @include button-icon( cancel ) }
-    &.drop-down { @include button-icon( drop-down ) }
-    &.drop-down.open { @include button-icon( drop-down-open ) }
-    &.arrow-right { @include button-icon( arrow-right ) }
-    &.arrow-left { @include button-icon( arrow-left ) }
-    &.play { @include button-icon( play ) }
-    &.pause { @include button-icon( pause ) }
-    &.stop { @include button-icon( stop ) }
+    &.plus {
+      @include button-icon(plus)
+    }
+    &.plus.medium {
+      @include button-icon(plus-medium)
+    }
+    &.minus {
+      @include button-icon(minus)
+    }
+    &.up {
+      @include button-icon(up)
+    }
+    &.down {
+      @include button-icon(down)
+    }
+    &.cancel {
+      @include button-icon(cancel)
+    }
+    &.drop-down {
+      @include button-icon(drop-down)
+    }
+    &.drop-down.open {
+      @include button-icon(drop-down-open)
+    }
+    &.arrow-right {
+      @include button-icon(arrow-right)
+    }
+    &.arrow-left {
+      @include button-icon(arrow-left)
+    }
+    &.play {
+      @include button-icon(play)
+    }
+    &.pause {
+      @include button-icon(pause)
+    }
+    &.stop {
+      @include button-icon(stop)
+    }
   }
 }

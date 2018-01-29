@@ -3,27 +3,58 @@
             v-model="value"
             label="displayName"
             :options="contributersList"
-            class="px"/>
+            :closeOnSelect="false"
+            :pushTags="true"
+            class="px">
+    <template slot="selected-option" slot-scope="option">
+      <div class="option">{{ option.displayName }}</div>
+    <!--
+    TODO: interface for setting the Roles of contributors:
+    here is an attempt to do so.. an extra inline select..-->
+      <inline-select taggable
+                v-model="option.role"
+                :options="roles"
+                :pushTags="true"
+                :placeholder="contributor"
+                class="micro"/>
+    </template>
+  </v-select>
 </template>
 
 <script>
   import { mapState } from 'vuex'
   import vSelect from './Select/components/Select'
+  import inlineSelect from './SelectInline'
 
   export default {
     props: ['value'],
     components: {
-      vSelect
+      vSelect,
+      inlineSelect
     },
     computed: {
       ...mapState(['artists']),
       contributersList () {
-        return this.artists.map(artist => ({displayName: artist.fullName, id: artist['.key']}))
+        return this.artists.map(artist => ({ displayName: artist.fullName, id: artist['.key'] }))
       }
     },
     data () {
       return {
-        selectedIds: this.value.map(it => it.id)
+        selectedIds: this.value.map(it => it.id),
+        roles: [
+          'artist',
+          'artistAssistant',
+          'interpreter',
+          'curator',
+          'exhibitionDesigner',
+          'mediaTechnician',
+          'conservator',
+          'registrar',
+          'fabricator',
+          'artHandler',
+          'externalCompany',
+          'other'
+        ]
       }
     },
     methods: {

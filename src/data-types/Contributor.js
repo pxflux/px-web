@@ -5,7 +5,7 @@ import { User } from './User'
  * @property {string} displayName
  * @property {string} photoUrl
  * @property {Attachment} photo
- * @property {string} role
+ * @property {number} role
  */
 export class Contributor extends User {
   /**
@@ -13,9 +13,13 @@ export class Contributor extends User {
    * @param {string} displayName
    * @param {string} photoUrl
    * @param {Attachment} photo
-   * @param {string} role
+   * @param {number} role
    */
-  constructor (id, displayName, photoUrl, photo, role) {
+  constructor (id,
+               displayName,
+               photoUrl,
+               photo,
+               role) {
     super(id, displayName, photoUrl, photo)
     this.role = role
   }

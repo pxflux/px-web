@@ -5,6 +5,9 @@
   z-index: 300;
 }
 
+#form-artwork{
+  max-width: $content-max-width + $module-size * 2.5;
+}
 form {
   margin: $module-size 0;
   max-width: calc(100% - 5.5 * #{$module-size});
@@ -26,9 +29,9 @@ form {
       background: $bg-color;
 
       &:first-child {
-        width: $module-size * 1.5;
+        width: $module-size * 2.5;
         flex-shrink: 0;
-        background: $bg-color;
+        //background: $bg-secondary-color;
       }
     }
 
@@ -74,25 +77,32 @@ form {
       padding-top: $module-size / 4;
     }
   }
+
+  header{
+    min-height: $module-size;
+    .tab{
+      line-height: $module-size;
+      padding: 0 $module-size/4;
+    }
+  }
 }
+
+$two-thirds: $module-size / 3 * 2;
 
 .v-select.px {
   font-family: font-family-of($work-sans) !important;
-  max-width: 100%;
 
-  .dropdown-toggle,
-  .dropdown-menu,
-  .selected-tag {
-    border-radius: 0;
-    border: none;
-    min-height: $module-size;
+  *{
+    border-radius: 0!important;
+    border: none!important;
+  }
+  .dropdown-toggle{
+    display: flex;
+    flex-flow: column nowrap;
   }
 
-  &.open .open-indicator{
-    @include button-icon(drop-down-open, $module-size/4);
-  }
   .open-indicator {
-    @include button();
+    @include button($w: $two-thirds, $h: $two-thirds);
     @include button-icon(drop-down, $module-size/4);
 
     position: absolute !important;
@@ -100,10 +110,24 @@ form {
     bottom: 0 !important;
     pointer-events: all;
   }
+  &.open .open-indicator{
+    @include button-icon(drop-down-open, $module-size/4);
+  }
 
   .selected-tag{
-    display: inline-block;
+    display: flex;
+    flex-flow: row nowrap;
     position: relative;
+    height: $two-thirds;
+    line-height: $two-thirds;
+    margin: 0;
+    padding: 0 $module-size/4;
+    background: transparent;
+
+    .option:after{
+      content: " ";
+      white-space: pre;
+    }
 
     button{
       display: inline-block;
@@ -130,19 +154,58 @@ form {
     @include focused()
   }
   ul.dropdown-menu{
-    padding: $module-size/4 0 0 0;
+    padding: $module-size/4 0 ;
+    //background: $bg-secondary-color;
     box-shadow: 1px 1px 0 0 #575757, -1px 1px 0 0 #575757;
 
     li{
-      background: $bg-color;
-
+      a{
+        color: transparentize($font-color, 0.5);
+      }
       &.active{ display: none }
       &.highlight{
         a {
-          background: darken($bg-color, 3%);
+          background: transparent;//($bg-secondary-color, 0.5%);
           color: $font-color;
         }
       }
+    }
+  }
+}
+.inline-select{
+  font-size: $font-size-caption;
+  height: 100%;
+  display: inline-block;
+  position: relative;
+
+  .dropdown-toggle{
+    display: flex;
+    flex-flow: row !important;
+
+    input[type="search"],
+    input[type="search"]:focus {
+      line-height: $two-thirds;
+      height: $two-thirds;
+      background: $bg-color;
+      width: 0!important;
+    }
+  }
+
+  .selected-inline-tag{
+    display: block;
+    pointer-events: none;
+    cursor: pointer !important;
+    padding: 0 $module-size/4;
+    background: $bg-secondary-color;
+  }
+
+  &.open{
+    .selected-inline-tag{
+      display: none;
+    }
+    input[type="search"]{
+      width: 100%!important;
+      min-width: 12em;
     }
   }
 }

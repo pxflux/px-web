@@ -37,7 +37,7 @@
 
 <script>
   import VideoPlayer from '../VideoPlayer'
-  
+
   export default {
     props: ['preview', 'image'],
     components: {

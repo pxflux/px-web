@@ -10,37 +10,9 @@
             </div>
           </div>
           <div class="row">
-            <label for="url">Work URL</label>
-            <div class="field">
-              <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
-            </div>
-          </div>
-          <div class="row">
             <label>Credits</label>
             <div class="field">
               <contributors-editor v-model="artwork.artists"/>
-            </div>
-          </div>
-        </section>
-        <section class="editor-section attachments">
-          <div class="row">
-            <label>Image</label>
-            <div class="field">
-              <image-attachment-editor v-model="artwork.thumbnail"/>
-            </div>
-          </div>
-          <div class="row">
-            <label>Video Preview</label>
-            <div class="field">
-              <video-attachment-editor v-model="artwork.preview"/>
-            </div>
-          </div>
-        </section>
-        <div class="editor-section">
-          <div class="row">
-            <label for="description">Description</label>
-            <div class="field">
-              <textarea id="description" v-model.trim="artwork.description"></textarea>
             </div>
           </div>
           <div class="row">
@@ -49,22 +21,52 @@
               <input id="year" type="text" v-model.trim="artwork.year" required="required">
             </div>
           </div>
-        </div>
-        <section>
           <div class="row">
-            <label>Remote Control</label>
+            <label for="description">Description</label>
             <div class="field">
-              <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
+              <textarea id="description" v-model.trim="artwork.description"></textarea>
             </div>
           </div>
         </section>
-        
-        <div class="editor-section">
+        <div class="work-specifications">
+          <header>
+            <div class="tab">Work Configurations</div>
+          </header>
+          <section class="editor-section attachments">
+            <div class="row">
+              <label>Image</label>
+              <div class="field">
+                <image-attachment-editor v-model="artwork.thumbnail"/>
+              </div>
+            </div>
+            <div class="row">
+              <label>Video Preview</label>
+              <div class="field">
+                <video-attachment-editor v-model="artwork.preview"/>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div class="row">
+              <label for="url">Work URL</label>
+              <div class="field">
+                <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
+              </div>
+            </div>
+            <div class="row">
+              <label>Remote Control</label>
+              <div class="field">
+                <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
+              </div>
+            </div>
+          </section>
+        </div>
+        <footer class="editor-section">
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
           <button v-if="isNew" @click="submitArtwork">Create</button>
           <button v-if="! isNew" @click="submitArtwork">Save</button>
-        </div>
+        </footer>
       </form>
     </div>
   </main>

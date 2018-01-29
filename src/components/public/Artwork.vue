@@ -1,6 +1,6 @@
 <template>
   <main v-if="artwork">
-    <attachment-panel v-if="preview" :preview="preview" :image="image"> </attachment-panel>
+    <attachment-panel v-if="image" :preview="preview" :image="image"> </attachment-panel>
     <div class="wrap-content">
       <div class="content">
         <h1 :title="artwork.title">{{ artwork.title }}</h1>
@@ -108,6 +108,8 @@
         return this.$route.params.id
       },
       image () {
+        console.log('this.artwork: >>>>>> image?')
+        console.log(this.artwork)
         return this.artwork && this.artwork.image ? this.artwork.image : {
           displayUrl: null,
           storageUri: null

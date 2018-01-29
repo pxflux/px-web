@@ -36,11 +36,6 @@
     watch: {
       $route () {
         this.init()
-      },
-      'artworks': function () {
-        this.$nextTick(function () {
-          this.fillEmptySpaceInGrid('grid')
-        })
       }
     }
   }

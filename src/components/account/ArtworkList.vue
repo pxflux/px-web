@@ -55,11 +55,6 @@
       },
       'userAccount' () {
         this.init()
-      },
-      accountArtworks () {
-        this.$nextTick(function () {
-          this.fillEmptySpaceInGrid('grid')
-        })
       }
     }
   }

@@ -1,7 +1,10 @@
-//
 $debug-allow: false;
 
-$baseline: 12px;
+///////////////
+$base-size: 12;
+///////////////
+
+$baseline: $base-size * 1px;
 $module-size: 4rem;
 
 $font-size-body: 1.33rem;
@@ -10,7 +13,10 @@ $font-size-h1: 3rem;
 
 $font-normal-wight: 400;
 
+$content-max-width: 54rem;
+
 $bg-color: #fff;
+$bg-secondary-color: #fafafa;
 $font-color: #323232;
 $link-color: hsl(207, 100%, 38%);
 $line-color: #909090;
@@ -19,7 +25,4 @@ $thumb-size: $module-size * 5;
 $keypad-button-size: $module-size * 2;
 
 $outline-color: rgb(237, 237, 237);
-$outline-width: 0.1rem;
-
-$form-label-width: 11.5rem;
-$form-padding-left: 2rem;
+$outline-width: 1rem / $base-size;

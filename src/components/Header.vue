@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="main">
     <div class="wrap">
       <router-link to="/">
         <div id="px-logo-box" class="px-logo button flick">
