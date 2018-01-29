@@ -131,8 +131,9 @@ $two-thirds: $module-size / 3 * 2;
 
     button{
       display: inline-block;
-      width: auto !important;
-      height: auto !important;
+      width: $two-thirds;
+      height: $two-thirds;
+      opacity: 1;
       min-height: 0;
       min-width: 0;
       font-weight: 300;
@@ -190,13 +191,22 @@ $two-thirds: $module-size / 3 * 2;
       width: 0!important;
     }
   }
-
+  ul.dropdown-menu{
+    padding: 0 0 0.5em 0!important;
+    box-shadow: 0 0 0 1px #575757!important;
+    li a {
+      padding: 0.5em 1em;
+    }
+  }
   .selected-inline-tag{
     display: block;
     pointer-events: none;
     cursor: pointer !important;
     padding: 0 $module-size/4;
     background: $bg-secondary-color;
+
+    button.close{
+    }
   }
 
   &.open{
@@ -206,6 +216,7 @@ $two-thirds: $module-size / 3 * 2;
     input[type="search"]{
       width: 100%!important;
       min-width: 12em;
+      z-index: 3000;
     }
   }
 }

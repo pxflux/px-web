@@ -10,8 +10,8 @@
           {{ getOptionLabel(option) }}
         </slot>
         <!--<button v-if="multiple" :disabled="disabled" @click="deselect(option)" type="button" class="close"-->
-                <!--aria-label="Remove option">-->
-          <!--<span aria-hidden="true">&times;</span>-->
+        <!--aria-label="Remove option">-->
+        <!--<span aria-hidden="true">&times;</span>-->
         <!--</button>-->
       </span>
       
@@ -77,7 +77,8 @@
         }
 
         return ['artist']
-      }
+      }/* ,
+      dropdownOpen () { return true } */
     }
   }
 </script>
