@@ -91,6 +91,7 @@ $two-thirds: $module-size / 3 * 2;
 
 .v-select.px {
   font-family: font-family-of($work-sans) !important;
+  cursor: unset;
 
   *{
     border-radius: 0!important;
@@ -99,19 +100,26 @@ $two-thirds: $module-size / 3 * 2;
   .dropdown-toggle{
     display: flex;
     flex-flow: column nowrap;
+
+    & > input{
+      width: calc(100% - #{$two-thirds});
+      height: $two-thirds;
+      line-height: $two-thirds;
+    }
   }
 
   .open-indicator {
     @include button($w: $two-thirds, $h: $two-thirds);
-    @include button-icon(drop-down, $module-size/4);
+    @include button-icon(plus, $module-size/3);
 
     position: absolute !important;
-    right: 0 !important;
+    left: 0 !important;
     bottom: 0 !important;
     pointer-events: all;
+    cursor: pointer !important;
   }
   &.open .open-indicator{
-    @include button-icon(drop-down-open, $module-size/4);
+    @include button-icon(cancel, $module-size/3);
   }
 
   .selected-tag{
@@ -121,7 +129,7 @@ $two-thirds: $module-size / 3 * 2;
     height: $two-thirds;
     line-height: $two-thirds;
     margin: 0;
-    padding: 0 $module-size/4;
+    padding: 0 $module-size/4 0 0;
     background: transparent;
 
     .option:after{
@@ -130,13 +138,15 @@ $two-thirds: $module-size / 3 * 2;
     }
 
     button{
+      order: -1;
       display: inline-block;
       width: $two-thirds;
       height: $two-thirds;
-      opacity: 1;
+      opacity: 0.3;
       min-height: 0;
       min-width: 0;
       font-weight: 300;
+      margin-right: $module-size/8;
 
       &:before{
         content: none;
@@ -149,6 +159,15 @@ $two-thirds: $module-size / 3 * 2;
   input[type="search"]:focus,
   .selected-tag{
     min-height: auto;
+    height: $two-thirds;
+  }
+  input[type="search"],
+  input[type="search"]:focus,
+  ul.dropdown-menu li{
+    padding-left: $two-thirds + $module-size/8;
+    a{
+      padding-left:0;
+    }
   }
 
   .focused{
@@ -174,9 +193,11 @@ $two-thirds: $module-size / 3 * 2;
   }
 }
 .inline-select{
+  $h: $module-size/2;
   font-size: $font-size-caption;
-  height: 100%;
+  height: $h;
   display: inline-block;
+  margin-top: ($two-thirds - $h)/2;
   position: relative;
 
   .dropdown-toggle{
@@ -185,38 +206,42 @@ $two-thirds: $module-size / 3 * 2;
 
     input[type="search"],
     input[type="search"]:focus {
-      line-height: $two-thirds;
-      height: $two-thirds;
+      line-height: $h;
+      height: $h;
       background: $bg-color;
       width: 0!important;
+      padding: 0;
     }
   }
   ul.dropdown-menu{
     padding: 0 0 0.5em 0!important;
     box-shadow: 0 0 0 1px #575757!important;
-    li a {
-      padding: 0.5em 1em;
+    li {
+      padding-left: 0 !important;
+      a {
+        padding: 0.5em 1em !important;
+      }
     }
   }
   .selected-inline-tag{
     display: block;
+    line-height: $h;
     pointer-events: none;
     cursor: pointer !important;
     padding: 0 $module-size/4;
     background: $bg-secondary-color;
 
-    button.close{
-    }
   }
-
-  &.open{
+  &.open {
+    input[type="search"],
+    input[type="search"]:focus {
+      width: 100%;
+      min-width: 10em;
+      padding: $module-size/4;
+      z-index: 3000;
+    }
     .selected-inline-tag{
       display: none;
-    }
-    input[type="search"]{
-      width: 100%!important;
-      min-width: 12em;
-      z-index: 3000;
     }
   }
 }

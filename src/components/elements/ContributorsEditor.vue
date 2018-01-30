@@ -11,12 +11,9 @@
     <!--
     TODO: interface for setting the Roles of contributors:
     here is an attempt to do so.. an extra inline select..-->
-      <inline-select taggable
-                v-model="option.role"
+      <inline-select
                 :options="roles"
-                :pushTags="true"
-                :placeholder="contributor"
-                class="micro"/>
+                :pushTags="true"/>
     </template>
   </v-select>
 </template>

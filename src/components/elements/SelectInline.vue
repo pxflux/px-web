@@ -30,12 +30,11 @@
         :class="[isValueEmpty ? 'empty' : 'has-value']"
         autocomplete="false"
         :disabled="disabled"
-        :placeholder="searchPlaceholder"
+        :placeholder="placeholderValue"
         :tabindex="tabindex"
         :readonly="!searchable"
         :id="inputId"
         aria-label="Search for option"
-        value="AAAA"
       />
       
       <slot name="spinner">
@@ -75,10 +74,17 @@
         } else if (this.mutableValue) {
           return [this.mutableValue]
         }
-
         return ['artist']
+      },
+      placeholderValue () {
+        return this.mutableValue ? this.mutableValue : 'artist'
+      },
+      searchPlaceholder () {
+        // if (this.isValueEmpty && this.placeholder) {
+        // return 'AAAA'// this.mutableValue
+        // }
       }/* ,
-      dropdownOpen () { return true } */
+      dropdownOpen () { return false }/**/
     }
   }
 </script>
