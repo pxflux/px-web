@@ -11,9 +11,9 @@
     <!--
     TODO: interface for setting the Roles of contributors:
     here is an attempt to do so.. an extra inline select..-->
-      <inline-select
-                :options="roles"
-                :pushTags="true"/>
+      <inline-select :options="roles"
+                     taggable
+                     :pushTags="true"/>
     </template>
   </v-select>
 </template>
@@ -21,7 +21,7 @@
 <script>
   import { mapState } from 'vuex'
   import vSelect from './Select/components/Select'
-  import inlineSelect from './SelectInline'
+  import inlineSelect from './Select/components/SelectInline'
 
   export default {
     props: ['value'],
@@ -40,17 +40,13 @@
         selectedIds: this.value.map(it => it.id),
         roles: [
           'artist',
-          'artistAssistant',
-          'interpreter',
-          'curator',
-          'exhibitionDesigner',
-          'mediaTechnician',
-          'conservator',
-          'registrar',
-          'fabricator',
-          'artHandler',
-          'externalCompany',
-          'other'
+          'author',
+          'programmer',
+          'sound engineer',
+          'editor',
+          'producer',
+          'manager',
+          'assistant'
         ]
       }
     },

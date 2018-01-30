@@ -4,6 +4,7 @@ import Vue from 'vue'
 import { createApp } from './init'
 import ProgressBar from './components/ProgressBar'
 import firebaseApp from './firebase-app'
+import inputAutoWidth from 'vue-input-autowidth'
 
 // global progress bar
 const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
@@ -23,6 +24,8 @@ Vue.mixin({
     }
   }
 })
+
+Vue.use(inputAutoWidth)
 
 const {app, router, store} = createApp()
 

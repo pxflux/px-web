@@ -105,6 +105,7 @@ $two-thirds: $module-size / 3 * 2;
       width: calc(100% - #{$two-thirds});
       height: $two-thirds;
       line-height: $two-thirds;
+      letter-spacing: $letter-spacing;
     }
   }
 
@@ -151,6 +152,9 @@ $two-thirds: $module-size / 3 * 2;
       &:before{
         content: none;
       }
+      //&:before, &:after{
+      //  opacity: 0.3;
+      //}
     }
   }
 
@@ -209,13 +213,17 @@ $two-thirds: $module-size / 3 * 2;
       line-height: $h;
       height: $h;
       background: $bg-color;
-      width: 0!important;
-      padding: 0;
+      position: absolute;
+      opacity: 0;
+    }
+    button.cancel{
+      display: none;
     }
   }
   ul.dropdown-menu{
     padding: 0 0 0.5em 0!important;
     box-shadow: 0 0 0 1px #575757!important;
+    z-index: 1;
     li {
       padding-left: 0 !important;
       a {
@@ -235,10 +243,28 @@ $two-thirds: $module-size / 3 * 2;
   &.open {
     input[type="search"],
     input[type="search"]:focus {
-      width: 100%;
-      min-width: 10em;
-      padding: $module-size/4;
-      z-index: 3000;
+      position: relative;
+      opacity: 1;
+      padding: 0 0 0 $module-size/4;
+      z-index: 100;
+    }
+    button.cancel{
+      @include button($h, $h);
+      //@include button-icon(cancel, $module-size/6);
+      order: 2;
+      padding: 0;
+      margin: 0;
+      opacity: 1;
+      z-index: 100;
+      &:before, &:after{
+        box-shadow: none;
+      }
+      .icon{
+        opacity: 0.3;
+        &.small{
+          font-size: 80%;
+        }
+      }
     }
     .selected-inline-tag{
       display: none;

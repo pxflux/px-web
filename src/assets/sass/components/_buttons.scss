@@ -16,10 +16,9 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
 @mixin plus( $size:$button-height, $line-w:$one-px, $rotate: 0deg, $plus:'true') {
   $plus-shift-x: -$size/2;
   $plus-shift-y: - $line-w/2;
-  $deg: $rotate;// * 1deg;
 
   &:before,
-  &:after{
+  &:after {
     width: $size;
     height: $size;
     border: none;
@@ -29,13 +28,13 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   }
   &:before {
     border-top: $line-w solid $button-icon-color;
-    transform: translate($plus-shift-x, $plus-shift-y) rotate($deg);
+    transform: translate($plus-shift-x, $plus-shift-y) rotate($rotate);
     transform-origin: top;
   }
   @if ($plus == 'true') {
     &:after {
       border-left: $line-w solid $button-icon-color;
-      transform: translate($plus-shift-y, $plus-shift-x) rotate($deg);
+      transform: translate($plus-shift-y, $plus-shift-x) rotate($rotate);
       transform-origin: left;
     }
   }
@@ -262,6 +261,9 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
     }
     &.cancel {
       @include button-icon(cancel)
+    }
+    &.cancel-small {
+      @include button-icon(cancel, $size:$button-height/5.3)
     }
     &.drop-down {
       @include button-icon(drop-down)

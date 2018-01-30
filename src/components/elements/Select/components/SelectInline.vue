@@ -35,7 +35,13 @@
         :readonly="!searchable"
         :id="inputId"
         aria-label="Search for option"
+        v-autowidth=""
       />
+      <button
+        ref="openIndicator" class=" cancel"
+        title="Clear selection">
+        <span class="icon small">✕</span>
+      </button>
       
       <slot name="spinner">
         <div class="spinner" v-show="mutableLoading">Loading...</div>
@@ -62,7 +68,7 @@
 </template>
 
 <script>
-  import vSelect from './Select/components/Select'
+  import vSelect from './Select'
 
   export default {
     extends: vSelect,
@@ -78,13 +84,8 @@
       },
       placeholderValue () {
         return this.mutableValue ? this.mutableValue : 'artist'
-      },
-      searchPlaceholder () {
-        // if (this.isValueEmpty && this.placeholder) {
-        // return 'AAAA'// this.mutableValue
-        // }
       }/* ,
-      dropdownOpen () { return false }/**/
+      dropdownOpen () { return true }/**/
     }
   }
 </script>
