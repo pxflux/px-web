@@ -3,6 +3,9 @@
     <div v-if="userAccount" class="wrap-content wrap-forms">
       <form id="form-artwork" v-on:submit.prevent>
         <section class="editor-section">
+          <header>
+            <h3>General Information</h3>
+          </header>
           <div class="row">
             <label for="title">Title</label>
             <div class="field">
@@ -10,9 +13,15 @@
             </div>
           </div>
           <div class="row">
-            <label>Credits</label>
+            <label>By</label>
             <div class="field">
               <contributors-editor v-model="artwork.artists"/>
+            </div>
+          </div>
+          <div class="row">
+            <label>Credits</label>
+            <div class="field">
+              <contributors-editor v-model="artwork.credits" :withRoles="true"/>
             </div>
           </div>
           <div class="row">
@@ -30,7 +39,7 @@
         </section>
         <div class="work-specifications">
           <header>
-            <div class="tab">Work Configurations</div>
+            <h3 class="tab">Presentation Setups</h3>
           </header>
           <section class="editor-section attachments">
             <div class="row">
@@ -78,6 +87,7 @@
   // https://github.com/shentao/vue-multiselect
   // SORTABLE
   // https://github.com/Jexordexan/vue-slicksort
+  // https://github.com/hilongjw/vue-dragging *
 
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
@@ -119,7 +129,7 @@
     },
     data () {
       return {
-        artwork: Artwork.empty()
+        artwork: new Artwork()
       }
     },
     methods: {
@@ -177,7 +187,7 @@
       'accountArtwork' () {
         console.log('this.accountArtwork: >>>>>>')
         console.log(this.accountArtwork)
-        this.artwork = Artwork.fromJson(this.accountArtwork)
+        this.artwork.fromJson(this.accountArtwork)
       }
     }
   }

@@ -1,19 +1,22 @@
 <template>
-  <v-select multiple taggable
-            v-model="value"
-            label="displayName"
-            :options="contributersList"
-            :closeOnSelect="false"
-            :pushTags="true"
-            class="px">
+  <v-select
+    multiple taggable
+    v-model="value"
+    label="displayName"
+    :options="contributersList"
+    :closeOnSelect="false"
+    :pushTags="true"
+    class="px">
     <template slot="selected-option" slot-scope="option">
       <div class="option">{{ option.displayName }}</div>
-    <!--
-    TODO: interface for setting the Roles of contributors:
-    here is an attempt to do so.. an extra inline select..-->
-      <inline-select :options="roles"
-                     taggable
-                     :pushTags="true"/>
+      
+      <!-- TODO: interface for setting the roles of contributors. Probably a popup bubble (like Popper.js) -->
+      <!-- Here is a version with an extra inline select.. could work for now.. -->
+      <inline-select
+        v-if="withRoles"
+        :options="roles"
+        taggable
+        :pushTags="true"/>
     </template>
   </v-select>
 </template>
@@ -24,7 +27,7 @@
   import inlineSelect from './Select/components/SelectInline'
 
   export default {
-    props: ['value'],
+    props: ['value', 'withRoles'],
     components: {
       vSelect,
       inlineSelect
@@ -37,16 +40,15 @@
     },
     data () {
       return {
-        selectedIds: this.value.map(it => it.id),
+        selectedIds: this.value ? this.value.map(it => it.id) : [],
         roles: [
-          'artist',
-          'author',
-          'programmer',
-          'sound engineer',
-          'editor',
-          'producer',
+          'programming',
+          'editing',
+          'sound',
+          'music',
+          'production',
           'manager',
-          'assistant'
+          'assistance'
         ]
       }
     },

@@ -6,22 +6,25 @@ export class ContributorRef {
   /**
    * @param {string} id
    * @param {string} displayName
+   * @param {string} role
    */
-  constructor (id, displayName) {
+  constructor (id, displayName, role) {
     this.id = id
     this.displayName = displayName
+    this.role = role
   }
 
   static fromJson (value) {
-    return new ContributorRef(value.id, value.displayName)
+    return new ContributorRef(value.id, value.displayName, value.role)
   }
 
   /**
    * @return {Object}
    */
-  updateValues () {
+  updatedEntries () {
     return {
-      'displayName': this.displayName
+      displayName: this.displayName,
+      role: this.role
     }
   }
 }
@@ -31,10 +34,10 @@ export class ContributorRefs {
    * @param {ContributorRef[]} values
    * @return {Object}
    */
-  static updateValues (values) {
+  static updatedEntries (values) {
     const data = {}
     values.forEach(value => {
-      data[value.id] = value.updateValues()
+      data[value.id] = value.updatedEntries()
     })
     return data
   }

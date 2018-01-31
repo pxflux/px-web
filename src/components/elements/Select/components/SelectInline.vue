@@ -80,10 +80,10 @@
         } else if (this.mutableValue) {
           return [this.mutableValue]
         }
-        return ['artist']
+        return ['select a role']
       },
       placeholderValue () {
-        return this.mutableValue ? this.mutableValue : 'artist'
+        return this.mutableValue ? this.mutableValue : ''
       }/* ,
       dropdownOpen () { return true }/**/
     }

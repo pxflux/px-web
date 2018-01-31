@@ -3,6 +3,7 @@ import { AttachmentStorage } from './AttachmentStorage'
 
 /**
  * @property {?string} type
+ * @property {?string} caption
  * @property {?AttachmentStorage} link
  * @property {?number} ratio
  */

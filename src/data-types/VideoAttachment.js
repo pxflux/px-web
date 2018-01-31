@@ -46,13 +46,13 @@ export class VideoAttachment extends Attachment {
    * @param {VideoAttachment} origin
    * @return {Object}
    */
-  updateValues (origin) {
-    const data = super.updateValues(origin)
+  updatedEntries (origin) {
+    const data = super.updatedEntries(origin)
     if (this.duration !== origin.duration) {
       data['duration'] = this.duration
     }
     if (this.thumbnail !== origin.thumbnail) {
-      data['thumbnail'] = this.thumbnail.updateValues(origin.thumbnail)
+      data['thumbnail'] = this.thumbnail.updatedEntries(origin.thumbnail)
     }
     return data
   }

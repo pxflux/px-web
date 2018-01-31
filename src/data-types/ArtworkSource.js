@@ -25,7 +25,7 @@ export class ArtworkSource {
    * @param {ArtworkSource} origin
    * @return {Object}
    */
-  updateValues (origin) {
+  updatedEntries (origin) {
     const data = {}
     if (this.type !== origin.type) {
       data['type'] = this.type

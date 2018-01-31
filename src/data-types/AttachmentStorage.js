@@ -23,7 +23,7 @@ export class AttachmentStorage {
    * @param {AttachmentStorage} origin
    * @return {Object}
    */
-  updateValues (origin) {
+  updatedEntries (origin) {
     const data = {}
     if (this.displayUrl !== origin.displayUrl) {
       data['displayUrl'] = this.displayUrl

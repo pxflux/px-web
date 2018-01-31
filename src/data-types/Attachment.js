@@ -37,13 +37,13 @@ export class Attachment {
    * @param {Attachment} origin
    * @return {Object}
    */
-  updateValues (origin) {
+  updatedEntries (origin) {
     const data = {}
     if (this.type !== origin.type) {
       data['type'] = this.type
     }
     if (this.storage !== origin.storage) {
-      data['storage'] = this.storage.updateValues(origin.storage)
+      data['storage'] = this.storage.updatedEntries(origin.storage)
     }
     if (this.caption !== origin.caption) {
       data['caption'] = this.caption

@@ -18,7 +18,7 @@ export class ControlValue {
   /**
    * @return {Object}
    */
-  updateValues () {
+  updatedEntries () {
     return {
       'type': this.type,
       'keyCode': this.keyCode,
@@ -56,13 +56,13 @@ export class Control {
   /**
    * @return {Object}
    */
-  updateValues () {
+  updatedEntries () {
     return {
       'order': this.order,
       'icon': this.icon,
       'label': this.label,
       'type': this.type,
-      'value': this.value.updateValues()
+      'value': this.value.updatedEntries()
     }
   }
 }
