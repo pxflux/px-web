@@ -1,10 +1,10 @@
 @import "buttons";
 
 .button, button{
-  &:not(.overlay) {
+
+  &:not(.frameless) {
     @include hairline-border();
   }
-
 }
 
 input{

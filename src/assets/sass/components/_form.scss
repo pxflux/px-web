@@ -158,6 +158,24 @@ $two-thirds: $module-size / 3 * 2;
       //}
     }
   }
+  &.single {
+    .open-indicator {
+      @include button-icon(drop-down, $module-size/4);
+    }
+    &.open .open-indicator{
+      @include button-icon(drop-down-open, $module-size/4);
+    }
+    button.clear {
+      display: none;
+    }
+    .dropdown-toggle{
+      display: block;
+    }
+    .selected-tag {
+      padding-left: $two-thirds + $module-size/8;
+      pointer-events: none;
+    }
+  }
 
   input,
   input[type="search"],

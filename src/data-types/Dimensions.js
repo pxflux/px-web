@@ -1,14 +1,71 @@
+/**
+ * @prop {?number} w
+ * @prop {?number} h
+ * @prop {?number} d
+ * @prop {?string} units
+ * @prop {string[]} dimensionsOrder
+ */
 export class Dimensions {
-  constructor (w, h, unit) {
-    this.w = w
-    this.h = h
-    this.unit = unit
+  /**
+   * @param {object=} jsonData
+   * @param {string[]=} dimensionsOrder - Array of three letters: 'w', 'h', 'd' representing the order in which the dimensions will be treated
+   */
+  constructor (jsonData, dimensionsOrder) {
+    this.w = null
+    this.h = null
+    this.d = null
+    this.units = ''
+    this.dimensionsOrder = dimensionsOrder || ['w', 'h', 'd']
+
+    if (jsonData) {
+      this.fromJson(jsonData)
+    }
   }
 
-  static fromJson (value) {
-    if (typeof value !== 'object') {
-      return null
-    }
-    return new Dimensions(value.w, value.h, value.unit)
+  isSet () {
+    return Dimensions.isNumeric(this.w) || Dimensions.isNumeric(this.h) || Dimensions.isNumeric(this.d)
+  }
+
+  /**
+   * @return {string}
+   */
+  toString () {
+    const orderedNumericValues = []
+    this.dimensionsOrder.forEach(dim => {
+      if (Dimensions.isNumeric(this[dim])) {
+        orderedNumericValues.push(this[dim])
+      }
+    })
+    return orderedNumericValues.join(' x ') + ' ' + this.units
+  }
+
+  /**
+   * @param {object} jsonData
+   */
+  fromJson (jsonData) {
+    if (typeof jsonData !== 'object') return
+
+    this.dimensionsOrder.forEach(dim => { this[dim] = parseFloat(jsonData[dim]) })
+    this.units = jsonData.units
+  }
+
+  /**
+   * @param {Dimensions} original
+   * @return {object}
+   */
+  updatedEntries (original) {
+    const updated = {}
+
+    Object.keys(this).forEach(key => {
+      if (this[key] !== original[key]) {
+        updated[key] = this[key]
+      }
+    })
+
+    return updated
+  }
+
+  static isNumeric (n) {
+    return !isNaN(parseFloat(n)) && isFinite(n)
   }
 }

@@ -13,8 +13,10 @@
     @include centered();
   }
 
-  button{
+  .button{
     @include centered();
+    width: $module-size;
+    height: $module-size;
     border-radius: 50%;
     background: rgba(255,255,255,0.4);
 

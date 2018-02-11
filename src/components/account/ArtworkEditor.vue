@@ -3,14 +3,24 @@
     <div v-if="userAccount" class="wrap-content wrap-forms">
       <form id="form-artwork" v-on:submit.prevent>
         <section class="editor-section">
-          <header>
-            <h3>General Information</h3>
-          </header>
           <div class="row">
             <label for="title">Title</label>
             <div class="field">
               <input id="title" type="text" v-model.trim="artwork.title" required="required">
             </div>
+          </div>
+          <div class="work-specifications">
+            <section>
+              <artwork-config-editor :artwork="artwork"/>
+            </section>
+            <section>
+              <div class="row">
+                <label>Remote Control</label>
+                <div class="field">
+                  <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
+                </div>
+              </div>
+            </section>
           </div>
           <div class="row">
             <label>By</label>
@@ -37,39 +47,6 @@
             </div>
           </div>
         </section>
-        <div class="work-specifications">
-          <header>
-            <h3 class="tab">Presentation Setups</h3>
-          </header>
-          <section class="editor-section attachments">
-            <div class="row">
-              <label>Image</label>
-              <div class="field">
-                <image-attachment-editor v-model="artwork.thumbnail"/>
-              </div>
-            </div>
-            <div class="row">
-              <label>Video Preview</label>
-              <div class="field">
-                <video-attachment-editor v-model="artwork.preview"/>
-              </div>
-            </div>
-          </section>
-          <section>
-            <div class="row">
-              <label for="url">Work URL</label>
-              <div class="field">
-                <input id="url" type="text" v-model.trim="artwork.source.url" required="required">
-              </div>
-            </div>
-            <div class="row">
-              <label>Remote Control</label>
-              <div class="field">
-                <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
-              </div>
-            </div>
-          </section>
-        </div>
         <footer class="editor-section">
           <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
           <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
@@ -98,10 +75,17 @@
   import ContributorsEditor from '../elements/ContributorsEditor'
   import VideoAttachmentEditor from '../elements/VideoAttachmentEditor'
   import ImageAttachmentEditor from '../elements/ImageAttachmentEditor'
+  import ArtworkConfigEditor from '../elements/ArtworkConfigEditor'
 
   export default {
     props: ['isNew'],
-    components: { ImageAttachmentEditor, VideoAttachmentEditor, RemoteControlEditor, ContributorsEditor },
+    components: {
+      ImageAttachmentEditor,
+      VideoAttachmentEditor,
+      RemoteControlEditor,
+      ContributorsEditor,
+      ArtworkConfigEditor
+    },
     created () {
       this.init()
     },
@@ -129,7 +113,8 @@
     },
     data () {
       return {
-        artwork: new Artwork()
+        artwork: new Artwork(),
+        selectedControls: null
       }
     },
     methods: {
@@ -178,15 +163,11 @@
         this.init()
       },
       'artists' () {
-        console.log('this.artists: >>>>>> WATCHED:')
-        console.log(this.artists)
       },
       'userAccount' () {
         this.init()
       },
       'accountArtwork' () {
-        console.log('this.accountArtwork: >>>>>>')
-        console.log(this.accountArtwork)
         this.artwork.fromJson(this.accountArtwork)
       }
     }

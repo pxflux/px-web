@@ -37,7 +37,11 @@
   transform: translate(0, -50% + $y-shift);
 }
 
-@mixin checker-bg{
-  background: #1a1a1a url("/static/img/checker-12-tr@1x.png") repeat right fixed;
-  background-size: 12px;
+@mixin checker-bg ($color:#1a1a1a, $size: $module-size/4 ){
+  background: $color url("/static/img/checker-12-tr@1x.png") repeat right fixed;
+  background-size: $size;
+}
+@mixin checker-bg-20 ($color:#1a1a1a, $size: $module-size/4 ){
+  background: $color url("/static/img/checker-12-tr20@2x.png") repeat right fixed;
+  background-size: $size;
 }

@@ -6,11 +6,11 @@
                   @pause="setPaused(true)"
                   @play="setPaused(false)"
                   @ready="onReady"
-                  @loaded="onLoad"></vimeo-player>
+                  @loaded="onLoad"/>
     <div class="overlay" @click="togglePlay">
-      <button type="button" class="overlay" @click="togglePlay">
+      <div class="button overlay frameless" @click="togglePlay">
         <div class="icon" :class="{play: paused, pause: !paused}"></div>
-      </button>
+      </div>
     </div>
   </div>
   <div v-else="">Video ID is not valid.</div>
