@@ -116,7 +116,7 @@
        * @return {Point[]}
        */
       convertConnectorsToPoints (connectors) {
-        const canvasBounds = this.canvasBounds
+        const canvasBounds = this.$refs.canvas.parentElement.getBoundingClientRect()
         const points = []
         connectors.forEach(connector => {
           let widthPlacement = connector.type === 'projection' ? 0 : 0.5

@@ -20,50 +20,47 @@
         </div>
       </div>
       <div class="panel outputs">
-        <output-block
-          :num-outputs="numberAudioOutputs"
-          :output-title="'Audio'"
-          v-on:update="updateOutputs('audio', ...arguments)"/>
-        <output-block
-          :num-outputs="numberVideoOutputs"
-          :output-title="'Video'"
-          v-on:update="updateOutputs('video', ...arguments)"/>
+        <output-control-panel
+          v-for="output in outputTypes"
+          ref="outputControls"
+          :num-outputs="numberOutputs[output.type]"
+          :output-title="output.title"
+          :type="output.type"
+          v-on:update="updateOutputsNumber(...arguments)"/>
       </div>
     </div>
     <div class="outputs-presentation">
       <output-representation-bar
-        v-if="numberAudioOutputs"
-        :type="'audio'"
-        :outputs-number="numberAudioOutputs"
-        :color="colors.audio"
-        v-on:update="updateOutputsBoxes('audio', ...arguments)"
-        :trigger="barTrigger"/>
-      <output-representation-bar
-        v-if="numberVideoOutputs"
-        :type="'video'"
-        :outputs-number="numberVideoOutputs"
-        :color="colors.video"
-        v-on:update="updateOutputsBoxes('video', ...arguments)"
+        v-for="output in outputTypes"
+        ref="outputBars"
+        v-if="numberOutputs[output.type]"
+        :type="output.type"
+        :outputs-number="numberOutputs[output.type]"
+        v-on:update="refreshOutputConnections(output.type, ...arguments)"
         :trigger="barTrigger"/>
     </div>
   </div>
 </template>
 
 <script>
-  import OutputBlock from './OutputBlock'
+  import OutputControlPanel from './OutputControlPanel'
   import OutputRepresentationBar from './OutputRepresentationBar'
   import ConnectorsCanvas from './ConnectorsCanvas'
 
   export default {
     name: 'source-channel',
     components: {
-      OutputBlock, OutputRepresentationBar, ConnectorsCanvas
+      OutputControlPanel, OutputRepresentationBar, ConnectorsCanvas
     },
     data () {
       return {
         numberAudioOutputs: 2,
         numberVideoOutputs: 1,
-        audioConnectors: { sockets: [], boxes: [] },
+        numberOutputs: { audio: 2, video: 1 },
+        outputTypes: [
+          { type: 'audio', title: 'Audio' },
+          { type: 'video', title: 'Video' }
+        ],
         videoConnectors: { sockets: [], boxes: [] },
         /** @type GroupedConnectors[] */
         outputSockets: [],
@@ -99,26 +96,36 @@
       videoChannelType (n) {
         return ['', 'Monitor', 'Projection'][n % 3 || 1]
       },
-      updateOutputsBoxes (type, boxesBounds) {
-        this.outputBoxes[type] = boxesBounds
-        this.trigger ++ // TODO find better way to trigger the update in the canvas
+      refreshOutputConnections (type, boxesBounds) {
+        this.$nextTick(() => { // let sockets to be updated
+          this.$refs.outputBars.forEach(bar => {
+            this.outputBoxes[bar.type] = bar.collectBoxes()
+          })
+          this.$refs.outputControls.forEach(bar => {
+            this.outputSockets[bar.type] = bar.collectSocketBounds()
+          })
+          // this.outputBoxes[type] = boxesBounds
+          this.trigger++ // TODO find a better way to trigger the update in the canvas
+        })
       },
-      updateOutputs (type, sockets) {
+      updateOutputsNumber (sockets, type) {
         this.outputSockets[type] = sockets
+        this.numberOutputs[type] = sockets.length
+
         if (type === 'audio') {
           this.numberAudioOutputs = sockets.length
         } else {
           this.numberVideoOutputs = sockets.length
         }
-        this.barTrigger ++ // TODO find better way to trigger the update in the bar
-      },
-      collectConnectorsData (refName) {
-        const bounds = []
-        this.$refs[refName].forEach(socketEl => {
-          bounds.push(socketEl.getBoundingClientRect())
-        })
-        return bounds
+        this.barTrigger++ // TODO find a better way to trigger the update in the bar
       }
+      // collectBoxes (refName) {
+      //   const bounds = []
+      //   this.$refs[refName].forEach(socketEl => {
+      //     bounds.push(socketEl.getBoundingClientRect())
+      //   })
+      //   return bounds
+      // }
     }
   }
 </script>

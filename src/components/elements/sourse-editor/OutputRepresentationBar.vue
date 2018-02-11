@@ -23,7 +23,6 @@
       'type',
       'outputList',
       'outputsNumber',
-      'color',
       'trigger'
     ],
     data () {
@@ -56,11 +55,11 @@
     methods: {
       update () {
         this.$nextTick(() => {
-          this.boxes = this.collectConnectorsData()
+          this.boxes = this.collectBoxes()
           this.$emit('update', this.boxes)
         })
       },
-      collectConnectorsData () {
+      collectBoxes () {
         const bounds = []
         this.$refs.boxes.forEach(boxEl => {
           bounds.push({ type: 'box', objectBounds: boxEl.getBoundingClientRect() })

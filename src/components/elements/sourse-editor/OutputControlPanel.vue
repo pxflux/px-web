@@ -1,5 +1,5 @@
 <template>
-  <div class="block" v-model="numOutputs" :class="className">
+  <div class="block" v-model="numOutputs" :class="type">
     <div class="button frameless">
       <div class="icon minus" @click="changeNumberOutputs(-1)"></div>
     </div>
@@ -10,7 +10,7 @@
       <header>{{ outputTitle }}</header>
       <div class="sockets">
         <span v-for="i in numSockets"
-              class="socket" :class="className" ref="sockets"></span>
+              class="socket" :class="type" ref="sockets"></span>
       </div>
     </div>
   </div>
@@ -19,7 +19,7 @@
 <script>
   export default {
     name: 'output-block',
-    props: ['numOutputs', 'outputTitle'],
+    props: ['numOutputs', 'outputTitle', 'type'],
     data () {
       return {
         numSockets: this.numOutputs
@@ -40,7 +40,7 @@
         if (this.numSockets > 18) this.numSockets = 18
         this.$nextTick(() => { // just to let sockets to be updated first
           const bounds = this.collectSocketBounds()
-          this.$emit('update', bounds)
+          this.$emit('update', bounds, this.type)
         })
       },
       collectSocketBounds () {
