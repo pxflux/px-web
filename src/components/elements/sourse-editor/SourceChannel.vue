@@ -36,7 +36,8 @@
         v-if="numberOutputs[output.type]"
         :type="output.type"
         :outputs-number="numberOutputs[output.type]"
-        v-on:update="refreshOutputConnections(output.type, ...arguments)"
+        :output-list="outputs[output.type]"
+        v-on:update="updateOutputs(...arguments)"
         :trigger="barTrigger"/>
     </div>
   </div>
@@ -54,18 +55,19 @@
     },
     data () {
       return {
-        numberAudioOutputs: 2,
-        numberVideoOutputs: 1,
+        outputs: {
+          audio: [{type: 'loudspeaker'}, {type: 'loudspeaker'}],
+          video: [{type: 'any screen', resolution: [0, 0], orientation: 'landscape'}]
+        },
         numberOutputs: { audio: 2, video: 1 },
-        outputTypes: [
-          { type: 'audio', title: 'Audio' },
-          { type: 'video', title: 'Video' }
-        ],
-        videoConnectors: { sockets: [], boxes: [] },
         /** @type GroupedConnectors[] */
         outputSockets: [],
         /** @type GroupedConnectors[] */
         outputBoxes: [],
+        outputTypes: [
+          { type: 'audio', title: 'Audio' },
+          { type: 'video', title: 'Video' }
+        ],
         colors: {
           video: 'rgba(115, 253, 234, 0.6)',
           audio: 'rgba(248, 186, 0, 0.6)'
@@ -77,55 +79,26 @@
     mounted () {
     },
     methods: {
-      channelName (n) {
-        const names = ['Mono', 'L', 'R']
-        let name = n
-        if (this.numberAudioOutputs === 2) {
-          name = names[n]
-        } else if (this.numberAudioOutputs === 1) {
-          name = names[0]
-        }
-        return name
+      updateOutputs (type, outputs) {
+        this.outputs[type] = outputs
+        this.refreshOutputConnections()
       },
-      channelType (n) {
-        return 'Loudspeaker'
-      },
-      videoChannelName (n) {
-        return n
-      },
-      videoChannelType (n) {
-        return ['', 'Monitor', 'Projection'][n % 3 || 1]
-      },
-      refreshOutputConnections (type, boxesBounds) {
-        this.$nextTick(() => { // let sockets to be updated
+      refreshOutputConnections () {
+        this.$nextTick(() => { // let sockets to be updated.. if they need it
           this.$refs.outputBars.forEach(bar => {
             this.outputBoxes[bar.type] = bar.collectBoxes()
           })
           this.$refs.outputControls.forEach(bar => {
             this.outputSockets[bar.type] = bar.collectSocketBounds()
           })
-          // this.outputBoxes[type] = boxesBounds
           this.trigger++ // TODO find a better way to trigger the update in the canvas
         })
       },
       updateOutputsNumber (sockets, type) {
         this.outputSockets[type] = sockets
         this.numberOutputs[type] = sockets.length
-
-        if (type === 'audio') {
-          this.numberAudioOutputs = sockets.length
-        } else {
-          this.numberVideoOutputs = sockets.length
-        }
         this.barTrigger++ // TODO find a better way to trigger the update in the bar
       }
-      // collectBoxes (refName) {
-      //   const bounds = []
-      //   this.$refs[refName].forEach(socketEl => {
-      //     bounds.push(socketEl.getBoundingClientRect())
-      //   })
-      //   return bounds
-      // }
     }
   }
 </script>

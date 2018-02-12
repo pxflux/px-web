@@ -1,5 +1,5 @@
 <template>
-  <div class="block" v-model="numOutputs" :class="type">
+  <div class="panel" v-model="numOutputs" :class="type" ref="panel">
     <div class="button frameless">
       <div class="icon minus" @click="changeNumberOutputs(-1)"></div>
     </div>
@@ -44,11 +44,28 @@
         })
       },
       collectSocketBounds () {
+        const panelBounds = this.$refs.panel.getBoundingClientRect()
         const bounds = []
         this.$refs.sockets.forEach(socketEl => {
-          bounds.push({type: 'socket', objectBounds: socketEl.getBoundingClientRect()})
+          bounds.push({
+            type: 'socket',
+            objectBounds: this.modifyBoundingRect(socketEl, panelBounds)
+          })
         })
         return bounds
+      },
+      modifyBoundingRect (socketEl, panelBounds) {
+        const socketBounds = socketEl.getBoundingClientRect()
+        return {
+          left: socketBounds.left,
+          top: socketBounds.top,
+          right: socketBounds.right,
+          bottom: panelBounds.bottom,
+          x: socketBounds.x,
+          y: socketBounds.y,
+          width: socketBounds.width,
+          height: panelBounds.bottom - socketBounds.top
+        }
       }
     }
   }
@@ -59,7 +76,7 @@
   @import "../../../assets/sass/hidpi";
   @import "../../../assets/sass/components/hairline";
   
-  .block {
+  .panel {
     width: 50%;
     display: flex;
     flex-flow: row nowrap;
@@ -107,7 +124,7 @@
           &.video {
             background: $video-color;
           }
-  
+          
         }
       }
     }

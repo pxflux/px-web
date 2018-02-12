@@ -1,9 +1,11 @@
 <template>
   <div class="output-bar-holder" :class="type">
     <div class="output-bar" :class="type">
-      <div v-for="i in outputsNumber" class="output-box" :class="type" ref="boxes">
+      <div v-for="(output, i) in outputs" class="output-box" :class="[type, outputClassName(output)]" ref="boxes">
         <div class="description">
-          <span>{{channelName(i)}}</span><span>{{channelType(i)}}</span>
+          <span class="name">{{outputName(output, i)}}</span>
+          <span class="type">{{outputType(output)}}</span>
+          <span class="description">{{outputDescription(output)}}</span>
         </div>
         <div class="icon drop-down small"></div>
       </div>
@@ -12,13 +14,34 @@
 </template>
 
 <script>
-  import ConnectorsCanvas from './ConnectorsCanvas'
+  /**
+   * @typedef {{
+   *  type: 'projection'
+   *  resolution: [0, 0]
+   *  orientation: 'landscape'
+   * }} OutputGeneric
+  /**
+   * @prop {string} type
+   */
+  class AudioOutput {
+    constructor () {
+      this.type = 'loudspeaker'
+    }
+  }
+  /**
+   * @prop {string} type
+   */
+  class VideoOutput {
+    constructor () {
+      this.type = 'projection'
+      this.resolution = [0, 0]
+      this.orientation = 'landscape'
+    }
+  }
 
   export default {
     name: 'output-representation-bar',
-    components: {
-      ConnectorsCanvas
-    },
+    components: {},
     props: [
       'type',
       'outputList',
@@ -29,10 +52,8 @@
       return {
         numberAudioOutputs: 0,
         numberVideoOutputs: 0,
-        /** @type Equipment[] */
-        outputs: [],
-        /** @type ClientRect[] */
-        sockets: [],
+        /** @type [] */
+        outputs: this.outputList,
         /** @type ClientRect[] */
         boxes: []
       }
@@ -42,9 +63,16 @@
     },
     watch: {
       outputsNumber () {
-        this.$nextTick(() => {
-          this.update()
-        })
+        if (this.outputsNumber < this.outputs.length) {
+          this.outputs = this.outputs.slice(0, this.outputsNumber)
+        } else if (this.outputsNumber > this.outputs.length) {
+          const numToAdd = this.outputsNumber - this.outputs.length
+          for (let i = 0; i < numToAdd; i++) {
+            const output = this.type === 'audio' ? new AudioOutput() : new VideoOutput()
+            this.outputs.push(output)
+          }
+        }
+        this.update()
       },
       trigger () {
         this.$nextTick(() => {
@@ -55,18 +83,20 @@
     methods: {
       update () {
         this.$nextTick(() => {
-          this.boxes = this.collectBoxes()
-          this.$emit('update', this.boxes)
+          // this.boxes = this.collectBoxes()
+          this.$emit('update', this.type, this.outputs)
         })
       },
       collectBoxes () {
         const bounds = []
-        this.$refs.boxes.forEach(boxEl => {
-          bounds.push({ type: 'box', objectBounds: boxEl.getBoundingClientRect() })
+        this.$refs.boxes.forEach((boxEl, i) => {
+          const output = this.outputs[i]
+          bounds.push({ type: output.type, objectBounds: boxEl.getBoundingClientRect() })
         })
         return bounds
       },
-      channelName (n) {
+      outputName (output, n) {
+        n++
         switch (this.type) {
           case 'video':
             return n
@@ -81,14 +111,28 @@
             return name
         }
       },
-      channelType (n) {
-        // TODO here must be a proper type description selection
-        switch (this.type) {
-          case 'video':
-            return 'Screen'
-          case 'audio':
-            return 'Loudspeaker'
+      /**
+       * @param {OutputGeneric} output
+       * @return {string}
+       */
+      outputType (output) {
+        return output.type
+      },
+      /**
+       * @param {OutputGeneric} output
+       * @return {string}
+       */
+      outputDescription (output) {
+        if (this.type === 'video') {
+          return 'Any resolution'
         }
+      },
+      /**
+       * @param {OutputGeneric} output
+       * @return {string}
+       */
+      outputClassName (output) {
+        return output.type.toLowerCase().replace(' ', '-')
       }
     }
   }
@@ -150,7 +194,7 @@
         flex-grow: 1;
         span {
           display: block;
-          &:last-child {
+          &:last-child, &.type {
             font-size: $font-size-caption / 1.2;
           }
         }
@@ -165,17 +209,7 @@
       position: relative;
       
       &.projection {
-        margin-top: $module-size/2;
-        &:after {
-          content: '';
-          display: block;
-          box-sizing: border-box;
-          position: absolute;
-          width: 100%;
-          height: $module-size/2;
-          bottom: 100%;
-          background: rgba(255, 255, 255, 0.2);
-        }
+        margin-top: $module-size/4;
       }
     }
   }
