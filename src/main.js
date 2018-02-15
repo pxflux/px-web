@@ -44,28 +44,31 @@ firebaseApp.auth().onAuthStateChanged(user => {
   }
   if (user) {
     userRef = firebaseApp.database().ref('metadata/' + user.uid + '/refreshTime')
-    callback = (snapshot) => {
+    callback = userRef.on('value', (snapshot) => {
+      console.log('onMetadataChanged:', snapshot)
       if (!snapshot.exists()) {
-        store.commit('UPDATE_USER', null)
+        return
       }
-      return user.getIdToken(true)
-        .then(function (token) {
-          return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
-        })
-        .then(function (payload) {
-          return firebaseApp.database().ref('accounts/' + payload['accountId']).once('value')
-        })
-        .then(function (snapshot) {
-          const account = snapshot.val()
-          account['.key'] = snapshot.key
-          store.commit('UPDATE_USER', {user: user, account: account})
-        })
-        .catch(function (error) {
-          console.log(error)
-          store.commit('UPDATE_USER', null)
-        })
-    }
-    userRef.on('value', callback)
+      return user.getIdToken(true).then((token) => {
+        console.log('getIdToken:', token)
+        return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
+      }).then(function (payload) {
+        if (!payload.hasOwnProperty('accountId')) {
+          throw new Error()
+        }
+        return firebaseApp.database().ref('accounts/' + payload.accountId).once('value')
+      }).then(function (snapshot) {
+        if (!snapshot.exists()) {
+          throw new Error()
+        }
+        const account = snapshot.val()
+        account['.key'] = snapshot.key
+        store.commit('UPDATE_USER', {user: user, account: account})
+      }).catch(function (error) {
+        console.log(error)
+        store.commit('UPDATE_USER', null)
+      })
+    })
   } else {
     store.commit('UPDATE_USER', null)
   }
