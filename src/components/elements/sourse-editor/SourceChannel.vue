@@ -118,7 +118,7 @@
             this.sourceDescription = `Vimeo video ${vimeoInfo.width} x ${vimeoInfo.height} px | [${vimeoInfo.duration}]`
           })
         } else {
-          const requestUrl = 'http://pxflux.com/url-to-headers/?url=' + encodeURIComponent(url)
+          const requestUrl = 'https://50artistsnet.ipage.com/pxflux/url-to-headers/?url=' + encodeURIComponent(url)
           const config = { headers: {'Access-Control-Allow-Origin': '*'} }
           axios.get(requestUrl, config).then(function (response) {
             console.log(response)
