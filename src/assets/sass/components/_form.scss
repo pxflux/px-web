@@ -46,7 +46,7 @@ form {
     }
     .field {
       padding: 0;
-      min-width: 10 * $module-size;
+      width: 100%;
       flex-grow: 1;
 
       & > input,

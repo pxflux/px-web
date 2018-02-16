@@ -39,7 +39,7 @@
     },
     watch: {
       value: function () {
-        this.imageUrl = this.value.storage.displayUrl
+        // this.imageUrl = this.value.storage.displayUrl
       }
     }
   }

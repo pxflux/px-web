@@ -8,12 +8,17 @@
     </connectors-canvas>
     <div class="module component source">
       <div class="body source">
-        <label>
+        <label for="sourceUrl">
           <span>Source</span>
         </label>
         <div class="info">
-          <span class="path">…/afterglow/?screens=3</span>
-          <span class="description">Video: 5760 x 1080 px | 25 fps | ∞</span>
+          <input
+            class="path"
+            id="sourceUrl"
+            name="sourceUrl"
+            v-model="source"
+            v-on:paste="updateSource" @change="updateSource"/>
+          <span class="description">{{sourceDescription}}</span>
         </div>
         <div class="button frameless">
           <div class="icon drop-down small"></div>
@@ -33,7 +38,6 @@
       <output-representation-bar
         v-for="output in outputTypes"
         ref="outputBars"
-        v-if="numberOutputs[output.type]"
         :type="output.type"
         :outputs-number="numberOutputs[output.type]"
         :output-list="outputs[output.type]"
@@ -44,20 +48,47 @@
 </template>
 
 <script>
+  /** @typedef {
+   *  {
+   *    url: string,
+   *    width: number,
+   *    height: number,
+   *    duration: number,
+   *    author_name: string,
+   *    author_url: string,
+   *    description: string,
+   *    vimeo_id: number,
+   *    thumbnail: { url: string, width: number, height: number },
+   *    error: string,
+   *    warning: string
+   *  }
+   * } VimeoVideoInfo
+   */
+  import axios from 'axios'
+
   import OutputControlPanel from './OutputControlPanel'
   import OutputRepresentationBar from './OutputRepresentationBar'
   import ConnectorsCanvas from './ConnectorsCanvas'
+  import VueSelect from '../Select/components/Select'
+
+  import vimeoLink from '../../../helpers/vimeoLink'
 
   export default {
     name: 'source-channel',
     components: {
-      OutputControlPanel, OutputRepresentationBar, ConnectorsCanvas
+      OutputControlPanel,
+      OutputRepresentationBar,
+      ConnectorsCanvas,
+      VueSelect
     },
+    mixins: [vimeoLink],
     data () {
       return {
+        source: '',
+        sourceDescription: '',
         outputs: {
-          audio: [{type: 'loudspeaker'}, {type: 'loudspeaker'}],
-          video: [{type: 'any screen', resolution: [0, 0], orientation: 'landscape'}]
+          audio: [{ type: 'loudspeaker' }, { type: 'loudspeaker' }],
+          video: [{ type: 'any screen', resolution: [0, 0], orientation: 'landscape' }]
         },
         numberOutputs: { audio: 2, video: 1 },
         /** @type GroupedConnectors[] */
@@ -79,6 +110,23 @@
     mounted () {
     },
     methods: {
+      updateSource () {
+        this.sourceDescription = ''
+        const url = this.source
+        if (this.getVimeoVideoIdFromUrl(url)) {
+          this.getVimeoVideoInfo(url, (/** @type VimeoVideoInfo */ vimeoInfo) => {
+            this.sourceDescription = `Vimeo video ${vimeoInfo.width} x ${vimeoInfo.height} px | [${vimeoInfo.duration}]`
+          })
+        } else {
+          const requestUrl = 'http://pxflux.com/url-to-headers/?url=' + encodeURIComponent(url)
+          const config = { headers: {'Access-Control-Allow-Origin': '*'} }
+          axios.get(requestUrl, config).then(function (response) {
+            console.log(response)
+            const type = response.data['Content-Type']
+            this.sourceDescription = `type: ${type}`
+          }.bind(this))
+        }
+      },
       updateOutputs (type, outputs) {
         this.outputs[type] = outputs
         this.refreshOutputConnections()
@@ -150,7 +198,7 @@
         background: transparent;
         cursor: pointer;
         
-        span {
+        span, input {
           display: block;
           height: $module-size/2;
           line-height: $module-size/2;
@@ -159,6 +207,11 @@
           &.path {
             font-size: 110%;
             color: $button-text-color;
+            width: 100%;
+            box-shadow: none;
+            &:focus {
+              outline: none;
+            }
           }
           &.description {
             font-size: $font-size-caption;

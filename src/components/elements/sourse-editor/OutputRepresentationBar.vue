@@ -1,26 +1,61 @@
 <template>
   <div class="output-bar-holder" :class="type">
     <div class="output-bar" :class="type">
-      <div v-for="(output, i) in outputs" class="output-box" :class="[type, outputClassName(output)]" ref="boxes">
-        <div class="description">
-          <span class="name">{{outputName(output, i)}}</span>
-          <span class="type">{{outputType(output)}}</span>
-          <span class="description">{{outputDescription(output)}}</span>
+      <popper
+        v-for="(output, i) in outputs"
+        trigger="click"
+        :options="{
+            placement: 'top-start',
+            modifiers: {
+              /*flip: {behavior: ['top']}*/
+            }
+        }">
+        <div v-if="type==='video'" class="popper">
+          <div>Popper Content Popper Content Popper Content Popper Content Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
+          <div>Popper Content</div>
         </div>
-        <div class="icon drop-down small"></div>
-      </div>
+        <div
+          class="output-box" :class="[type, outputClassName(output)]"
+          ref="boxes"
+          slot="reference">
+          <div class="description">
+            <span class="name">{{outputName(output, i)}}</span>
+            <span class="type">{{outputType(output)}}</span>
+            <span class="description">{{outputDescription(output)}}</span>
+          </div>
+          <div v-if="type==='video'" class="icon drop-down small"></div>
+        </div>
+      </popper>
+      <!--</popper>-->
     </div>
+  
   </div>
 </template>
 
 <script>
+  import Popper from 'vue-popperjs'
+  import 'vue-popperjs/dist/css/vue-popper.css'
+
   /**
    * @typedef {{
    *  type: 'projection'
    *  resolution: [0, 0]
    *  orientation: 'landscape'
    * }} OutputGeneric
-  /**
+   /**
    * @prop {string} type
    */
   class AudioOutput {
@@ -28,6 +63,7 @@
       this.type = 'loudspeaker'
     }
   }
+
   /**
    * @prop {string} type
    */
@@ -41,7 +77,9 @@
 
   export default {
     name: 'output-representation-bar',
-    components: {},
+    components: {
+      Popper
+    },
     props: [
       'type',
       'outputList',
@@ -55,7 +93,8 @@
         /** @type [] */
         outputs: this.outputList,
         /** @type ClientRect[] */
-        boxes: []
+        boxes: [],
+        showPopperParentVar: true
       }
     },
     mounted () {

@@ -18,7 +18,7 @@
 
 <script>
   export default {
-    name: 'output-block',
+    name: 'output-control-panel',
     props: ['numOutputs', 'outputTitle', 'type'],
     data () {
       return {
