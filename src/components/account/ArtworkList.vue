@@ -6,21 +6,19 @@
                    :uri="'/artwork/' + artwork['.key']">
       </ArtworkItem>
       <router-link to="/account/artwork/new" class="grid-cell button" title="Add Artwork">
-          <div class="plus icon"></div>
+        <div class="plus icon"></div>
       </router-link>
     </div>
-    <span class="nothing-found" v-if="accountArtworks.length == 0">Artworks not found.</span>
+    <span class="nothing-found" v-if="accountArtworks.length === 0">Artworks not found.</span>
   </main>
 </template>
 
 <script>
-  import ArtworkItem from '../ArtworkItem'
+  import ArtworkItem from '../elements/ArtworkItem'
   import firebase from '../../firebase-app'
-  import { mapState, mapActions } from 'vuex'
-  // import GridHelper from '../../helpers/grid'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
-    // mixins: [GridHelper],
     components: {
       ArtworkItem
     },

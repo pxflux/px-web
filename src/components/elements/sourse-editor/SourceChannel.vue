@@ -26,7 +26,8 @@
       </div>
       <div class="panel outputs">
         <output-control-panel
-          v-for="output in outputTypes"
+          v-for="(output, i) in outputTypes"
+          :key="i"
           ref="outputControls"
           :num-outputs="numberOutputs[output.type]"
           :output-title="output.title"
@@ -36,13 +37,15 @@
     </div>
     <div class="outputs-presentation">
       <output-representation-bar
-        v-for="output in outputTypes"
+        v-for="(output, i) in outputTypes"
+        :key="i"
         ref="outputBars"
         :type="output.type"
         :outputs-number="numberOutputs[output.type]"
         :output-list="outputs[output.type]"
         v-on:update="updateOutputs(...arguments)"
-        :trigger="barTrigger"/>
+        :trigger="barTrigger"
+      />
     </div>
   </div>
 </template>
@@ -157,7 +160,7 @@
   @import "../../../assets/sass/hidpi";
   @import "../../../assets/sass/components/hairline";
   @import "../../../assets/sass/components/buttons";
-  
+
   .channel {
     position: relative;
     canvas {
@@ -168,7 +171,7 @@
       height: 100%;
     }
   }
-  
+
   .module {
     width: $module-size * 8;
     .body {
@@ -178,7 +181,7 @@
       height: $module-size * 1.5;
       background: $bg-secondary-color;
       @include hairline-border($positionRelative: true, $side: all, $color: #808080, $bg-color: $dark-bg);
-      
+
       label {
         display: block;
         height: 100%;
@@ -190,20 +193,20 @@
           @include centered();
         }
       }
-      
+
       .info {
         flex-grow: 1;
         line-height: 1.5;
         text-align: center;
         background: transparent;
         cursor: pointer;
-        
+
         span, input {
           display: block;
           height: $module-size/2;
           line-height: $module-size/2;
           white-space: nowrap;
-          
+
           &.path {
             font-size: 110%;
             color: $button-text-color;
@@ -223,7 +226,7 @@
         flex-shrink: 0;
         height: 100%;
       }
-      
+
     }
     .panel {
       display: flex;
@@ -232,7 +235,7 @@
       min-height: $module-size;
       color: $font-color-on-dark;
     }
-    
+
     button.modal {
       width: 100%;
       height: 100%;
@@ -249,7 +252,7 @@
       }
     }
   }
-  
+
   .outputs-presentation {
     position: relative;
     min-height: $module-size * 2;

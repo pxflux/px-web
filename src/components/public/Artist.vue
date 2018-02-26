@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
   import firebase from '../../firebase-app'
 
   export default {

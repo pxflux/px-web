@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import { createApp } from './init'
-import ProgressBar from './components/ProgressBar'
+import ProgressBar from './components/elements/ProgressBar'
 import firebaseApp from './firebase-app'
 import inputAutoWidth from 'vue-input-autowidth'
 
@@ -50,7 +50,8 @@ firebaseApp.auth().onAuthStateChanged(user => {
         return
       }
       return user.getIdToken(true).then((token) => {
-        console.log('getIdToken:', token)
+        store.commit('UPDATE_USER', {user: firebaseApp.auth().currentUser, account: firebaseApp.auth().currentUser})
+        // console.log('getIdToken:', token)
         return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
       }).then(function (payload) {
         if (!payload.hasOwnProperty('accountId')) {

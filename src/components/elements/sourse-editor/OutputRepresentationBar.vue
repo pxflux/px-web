@@ -3,6 +3,7 @@
     <div class="output-bar" :class="type">
       <popper
         v-for="(output, i) in outputs"
+        :key="i"
         trigger="click"
         :options="{
             placement: 'top-start',
@@ -41,7 +42,7 @@
       </popper>
       <!--</popper>-->
     </div>
-  
+
   </div>
 </template>
 
@@ -130,7 +131,7 @@
         const bounds = []
         this.$refs.boxes.forEach((boxEl, i) => {
           const output = this.outputs[i]
-          bounds.push({ type: output.type, objectBounds: boxEl.getBoundingClientRect() })
+          bounds.push({type: output.type, objectBounds: boxEl.getBoundingClientRect()})
         })
         return bounds
       },
@@ -183,37 +184,37 @@
   @import "../../../assets/sass/hidpi";
   @import "../../../assets/sass/components/hairline";
   @import "../../../assets/sass/components/buttons";
-  
+
   $audio-bar-height: $module-size * 2;
   $video-box-height: $module-size * 2;
-  
+
   .output-bar-holder {
     position: relative;
     /*display: flex;*/
     /*flex-flow: column nowrap;*/
   }
-  
+
   .output-bar {
     position: relative;
     display: flex;
     align-items: flex-end;
     margin-top: $module-size;
-    
+
     min-height: $module-size;
-    
+
     .output-box {
       flex-shrink: 0;
       flex-grow: 0;
       display: flex;
       align-items: center;
       margin-right: $module-size / 8;
-      
+
       width: $module-size * 2;
       height: $module-size;
       padding: 0;
-      
+
       @include hairline-border($positionRelative: true, $side: all, $color: #808080, $bg-color: $dark-bg);
-      
+
       &.audio {
         background: darken($bg-secondary-color, 15%);
       }
@@ -241,12 +242,12 @@
     }
     .output-box.video {
       $screen-width: $module-size * 2 * (16/9);
-      
+
       background: #fff;
       height: $module-size * 2;
       width: $screen-width;
       position: relative;
-      
+
       &.projection {
         margin-top: $module-size/4;
       }
