@@ -2,33 +2,49 @@
   <main>
     <div v-if="userAccount" class="wrap-content">
       <ul>
-        <li v-for="player in players" :key="player['.key']">
+        <li v-for="player in accountPlayers" :key="player['.key']">
           {{ player.pin }}
         </li>
       </ul>
-      <span class="nothing-found" v-if="players.length == 0">Players not found.</span>
+      <span class="nothing-found" v-if="accountPlayers.length === 0">Players not found.</span>
       <router-link to="/account/player/new">Add Player</router-link>
     </div>
   </main>
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
+  import firebase from '../../firebase-app'
 
   export default {
+    created () {
+      this.init()
+    },
     computed: {
-      ...mapState(['userAccount']),
+      ...mapState(['userAccount', 'accountPlayers']),
 
       accountId () {
         if (!this.userAccount) {
           return null
         }
         return this.userAccount['.key']
+      }
+    },
+    methods: {
+      ...mapActions(['setRef']),
+
+      init () {
+        if (this.accountId) {
+          this.setRef({key: 'accountPlayers', ref: firebase.database().ref('accounts/' + this.accountId + '/players')})
+        }
+      }
+    },
+    watch: {
+      $route () {
+        this.init()
       },
-      players () {
-        return Object.keys((this.userAccount || {}).players || {}).map(id => {
-          return {...this.userAccount.players[id], ...{'.key': id}}
-        })
+      'userAccount' () {
+        this.init()
       }
     }
   }
