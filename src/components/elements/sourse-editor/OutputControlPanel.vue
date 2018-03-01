@@ -82,7 +82,7 @@
     flex-flow: row nowrap;
     align-items: center;
     position: relative;
-    background: $dark-bg;
+    background: $bg-color;
     @include hairline-border($positionRelative: true, $side: all, $color: #808080, $bg-color: $dark-bg);
     
     &.video {
@@ -104,6 +104,8 @@
     }
     .connectors {
       flex-grow: 1;
+      width: 2.5 * $module-size;
+      padding: 0 12px;
       
       .sockets {
         display: flex;

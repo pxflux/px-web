@@ -1,4 +1,7 @@
 @import "buttons";
+@import "popper";
+@import "select";
+
 @mixin focused(){
   outline: none;
   box-shadow: 0 0 0 1px #575757;
@@ -8,6 +11,7 @@
 #form-artwork{
   max-width: $content-max-width + $module-size * 2.5;
 }
+
 form {
   margin: $module-size 0;
   max-width: calc(100% - 5.5 * #{$module-size});
@@ -18,52 +22,104 @@ form {
   }
 
   .row {
-    display: flex;
-    flex-flow: row nowrap;
     min-height: $module-size;
-    background: $bg-color;
 
-    & > * {
-      margin: 0;
-      @include hairline-border(true, all, $color: rgb(197, 197, 197));
-      background: $bg-color;
-
-      &:first-child {
-        width: $module-size * 2.5;
-        flex-shrink: 0;
-        //background: $bg-secondary-color;
-      }
+    @include weider-then-phone(){
+      display: flex;
+      flex-flow: row nowrap;
     }
 
     input#title {
       font-size: $font-size-h1 * 0.75;
     }
-    label {
-      padding: $module-size / 4 $module-size / 4;
-      text-align: right;
+
+    > * {
+      margin: 0;
+    }
+
+    > label {
+      position: relative;
+      display: block;
+      min-height: $module-size;
+      padding: 0;
       font-size: $font-size-caption;
 
+      @include weider-then-phone() {
+        flex-shrink: 0;
+        width: $module-size * 2.5;
+        text-align: right;
+
+        &:not(.with-icon) > span {
+          display: block;
+          width: 100%;
+          padding: 0 $module-size / 4 0 0;
+          @include centeredVertical();
+        }
+      }
+
+      &.with-icon{
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        padding: 0;
+        cursor: pointer;
+
+        @include weider-then-phone{
+          padding: 0 $module-size / 4 0 0;
+          justify-content: flex-end;
+        }
+
+        .icon{
+          display: block;
+          position: relative;
+          width: $module-size;
+          height: 100%;
+          &.small{
+            width: $two-thirds;
+          }
+          &:before, &:after{
+            border-color: $button-text-color;
+          }
+        }
+      }
     }
     .field {
-      padding: 0;
-      width: 100%;
+      position: relative;
       flex-grow: 1;
+      width: 100%;
+      min-height: $module-size;
+      padding: 0;
+      &.closed {
+        border: 0.5px rgba(0,0,0,0.1);
+        border-style: dotted none;
+      }
 
-      & > input,
-      & > textarea {
+      > input,
+      > textarea {
         width: 100% !important;
         height: 100%;
         min-height: $module-size !important;
         padding: 0 $module-size / 4;
+        @include hairline-border(true, all, $color: rgb(255, 197, 197));
         &.attachment {
           padding: 0;
         }
       }
+
+      > span{
+        //@include centeredVertical();
+      }
+
+      .description {
+        display: block;
+        padding: $module-size / 4;
+        font-size: $font-size-body * 0.85;
+      }
     }
     input, textarea, select {
       position: relative;
-      border: none;
-      box-shadow: none;
+      //border: none;
+      //box-shadow: none;
       padding: 0 $module-size / 4;
       margin: 0;
       display: block;
@@ -86,8 +142,6 @@ form {
     }
   }
 }
-
-$two-thirds: $module-size / 3 * 2;
 
 .v-select.px {
   font-family: font-family-of($work-sans) !important;

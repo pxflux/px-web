@@ -4,7 +4,8 @@
   font-size: $font-size-caption;
 
   .row{
-    //height: $module-size;
+    display: flex;
+    flex-flow: row nowrap;
     justify-content: flex-end;
 
     .row-header{

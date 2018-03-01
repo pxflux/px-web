@@ -33,7 +33,6 @@
 @mixin centeredVertical($y-shift:0){
   position: absolute;
   top: 50%;
-  //left: 0;
   transform: translate(0, -50% + $y-shift);
 }
 
@@ -45,3 +44,15 @@
   background: $color url("/static/img/checker-12-tr20@2x.png") repeat right fixed;
   background-size: $size;
 }
+
+@mixin weider-then-iphon5 (){
+  @media (min-width: 340px) {
+    @content;
+  }
+}
+@mixin weider-then-phone (){
+  @media (min-width: 600px) {
+    @content;
+  }
+}
+

@@ -14,12 +14,12 @@ import Color from './color'
  *  }} Pixel
  */
 /**
- * @param {string} imgPath
+ * @param {string} imgURL
  * @param {string} canvasID
  * @param {ScalableCanvasFromImageOptions=} options
  * @constructor
  */
-function ScalableCanvasFromImage (imgPath, canvasID, options) {
+function ScalableCanvasFromImage (imgURL, canvasID, options) {
   const _this = this
   options = new ScalableCanvasFromImageOptions(options)
 
@@ -30,36 +30,37 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
   const gradient = options.gradient  // new Gradient([bgColor.offset(45, 100)]);
   let gradientPosition = 0
   const gradientStep = 0.05
-  let pixels
+  let modelPixels
 
   this.pixSize = 0
-  this.setup = function () {
-    pixels = new ImgPixels(imgPath)
-    pixels.readPixels(function () {
+  this.setup = function (url) {
+    if (!url) url = imgURL
+    modelPixels = new ImgPixels(url)
+    modelPixels.readPixels(function () {
       setLogoCanvasSize(options.width)
       _this.draw()
     })
   }
 
-  window.addEventListener('resize', function () {
-    if (!options.width || options.width <= 1) {
-      setLogoCanvasSize(options.width)
-      if (!options.animate) {
-        _this.draw()
-      }
-    }
-  })
+  // window.addEventListener('resize', function () {
+  //   if (!options.width || options.width <= 1) {
+  //     setLogoCanvasSize(options.width)
+  //     if (!options.animate) {
+  //       _this.draw()
+  //     }
+  //   }
+  // })
 
   this.draw = function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     const pixSize = _this.pixSize // -1;
-    const colorWidth = 1 / pixels.width
-    for (let y = 0; y < pixels.height; y++) {
+    const colorWidth = 1 / modelPixels.width
+    for (let y = 0; y < modelPixels.height; y++) {
       const pxY = pixSize * y
 
-      for (let x = 0; x < pixels.width; x++) {
+      for (let x = 0; x < modelPixels.width; x++) {
         const pxX = pixSize * x
-        const px = pixels.pixTable[ x ][ y ]
+        const px = modelPixels.pixTable[x][y]
         if (px.a === 0) {
           continue
         }
@@ -85,14 +86,14 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
       ctx.strokeStyle = options.strokeColor.toRGBAString(0.3)
       ctx.lineWidth = 0.5
 
-      for (let sY = 0; sY < pixels.height; sY++) {
+      for (let sY = 0; sY < modelPixels.height; sY++) {
         const yy = sY * pixSize + 0.5
         ctx.beginPath()
         ctx.moveTo(0, yy)
         ctx.lineTo(canvas.width, yy)
         ctx.stroke()
       }
-      for (let sX = 0; sX < pixels.width; sX++) {
+      for (let sX = 0; sX < modelPixels.width; sX++) {
         const xx = sX * pixSize + 0.5
         ctx.beginPath()
         ctx.moveTo(xx, 0)
@@ -120,20 +121,19 @@ function ScalableCanvasFromImage (imgPath, canvasID, options) {
     const paddingRight = parseFloat(style.getPropertyValue('padding-right'))
     const paddingTop = parseFloat(style.getPropertyValue('padding-top'))
     const paddingBottom = parseFloat(style.getPropertyValue('padding-bottom'))
-    const avalibleH = (parent.clientHeight - paddingBottom - paddingTop)
-
+    const availableH = (parent.clientHeight - paddingBottom - paddingTop)
     if (desiredWidth <= 1) {
       desiredWidth = (parent.clientWidth - paddingLeft - paddingRight) * desiredWidth
     }
 
-    _this.pixSize = Math.floor(desiredWidth / pixels.width)
+    _this.pixSize = Math.floor(desiredWidth / modelPixels.width)
 
-    let h = _this.pixSize * pixels.height
-    if (h > avalibleH) {
-      _this.pixSize = Math.floor(avalibleH / pixels.height)
-      h = _this.pixSize * pixels.height
+    let h = _this.pixSize * modelPixels.height
+    if (h > availableH) {
+      _this.pixSize = Math.floor(availableH / modelPixels.height)
+      h = _this.pixSize * modelPixels.height
     }
-    const w = _this.pixSize * pixels.width
+    const w = _this.pixSize * modelPixels.width
     canvas.width = w * pixDensity
     canvas.height = h * pixDensity
 
@@ -177,7 +177,6 @@ function ImgPixels (imgScr) {
     })
 
     img.src = imgScr
-    console.log(img)
   }
 
   /**
@@ -191,10 +190,10 @@ function ImgPixels (imgScr) {
     for (let i = 0; i < imageData.length; i += 4) {
       /** @type {Pixel} */
       let pix = {
-        r: imageData[ i ],
-        g: imageData[ i + 1 ],
-        b: imageData[ i + 2 ],
-        a: imageData[ i + 3 ]
+        r: imageData[i],
+        g: imageData[i + 1],
+        b: imageData[i + 2],
+        a: imageData[i + 3]
       }
       let max, min
       max = Math.max(pix.r, pix.g, pix.b)
@@ -205,10 +204,10 @@ function ImgPixels (imgScr) {
       let color = new Color(pix.r, pix.g, pix.b, true)
       pix.colorString = color.toRGBAString(pix.a)
       let x = pixIndex % _this.width
-      if (typeof _this.pixTable[ x ] === 'undefined') {
-        _this.pixTable[ x ] = []
+      if (typeof _this.pixTable[x] === 'undefined') {
+        _this.pixTable[x] = []
       }
-      _this.pixTable[ x ].push(pix)
+      _this.pixTable[x].push(pix)
       pixIndex++
     }
     return pixels

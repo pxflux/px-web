@@ -1,0 +1,73 @@
+$options-padding: $two-thirds;
+
+.video-options-box {
+  width: 4.5 * $module-size + 2 * $options-padding;
+  margin: auto;
+
+  header {
+    position: relative;
+    height: $module-size;
+    text-align: center;
+    font-size: $font-size-body;
+    line-height: $module-size;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .select-wrap {
+    padding: 0 $options-padding;
+  }
+  .resolution-header, .resolution-row {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+
+    padding: 0 $options-padding;
+  }
+  .resolution-header {
+    height: $module-size / 2;
+    margin-top: $module-size / 8;
+
+    label {
+      flex-grow: 1;
+    }
+  }
+  .resolution-row {
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      width: $options-padding;
+      height: $module-size;
+      line-height: $module-size;
+    }
+    &:before {
+      content: 'W';
+      left: 0;
+    }
+    &.height:before {
+      content: 'H';
+    }
+    &:after {
+      content: 'px';
+      right: 0;
+    }
+    input {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
+      //background: transparent;
+      &.active {
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        //background: $bg-color;
+      }
+    }
+  }
+
+  footer {
+    height: $module-size;
+    padding: 0;
+    float: none;
+    &, .button {
+      background: transparent;
+    }
+  }
+}

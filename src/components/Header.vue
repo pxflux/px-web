@@ -4,7 +4,7 @@
       <router-link to="/">
         <div id="px-logo-box" class="px-logo button flick">
           <canvas id="px-logo"></canvas>
-          <span class="label beta">prototype</span>
+          <span class="label beta"></span>
         </div>
       </router-link>
       <template v-if="$route.name !== 'auth'">
@@ -119,11 +119,20 @@
     },
 
     mounted: function () {
-      const logoURL = './static/img/pxflux-logo-9.png'
+      let logoURL = getLogoURL()
       const canvasID = 'px-logo'
-      new ScalableCanvasFromImage(logoURL, canvasID).setup()
+      const logo = new ScalableCanvasFromImage(logoURL, canvasID)
+      logo.setup()
       this.setFlicker()
       this.setupSubmenusWithClass('submenu', 'submenu-trigger')
+      window.addEventListener('resize', function () {
+        logo.setup(getLogoURL())
+      })
+      function getLogoURL () {
+        const el = document.getElementById('px-logo-box')
+        const style = window.getComputedStyle(el)
+        return style.backgroundImage.slice(4, -1).replace(/"/g, '')
+      }
     },
     updated: function () {
       this.setFlicker()

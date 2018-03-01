@@ -1,0 +1,96 @@
+$pop-arrow-size: $module-size / 8;
+$pop-bg-color: transparentize($bg-color, 0.1);
+
+.popper {
+  box-sizing: border-box;
+  width: calc(100vw - #{$module-size/4});
+  @include weider-then-phone {
+    width: auto;
+    min-width: 5 * $module-size;
+  }
+  background-color: $pop-bg-color;
+  color: $font-color;
+  text-align: center;
+  padding: 0;
+  display: block;
+  border-radius: 0;
+  position: relative;
+  font-size: $font-size-caption;
+  font-weight: normal;
+  border: 1px solid #000;
+  z-index: 200000;
+  box-shadow: 0 0 0 4px $bg-secondary-color;
+
+  .button.cancel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: transparent;
+
+    .icon, i {
+      &:before, &:after {
+        border-color: $button-text-color !important;
+      }
+    }
+  }
+}
+
+.popper .popper__arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  position: absolute;
+  margin: $pop-arrow-size;
+}
+
+.popper[x-placement^="top"] {
+  margin-bottom: $pop-arrow-size;
+}
+
+.popper[x-placement^="top"] .popper__arrow {
+  border-width: $pop-arrow-size $pop-arrow-size 0 $pop-arrow-size;
+  border-color: $bg-color transparent transparent transparent;
+  bottom: -$pop-arrow-size;
+  left: calc(50% - #{$pop-arrow-size});
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.popper[x-placement^="bottom"] {
+  margin-top: $pop-arrow-size;
+}
+
+.popper[x-placement^="bottom"] .popper__arrow {
+  border-width: 0 $pop-arrow-size $pop-arrow-size $pop-arrow-size;
+  border-color: transparent transparent $bg-color transparent;
+  top: -$pop-arrow-size;
+  left: calc(50% - #{$pop-arrow-size});
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.popper[x-placement^="right"] {
+  margin-left: 5px;
+}
+
+.popper[x-placement^="right"] .popper__arrow {
+  border-width: $pop-arrow-size $pop-arrow-size $pop-arrow-size 0;
+  border-color: transparent $bg-color transparent transparent;
+  left: -$pop-arrow-size;
+  top: calc(50% - #{$pop-arrow-size});
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.popper[x-placement^="left"] {
+  margin-right: 5px;
+}
+
+.popper[x-placement^="left"] .popper__arrow {
+  border-width: 5px 0 5px 5px;
+  border-color: transparent transparent transparent $bg-color;
+  right: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}

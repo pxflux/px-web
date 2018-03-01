@@ -6,6 +6,8 @@ $base-size: 12;
 
 $baseline: $base-size * 1px;
 $module-size: 4rem;
+$two-thirds: $module-size / 3 * 2;
+$three-quarters: $module-size / 4 * 3;
 
 $font-size-body: 1.33rem;
 $font-size-caption: 1rem;
@@ -31,7 +33,6 @@ $outline-width: 1rem / $base-size;
 $dark-bg: #1a1a1a;
 $font-color-on-dark: #d6d5d5;
 $button-text-color: #00a2ff;
-$two-thirds: $module-size / 3 * 2;
 
 $audio-color: #f8ba00;
 $video-color: #73fdea;

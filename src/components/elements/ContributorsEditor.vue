@@ -9,7 +9,6 @@
     class="px">
     <template slot="selected-option" slot-scope="option">
       <div class="option">{{ option.displayName }}</div>
-      
       <!-- TODO: interface for setting the roles of contributors. Probably a popup bubble (like Popper.js) -->
       <!-- Here is a version with an extra inline select.. could work for now.. -->
       <inline-select

@@ -63,7 +63,7 @@
         this.preparePoints()
 
         const ctx = this.ctx
-        ctx.lineWidth = this.lineW * this.pixDensity
+        const lineWidth = this.lineW * this.pixDensity
         ctx.clearRect(0, 0, this.w, this.h)
 
         this.startPointGroups.forEach((startPointsGroup, i) => {
@@ -85,6 +85,7 @@
 
             ctx.beginPath()
             ctx.strokeStyle = strokeColor
+            ctx.lineWidth = lineWidth
             ctx.moveTo(startPoint.x, startPoint.y)
             ctx.bezierCurveTo(c1x, c1y, c2x, c2y, endPoint.x, endY)
             ctx.stroke()
@@ -102,18 +103,12 @@
           case 'projection':
             const originY = endPoint.y - this.options.projectionBeamH * this.pixDensity
             const rayH = this.options.projectorRay * this.pixDensity
+            // BULB
             ctx.beginPath()
-            ctx.fillStyle = 'rgba(255,255,255,0.2)'
-            ctx.lineTo(endPoint.x, endPoint.y)
-            ctx.lineTo(endPoint.x + endPoint.w, endPoint.y)
-            ctx.lineTo(endPoint.x + endPoint.w, endPoint.y)
-            ctx.lineTo(endPoint.x, originY)
-            ctx.fill()
-            // draw bulb
-            ctx.beginPath()
-            ctx.strokeStyle = 'rgba(255,255,255,0.6)'
+            ctx.strokeStyle = 'rgba(0,0,0,0.4)'
+            // ctx.lineWidth = 1 / this.pixDensity
             ctx.save()
-            ctx.translate(endPoint.x, originY - rayH * 1.5)
+            ctx.translate(Math.floor(endPoint.x) - 0.5, Math.floor(originY) - rayH * 1.5 - 0.5)
             for (let i = 0; i < 5; i++) {
               ctx.moveTo(0, -rayH)
               ctx.lineTo(0, rayH)
@@ -121,12 +116,19 @@
             }
             ctx.stroke()
             ctx.restore()
+
+            // LIGHT BEAM
+            ctx.beginPath()
+            ctx.strokeStyle = 'rgba(0,0,0,0.07)'
+            ctx.fillStyle = 'rgba(255,255,255,0.65)'
+            ctx.lineWidth = 1 / this.pixDensity
+            ctx.moveTo(endPoint.x, endPoint.y)
+            ctx.lineTo(endPoint.x, originY)
+            ctx.lineTo(endPoint.x + endPoint.w, endPoint.y)
+            ctx.fill()
+            ctx.stroke()
             break
           default:
-          // ctx.lineTo(endPoint.x, endPoint.y)
-          // ctx.lineTo(endPoint.x - 5, endPoint.y - 5)
-          // ctx.moveTo(endPoint.x, endPoint.y)
-          // ctx.lineTo(endPoint.x + 5, endPoint.y - 5)
         }
       },
       updateCanvasSize () {
@@ -196,7 +198,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>
