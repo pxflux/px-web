@@ -6,14 +6,14 @@ main {
   padding: $module-size;
 }
 
-.row{
-  display: flex;
-  flex-flow: row nowrap;
-
-  .row-header{
-    flex-grow: 1;
-  }
-}
+//.row{
+//  display: flex;
+//  flex-flow: row nowrap;
+//
+//  .row-header{
+//    flex-grow: 1;
+//  }
+//}
 .cell{
   @include hairline-border(true);
   background: $bg-color;

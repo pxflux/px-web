@@ -4,7 +4,7 @@
       <form id="form-artwork" v-on:submit.prevent>
         <section class="editor-section">
           <div class="row">
-            <label for="title">Title</label>
+            <label for="title"><span>Title</span></label>
             <div class="field">
               <input id="title" type="text" v-model.trim="artwork.title" required="required">
             </div>

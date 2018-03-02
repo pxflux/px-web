@@ -20,7 +20,8 @@
 }
 
 @mixin border-side($side: all, $style: solid, $color: rgba(59,59,59,0.61)) {
-  box-shadow: 0 0 0 1px $color;
+  //box-shadow: 0 0 0 1px $color;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
 }
 
 @mixin hairline-border-base($positionRelative) {
@@ -47,14 +48,14 @@
 
   @include border-side($side, solid, mix($color, $bg-color, 30%)); // [1]
 
-  @include on-retina() {
-    box-shadow: none; // [4]
-    border: none;
-
-    &:before {
-      @include border-side($side, solid, $color); // [5]
-    }
-  }
+  //@include on-retina() {
+  //  box-shadow: none; // [4]
+  //  border: none;
+  //
+  //  &:before {
+  //    @include border-side($side, solid, $color); // [5]
+  //  }
+  //}
 }
 
 /** Helper mixin in case you need to reset the border */
