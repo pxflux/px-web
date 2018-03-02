@@ -4,15 +4,28 @@ import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
 
+const firebaseProgress = store => {
+  store.subscribe((mutation, state) => {
+    if (mutation.type === 'vuexfire/OBJECT_VALUE' || mutation.type === 'VUEXFIRE_ARRAY_INITIALIZE') {
+      store.commit('SET_LOADING', false)
+    }
+  })
+}
+
 Vue.use(Vuex)
 
 export function createStore () {
   return new Vuex.Store({
+    plugins: [firebaseProgress],
     state: {
+      loading: false,
+
       config: null,
 
       user: null,
       userAccount: null,
+
+      playerPin: null,
 
       artworks: [],
       artwork: null,

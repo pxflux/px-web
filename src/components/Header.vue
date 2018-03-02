@@ -7,7 +7,7 @@
           <span class="label beta">prototype</span>
         </div>
       </router-link>
-      <template v-if="$route.name !== 'auth'">
+      <template v-if="!['player-client', 'auth'].includes($route.name)">
         <div class="right">
           <router-link to="/download" class="button">Download</router-link>
           <router-link v-if=" ! user" to="/auth" class="button">Login</router-link>

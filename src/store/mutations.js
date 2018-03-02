@@ -40,5 +40,8 @@ export default {
         Vue.set(state.items, item.__key, item)
       }
     })
+  },
+  SET_LOADING: (state, loading) => {
+    state.loading = loading
   }
 }

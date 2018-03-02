@@ -3,13 +3,14 @@ import Router from 'vue-router'
 
 import UserUpdate from '@/components/UserUpdate'
 import Auth from '@/components/Auth'
-import Overview from '@/components/Overview'
-import Download from '@/components/Download'
 
+import Overview from '@/components/public/Overview'
+import Download from '@/components/public/Download'
 import ArtworkDetail from '@/components/public/Artwork'
 import ArtistDetail from '@/components/public/Artist'
 import ShowDetail from '@/components/public/Show'
 import PlaceDetail from '@/components/public/Place'
+import PlayerClient from '@/components/public/PlayerClient'
 
 import AccountNew from '@/components/account/AccountNew'
 import AccountDetail from '@/components/account/AccountDetail'
@@ -37,14 +38,16 @@ export function createRouter () {
   return new Router({
     routes: [
       {path: '/', component: Overview, name: 'home'},
-      {path: '/download', component: Download, name: 'download'},
       {path: '/user/update', component: UserUpdate, name: 'user-update'},
       {path: '/auth', component: Auth, name: 'auth'},
 
+      {path: '/download', component: Download, name: 'download'},
       {path: '/artwork/:id', component: ArtworkDetail, name: 'artwork-detail'},
       {path: '/artist/:id', component: ArtistDetail, name: 'artist-detail'},
       {path: '/show/:id', component: ShowDetail, name: 'show-detail'},
       {path: '/place/:id', component: PlaceDetail, name: 'place-detail'},
+
+      {path: '/p/:id', component: PlayerClient, name: 'player-client'},
 
       {path: '/account/new', component: AccountNew},
       {path: '/account/update', component: AccountDetail},
