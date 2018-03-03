@@ -15,9 +15,9 @@
 
 <script>
   import axios from 'axios'
-  import { VideoAttachment } from '../../data-types/VideoAttachment'
-  import { AttachmentStorage } from '../../data-types/AttachmentStorage'
-  import { ImageAttachment } from '../../data-types/ImageAttachment'
+  import { VideoAttachment } from '../../models/VideoAttachment'
+  import { AttachmentStorage } from '../../models/AttachmentStorage'
+  import { ImageAttachment } from '../../models/ImageAttachment'
   import VideoPlayer from '../VideoPlayer'
 
   export default {

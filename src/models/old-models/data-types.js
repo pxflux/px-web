@@ -1,5 +1,5 @@
 /* eslint-disable valid-typeof */
-import { isNumeric, setupProtoInheritance } from '../helper'
+import { isNumeric, setupProtoInheritance } from '../../helper'
 
 export function BasicData () {}
 

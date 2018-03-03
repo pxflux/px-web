@@ -1,5 +1,6 @@
 $pop-arrow-size: $module-size / 8;
 $pop-bg-color: transparentize($bg-color, 0.1);
+$pop-padding: $two-thirds;
 
 .popper {
   box-sizing: border-box;
@@ -19,7 +20,7 @@ $pop-bg-color: transparentize($bg-color, 0.1);
   font-weight: normal;
   border: 1px solid #000;
   z-index: 200000;
-  box-shadow: 0 0 0 4px $bg-secondary-color;
+  box-shadow: 0 0 10px 5px transparentize($bg-secondary-color, 0.1);
 
   .button.cancel {
     position: absolute;
@@ -33,6 +34,50 @@ $pop-bg-color: transparentize($bg-color, 0.1);
       }
     }
   }
+  .row{
+    display: block;
+    width: 100%;
+    //padding: $pop-padding;
+  }
+  header {
+    position: relative;
+    height: $module-size;
+    text-align: center;
+    font-size: $font-size-body;
+    line-height: $module-size;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  footer {
+    height: $module-size;
+    padding: 0;
+    float: none;
+    &, .button {
+      background: transparent;
+    }
+  }
+  label{
+    margin-top: $module-size / 8;
+    padding: 0;
+    width: auto;
+    height: $module-size / 2;
+    min-height: $module-size / 2;
+    line-height: $module-size / 2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: start;
+
+    &.first{
+      margin-top: 0;
+    }
+  }
+  .description {
+    display: block;
+    padding: 0;
+    margin-top: $module-size / 4;
+    text-align: start;
+  }
+
 }
 
 .popper .popper__arrow {

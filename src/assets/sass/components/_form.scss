@@ -1,14 +1,9 @@
 @import "buttons";
 @import "popper";
 @import "select";
+@import "contributor-select";
 
-@mixin focused(){
-  outline: none;
-  box-shadow: 0 0 0 1px #575757;
-  z-index: 300;
-}
-
-#form-artwork{
+#form-artwork {
   max-width: $content-max-width + $module-size * 2.5;
 }
 
@@ -24,9 +19,10 @@ form {
   .row {
     min-height: $module-size;
 
-    @include weider-then-phone(){
+    @include weider-then-phone() {
       display: flex;
       flex-flow: row nowrap;
+      width: calc(100vw - #{$module-size});
     }
 
     input#title {
@@ -37,52 +33,6 @@ form {
       margin: 0;
     }
 
-    > label {
-      position: relative;
-      display: block;
-      min-height: $module-size;
-      padding: 0;
-      font-size: $font-size-caption;
-
-      @include weider-then-phone() {
-        flex-shrink: 0;
-        width: $module-size * 2.5;
-        text-align: right;
-
-        &:not(.with-icon) > span {
-          display: block;
-          width: 100%;
-          padding: 0 $module-size / 4 0 0;
-          @include centeredVertical();
-        }
-      }
-
-      &.with-icon{
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        padding: 0;
-        cursor: pointer;
-
-        @include weider-then-phone{
-          padding: 0 $module-size / 4 0 0;
-          justify-content: flex-end;
-        }
-
-        .icon{
-          display: block;
-          position: relative;
-          width: $module-size;
-          height: 100%;
-          &.small{
-            width: $two-thirds;
-          }
-          &:before, &:after{
-            border-color: $button-text-color;
-          }
-        }
-      }
-    }
     .field {
       position: relative;
       flex-grow: 1;
@@ -90,27 +40,25 @@ form {
       min-height: $module-size;
       padding: 0;
       &.closed {
-        border: 0.5px rgba(0,0,0,0.1);
+        border: 0.5px rgba(0, 0, 0, 0.1);
         border-style: dotted none;
       }
 
       > input,
       > textarea {
         width: 100% !important;
-        height: 100%;
-        min-height: $module-size !important;
+
         padding: 0 $module-size / 4;
-        @include hairline-border(true, all, $color: rgb(255, 197, 197));
         &.attachment {
           padding: 0;
         }
       }
 
-      > span{
+      > span {
         //@include centeredVertical();
       }
 
-      .description {
+      > .description {
         display: block;
         padding: $module-size / 4;
         font-size: $font-size-body * 0.85;
@@ -118,231 +66,101 @@ form {
     }
     input, textarea, select {
       position: relative;
-      //border: none;
+      border: none;
       //box-shadow: none;
+      height: 100%;
+      min-height: $module-size;
       padding: 0 $module-size / 4;
       margin: 0;
       display: block;
       width: 100%;
 
       &:focus {
-        @include focused()
+        @include input-focused()
       }
     }
     textarea {
       padding-top: $module-size / 4;
+      min-height: 4 * $module-size;
     }
   }
 
-  header{
+  header {
     min-height: $module-size;
-    .tab{
+    .tab {
       line-height: $module-size;
       padding: 0 $module-size/4;
     }
   }
-}
-
-.v-select.px {
-  font-family: font-family-of($work-sans) !important;
-  cursor: unset;
-
-  *{
-    border-radius: 0!important;
-    border: none!important;
-  }
-  .dropdown-toggle{
-    display: flex;
-    flex-flow: column nowrap;
-    padding: 0.5rem 0;
-
-    & > input{
-      width: calc(100% - #{$two-thirds});
-      height: $two-thirds;
-      line-height: $two-thirds;
-      letter-spacing: $letter-spacing;
-    }
-  }
-
-  .open-indicator {
-    @include button($w: $two-thirds, $h: $two-thirds);
-    @include button-icon(plus, $module-size/3);
-
-    position: absolute !important;
-    left: 0 !important;
-    bottom: 0.5rem !important;
-    pointer-events: all;
-    cursor: pointer !important;
-  }
-  &.open .open-indicator{
-    @include button-icon(cancel, $module-size/3);
-  }
-
-  .selected-tag{
-    display: flex;
-    flex-flow: row nowrap;
-    position: relative;
-    height: $two-thirds;
-    line-height: $two-thirds;
-    margin: 0;
-    padding: 0 $module-size/4 0 0;
-    background: transparent;
-
-    .option:after{
-      content: " ";
-      white-space: pre;
-    }
-
-    button{
-      order: -1;
-      display: inline-block;
-      width: $two-thirds;
-      height: $two-thirds;
-      opacity: 0.3;
-      min-height: 0;
-      min-width: 0;
-      font-weight: 300;
-      margin-right: $module-size/8;
-
-      &:before{
-        content: none;
-      }
-      //&:before, &:after{
-      //  opacity: 0.3;
-      //}
-    }
-  }
-  &.single {
-    .open-indicator {
-      @include button-icon(drop-down, $module-size/4);
-    }
-    &.open .open-indicator{
-      @include button-icon(drop-down-open, $module-size/4);
-    }
-    button.clear {
-      display: none;
-    }
-    .dropdown-toggle{
-      display: block;
-    }
-    .selected-tag {
-      padding-left: $two-thirds + $module-size/8;
-      pointer-events: none;
-    }
-  }
 
   input,
-  input[type="search"],
-  input[type="search"]:focus,
-  .selected-tag{
-    min-height: auto;
-    height: $two-thirds;
-  }
-  input[type="search"],
-  input[type="search"]:focus,
-  ul.dropdown-menu li{
-    padding-left: $two-thirds + $module-size/8;
-    a{
-      padding-left:0;
-    }
+  textarea,
+  [contenteditable=true] {
+    padding: 0 $module-size / 4;
+    @include hairline-border();
   }
 
-  .focused{
-    @include focused()
-  }
-  ul.dropdown-menu{
-    margin-top: -1px; // compencate fore a strange gap between the menu and the panel above
-    padding: $module-size/4 0 ;
-    background: $bg-secondary-color;
-    box-shadow: 1px 1px 0 0 #575757, -1px 1px 0 0 #575757;
-
-    li{
-      a{
-        color: transparentize($font-color, 0.5);
-      }
-      &.active{ display: none }
-      &.highlight{
-        a {
-          background: transparent;//($bg-secondary-color, 0.5%);
-          color: $font-color;
-        }
-      }
-    }
-  }
-}
-.inline-select{
-  $h: $module-size/2;
-  font-size: $font-size-caption;
-  height: $h;
-  display: inline-block;
-  margin-top: ($two-thirds - $h)/2;
-  position: relative;
-
-  .dropdown-toggle{
-    display: flex;
-    flex-flow: row !important;
-    padding: 0 !important;
-
-    input[type="search"],
-    input[type="search"]:focus {
-      line-height: $h;
-      height: $h;
-      background: $bg-color;
-      position: absolute;
-      opacity: 0;
-    }
-    button.cancel{
-      display: none;
-    }
-  }
-  ul.dropdown-menu{
-    padding: 0 0 0.5em 0!important;
-    box-shadow: 0 0 0 1px #575757!important;
-    z-index: 1;
-    li {
-      padding-left: 0 !important;
-      a {
-        padding: 0.5em 1em !important;
-      }
-    }
-  }
-  .selected-inline-tag{
+  label {
     display: block;
-    line-height: $h;
-    pointer-events: none;
-    cursor: pointer !important;
-    padding: 0 $module-size/4;
-    background: $bg-secondary-color;
+    position: relative;
+    min-height: $module-size;
+    font-size: $font-size-caption;
+    padding: $module-size/4;
 
-  }
-  &.open {
-    input[type="search"],
-    input[type="search"]:focus {
-      position: relative;
-      opacity: 1;
-      padding: 0 0 0 $module-size/4;
-      z-index: 100;
-    }
-    button.cancel{
-      @include button($h, $h);
-      //@include button-icon(cancel, $module-size/6);
-      order: 2;
+    @include weider-then-phone() {
+      flex-shrink: 0;
+      width: $module-size * 2.5;
       padding: 0;
-      margin: 0;
-      opacity: 1;
-      z-index: 100;
-      &:before, &:after{
-        box-shadow: none;
+      text-align: right;
+    }
+
+    &:not(.with-icon) > span {
+      @include centeredVertical();
+      @include weider-then-phone {
+        display: block;
+        width: 100%;
+        padding: 0 $module-size / 4 0 0;
       }
-      .icon{
-        opacity: 0.3;
-        &.small{
-          font-size: 80%;
+    }
+
+    &.with-icon {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      padding: 0;
+      cursor: pointer;
+
+      @include weider-then-phone {
+        padding: 0 $module-size / 4 0 0;
+        justify-content: flex-end;
+      }
+
+      .icon {
+        display: block;
+        position: relative;
+        width: $module-size;
+        height: 100%;
+        &.small {
+          width: $two-thirds;
+        }
+        &:before, &:after {
+          border-color: $button-text-color;
         }
       }
     }
-    .selected-inline-tag{
-      display: none;
+  }
+  .description {
+    $arrow-size: $module-size /4;
+    &.with-arrow {
+      position: relative;
+      display: block;
+      text-align: center;
+      margin-top: $arrow-size;
+      @include button-icon($name: 'up', $size: $arrow-size * 0.95);
+      &:after, &:before{
+        top: -$arrow-size * 0.4;
+        border-color: rgba(0,0,0,0.2);
+      }
     }
   }
 }

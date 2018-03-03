@@ -56,3 +56,9 @@
   }
 }
 
+@mixin input-focused(){
+  outline: none;
+  box-shadow: 0 0 0 1px #575757;
+  z-index: 300;
+}
+

@@ -1,4 +1,4 @@
-import { getValueFromObj } from '../helper'
+import { getValueFromObj } from '../../helper'
 
 /**
  * @param {object=} data

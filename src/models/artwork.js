@@ -1,98 +1,98 @@
-import {
-  ArtworkSourceData,
-  AttachmentData,
-  AttachmentVideoData,
-  BasicData,
-  Contributor,
-  Control
-} from './data-types'
+import { SourceURL } from './SourceURL'
+import { VideoAttachment } from './VideoAttachment'
+import { ImageAttachment } from './ImageAttachment'
+import { ContributorRefs } from './ContributorRef'
+import { Controls } from './Control'
 
-export function ArtworkDataStruct (data) {
-  BasicData.call(this)
+/**
+ * @property {boolean} published
+ * @property {?string} title
+ * @property {SourceURL} source
+ * @property {ImageAttachment} thumbnail
+ * @property {VideoAttachment} preview
+ * @property {ContributorRef[]} artists
+ * @property {ContributorRef[]} credits
+ * @property {?number} year
+ * @property {?string} description
+ * @property {Control[]} controls
+ */
+export class Artwork {
+  /**
+   * @param {object=} jsonData
+   */
+  constructor (jsonData) {
+    this.published = false
+    this.title = ''
+    this.artists = []
+    this.credits = []
+    this.year = null
+    this.description = ''
+    this.source = new SourceURL()
+    this.thumbnail = ImageAttachment.empty()
+    this.preview = VideoAttachment.empty()
+    this.controls = []
 
-  /** @type string */
-  this.ownerId = ''
+    /** @type {?string} - Artwork version */
+    this.version = ''
 
-  /** @type string */
-  this.sourceId = ''
+    /** @type {object} - Catalog of project files --> reference to build-in git repository? */
+    this.sourceFiles = null
 
-  /** @type boolean */
-  this.published = false
-
-  /** @type string */
-  this.title = 'Untitled'
-
-  /** @type ArtworkSourceData */
-  this.source = new ArtworkSourceData()
-
-  /** @type AttachmentData */
-  this.thumbnail = new AttachmentData()
-
-  /** @type AttachmentVideoData */
-  this.preview = new AttachmentVideoData()
-
-  /** @type Contributor[] */
-  this.artists = [new Contributor()]
-
-  /** @type string */
-  this.year = ''
-
-  /** @type string */
-  this.description = ''
-
-  /** @type Control[] */
-  this.controls = [new Control()]
-
-  /** @type Iteration[] */
-  this.iterations = []
-
-  this.castFrom(data)
-}
-
-ArtworkDataStruct.prototype = BasicData.prototype
-ArtworkDataStruct.prototype.constructor = ArtworkDataStruct
-
-export function cloneArtwork (uid, artworkId, artwork) {
-  const newArtwork = { ...ArtworkDataStruct, ...artwork }
-  newArtwork.ownerId = uid
-  newArtwork.sourceId = artworkId
-
-  if (artwork.imageUrl) {
-    // TODO it's should be removed.. is it ever used??
-    newArtwork.imageUrl = artwork.imageUrl
+    if (typeof jsonData === 'object') {
+      this.fromJson(jsonData)
+    }
   }
-  if (artwork.controls) {
-    artwork.controls.forEach(control => {
-      const newControl = {
-        label: control.label,
-        type: control.type
-      }
-      if (control.type === 'keyboard') {
-        newControl.value = {
-          type: control.value.type
-        }
-        if (control.value.keyCode) {
-          newControl.value.keyCode = control.value.keyCode
-        }
-        if (control.value.altKey) {
-          newControl.value.altKey = control.value.altKey
-        }
-        if (control.value.ctrlKey) {
-          newControl.value.ctrlKey = control.value.ctrlKey
-        }
-        if (control.value.shiftKey) {
-          newControl.value.shiftKey = control.value.shiftKey
-        }
-        if (control.value.metaKey) {
-          newControl.value.metaKey = control.value.metaKey
-        }
-      } else if (control.type === 'function') {
-        newControl.value = {
-          'function': control.value.function
-        }
-      }
-      newArtwork.controls.push(newControl)
-    })
+
+  /**
+   * @param {object} obj
+   */
+  fromJson (obj) {
+    this.published = obj.published
+    this.title = obj.title
+    this.artists = ContributorRefs.fromJson(obj.artists)
+    this.credits = ContributorRefs.fromJson(obj.credits)
+    this.year = obj.year
+    this.source.fromJson(obj.source)
+    this.thumbnail = ImageAttachment.fromJson(obj.thumbnail)
+    this.preview = VideoAttachment.fromJson(obj.preview)
+    this.description = obj.description
+    this.controls = Controls.fromJson(obj.controls)
   }
-  return newArtwork
+
+  /**
+   * @param {Artwork} original
+   * @return {Object}
+   */
+  updatedEntries (original) {
+    const updated = {}
+
+    if (this.published !== original.published) {
+      updated.published = this.published
+    }
+    if (this.title !== original.title) {
+      updated.title = this.title
+    }
+
+    updated.source = this.source.updatedEntries(original.source)
+
+    updated.thumbnail = this.thumbnail.updatedEntries(original.thumbnail)
+
+    updated.preview = this.preview.updatedEntries(original.preview)
+
+    updated.artists = ContributorRefs.updatedEntries(this.artists)
+
+    updated.credits = ContributorRefs.updatedEntries(this.credits)
+
+    if (this.year !== original.year) {
+      updated.year = this.year
+    }
+
+    if (this.description !== original.description) {
+      updated.description = this.description
+    }
+
+    updated.controls = this.controls.map(value => value.updatedEntries())
+
+    return updated
+  }
 }

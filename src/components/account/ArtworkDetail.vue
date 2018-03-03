@@ -92,7 +92,7 @@
 
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import { cloneArtwork } from '../../models/artwork'
+  import { cloneArtwork } from '../../models/old-models/artwork'
   import { log } from '../../helper'
   import Firebase from 'firebase'
   import firebaseApp, { store } from '../../firebase-app'

@@ -9,12 +9,8 @@
 
 input{
   border: none;
-  box-shadow: 0 0 0 1px $button-icon-color;
+  //box-shadow: 0 0 0 1px $button-icon-color;
   min-height: $module-size;
-
-  @include on-retina(){
-    //box-shadow: none;
-  }
 }
 
 .badge {

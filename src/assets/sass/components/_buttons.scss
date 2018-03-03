@@ -72,7 +72,13 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   }
 }
 
-@mixin arrowhead( $direction: right, $size: $ico-size, $line-w: $ico-line-w, $color:$button-icon-color) {
+@mixin arrowhead(
+  $direction: right,
+  $size: $ico-size,
+  $line-w: $ico-line-w,
+  $color: $button-icon-color,
+  $clear-after: true
+) {
   $arr-size: $size / $diagonal-factor;
   $offset: 35%;
   $degree: 135deg;
@@ -101,8 +107,10 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
     width: $arr-size * 0.65;
     height: $arr-size * 0.65;
   }
-  &:after {
-    content: none;
+  @if $clear-after {
+    &:after {
+      content: none;
+    }
   }
 }
 
@@ -110,7 +118,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   $x-shift: -50%;
   $y-shift: -50%;
 
-  @include button-arrowhead(-90deg, $size, $line-w);
+  @include button-arrowhead(-90deg, $size, $line-w, $color);
 
   &:after {
     content: '';

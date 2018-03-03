@@ -1,87 +1,50 @@
 <template>
   <div class="controls-panel">
     <div class="keypad">
-      <div v-for="(button, n) in buttons" class="button-box">
-        <a v-if="button" @click.stop="showKeyboardForm(n)" class="grid-cell button ready" title="Update Button">
-          <span v-if="button.icon">{{ button.icon }}</span>
-          <span v-if="button.label">{{ button.label }}</span>
-        </a>
-        <a v-else="" @click.stop="showKeyboardForm(n)" class="grid-cell button" title="Add Button">
-          <!--<div class="center">-->
-            <div class="icon plus medium"></div>
-          <!--</div>-->
-        </a>
-      </div>
-
-      <div class="dialog" v-show="(index > -1)">
-        <div class="bg" @click.stop="hideKeyboardForm"></div>
-
-        <div class="dialog-box">
-          <div class="dialog-header">
-            <div class="button">Button #{{ index + 1 }}</div>
-            <div class="button cancel" @click.stop="hideKeyboardForm"></div>
-          </div>
-
-          <div class="dialog-body button-editor">
-            <label for="label">Text</label>
-            <input type="text" id="label" placeholder="Button Text" v-model="label"/>
-
-            <input type="radio" id="keydown" value="keydown" v-model="keyboardType">
-            <label for="keydown">Key Down</label>
-            <input type="radio" id="keyup" value="keyup" v-model="keyboardType">
-            <label for="keyup">Key Up</label>
-            <input type="radio" id="keypress" value="keypress" v-model="keyboardType">
-            <label for="keypress">Key press</label>
-
-            <label for="keyCode">KeyCode</label>
-            <input type="text" id="keyCode" placeholder="KeyCode(s)" v-model="keyboardKeyCode"/>
-
-            <input type="checkbox" id="altKey" value="altKey" v-model="keyboardAltKey">
-            <label for="altKey">Alt</label>
-            <input type="checkbox" id="ctrlKey" value="ctrlKey" v-model="keyboardCtrlKey">
-            <label for="ctrlKey">Ctrl</label>
-            <input type="checkbox" id="shiftKey" value="shiftKey" v-model="keyboardShiftKey">
-            <label for="shiftKey">Shift</label>
-            <input type="checkbox" id="metaKey" value="metaKey" v-model="keyboardMetaKey">
-            <label for="metaKey">Meta</label>
-          </div>
-
-          <div class="dialog-buttons">
-            <button v-if="hasControl" @click.stop="removeControl">
-              <span>Remove</span>
-            </button>
-            <button @click.stop="addControl">
-              <span v-if="hasControl">Update</span>
-              <span v-else>Add</span>
-            </button>
+      <popper v-for="(button, i) in buttons"
+              trigger="click"
+              :options="{placement: 'bottom-start'}">
+        <div class="popper">
+          <button-editor :button="button"
+                         :index="index"
+                         :title="'Button ' + (i + 1)"
+                         :bus="bus"/>
+          <div class="button frameless cancel narrow" @click="onPopperCancel(i)">
+            <span class="icon cancel small"></span>
           </div>
         </div>
-      </div>
+        
+        <div class="button-box" slot="reference">
+          <a class="grid-cell button"
+             :class="[button? 'ready' : '']"
+             :title="[button? 'Edit Button' : 'Add Button']">
+            <div v-if="button">
+              <span v-if="button.icon">{{ button.icon }}</span>
+              <span v-if="button.label">{{ button.label }}</span>
+            </div>
+            <div v-else="">
+              <i class="plus medium"></i>
+            </div>
+          </a>
+        </div>
+      </popper>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
-    props: ['controls'],
-    computed: {
-      buttons () {
-        let list = new Array(9)
-        if (this.controls) {
-          for (let i = 0; i < this.controls.length; i++) {
-            const control = this.controls[i]
-            const position = control ? control.order || i : i
-            list[position] = control
-          }
-        }
-        return list
-      }
-    },
+  import Vue from 'vue'
+  import { Buttons as ButtonsList } from '../../models/remote-control/RCButton'
+  import Popper from 'vue-popperjs'
+  import buttonEditor from './RemoteButtonOptions'
 
+  export default {
+    components: { Popper, buttonEditor },
+    props: ['controls'],
+    computed: {},
     data () {
       return {
-        index: -1,
-
+        index: 0,
         label: '',
         keyboardType: '',
         keyboardKeyCode: '',
@@ -90,15 +53,38 @@
         keyboardShiftKey: false,
         keyboardMetaKey: false,
 
-        x: 0
+        x: 0,
+        buttons: new Array(9),
+        bus: new Vue()
       }
     },
-
+    mounted () {
+      console.log('--> buttons: >>>>>>')
+      console.log(this.buttons)
+      this.bus.$on('updateButton', (options, index) => {
+        this.buttons[index] = options
+      })
+    },
+    watch: {
+      controls () {
+        /** @type RCButton[] */
+        const controls = ButtonsList.fromJson(this.controls)
+        this.buttons = new Array(9)
+        if (controls.length) {
+          controls.forEach((button, i) => {
+            const order = button.order || i
+            if (order < this.buttons.length) {
+              this.buttons[order] = button
+            }
+          })
+        }
+      }
+    },
     methods: {
       showKeyboardForm (n) {
         this.index = n
 
-        const button = this.buttons[this.index] || {value: {}}
+        const button = this.buttons[this.index] || { value: {} }
         this.label = button.label
         this.keyboardType = button.value.type || 'keydown'
         this.keyboardKeyCode = button.value.keyCode || ''

@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="row">
-        <label>Video Preview</label>
+        <label><span>Video Preview</span></label>
         <div class="field">
           <!--<video-attachment-editor v-model="artwork.preview"/>-->
         </div>
@@ -107,7 +107,7 @@
   import VueSelect from '../Select/components/Select'
 
   import vimeoLink from '../../../helpers/vimeoLink'
-  import commonResolutions from '../../../models/display-resolutions'
+  import commonResolutions from '../../../models/old-models/display-resolutions'
 
   export default {
     name: 'source-channel',

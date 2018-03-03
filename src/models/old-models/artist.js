@@ -1,6 +1,6 @@
 import latinize from 'latinize'
-import { log } from '../helper'
-import firebase from '../firebase-app'
+import { log } from '../../helper'
+import firebase from '../../firebase-app'
 
 /**
  * Returns the artists which name match the given search query as a Promise.

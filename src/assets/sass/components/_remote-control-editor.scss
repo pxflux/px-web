@@ -43,3 +43,43 @@
     }
   }
 }
+.remote-button-options-box {
+  width: auto;
+  padding: 0 $two-thirds;
+  @include weider-then-phone{
+    width: 4.5 * $module-size + 2 * $options-padding;
+  }
+
+  .key-code-display {
+    $code-h: 1.5 * $module-size;
+    position: relative;
+    height: $code-h;
+    line-height: $code-h;
+    font-size: 200%;
+    color: transparent;
+    padding: 0;
+    text-shadow: 0 0 0 $button-text-color;
+    background: $bg-secondary-color;
+
+    span{
+      display: block;
+      position: absolute;
+      bottom: 0;
+      font-size: $font-size-caption;
+      line-height: 1em;
+      padding: $module-size / 4 0;
+      left: 50%;
+      transform: translate(-50%);
+      white-space: nowrap;
+    }
+    &:focus{
+      outline: none;
+      box-shadow: 0 0 0 2px $button-text-color;
+    }
+
+    &:empty:before {
+      content: attr(placeholder);
+      display: block; /* For Firefox */
+    }
+  }
+}

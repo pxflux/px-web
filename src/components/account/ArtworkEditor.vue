@@ -15,7 +15,7 @@
             </section>
             <section>
               <div class="row">
-                <label>Remote Control</label>
+                <label><span>Remote Control</span></label>
                 <div class="field">
                   <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
                 </div>
@@ -23,25 +23,25 @@
             </section>
           </div>
           <div class="row">
-            <label>By</label>
+            <label><span>By</span></label>
             <div class="field">
               <contributors-editor v-model="artwork.artists"/>
             </div>
           </div>
           <div class="row">
-            <label>Credits</label>
+            <label><span>Credits</span></label>
             <div class="field">
               <contributors-editor v-model="artwork.credits" :withRoles="true"/>
             </div>
           </div>
           <div class="row">
-            <label for="year">Year</label>
+            <label for="year"><span>Year</span></label>
             <div class="field">
               <input id="year" type="text" v-model.trim="artwork.year" required="required">
             </div>
           </div>
           <div class="row">
-            <label for="description">Description</label>
+            <label for="description"><span>Description</span></label>
             <div class="field">
               <textarea id="description" v-model.trim="artwork.description"></textarea>
             </div>
@@ -69,7 +69,7 @@
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
-  import { Artwork } from '../../data-types/Artwork'
+  import { Artwork } from '../../models/Artwork'
 
   import RemoteControlEditor from '../elements/RemoteControlEditor'
   import ContributorsEditor from '../elements/ContributorsEditor'

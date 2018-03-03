@@ -8,10 +8,10 @@
           {{ getOptionLabel(option) }}
         </slot>
         <button v-if="multiple"
-                :disabled="disabled"
                 @click="deselect(option)"
+                :disabled="disabled"
                 type="button"
-                class="close"
+                class="close frameless"
                 aria-label="Remove option">
           <span aria-hidden="true">&times;</span>
         </button>
