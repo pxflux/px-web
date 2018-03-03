@@ -92,9 +92,10 @@
       }
 
       const keyer = this.$refs.keysField
-      keyer.addEventListener('keydown', this.getKeysCombination)
-      keyer.addEventListener('keyup', this.blurKyeDisplay)
-
+      if (keyer) {
+        keyer.addEventListener('keydown', this.getKeysCombination)
+        keyer.addEventListener('keyup', this.blurKyeDisplay)
+      }
       this.helpMessage = this.refreshHelpMessage()
     },
 
@@ -111,6 +112,11 @@
       'buttonOptions.eventType' () {
         if (this.buttonOptions.eventType === 'keyboard') {
           this.refreshHelpMessage()
+          this.$nextTick(() => {
+            const keyer = this.$refs.keysField
+            keyer.addEventListener('keydown', this.getKeysCombination)
+            keyer.addEventListener('keyup', this.blurKyeDisplay)
+          })
         }
       }
     },
