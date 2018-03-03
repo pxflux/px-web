@@ -30,7 +30,7 @@
         <label>Event Data</label>
         <input v-model="buttonOptions.detail"/>
       </div>
-      <div v-if="buttonOptions.type === 'mouse'" class="description">
+      <div v-if="buttonOptions.eventType === 'mouse'" class="description">
         Not Supported yet :(<br>Working hard to get it done soon.
       </div>
     </div>
