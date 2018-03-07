@@ -29,12 +29,17 @@ main {
   &.grid, &.wrap-forms {
     display: flex;
     flex-flow: row wrap;
-    @include on-retina() {
-      transform: translate(0, 0.5px); // compensate hairline borders
-    }
 
     a {
       color: #292929;
+    }
+  }
+  &.grid{
+    padding: $module-size / 2;
+
+    .grid-cell.button{
+      //width: 100%;
+      //height: 100%;
     }
   }
 
@@ -67,25 +72,23 @@ main {
 
 .item-wrap,
 .grid-cell,
-.grid-cell-placeholder {
+.grid-cell-placeholder,
+.grid-cell.button{
   width: 100vw;
   height: 100vw;
   position: relative;
-  background: $bg-color;
-
-  @include grey-outline();
 
   @media (min-width: 500px) {
-    width: 50vw;
-    height: 50vw;
+    width: calc((100vw - #{$module-size}) / 2);
+    height: calc((100vw - #{$module-size}) / 2);
   }
   @media (min-width: 750px) {
-    width: 33.333vw;
-    height: 33.333vw;
+    width: calc((100vw - #{$module-size}) / 3);
+    height: calc((100vw - #{$module-size}) / 3);
   }
   @media (min-width: 1000px) {
-    width: 20vw;
-    height: 20vw;
+    width: calc((100vw - #{$module-size}) / 4);
+    height: calc((100vw - #{$module-size}) / 4);
   }
 }
 
@@ -113,22 +116,28 @@ main {
 }
 
 .no-image {
+  @include checker-bg-20($color: #4b4b4b, $size: $module-size/4)
 }
 
 .item-description {
   position: absolute;
   width: 100%;
+  height: $module-size;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  color: black;
-  padding: 0.5em 0.5em;
+
+  padding: $module-size / 8 $module-size / 2 0;
 
   span {
-    font-size: 0.7em;
+    display: block;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    font-size: $font-size-caption;
+    color: $font-color;
+    white-space: nowrap;
   }
   span.item-title {
-    font-size: 1em;
-    display: block;
+    font-weight: 600;
+    font-size: $font-size-body;
   }
 
 }

@@ -10,6 +10,7 @@ import Color from './color'
  *  b : number,
  *  a : number,
  *  lum : number,
+ *  color: Color,
  *  colorString: string
  *  }} Pixel
  */
@@ -30,36 +31,56 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
   const gradient = options.gradient  // new Gradient([bgColor.offset(45, 100)]);
   let gradientPosition = 0
   const gradientStep = 0.05
+
   let modelPixels
 
-  this.pixSize = 0
+  this.sPX = 0
+  let previousSpx = 0
+  let canvasHSpx = 0
+  let canvasWSpx = 0
+  let logoTopSpx = 0
+  let logoLeftSpx = 0
+  let gridAlreadyDrawn = false
+  let mainColor = null
+
+  this.logoTopSpx = 0
+  this.logoLeftSpx = 0
+  this.logoH = 0
+
+  // Listen for the event.
+  window.addEventListener('changeMainColor', function (e) {
+    mainColor = e.detail
+    _this.draw()
+  })
+
+  if (options.fillParent) {
+    // canvas.style.width = '100%'
+    // canvas.style.height = '100%'
+  }
+
   this.setup = function (url) {
     if (!url) url = imgURL
     modelPixels = new ImgPixels(url)
     modelPixels.readPixels(function () {
       setLogoCanvasSize(options.width)
+      gridAlreadyDrawn = false
       _this.draw()
+      _this.logoH = modelPixels.height
     })
   }
 
-  // window.addEventListener('resize', function () {
-  //   if (!options.width || options.width <= 1) {
-  //     setLogoCanvasSize(options.width)
-  //     if (!options.animate) {
-  //       _this.draw()
-  //     }
-  //   }
-  // })
-
   this.draw = function () {
+    // let hueOffs = 0
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    const pixSize = _this.pixSize // -1;
+    const pixSize = _this.sPX // -1;
     const colorWidth = 1 / modelPixels.width
+    mainColor = new Color(null, 5, 5)
+
     for (let y = 0; y < modelPixels.height; y++) {
-      const pxY = pixSize * y
+      const pxY = pixSize * (y + logoTopSpx)
 
       for (let x = 0; x < modelPixels.width; x++) {
-        const pxX = pixSize * x
+        const pxX = pixSize * (x + logoLeftSpx)
         const px = modelPixels.pixTable[x][y]
         if (px.a === 0) {
           continue
@@ -76,30 +97,42 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
           const grPosition = (x * colorWidth + y * colorWidth * 0.2 + gradientPosition)
           ctx.fillStyle = gradient.getValue(grPosition, 1 - pxLum * options.alphaFactor)
         } else {
-          ctx.fillStyle = px.colorString
+          let col = ''
+          if (options.randomColor) {
+            col = px.lum > 0.999 ? px.colorString : new Color(null, 100, 90).toRGBAString(px.a)
+            // col = px.color.offset(hueOffs += 0.5 + 180, 50, 50).toRGBAString(px.a)
+            if (mainColor) {
+              col = px.lum > 0.999 ? px.colorString : mainColor.offset(Math.random() * 20 - 10, -80, -20).toRGBAString(px.a)
+            }
+          } else {
+            col = px.lum > 0.999 ? px.colorString : mainColor.toRGBAString(px.a)
+          }
+          ctx.fillStyle = col // px.colorString
         }
         ctx.fillRect(pxX, pxY, pixSize, pixSize)
       }
     }
 
-    if (options.stroke) {
-      ctx.strokeStyle = options.strokeColor.toRGBAString(0.3)
+    if (options.stroke && !gridAlreadyDrawn) {
+      const a = options.strokeColor.a < 1 ? options.strokeColor.a : 0.05
+      ctx.strokeStyle = options.strokeColor.toRGBAString(a)
       ctx.lineWidth = 0.5
 
-      for (let sY = 0; sY < modelPixels.height; sY++) {
+      for (let sY = 0; sY < canvasHSpx; sY++) {
         const yy = sY * pixSize + 0.5
         ctx.beginPath()
         ctx.moveTo(0, yy)
         ctx.lineTo(canvas.width, yy)
         ctx.stroke()
       }
-      for (let sX = 0; sX < modelPixels.width; sX++) {
+      for (let sX = 0; sX < canvasWSpx; sX++) {
         const xx = sX * pixSize + 0.5
         ctx.beginPath()
         ctx.moveTo(xx, 0)
         ctx.lineTo(xx, canvas.height)
         ctx.stroke()
       }
+      // gridAlreadyDrawn = true
     }
 
     if (options.animate) {
@@ -107,7 +140,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
 
       setTimeout(function () {
         requestAnimationFrame(_this.draw)
-      }, 100)
+      }, 0)
     }
   }
 
@@ -116,30 +149,54 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
       desiredWidth = 1
     }
     const parent = canvas.parentElement
-    const style = window.getComputedStyle(parent, null)
-    const paddingLeft = parseFloat(style.getPropertyValue('padding-left'))
-    const paddingRight = parseFloat(style.getPropertyValue('padding-right'))
-    const paddingTop = parseFloat(style.getPropertyValue('padding-top'))
-    const paddingBottom = parseFloat(style.getPropertyValue('padding-bottom'))
-    const availableH = (parent.clientHeight - paddingBottom - paddingTop)
+    const availableH = parent.clientHeight
     if (desiredWidth <= 1) {
-      desiredWidth = (parent.clientWidth - paddingLeft - paddingRight) * desiredWidth
+      desiredWidth = parent.clientWidth * desiredWidth
     }
 
-    _this.pixSize = Math.floor(desiredWidth / modelPixels.width)
+    if (options.fillParent) {
+      const vW = parent.clientWidth * pixDensity
+      const vH = parent.clientHeight * pixDensity
 
-    let h = _this.pixSize * modelPixels.height
-    if (h > availableH) {
-      _this.pixSize = Math.floor(availableH / modelPixels.height)
-      h = _this.pixSize * modelPixels.height
+      const module = 48 * pixDensity
+      _this.sPX = Math.floor(vW / modelPixels.width)
+      _this.sPX = module / Math.ceil(module / _this.sPX)
+
+      canvasWSpx = Math.ceil(vW / _this.sPX)
+      canvasHSpx = Math.ceil(vH / _this.sPX)
+
+      logoTopSpx = options.top ? options.top : Math.floor((canvasHSpx - modelPixels.height) / 2 * 0.95)
+      _this.logoTopSpx = logoTopSpx
+
+      logoLeftSpx = options.left ? options.left : Math.floor((canvasWSpx - modelPixels.width) / 2)
+      _this.logoLeftSpx = logoLeftSpx
+
+      canvas.width = vW
+      canvas.height = vH
+
+      canvas.style.width = parent.clientWidth + 'px'
+      canvas.style.height = parent.clientHeight + 'px'
+    } else {
+      _this.sPX = Math.floor(desiredWidth / modelPixels.width)
+
+      let h = _this.sPX * modelPixels.height
+      if (h > availableH) {
+        _this.sPX = Math.floor(availableH / modelPixels.height)
+        h = _this.sPX * modelPixels.height
+      }
+      const w = _this.sPX * modelPixels.width
+      _this.sPX = Math.round(_this.sPX * pixDensity)
+
+      canvas.width = w * pixDensity
+      canvas.height = h * pixDensity
+
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
     }
-    const w = _this.pixSize * modelPixels.width
-    canvas.width = w * pixDensity
-    canvas.height = h * pixDensity
-
-    _this.pixSize = Math.round(_this.pixSize * pixDensity)
-    canvas.style.width = w + 'px'
-    canvas.style.height = h + 'px'
+    if (_this.sPX !== previousSpx) {
+      const event = new CustomEvent('changePxSize', { detail: _this.sPX })
+      window.dispatchEvent(event)
+    }
   }
 }
 
@@ -180,7 +237,7 @@ function ImgPixels (imgScr) {
   }
 
   /**
-   * @param {CanvasPixelArray} imageData
+   * @param {ImageData} imageData
    * @return {Pixel[]}
    */
   function collectPixels (imageData) {
@@ -201,8 +258,8 @@ function ImgPixels (imgScr) {
       pix.lum = normalize((max + min) / 2, 255)
       pixels.push(pix)
 
-      let color = new Color(pix.r, pix.g, pix.b, true)
-      pix.colorString = color.toRGBAString(pix.a)
+      pix.color = new Color(pix.r, pix.g, pix.b, true)
+      pix.colorString = pix.color.toRGBAString(pix.a)
       let x = pixIndex % _this.width
       if (typeof _this.pixTable[x] === 'undefined') {
         _this.pixTable[x] = []
@@ -232,8 +289,20 @@ function ScalableCanvasFromImageOptions (options) {
   /** @type number */
   this.width = options.hasOwnProperty('width') ? options.width : 1
 
+  /** @type number */
+  this.top = options.hasOwnProperty('top') ? options.top : 0
+
+  /** @type number */
+  this.left = options.hasOwnProperty('left') ? options.left : 0
+
+  /** @type boolean */
+  this.fillParent = options.hasOwnProperty('fillParent') ? options.fillParent : true
+
   /** @type Gradient */
   this.gradient = options.hasOwnProperty('gradient') ? options.gradient : null
+
+  /** @type boolean */
+  this.randomColor = options.hasOwnProperty('randomColor') ? options.randomColor : false
 
   /** @type boolean */
   this.animate = options.hasOwnProperty('animate') ? options.animate : false
@@ -245,7 +314,7 @@ function ScalableCanvasFromImageOptions (options) {
   this.withBackground = options.hasOwnProperty('withBackground') ? options.withBackground : false
 
   /** @type Color */
-  this.strokeColor = options.hasOwnProperty('strokeColor') ? options.strokeColor : new Color(50)
+  this.strokeColor = options.hasOwnProperty('strokeColor') ? options.strokeColor : new Color(0)
 
   /** @type number */
   this.alphaFactor = options.hasOwnProperty('alphaFactor') ? options.alphaFactor : 1

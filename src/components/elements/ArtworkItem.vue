@@ -4,7 +4,7 @@
       <div class="grid-cell-border"></div>
       <div class="item-image-wrap">
         <img v-if="image.displayUrl" :src="image.displayUrl" class="item-image">
-        <img v-else src="/static/img/no-preview.png" class="item-image">
+        <div v-else class="item-image no-image"></div>
       </div>
       <div class="item-description">
         <span :title="artwork.title" class="item-title">{{ artwork.title }}</span>

@@ -39,6 +39,7 @@ function Color (h, s, l, isRGB) {
 
     this.rgb = this.toRGB()
   }
+  this.a = 1
 }
 
 Color.prototype = {
@@ -48,6 +49,10 @@ Color.prototype = {
       return 1
     }
     return (n % max) / parseFloat(max)
+  },
+  setAlpha: function (a) {
+    this.a = a
+    return this
   },
   clamp: function (n, max) {
     return Math.min(max, Math.max(0, n))
@@ -60,13 +65,13 @@ Color.prototype = {
   },
   getBrightness: function () {
     // http://www.w3.org/TR/AERT#color-contrast
-    var rgb = this.toRGB()
+    const rgb = this.toRGB()
     return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000
   },
   getLuminance: function () {
     // http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-    var rgb = this.rgb
-    var RsRGB, GsRGB, BsRGB, R, G, B
+    const rgb = this.rgb
+    let RsRGB, GsRGB, BsRGB, R, G, B
     RsRGB = rgb.r
     GsRGB = rgb.g
     BsRGB = rgb.b
@@ -112,7 +117,7 @@ Color.prototype = {
   },
   toRGBAString: function (/** number= */a) {
     if (typeof a === 'undefined') {
-      a = 1
+      a = this.a
     }
     if (a > 1) {
       a = this.normalize(a, 255)
@@ -143,7 +148,7 @@ Color.prototype = {
   },
   toOppositeHSLAString: function (/** number= */a) {
     if (typeof a === 'undefined') {
-      a = 1
+      a = this.a
     }
     return 'hsla(' + ((this.h * 360 + 180) % 360) + ',' + this.s * 100 + '%,' + (this.l) * 100 + '%,' + a + ')'
   },
@@ -278,16 +283,17 @@ Color.prototype.fromRGB = function (r, g, b, from255) {
  * @return {Color}
  */
 Color.prototype.complement = function () {
-  var newColor = this.copy()
+  const newColor = this.copy()
   newColor.raw[ 0 ] = (newColor.h + 180) % 360
   newColor.h = newColor.normalize(newColor.raw[ 0 ], 360)
+  newColor.rgb = newColor.toRGB()
   return newColor
 }
 /**
  * @return {[Color,Color,Color]}
  */
 Color.prototype.triad = function () {
-  var h = this.raw[ 0 ]
+  const h = this.raw[ 0 ]
   return [
     this,
     new Color({ h: (h + 120) % 360, s: this.raw[ 1 ], l: this.raw[ 2 ] }),
@@ -298,7 +304,7 @@ Color.prototype.triad = function () {
  * @return {[Color,Color,Color,Color]}
  */
 Color.prototype.tetrad = function () {
-  var h = this.raw[ 0 ]
+  const h = this.raw[ 0 ]
   return [
     this,
     new Color({ h: (h + 90) % 360, s: this.raw[ 1 ], l: this.raw[ 2 ] }),

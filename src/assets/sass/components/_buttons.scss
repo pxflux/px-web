@@ -11,7 +11,7 @@ $ico-color: $button-icon-color;
 $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a square root of 1*1+1*1)
 
 @mixin plus( $size:$button-height, $line-w:$one-px, $rotate: 0deg, $plus:'true') {
-  $plus-shift-x: -$size/2;
+  $plus-shift-x: - $size/2;
   $plus-shift-y: - $line-w/2;
 
   &:before,
@@ -173,6 +173,9 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   } @else if $name == plus-medium {
     @include plus($size, $one-px)
 
+  } @else if $name == plus-large {
+    @include plus($button-height, $one-px)
+
   } @else if $name == minus {
     @include plus($size, $line-w, 0deg, 'false');
 
@@ -272,6 +275,9 @@ i, .icon {
   }
   &.plus.medium {
     @include button-icon(plus-medium)
+  }
+  &.plus.large {
+    @include button-icon(plus-large)
   }
   &.minus {
     @include button-icon(minus)

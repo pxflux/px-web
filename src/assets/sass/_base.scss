@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Work+Sans:300,400,600&subset=latin-ext');
-
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300');
 // enable responsive baseline & type scaling.
 // increases root font size from each breakpoint, starting from the size specified in the rootsizes below
 $baseline-scaling: false;
@@ -45,6 +45,12 @@ $work-sans: (
   regular: $font-normal-wight,
   cap-height: 0.66
 );
+$roboto-mono: (
+  font-family: '"Roboto Mono", monospace',
+  font-size: $font-size-body,
+  regular: $font-normal-wight,
+  cap-height: 0.66
+);
 
 // debug baseline grid
 $debug-grid: true;
@@ -68,7 +74,8 @@ html {
 }
 
 body {
-  font-family: font-family-of($work-sans);
+  //font-family: font-family-of($work-sans);
+  font-family: font-family-of($roboto-mono);
   font-size: $font-size-body;
   font-weight: $font-normal-wight;
 

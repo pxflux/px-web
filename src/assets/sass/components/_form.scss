@@ -16,6 +16,9 @@ form {
     margin-bottom: $module-size / 2;
   }
 
+  > .row, section > .row{
+    margin-top: $module-size / 2;
+  }
   .row {
     min-height: $module-size;
 
@@ -37,6 +40,7 @@ form {
       position: relative;
       flex-grow: 1;
       width: 100%;
+      max-width: 12 * $module-size;
       min-height: $module-size;
       padding: 0;
       &.closed {

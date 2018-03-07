@@ -5,8 +5,10 @@
                    :artwork="artwork" :key="artwork['.key']"
                    :uri="'/artwork/' + artwork['.key']">
       </ArtworkItem>
-      <router-link to="/account/artwork/new" class="grid-cell button" title="Add Artwork">
-        <div class="plus icon"></div>
+      <router-link to="/account/artwork/new"
+                   class="grid-cell button frameless"
+                   title="Add Artwork">
+        <i class="plus large"></i>
       </router-link>
     </div>
     <span class="nothing-found" v-if="accountArtworks.length === 0">Artworks not found.</span>

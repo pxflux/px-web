@@ -1,5 +1,5 @@
 .sidebar{
-  min-width: 5 * $module-size;
+  min-width: 5.5 * $module-size;
   margin-top: $module-size/2;
   font-size: $font-size-caption;
 
@@ -12,6 +12,7 @@
       padding: 0 $module-size/4;
       text-align: end;
       line-height: $module-size;
+      width: 4.5 * $module-size;
 
       &.active{
         background: #4bff93;

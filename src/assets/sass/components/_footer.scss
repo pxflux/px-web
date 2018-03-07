@@ -1,18 +1,8 @@
 footer {
-	padding: 40px 0;
-	width: 100%;
-	float: left;
-
-	.open-modal & {
-		padding: 40px 16px 0 0;
-	}
-	
-	.dark & {
-		opacity: .9;
-	}
-}
-
-.attribution {
-	color: #fff;
-	float: left;
+	flex-shrink: 0;
+	/*background: greenyellow;*/
+	padding: 0;
+	height: $module-size;
+  width: 5 * $module-size;
+  background: #000;
 }

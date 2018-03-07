@@ -2,7 +2,7 @@
   <header class="main">
     <div class="wrap">
       <router-link to="/">
-        <div id="px-logo-box" class="px-logo button flick">
+        <div id="px-logo-box" class="px-logo flick">
           <canvas id="px-logo"></canvas>
           <span class="label beta"></span>
         </div>
@@ -121,13 +121,14 @@
     mounted: function () {
       let logoURL = getLogoURL()
       const canvasID = 'px-logo'
-      const logo = new ScalableCanvasFromImage(logoURL, canvasID)
+      const logo = new ScalableCanvasFromImage(logoURL, canvasID, { fillParent: false })
       logo.setup()
       this.setFlicker()
       this.setupSubmenusWithClass('submenu', 'submenu-trigger')
       window.addEventListener('resize', function () {
         logo.setup(getLogoURL())
       })
+
       function getLogoURL () {
         const el = document.getElementById('px-logo-box')
         const style = window.getComputedStyle(el)
