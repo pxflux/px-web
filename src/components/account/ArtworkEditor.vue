@@ -69,7 +69,7 @@
   import { mapActions, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
-  import { Artwork } from '../../models/Artwork'
+  import { Artwork } from '../../models/ArtworkData'
 
   import RemoteControlEditor from '../elements/RemoteControlEditor'
   import ContributorsEditor from '../elements/ContributorsEditor'

@@ -35,9 +35,6 @@ export class Artwork {
     /** @type {?string} - Artwork version */
     this.version = ''
 
-    /** @type {object} - Catalog of project files --> reference to build-in git repository? */
-    this.sourceFiles = null
-
     if (typeof jsonData === 'object') {
       this.fromJson(jsonData)
     }
