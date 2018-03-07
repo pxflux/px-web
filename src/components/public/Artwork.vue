@@ -1,6 +1,6 @@
 <template>
   <main v-if="artwork">
-    <attachment-panel v-if="image" :preview="preview" :image="image"></attachment-panel>
+    <attachment-panel v-if="image" :preview="preview" :image="image"/>
     <div class="wrap-content">
       <div class="content">
         <h1 :title="artwork.title">{{ artwork.title }}</h1>
