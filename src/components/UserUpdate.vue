@@ -1,55 +1,57 @@
 <template>
   <main>
     <div class="wrap-content wrap-forms" v-if="user">
-      <h1>{{ user.displayName }}</h1>
-      <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" width="100px" height="100px">
-      <h2>Information</h2>
-      <form id="form-profile" @submit.prevent="updateProfile">
-        <label for="name">Display Name</label>
-        <input id="name" type="text" name="name" v-model="displayName" required="required">
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" v-model="email" required="required">
-        <button class="right">Save Changes</button>
-      </form>
-      <template v-if="user.email">
-        <h2>Password</h2>
-        <form id="form-password" @submit.prevent="updatePassword">
-          <template v-if="emailFederated">
-            <label for="current-password">Current Password</label>
-            <input id="current-password" name="current_password" type="password" autocomplete="on" pattern=".{6,}"
-                   title="6 characters minimum" autofocus="autofocus" required="required">
-            <label for="new_password">New Password</label>
-          </template>
-          <label v-if=" ! emailFederated" for="new_password">Set Password</label>
-          <input id="new_password" name="new_password" type="password" pattern=".{6,}" title="6 characters minimum"
-                 required="required" v-model="password">
+      <div class="content">
+        <h1>{{ user.displayName }}</h1>
+        <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" width="100px" height="100px">
+        <h2>Information</h2>
+        <form id="form-profile" @submit.prevent="updateProfile">
+          <label for="name">Display Name</label>
+          <input id="name" type="text" name="name" v-model="displayName" required="required">
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" v-model="email" required="required">
           <button class="right">Save Changes</button>
         </form>
-      </template>
-      <h2>Linked Accounts</h2>
-      <ul>
-        <li v-if="googleFederated">
-          <form id="form-disconnect-google" @submit.prevent="disconnectGoogle">
-            <p>You are connected to Google.</p>
-            <p>You can now sign in to PxFlux using your Google account.</p>
-            <p>{{ googleFederated.email }}</p>
-            <img v-if="googleFederated.photoURL" :src="googleFederated.photoURL" :alt="googleFederated.displayName"
-                 width="48px" height="48px">
-            <button v-if="multipleAuth" class="right">Disconnect</button>
+        <template v-if="user.email">
+          <h2>Password</h2>
+          <form id="form-password" @submit.prevent="updatePassword">
+            <template v-if="emailFederated">
+              <label for="current-password">Current Password</label>
+              <input id="current-password" name="current_password" type="password" autocomplete="on" pattern=".{6,}"
+                     title="6 characters minimum" autofocus="autofocus" required="required">
+              <label for="new_password">New Password</label>
+            </template>
+            <label v-if=" ! emailFederated" for="new_password">Set Password</label>
+            <input id="new_password" name="new_password" type="password" pattern=".{6,}" title="6 characters minimum"
+                   required="required" v-model="password">
+            <button class="right">Save Changes</button>
           </form>
-        </li>
-        <li v-if=" ! googleFederated">
-          <form id="form-connect-google" @submit.prevent="connectGoogle">
-            <button class="right">Connect to Google</button>
-          </form>
-        </li>
-      </ul>
-      <h2>Email Preferences</h2>
-      <form>
-        <label for="receive_emails">Receive Emails</label>
-        <input type="checkbox" id="receive_emails" name="receive_emails" checked="checked">
-        <button class="right">Save Changes</button>
-      </form>
+        </template>
+        <h2>Linked Accounts</h2>
+        <ul>
+          <li v-if="googleFederated">
+            <form id="form-disconnect-google" @submit.prevent="disconnectGoogle">
+              <p>You are connected to Google.</p>
+              <p>You can now sign in to PxFlux using your Google account.</p>
+              <p>{{ googleFederated.email }}</p>
+              <img v-if="googleFederated.photoURL" :src="googleFederated.photoURL" :alt="googleFederated.displayName"
+                   width="48px" height="48px">
+              <button v-if="multipleAuth" class="right">Disconnect</button>
+            </form>
+          </li>
+          <li v-if=" ! googleFederated">
+            <form id="form-connect-google" @submit.prevent="connectGoogle">
+              <button class="right">Connect to Google</button>
+            </form>
+          </li>
+        </ul>
+        <h2>Email Preferences</h2>
+        <form>
+          <label for="receive_emails">Receive Emails</label>
+          <input type="checkbox" id="receive_emails" name="receive_emails" checked="checked">
+          <button class="right">Save Changes</button>
+        </form>
+      </div>
     </div>
   </main>
 </template>
@@ -98,7 +100,7 @@
           this.user.linkWithCredential(credential).then(function (user) {
             console.log('Account link', user)
             firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', {user: user})
+            this.$store.commit('UPDATE_USER', { user: user })
           }.bind(this), function (error) {
             console.log('Account linking error', error)
           })
@@ -107,27 +109,27 @@
       },
       disconnectGoogle () {
         this.user.unlink(firebase.auth.GoogleAuthProvider.PROVIDER_ID)
-          .then(function (user) {
-            console.log('Account unlink', user)
-            firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', {user: user})
-          }.bind(this))
-          .catch(function (error) {
-            console.log('Account unlink error', error)
-          })
+        .then(function (user) {
+          console.log('Account unlink', user)
+          firebaseApp.auth().currentUser.reload()
+          this.$store.commit('UPDATE_USER', { user: user })
+        }.bind(this))
+        .catch(function (error) {
+          console.log('Account unlink error', error)
+        })
       },
       connectGoogle () {
         let provider = new firebase.auth.GoogleAuthProvider()
-          .addScope('https://www.googleapis.com/auth/plus.login')
+        .addScope('https://www.googleapis.com/auth/plus.login')
         this.user.linkWithPopup(provider)
-          .then(function (result) {
-            console.log('Account link', result)
-            firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', {user: result.user})
-          }.bind(this))
-          .catch(function (error) {
-            console.log('Account linking error', error)
-          })
+        .then(function (result) {
+          console.log('Account link', result)
+          firebaseApp.auth().currentUser.reload()
+          this.$store.commit('UPDATE_USER', { user: result.user })
+        }.bind(this))
+        .catch(function (error) {
+          console.log('Account linking error', error)
+        })
       }
     }
   }

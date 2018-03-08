@@ -19,9 +19,9 @@
   }
 }
 
-@mixin border-side($side: all, $style: solid, $color: rgba(59,59,59,0.61)) {
+@mixin border-side($side: all, $style: solid, $color: rgba(0,0,0,0.1)) {
   //box-shadow: 0 0 0 1px $color;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  box-shadow: 0 0 0 1px $color;
 }
 
 @mixin hairline-border-base($positionRelative) {
@@ -43,10 +43,10 @@
   }
 }
 
-@mixin hairline-border( $positionRelative: false, $side: all, $color: rgb(35,35,35), $bg-color: #fff ) {
+@mixin hairline-border( $positionRelative: false, $side: all, $color: rgba(0,0,0,0.1), $bg-color: #fff ) {
   @include hairline-border-base($positionRelative);
 
-  @include border-side($side, solid, mix($color, $bg-color, 30%)); // [1]
+  @include border-side($side, solid, $color); // [1]
 
   //@include on-retina() {
   //  box-shadow: none; // [4]

@@ -22,7 +22,7 @@
     },
     computed: {
       pxSubtitleLetters () {
-        return 'Art in the flux of pixels'
+        return 'Art in flux of pixels'
       },
       pxSubtitlesWords () {
         const txt = this.pxSubtitleLetters.toUpperCase()
@@ -76,6 +76,7 @@
           stroke: true,
           top: 4,
           left: 0,
+          mainColor: new Color(203, 16, 26),
           strokeColor: new Color(0).setAlpha(0.1)
         }
         this.logo = new Logo(logoURL, canvasID, options)

@@ -13,6 +13,9 @@ export class RCKeyboardEventData {
     this.ctrlKey = false
     this.metaKey = false
     this.shiftKey = false
+    // this are deprecated but we use them as backward comparability
+    this.keyCode = null
+    this.which = ''
 
     if (data) {
       this.fromJson(data)
@@ -31,6 +34,8 @@ export class RCKeyboardEventData {
     this.ctrlKey = data.ctrlKey
     this.metaKey = data.metaKey
     this.shiftKey = data.shiftKey
+    this.keyCode = data.keyCode
+    this.which = data.which
   }
 
   /**
@@ -45,7 +50,7 @@ export class RCKeyboardEventData {
       }
     }
     // backward compatibility
-    if (this.key !== orig.key) obj.keyCode = this.key
+    // if (this.key !== orig.key) obj.keyCode = this.key
     obj.type = '' // We should generate the 'type'('keyup','keydown'..) on the remote control using touch event on the button..
     return obj
   }

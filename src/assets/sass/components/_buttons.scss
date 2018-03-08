@@ -152,6 +152,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   position: absolute !important;
   font-size: $font-size-caption;
   font-weight: 300;
+  font-style: normal;
   @if $with-icon == true {
     width: 100%;
     height: 100%;
@@ -270,6 +271,18 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
 }
 
 i, .icon {
+  &.edit {
+    &:after {content: 'Edit'}
+  }
+  &.ok {
+    &:after {content: 'OK'}
+  }
+  &.save {
+    &:after {content: 'Save'}
+  }
+  &.cancel-text {
+    &:after {content: 'Cancel'}
+  }
   &.plus {
     @include button-icon(plus)
   }

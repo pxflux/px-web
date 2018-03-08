@@ -48,7 +48,7 @@
 </template>
 
 <script>
-  import VSelect from './Select/components/Select'
+  import VSelect from './UI/Select/components/Select'
   import ImageAttachmentEditor from './ImageAttachmentEditor'
   import VideoAttachmentEditor from './VideoAttachmentEditor'
   import SourceChannel from './sourse-editor/SourceChannel'

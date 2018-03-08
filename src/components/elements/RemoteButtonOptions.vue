@@ -45,7 +45,7 @@
 <script>
   import { RCButton } from '../../models/remote-control/RCButton'
   import keycodes from 'keycode'
-  import VSelect from './Select/components/Select'
+  import VSelect from './UI/Select/components/Select'
 
   export default {
     name: 'remote-button-options',
