@@ -2,6 +2,17 @@
  * pxflux Remote Control KeyboardEvent
  */
 
+/**
+ * @property {string} key
+ * @property {string} code
+ * @property {boolean} repeat
+ * @property {boolean} altKey
+ * @property {boolean} ctrlKey
+ * @property {boolean} metaKey
+ * @property {boolean} shiftKey
+ * @property {number} keyCode
+ * @property {string} which
+ */
 export class RCKeyboardEventData {
   constructor (data) {
     this.kind = 'keyboard'
@@ -13,6 +24,10 @@ export class RCKeyboardEventData {
     this.ctrlKey = false
     this.metaKey = false
     this.shiftKey = false
+    // thees two are deprecated but we use them as backward comparability
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
+    this.keyCode = null
+    this.which = ''
 
     if (data) {
       this.fromJson(data)
@@ -31,6 +46,8 @@ export class RCKeyboardEventData {
     this.ctrlKey = data.ctrlKey
     this.metaKey = data.metaKey
     this.shiftKey = data.shiftKey
+    this.keyCode = data.keyCode
+    this.which = data.which
   }
 
   /**
@@ -44,8 +61,6 @@ export class RCKeyboardEventData {
         obj[prop] = this[prop]
       }
     }
-    // backward compatibility
-    if (this.key !== orig.key) obj.keyCode = this.key
     obj.type = '' // We should generate the 'type'('keyup','keydown'..) on the remote control using touch event on the button..
     return obj
   }

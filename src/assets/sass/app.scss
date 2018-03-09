@@ -1,9 +1,9 @@
 @charset "UTF-8";
 
+@import 'hidpi';
 @import 'normalize', 'mixins', 'vars';
 @import 'megatype/megatype';
 @import 'base';
-@import 'hidpi';
 @import 'components/hairline';
 @import 'components/header';
 @import 'components/content';

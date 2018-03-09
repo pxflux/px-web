@@ -22,8 +22,8 @@
 
 <script>
   import { mapState } from 'vuex'
-  import vSelect from './Select/components/Select'
-  import inlineSelect from './Select/components/SelectInline'
+  import vSelect from './UI/Select/components/Select'
+  import inlineSelect from './UI/Select/components/SelectInline'
 
   export default {
     props: ['value', 'withRoles'],

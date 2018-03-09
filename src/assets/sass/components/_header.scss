@@ -31,7 +31,7 @@ header.main {
       right: 4px;
       transform: translate(0%, -50%);
 
-      @include weider-then-phone(){
+      @include weider-then-phone() {
         left: 50%;
         transform: translate(-50%, -50%);
       }
@@ -39,23 +39,29 @@ header.main {
     .label.beta {
       display: block;
       position: absolute;
-      bottom: 4px;
-      right: 10px;
+      bottom: -15px;
+      width: 100%;
       font-size: 10px;
-      font-weight: 600;
-      line-height: 1;
-      text-align: right;
-      color: rgba(0, 0, 0, 0.9);
+      line-height: 15px;
+      font-weight: 400;
+      text-align: center;
+      color: rgba(0, 0, 0, 0.6);
+      background: rgba(255,255,255,0.6);
+      padding: 0 5px;
 
-      &:after{
-        content: "α";
+      &:after {
+        content: "alpha";
       }
 
-      @include weider-then-phone(){
-        font-weight: 300;
-        right: 7px;
+      @include weider-then-phone() {
+        width: auto;
+        //line-height: 1;
+        //background: transparent;
+        padding: 0 7px 0 5px;
+        //bottom: 0;
+        right: 0;
         text-align: right;
-        &:after{
+        &:after {
           content: "alpha"
         }
       }
@@ -78,7 +84,7 @@ header.main {
     top: 0;
     left: 0;
   }
-  .button, button{
+  .button, button {
     box-shadow: none;
   }
 }

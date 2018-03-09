@@ -1,8 +1,10 @@
 footer {
 	flex-shrink: 0;
 	/*background: greenyellow;*/
-	padding: 0;
+	padding: 0 $module-size;
 	height: $module-size;
-  width: 5 * $module-size;
-  background: #000;
+  .wrap {
+    height: $module-size;
+    background: #5b5b5b;
+  }
 }

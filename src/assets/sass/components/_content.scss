@@ -6,14 +6,6 @@ main {
   padding: $module-size;
 }
 
-//.row{
-//  display: flex;
-//  flex-flow: row nowrap;
-//
-//  .row-header{
-//    flex-grow: 1;
-//  }
-//}
 .cell{
   @include hairline-border(true);
   background: $bg-color;
@@ -21,34 +13,31 @@ main {
 
 .wrap-content {
   display: flex;
+  padding-top: calc(#{$module-size} + 1px);
 
   &:not(.grid) {
     flex-flow: row nowrap;
   }
-
   &.grid, &.wrap-forms {
     display: flex;
     flex-flow: row wrap;
-
     a {
       color: #292929;
     }
   }
   &.grid{
     padding: $module-size / 2;
-
-    .grid-cell.button{
-      //width: 100%;
-      //height: 100%;
-    }
   }
 
   .content {
     flex-grow: 1;
-    padding: 0 $module-size/2 $module-size $module-size;
+    padding: calc(#{$module-size / 4} - 1px) $module-size / 4;
+    background: $bg-semi-transparent-color;
+    @include weider-then-iphon5{
 
-    h1{
-      //margin: 0;
+    }
+    @include weider-then-phone {
+      padding: $module-size/2 $module-size/2 $module-size $module-size;
     }
 
     .by-string li{

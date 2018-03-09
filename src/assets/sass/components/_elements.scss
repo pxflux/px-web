@@ -1,16 +1,106 @@
 @import "buttons";
 
-.button, button{
+$input-padding-x: $module-size / 4;
+$input-padding-y: 0rem;
 
+.button, button{
   &:not(.frameless) {
     @include hairline-border();
   }
 }
 
-input{
+input, textarea{
   border: none;
-  //box-shadow: 0 0 0 1px $button-icon-color;
+  padding: $input-padding-y $input-padding-x;
+  width: 100%;
   min-height: $module-size;
+  max-width: 30rem;
+  @include hairline-border();
+
+  &:focus {
+    outline: none;
+    @include hairline-border(false, true, #000);
+  }
+}
+
+ul{
+  li{
+    min-height: $module-size;
+    background: $bg-semi-transparent-color;
+
+    &.card{
+      display: flex;
+      flex-flow: row nowrap;
+      align-content: center;
+      height: $module-size;
+      max-width: 6 * $module-size;
+      margin-bottom: $module-size/4;
+      image{
+        flex-shrink: 0;
+      }
+      span{
+        flex-grow: 1;
+        padding: 0 $input-padding-x;
+        line-height: $module-size;
+      }
+    }
+  }
+}
+
+.editable-with-submit{
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  //background: $bg-color;
+
+  .editable {
+    display: inline-block;
+    word-break: break-all;
+    max-width: initial;
+    padding-right: $input-padding-x;
+
+    @include weider-then-phone {
+      width: auto;
+    }
+  }
+  .button {
+    position: relative;
+    width: auto;
+    padding: 0 $module-size / 4;
+    background: transparentize($bg-color, 0.6);
+  }
+  .button-group {
+    display: flex;
+    flex-flow: row nowrap;
+
+    button:first-child{
+      border: 1px $outline-color;
+      border-style: none solid;
+    }
+  }
+}
+
+.editable{
+  width: auto;
+
+  &:focus{
+    outline: none;
+  }
+  &[contenteditable="true"]{
+      position: relative;
+      color: $interactive-color;
+    &:after{
+      content: '';
+      position: absolute;
+      width: calc(100% + #{$input-padding-x * 2});
+      height: calc(100% + #{$input-padding-y * 2});
+      min-height: $module-size;
+      @include centered();
+      z-index: -1;
+    }
+    &:focus:after{
+    }
+  }
 }
 
 .badge {
@@ -40,71 +130,4 @@ input{
       background: #c6ff00;
     }
   }
-
-  .dialog {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background: transparent;
-    top: 0;
-    left: 0;
-    z-index: 10;
-
-    & > * {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-    .bg {
-      top: 0;
-      left: 0;
-      background: transparent; //transparentize($bg-color, 0.99);
-    }
-    .dialog-box {
-      background: $bg-color;
-      max-width: 30rem;
-      max-height: 30rem;
-      @include centered();
-      @include grey-outline();
-    }
-
-    .dialog-header {
-      display: flex;
-      justify-content: space-between;
-      height: $module-size;
-      width: 100%;
-
-      .button {
-        background: $bg-color;
-      }
-    }
-
-    .dialog-body {
-      width: 100%;
-      @include centered(0, -3%);
-
-      &.button-editor {
-        .medium-editor-element {
-        }
-      }
-    }
-
-    .dialog-buttons {
-      display: flex;
-      justify-content: space-between;
-      position: absolute;
-      width: 100%;
-      height: $module-size;
-      bottom: 0;
-
-      //button{  }
-      /* one item */
-      button:first-child:nth-last-child(1) {
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
-    }
-  }
-
 }

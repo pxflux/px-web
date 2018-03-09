@@ -1,6 +1,4 @@
 .attachments {
-  //width: 100.001vw; // fix for chrome, which sometimes kills hairline borders in the page header
-
   .display {
     position: relative;
     display: flex;
@@ -33,7 +31,6 @@
 
   .toolbar {
     position: relative;
-    border-top: 0.5px solid;
     display: flex;
     flex-flow: row nowrap;
 

@@ -11,31 +11,35 @@ $three-quarters: $module-size / 4 * 3;
 
 $font-size-body: 1.16666rem; // 14px
 $font-size-caption: 1rem;
-$font-size-h1: 3rem;
+$h1-font-size: 3rem;
+$h1-line-height: 4rem;
 
-$font-normal-wight: 400;
+$font-normal-wight: 300;
 $letter-spacing: 0.01em;
 
 $content-max-width: 54rem;
 
 $bg-color: #fff;
+$bg-semi-transparent-color: rgba(255,255,255, 0.6);
 $bg-secondary-color: #fafafa;
 $font-color: #595959;
 $link-color: hsl(207, 100%, 38%);
-$line-color: #909090;
+$line-color: rgba(0,0,0,0.1);
+
+$dark-bg: #1a1a1a;
+$font-color-on-dark: #d6d5d5;
+$button-text-color: #00a2ff;
+$interactive-color: #00a2ff;
+
+$audio-color: #f8ba00;
+$video-color: #73fdea;
 
 $thumb-size: $module-size * 5;
 $keypad-button-size: $module-size * 2;
 
 $options-padding: $two-thirds;
 
-$outline-color: rgb(237, 237, 237);
+$outline-color: rgba(0,0,0,0.1);
 $outline-width: 1rem / $base-size;
 
-$dark-bg: #1a1a1a;
-$font-color-on-dark: #d6d5d5;
-$button-text-color: #00a2ff;
-
-$audio-color: #f8ba00;
-$video-color: #73fdea;
 

@@ -106,7 +106,7 @@
   import OutputControlPanel from './OutputControlPanel'
   import OutputRepresentationBar from './OutputRepresentationBar'
   import ConnectorsCanvas from './ConnectorsCanvas'
-  import VueSelect from '../Select/components/Select'
+  import VueSelect from '../UI/Select/components/Select'
 
   import vimeoLink from '../../../helpers/vimeoLink'
   import commonResolutions from '../../../models/old-models/display-resolutions'

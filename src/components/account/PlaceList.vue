@@ -1,19 +1,21 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content">
-      <ul>
-        <li v-for="place in accountPlaces" :key="place['.key']">
-          <router-link :to="'/account/place/' + place['.key']">{{ place.title }}</router-link>
-        </li>
-      </ul>
-      <span class="nothing-found" v-if="accountPlaces.length == 0">Places not found.</span>
-      <router-link to="/account/place/new">Add Place</router-link>
+      <div class="content">
+        <ul>
+          <li v-for="place in accountPlaces" :key="place['.key']">
+            <router-link :to="'/account/place/' + place['.key']">{{ place.title }}</router-link>
+          </li>
+        </ul>
+        <span class="nothing-found" v-if="accountPlaces.length == 0">Places not found.</span>
+        <router-link to="/account/place/new">Add Place</router-link>
+      </div>
     </div>
   </main>
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
   import firebase from '../../firebase-app'
 
   export default {
@@ -35,7 +37,7 @@
 
       init () {
         if (this.accountId) {
-          this.setRef({key: 'accountPlaces', ref: firebase.database().ref('accounts/' + this.accountId + '/places')})
+          this.setRef({ key: 'accountPlaces', ref: firebase.database().ref('accounts/' + this.accountId + '/places') })
         }
       }
     },

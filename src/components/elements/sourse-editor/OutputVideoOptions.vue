@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import VSelect from '../Select/components/Select'
+  import VSelect from '../UI/Select/components/Select'
 
   export default {
     name: 'output-video-options',

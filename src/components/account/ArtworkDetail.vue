@@ -32,7 +32,7 @@
             <medium-editor
               :text='namesString' :options='mediumSingleLineOptions'
               :data-placeholder="placeholders.artists" :data-label="labels.artists" :data-field-name="''"
-              v-on:edit='' custom-tag='p'></medium-editor>
+              v-on:edit='' custom-tag='p'/>
             <p>
               <!--<button class="mini">+</button>-->
               <select @change="addArtistNameToString" v-model="artistName">

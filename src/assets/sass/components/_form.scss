@@ -29,7 +29,7 @@ form {
     }
 
     input#title {
-      font-size: $font-size-h1 * 0.75;
+      font-size: $h1-font-size * 0.75;
     }
 
     > * {
@@ -99,7 +99,7 @@ form {
 
   input,
   textarea,
-  [contenteditable=true] {
+  [contenteditable="true"] {
     padding: 0 $module-size / 4;
     @include hairline-border();
   }

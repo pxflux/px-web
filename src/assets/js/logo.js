@@ -41,7 +41,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
   let logoTopSpx = 0
   let logoLeftSpx = 0
   let gridAlreadyDrawn = false
-  let mainColor = null
+  let mainColor = true
 
   this.logoTopSpx = 0
   this.logoLeftSpx = 0
@@ -102,10 +102,10 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
             col = px.lum > 0.999 ? px.colorString : new Color(null, 100, 90).toRGBAString(px.a)
             // col = px.color.offset(hueOffs += 0.5 + 180, 50, 50).toRGBAString(px.a)
             if (mainColor) {
-              col = px.lum > 0.999 ? px.colorString : mainColor.offset(Math.random() * 20 - 10, -80, -20).toRGBAString(px.a)
+              col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBAString(px.a)
             }
           } else {
-            col = px.lum > 0.999 ? px.colorString : mainColor.toRGBAString(px.a)
+            col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBAString(px.a)
           }
           ctx.fillStyle = col // px.colorString
         }
@@ -315,6 +315,9 @@ function ScalableCanvasFromImageOptions (options) {
 
   /** @type Color */
   this.strokeColor = options.hasOwnProperty('strokeColor') ? options.strokeColor : new Color(0)
+
+  /** @type Color */
+  this.mainColor = options.hasOwnProperty('mainColor') ? options.mainColor : new Color(0)
 
   /** @type number */
   this.alphaFactor = options.hasOwnProperty('alphaFactor') ? options.alphaFactor : 1

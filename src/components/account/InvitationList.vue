@@ -1,18 +1,22 @@
 <template>
   <main>
-    <ul>
-      <li v-for="invitation in userInvitations" :key="invitation['.key']">
-        {{ invitation.account.title }}
-        <button @click="acceptInvitation(invitation['.key'])" class="button">Accept</button>
-        <button @click="rejectInvitation(invitation['.key'])" class="button">Reject</button>
-      </li>
-    </ul>
-    <span class="nothing-found" v-if="userInvitations.length == 0">No invitations.</span>
+    <div class="wrap-content">
+      <div class="content">
+        <ul>
+          <li v-for="invitation in userInvitations" :key="invitation['.key']">
+            {{ invitation.account.title }}
+            <button @click="acceptInvitation(invitation['.key'])" class="button">Accept</button>
+            <button @click="rejectInvitation(invitation['.key'])" class="button">Reject</button>
+          </li>
+        </ul>
+        <span class="nothing-found" v-if="userInvitations.length == 0">No invitations.</span>
+      </div>
+    </div>
   </main>
 </template>
 
 <script>
-  import { mapState, mapGetters, mapActions } from 'vuex'
+  import { mapActions, mapGetters, mapState } from 'vuex'
   import { log } from '../../helper'
   import firebase from '../../firebase-app'
 

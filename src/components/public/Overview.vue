@@ -17,12 +17,14 @@
   export default {
     data () {
       return {
-        logo: null
+        slogan: 'Flux of picture elements', // 'Art in flux of pixels',
+        logo: null,
+        pixelRatio: window.devicePixelRatio || 1
       }
     },
     computed: {
       pxSubtitleLetters () {
-        return 'Art in the flux of pixels'
+        return this.slogan
       },
       pxSubtitlesWords () {
         const txt = this.pxSubtitleLetters.toUpperCase()
@@ -30,10 +32,18 @@
         const pxWords = []
         words.forEach((w, i) => {
           const ll = w.split('')
-          ll.push(' ')
+          ll.push(' ')
           pxWords.push(ll)
         })
         return pxWords
+      }
+    },
+
+    methods: {
+      sPxToBgSize (sPx) {
+        if (sPx % 3 === 0) return 3
+        if (sPx % 2 === 0) return 2
+        return null
       }
     },
 
@@ -41,33 +51,37 @@
       window.addEventListener('resize', () => {
         this.logo.setup(getLogoURL())
       })
+      this.$nextTick(() => {
+        window.addEventListener('changePxSize', e => {
+          const sPx = e.detail
+          const cssPx = Math.round(sPx / this.pixelRatio)
+          let bgSize = this.sPxToBgSize(cssPx)
+          if (!bgSize) bgSize = sPx / 4
+          const bgFile = `grid-cell-${bgSize}px-o10@${this.pixelRatio}x.png`
+          document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
+          document.body.style.backgroundSize = bgSize + 'px'
 
-      window.addEventListener('changePxSize', e => {
-        const sPx = e.detail
-        const cssPx = sPx / (window.devicePixelRatio || 1)
-        this.$refs['main'].style.backgroundSize = sPx / 4 + 'px'
+          const subtitle = this.$refs['subtitleBox']
+          if (subtitle) subtitle.style.left = 0
 
-        const subtitle = this.$refs['subtitleBox']
-        subtitle.style.left = 0
-        this.$refs['subtitleLetters'].forEach(e => {
-          e.style.width = cssPx + 'px'
-          e.style.height = cssPx + 'px'
-          e.style.lineHeight = cssPx + 'px'
-          e.style.marginTop = cssPx + 'px'
-          e.style.fontSize = cssPx + 'px'
-        })
-        this.$nextTick(() => {
-          if (subtitle) {
-            // const subtitleLeft = cssPx * Math.round((subtitle.parentElement.clientWidth - subtitle.clientWidth) / 2 / cssPx)
-            subtitle.style.left = cssPx * (this.logo.logoLeftSpx + 1) + 'px'
-            subtitle.style.top = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + 'px'
+          const letters = this.$refs['subtitleLetters']
+          if (Array.isArray(letters)) {
+            letters.forEach(e => {
+              e.style.width = cssPx + 'px'
+              e.style.height = cssPx + 'px'
+              e.style.lineHeight = cssPx + 'px'
+              e.style.marginTop = cssPx + 'px'
+              e.style.fontSize = cssPx + 'px'
+            })
           }
+          this.$nextTick(() => {
+            if (subtitle) {
+              subtitle.style.left = cssPx * (this.logo.logoLeftSpx + 1) + 'px'
+              subtitle.style.top = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + 'px'
+            }
+          })
         })
       })
-
-      // window.addEventListener('changeMainColor', (e) => {
-      //   this.$refs['subtitleBox'].style.color = e.detail.toRGBAString()
-      // })
 
       this.$nextTick(() => {
         let logoURL = getLogoURL()
@@ -76,6 +90,7 @@
           stroke: true,
           top: 4,
           left: 0,
+          mainColor: new Color(203, 16, 26),
           strokeColor: new Color(0).setAlpha(0.1)
         }
         this.logo = new Logo(logoURL, canvasID, options)
@@ -87,6 +102,11 @@
         const style = window.getComputedStyle(el)
         return style.backgroundImage.slice(4, -1).replace(/"/g, '')
       }
+    },
+
+    destroyed () {
+      document.body.style.removeProperty('background-image')
+      document.body.style.removeProperty('background-size')
     }
   }
 </script>
@@ -111,7 +131,6 @@
     width: 100vw;
     position: relative;
     flex-grow: 2;
-    // @include checker-bg-5($color: rgb(229, 229, 229), $size: $module-size);
     
     .subtitle {
       position: absolute;
@@ -119,7 +138,6 @@
       flex-flow: row wrap;
       top: $module-size;
       color: #434343;
-      //font-weight: 600;
       font-size: $module-size;
       .word {
         display: flex;
@@ -132,6 +150,7 @@
         text-align: center;
         line-height: $module-size;
         overflow: hidden;
+        background: transparentize($bg-color, 0.7);
       }
     }
   }
