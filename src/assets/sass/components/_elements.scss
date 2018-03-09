@@ -9,7 +9,7 @@ $input-padding-y: 0rem;
   }
 }
 
-input, textarea{
+input, textarea {
   border: none;
   padding: $input-padding-y $input-padding-x;
   width: 100%;
@@ -23,22 +23,22 @@ input, textarea{
   }
 }
 
-ul{
-  li{
+ul {
+  li {
     min-height: $module-size;
     background: $bg-semi-transparent-color;
 
-    &.card{
+    &.card {
       display: flex;
       flex-flow: row nowrap;
       align-content: center;
       height: $module-size;
       max-width: 6 * $module-size;
       margin-bottom: $module-size/4;
-      image{
+      image {
         flex-shrink: 0;
       }
-      span{
+      span {
         flex-grow: 1;
         padding: 0 $input-padding-x;
         line-height: $module-size;
@@ -47,7 +47,7 @@ ul{
   }
 }
 
-.editable-with-submit{
+.editable-with-submit {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
@@ -73,23 +73,23 @@ ul{
     display: flex;
     flex-flow: row nowrap;
 
-    button:first-child{
+    button:first-child {
       border: 1px $outline-color;
       border-style: none solid;
     }
   }
 }
 
-.editable{
+.editable {
   width: auto;
 
-  &:focus{
+  &:focus {
     outline: none;
   }
-  &[contenteditable="true"]{
-      position: relative;
-      color: $interactive-color;
-    &:after{
+  &[contenteditable="true"] {
+    position: relative;
+    color: $interactive-color;
+    &:after {
       content: '';
       position: absolute;
       width: calc(100% + #{$input-padding-x * 2});
@@ -98,7 +98,7 @@ ul{
       @include centered();
       z-index: -1;
     }
-    &:focus:after{
+    &:focus:after {
     }
   }
 }

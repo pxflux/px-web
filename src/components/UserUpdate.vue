@@ -100,7 +100,7 @@
           this.user.linkWithCredential(credential).then(function (user) {
             console.log('Account link', user)
             firebaseApp.auth().currentUser.reload()
-            this.$store.commit('UPDATE_USER', { user: user })
+            this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this), function (error) {
             console.log('Account linking error', error)
           })
@@ -109,27 +109,27 @@
       },
       disconnectGoogle () {
         this.user.unlink(firebase.auth.GoogleAuthProvider.PROVIDER_ID)
-        .then(function (user) {
-          console.log('Account unlink', user)
-          firebaseApp.auth().currentUser.reload()
-          this.$store.commit('UPDATE_USER', { user: user })
-        }.bind(this))
-        .catch(function (error) {
-          console.log('Account unlink error', error)
-        })
+          .then(function (user) {
+            console.log('Account unlink', user)
+            firebaseApp.auth().currentUser.reload()
+            this.$store.commit('UPDATE_USER', {user: user})
+          }.bind(this))
+          .catch(function (error) {
+            console.log('Account unlink error', error)
+          })
       },
       connectGoogle () {
         let provider = new firebase.auth.GoogleAuthProvider()
-        .addScope('https://www.googleapis.com/auth/plus.login')
+          .addScope('https://www.googleapis.com/auth/plus.login')
         this.user.linkWithPopup(provider)
-        .then(function (result) {
-          console.log('Account link', result)
-          firebaseApp.auth().currentUser.reload()
-          this.$store.commit('UPDATE_USER', { user: result.user })
-        }.bind(this))
-        .catch(function (error) {
-          console.log('Account linking error', error)
-        })
+          .then(function (result) {
+            console.log('Account link', result)
+            firebaseApp.auth().currentUser.reload()
+            this.$store.commit('UPDATE_USER', {user: result.user})
+          }.bind(this))
+          .catch(function (error) {
+            console.log('Account linking error', error)
+          })
       }
     }
   }

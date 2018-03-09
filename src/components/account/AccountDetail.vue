@@ -73,8 +73,8 @@
 
       init () {
         if (this.userAccount) {
-          this.setRef({ key: 'account', ref: firebase.database().ref('accounts/' + this.userAccount['.key']) })
-          this.setRef({ key: 'invitations', ref: firebase.database().ref('invitations') })
+          this.setRef({key: 'account', ref: firebase.database().ref('accounts/' + this.userAccount['.key'])})
+          this.setRef({key: 'invitations', ref: firebase.database().ref('invitations')})
         }
       },
 
@@ -118,9 +118,9 @@
   }
 </script>
 <style lang="scss">
-  
-  .staff{
-    img{
+
+  .staff {
+    img {
       filter: grayscale(100%);
     }
   }

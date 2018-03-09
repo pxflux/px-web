@@ -33,7 +33,7 @@ main {
     flex-grow: 1;
     padding: calc(#{$module-size / 4} - 1px) $module-size / 4;
     background: $bg-semi-transparent-color;
-    @include weider-then-iphon5{
+    @include weider-then-iphon5 {
 
     }
     @include weider-then-phone {

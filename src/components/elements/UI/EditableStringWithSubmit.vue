@@ -7,21 +7,21 @@
           class="editable with-submit">
     </span>
     <button v-if="!editable"
-         @click="makeEditable"
-         class="button frameless"
-         contenteditable="false">
+            @click="makeEditable"
+            class="button frameless"
+            contenteditable="false">
       Change
     </button>
     <div v-else=""
          class="button-group"
          contenteditable="false">
       <button @click="cancel"
-            class="button frameless">
-            Cancel
+              class="button frameless">
+        Cancel
       </button>
       <button @click="submit"
-            class="button frameless">
-            <b>Save</b>
+              class="button frameless">
+        <b>Save</b>
       </button>
     </div>
   </div>
@@ -31,9 +31,9 @@
   export default {
     name: 'editable-string',
     props: {
-      value: { default: '', type: String },
-      stringClass: { default: '', type: String },
-      multiLine: { default: false, type: Boolean }
+      value: {default: '', type: String},
+      stringClass: {default: '', type: String},
+      multiLine: {default: false, type: Boolean}
     },
     data () {
       return {

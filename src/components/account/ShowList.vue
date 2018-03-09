@@ -39,7 +39,7 @@
 
       init () {
         if (this.accountId) {
-          this.setRef({ key: 'accountShows', ref: firebase.database().ref('accounts/' + this.accountId + '/shows') })
+          this.setRef({key: 'accountShows', ref: firebase.database().ref('accounts/' + this.accountId + '/shows')})
         }
       }
     },

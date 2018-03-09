@@ -91,7 +91,7 @@
 </template>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapActions, mapMutations, mapState } from 'vuex'
   import { cloneArtwork } from '../../models/old-models/artwork'
   import { log } from '../../helper'
   import Firebase from 'firebase'
