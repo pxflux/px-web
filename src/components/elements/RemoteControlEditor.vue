@@ -2,6 +2,7 @@
   <div class="controls-panel">
     <div class="keypad">
       <popper v-for="(button, i) in buttons"
+              :key="i"
               trigger="click"
               :options="{placement: 'bottom-start'}">
         <div class="popper">
@@ -13,7 +14,7 @@
             <span class="icon cancel small"></span>
           </div>
         </div>
-        
+
         <div class="button-box" slot="reference">
           <a class="grid-cell button"
              :class="[button? 'ready' : '']"
@@ -59,8 +60,6 @@
       }
     },
     mounted () {
-      console.log('--> buttons: >>>>>>')
-      console.log(this.buttons)
       this.bus.$on('updateButton', (options, index) => {
         this.buttons[index] = options
       })

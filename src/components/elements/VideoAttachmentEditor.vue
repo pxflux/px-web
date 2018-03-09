@@ -64,8 +64,8 @@
               this.warning = (parseInt(data.is_plus) === 0) ? 'This video is from <b>Basic</b> Vimeo account.' : ''
               this.error = ''
 
-              const thumbnail = new ImageAttachment(new AttachmentStorage(data.thumbnail_url), data.thumbnail_width / data.thumbnail_height)
-              const attachment = new VideoAttachment(new AttachmentStorage(this.displayUrl), this.ratio, data.duration, thumbnail)
+              const thumbnail = new ImageAttachment(new AttachmentStorage(data.thumbnail_url, null, null), null, data.thumbnail_width / data.thumbnail_height)
+              const attachment = new VideoAttachment(new AttachmentStorage(this.displayUrl, null, null), null, this.ratio, data.duration, thumbnail)
               this.$emit('input', attachment)
             }.bind(this)).catch(function (error) {
               console.log(error)

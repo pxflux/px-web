@@ -1,26 +1,27 @@
 /** @prop {?string} type  - Possible values html, video */
-/** @prop {?string} url   - URL to html page or a video file or Vimeo link */
+import { cleanEntries } from './CleanEntries'
 
+/** @prop {?string} url   - URL to html page or a video file or Vimeo link */
 export class SourceURL {
   /**
-   * @param {object=} data
+   * @param {?string} type
+   * @param {?string} url
    */
-  constructor (data) {
-    this.type = ''
-    this.url = ''
+  constructor (type, url) {
+    this.type = type
+    this.url = url
+  }
 
-    if (typeof data === 'object') {
-      this.fromJson(data)
-    }
+  static empty () {
+    return new SourceURL(null, null)
   }
 
   /**
    * @param {object} data
    */
-  fromJson (data) {
+  static fromJson (data) {
     if (typeof data !== 'object') return
-    this.type = data.type
-    this.url = data.url
+    return new SourceURL(data.type || null, data.url || null)
   }
 
   /**
@@ -28,12 +29,13 @@ export class SourceURL {
    * @return {Object}
    */
   updatedEntries (original) {
-    const updated = {}
-
-    if (this.type !== original.type) updated.type = this.type
-
-    if (this.url !== original.url) updated.url = this.url
-
-    return updated
+    const data = {}
+    if (this.type !== original.type) {
+      data.type = this.type
+    }
+    if (this.url !== original.url) {
+      data.url = this.url
+    }
+    return cleanEntries(data)
   }
 }

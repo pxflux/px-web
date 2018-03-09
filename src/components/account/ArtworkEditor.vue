@@ -11,7 +11,7 @@
           </div>
           <div class="work-specifications">
             <section>
-              <artwork-config-editor :artwork="artwork"/>
+              <artwork-config-editor v-model="artwork.setups"/>
             </section>
             <section>
               <div class="row">
@@ -113,7 +113,7 @@
     },
     data () {
       return {
-        artwork: new Artwork(),
+        artwork: Artwork.empty(),
         selectedControls: null
       }
     },
@@ -123,11 +123,11 @@
       init () {
         if (!this.isNew && this.accountId) {
           this.source = firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.setRef({ key: 'accountArtwork', ref: this.source })
+          this.setRef({key: 'accountArtwork', ref: this.source})
         } else {
           this.source = null
         }
-        this.setRef({ key: 'artists', ref: firebase.database().ref('artists') })
+        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
       },
       /**
        * @param {Control[]} controls
@@ -139,22 +139,18 @@
         if (!this.accountId) {
           return
         }
-        const artwork = Artwork.fromJson(this.accountArtwork)
-        artwork.url = this.url
-        artwork.title = this.title
-        artwork.description = this.description
-        artwork.year = this.year
-        artwork.preview = this.preview
-        this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
-          const data = { fullName: artist.fullName }
-          if (artist.photoUrl) {
-            data.photoUrl = artist.photoUrl
-          }
-          artwork.artists[artist['.key']] = data
-        })
-        artwork.controls = this.selectedControls
-        store(this.accountId, this.artworkId, 'artworks', artwork, this.imageRemoved, this.imageFile).then(function (ref) {
-          this.$router.push('/account/artwork/' + ref.key)
+        // const artwork = Artwork(this.accountArtwork)
+        // this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
+        //   const data = { fullName: artist.fullName }
+        //   if (artist.photoUrl) {
+        //     data.photoUrl = artist.photoUrl
+        //   }
+        //   artwork.artists[artist['.key']] = data
+        // })
+        // artwork.controls = this.selectedControls
+        const data = this.artwork.updatedEntries(this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork))
+        store(this.accountId, this.artworkId, 'artworks', data, this.imageRemoved, this.imageFile).then(function (ref) {
+          this.$router.push('/artwork/' + ref.key)
         }.bind(this)).catch(log())
       }
     },
@@ -162,13 +158,11 @@
       $route () {
         this.init()
       },
-      'artists' () {
-      },
       'userAccount' () {
         this.init()
       },
       'accountArtwork' () {
-        this.artwork.fromJson(this.accountArtwork)
+        this.artwork = Artwork.fromJson(this.accountArtwork)
       }
     }
   }

@@ -2,6 +2,8 @@
  * @property {string} id
  * @property {string} displayName
  */
+import { cleanEntries } from './CleanEntries'
+
 export class ContributorRef {
   /**
    * @param {string} id
@@ -22,10 +24,11 @@ export class ContributorRef {
    * @return {Object}
    */
   updatedEntries () {
-    return {
+    const data = {
       displayName: this.displayName,
       role: this.role
     }
+    return cleanEntries(data)
   }
 }
 
@@ -39,7 +42,7 @@ export class ContributorRefs {
     values.forEach(value => {
       data[value.id] = value.updatedEntries()
     })
-    return data
+    return cleanEntries(data)
   }
 
   /**

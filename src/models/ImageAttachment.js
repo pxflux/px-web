@@ -9,12 +9,12 @@ import { AttachmentStorage } from './AttachmentStorage'
  */
 export class ImageAttachment extends Attachment {
   /**
-   * @param {?AttachmentStorage} link
+   * @param {?AttachmentStorage} storage
    * @param {?string} caption
    * @param {?number} ratio
    */
-  constructor (link, caption, ratio) {
-    super('image', link, caption, ratio)
+  constructor (storage, caption, ratio) {
+    super('image', storage, caption, ratio)
   }
 
   static empty () {
@@ -26,6 +26,6 @@ export class ImageAttachment extends Attachment {
     if (attachment === null) {
       return this.empty()
     }
-    return new ImageAttachment(attachment.link, attachment.caption, attachment.ratio)
+    return new ImageAttachment(attachment.storage, attachment.caption, attachment.ratio)
   }
 }

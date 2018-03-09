@@ -1,3 +1,5 @@
+import { cleanEntries } from './CleanEntries'
+
 /**
  * @property {?string} displayUrl
  * @property {?string} storageUrl
@@ -20,17 +22,27 @@ export class AttachmentStorage {
   }
 
   /**
+   * @return {?AttachmentStorage}
+   */
+  static fromJson (value) {
+    if (typeof value !== 'object') {
+      return null
+    }
+    return new AttachmentStorage(value.displayUrl, value.storageUrl, null)
+  }
+
+  /**
    * @param {AttachmentStorage} origin
    * @return {Object}
    */
   updatedEntries (origin) {
     const data = {}
     if (this.displayUrl !== origin.displayUrl) {
-      data['displayUrl'] = this.displayUrl
+      data.displayUrl = this.displayUrl
     }
     if (this.storageUrl !== origin.storageUrl) {
-      data['storageUrl'] = this.storageUrl
+      data.storageUrl = this.storageUrl
     }
-    return data
+    return cleanEntries(data)
   }
 }

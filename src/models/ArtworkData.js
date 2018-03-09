@@ -1,59 +1,46 @@
-import { SourceURL } from './SourceURL'
-import { VideoAttachment } from './VideoAttachment'
-import { ImageAttachment } from './ImageAttachment'
 import { ContributorRefs } from './ContributorRef'
+import { Setups } from './Setup'
 import { Controls } from './Control'
+import { cleanEntries } from './CleanEntries'
 
 /**
  * @property {boolean} published
  * @property {?string} title
- * @property {SourceURL} source
- * @property {ImageAttachment} thumbnail
- * @property {VideoAttachment} preview
  * @property {ContributorRef[]} artists
  * @property {ContributorRef[]} credits
  * @property {?number} year
  * @property {?string} description
+ * @property {Setup[]} setups
  * @property {Control[]} controls
+ * @property {?string} version
  */
 export class Artwork {
-  /**
-   * @param {object=} jsonData
-   */
-  constructor (jsonData) {
-    this.published = false
-    this.title = ''
-    this.artists = []
-    this.credits = []
-    this.year = null
-    this.description = ''
-    this.source = new SourceURL()
-    this.thumbnail = ImageAttachment.empty()
-    this.preview = VideoAttachment.empty()
-    this.controls = []
+  constructor (published, title, artists, credits, year, description, setups, controls, version) {
+    this.published = published
+    this.title = title
+    this.artists = artists
+    this.credits = credits
+    this.year = year
+    this.description = description
+    this.setups = setups
+    this.controls = controls
+    this.version = version
+  }
 
-    /** @type {?string} - Artwork version */
-    this.version = ''
-
-    if (typeof jsonData === 'object') {
-      this.fromJson(jsonData)
-    }
+  static empty () {
+    return new Artwork(false, null, [], [], null, null, Setups.empty(), [], null)
   }
 
   /**
-   * @param {object} obj
+   * @param {object} value
    */
-  fromJson (obj) {
-    this.published = obj.published
-    this.title = obj.title
-    this.artists = ContributorRefs.fromJson(obj.artists)
-    this.credits = ContributorRefs.fromJson(obj.credits)
-    this.year = obj.year
-    this.source.fromJson(obj.source)
-    this.thumbnail = ImageAttachment.fromJson(obj.thumbnail)
-    this.preview = VideoAttachment.fromJson(obj.preview)
-    this.description = obj.description
-    this.controls = Controls.fromJson(obj.controls)
+  static fromJson (value) {
+    if (typeof value !== 'object') {
+      return null
+    }
+    return new Artwork(value.published, value.title, ContributorRefs.fromJson(value.artists),
+      ContributorRefs.fromJson(value.credits), value.year, value.description, Setups.fromJson(value.setups),
+      Controls.fromJson(value.controls), value.version)
   }
 
   /**
@@ -61,35 +48,24 @@ export class Artwork {
    * @return {Object}
    */
   updatedEntries (original) {
-    const updated = {}
-
+    const data = {}
     if (this.published !== original.published) {
-      updated.published = this.published
+      data.published = this.published
     }
     if (this.title !== original.title) {
-      updated.title = this.title
+      data.title = this.title
     }
-
-    updated.source = this.source.updatedEntries(original.source)
-
-    updated.thumbnail = this.thumbnail.updatedEntries(original.thumbnail)
-
-    updated.preview = this.preview.updatedEntries(original.preview)
-
-    updated.artists = ContributorRefs.updatedEntries(this.artists)
-
-    updated.credits = ContributorRefs.updatedEntries(this.credits)
-
+    data.artists = ContributorRefs.updatedEntries(this.artists)
+    data.credits = ContributorRefs.updatedEntries(this.credits)
     if (this.year !== original.year) {
-      updated.year = this.year
+      data.year = this.year
     }
-
     if (this.description !== original.description) {
-      updated.description = this.description
+      data.description = this.description
     }
+    data.setups = Setups.updatedEntries(original.setups, this.setups)
+    data.controls = this.controls.map(value => value.updatedEntries())
 
-    updated.controls = this.controls.map(value => value.updatedEntries())
-
-    return updated
+    return cleanEntries(data)
   }
 }

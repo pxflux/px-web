@@ -1,4 +1,5 @@
 import { AttachmentStorage } from './AttachmentStorage'
+import { cleanEntries } from './CleanEntries'
 
 /**
  * @property {?string} type
@@ -30,7 +31,7 @@ export class Attachment {
     if (typeof value !== 'object') {
       return null
     }
-    return new Attachment(value.type, new AttachmentStorage(value.displayUrl, value.storageUrl), value.caption, value.ratio)
+    return new Attachment(value.type, AttachmentStorage.fromJson(value.storage), value.caption, value.ratio)
   }
 
   /**
@@ -40,17 +41,15 @@ export class Attachment {
   updatedEntries (origin) {
     const data = {}
     if (this.type !== origin.type) {
-      data['type'] = this.type
+      data.type = this.type
     }
-    if (this.storage !== origin.storage) {
-      data['storage'] = this.storage.updatedEntries(origin.storage)
-    }
+    data.storage = this.storage.updatedEntries(origin.storage)
     if (this.caption !== origin.caption) {
-      data['caption'] = this.caption
+      data.caption = this.caption
     }
     if (this.ratio !== origin.ratio) {
-      data['ratio'] = this.ratio
+      data.ratio = this.ratio
     }
-    return data
+    return cleanEntries(data)
   }
 }

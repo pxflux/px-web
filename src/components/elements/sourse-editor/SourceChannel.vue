@@ -24,18 +24,19 @@
         </div>
       </div>
     </section>
-    
+
     <section v-if="sourceIsOK" class="outputs-editor-panel row" ref="outputEditor">
       <label class="with-icon" @click="outputsPanelOpen = !outputsPanelOpen">
           <span class="icon arrow-right small"
                 :class="[outputsPanelOpen? 'open' : '']"></span>
         <span>Outputs</span>
       </label>
-      
+
       <div v-if="outputsPanelOpen"
            class="outputs-control-panel field">
         <output-control-panel
-          v-for="output in outputTypes" ref="outputControls"
+          v-for="(output, i) in outputTypes" ref="outputControls"
+          :key="i"
           :num-outputs="numberOutputs[output.type]"
           :output-title="output.title"
           :type="output.type"
@@ -45,11 +46,12 @@
         <span class="description">{{outputsSummary()}}</span>
       </div>
     </section>
-    
+
     <section>
       <div v-if="outputsPanelOpen" class="outputs-presentation">
         <output-representation-bar
-          v-for="output in outputTypes"
+          v-for="(output, i) in outputTypes"
+          :key="i"
           ref="outputBars"
           :type="output.type"
           :outputs-number="numberOutputs[output.type]"
@@ -64,7 +66,7 @@
         </div>
       </div>
     </section>
-  
+
     <section>
       <div class="row">
         <label><span>Image</span></label>
@@ -108,10 +110,11 @@
 
   import vimeoLink from '../../../helpers/vimeoLink'
   import commonResolutions from '../../../models/old-models/display-resolutions'
+  import { SourceURL } from '../../../models/SourceURL'
 
   export default {
     name: 'source-channel',
-    props: ['sourceData', 'scrolling'],
+    props: ['value'],
     components: {
       OutputControlPanel,
       OutputRepresentationBar,
@@ -122,22 +125,22 @@
     data () {
       return {
         channelObject: null,
-        source: this.sourceData ? this.sourceData.source : '',
+        source: this.value.url,
         sourceIsOK: false,
         sourceDescription: 'URL (HTML/Javascript or Vimeo video link)',
         outputsPanelOpen: false,
         outputs: {
-          audio: [{ type: 'loudspeaker' }, { type: 'loudspeaker' }],
-          video: [{ type: 'any', resolution: [0, 0], orientation: 'landscape' }]
+          audio: [{type: 'loudspeaker'}, {type: 'loudspeaker'}],
+          video: [{type: 'any', resolution: [0, 0], orientation: 'landscape'}]
         },
-        numberOutputs: { audio: 2, video: 1 },
+        numberOutputs: {audio: 2, video: 1},
         /** @type GroupedConnectors[] */
         outputSockets: [],
         /** @type GroupedConnectors[] */
         outputBoxes: [],
         outputTypes: [
-          { type: 'audio', title: 'Audio' },
-          { type: 'video', title: 'Video' }
+          {type: 'audio', title: 'Audio'},
+          {type: 'video', title: 'Video'}
         ],
         colors: {
           video: 'rgba(115, 253, 234, 0.6)',
@@ -150,8 +153,6 @@
         scrollTimeout: null
       }
     },
-    computed: {},
-    watch: {},
     mounted () {
       window.addEventListener('resize', () => {
         this.refreshOutputConnections()
@@ -258,7 +259,7 @@
           if (v.resolution[0]) {
             const w = Math.max(v.resolution[0], v.resolution[1])
             const h = Math.min(v.resolution[0], v.resolution[1])
-            const res = commonResolutions.closestStandardForSize({ w: w, h: h })
+            const res = commonResolutions.closestStandardForSize({w: w, h: h})
             resStr = res ? res.abr : `(${w} x ${h} px)`
           }
           if (!displayStats.hasOwnProperty(v.type)) displayStats[v.type] = {}
@@ -286,6 +287,16 @@
         }
         if (!displayStatsStr) displayStatsStr = 'No video'
         return displayStatsStr
+      }
+    },
+    watch: {
+      value: function () {
+        this.source = this.value.url
+      },
+      sourceIsOK: function () {
+        if (this.sourceIsOK) {
+          this.$emit('input', new SourceURL(null, this.source))
+        }
       }
     }
   }

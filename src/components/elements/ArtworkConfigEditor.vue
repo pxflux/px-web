@@ -6,14 +6,17 @@
           <span>Setup</span>
         </label>
         <div class="tabs field">
-          <div v-model="curConfigName"
-               v-for="(tab, i) in configList"
-               @click="curConfigIndex = i"
+          <div v-model="configName"
+               v-for="(config, i) in configs"
+               @click="configIndex = i"
                class="tab"
-               :class="[curConfigIndex === i? 'active': '']">
-            {{tab}}
+               :class="[configIndex === i ? 'active': '']">
+            {{config.title||'Simple'}}
           </div>
-          <div class="button frameless"><span class="icon plus"></span></div>
+          <div class="button frameless"><span class="icon plus" @click="addConfig()"></span></div>
+          <div class="button frameless" v-if="configs.length > 1">
+            <span class="icon minus" @click="removeConfig()"></span>
+          </div>
         </div>
       </div>
       <div class="config-editor">
@@ -24,14 +27,13 @@
             <span>Rename</span>
           </label>
           <div v-if="renameConfigOpen" class="field">
-            <input id="configName" type="text" v-model="curConfigName"/>
+            <input id="configName" type="text" v-model="configName"/>
           </div>
         </div>
         <section class="scene" v-on:scroll="onScroll">
           <source-channel
             ref="sourceChannel"
-            :source-data="configSource"
-            :scrolling="scrolling"/>
+            v-model="configSource"/>
         </section>
         <!--<div class="row">-->
         <!--<label><span>Required Equipment</span></label>-->
@@ -43,11 +45,12 @@
         <!--</div>-->
       </div>
     </section>
-  
+
   </div>
 </template>
 
 <script>
+  import { Setup, Setups } from '../../models/Setup'
   import VSelect from './Select/components/Select'
   import ImageAttachmentEditor from './ImageAttachmentEditor'
   import VideoAttachmentEditor from './VideoAttachmentEditor'
@@ -55,7 +58,7 @@
 
   export default {
     name: 'artwork-configuration-editor',
-    props: ['artwork'],
+    props: ['value'],
     components: {
       VSelect,
       ImageAttachmentEditor,
@@ -64,24 +67,55 @@
     },
     data () {
       return {
-        curConfigIndex: 0,
-        configSource: false,
+        configs: this.value || Setups.empty(),
+        configIndex: 0,
         scrolling: false,
         renameConfigOpen: false
       }
     },
     computed: {
-      configList () { return ['Triple projection', 'Single'] },
-      curConfigName: {
+      configName: {
         set (newValue) {
-          this.configList[this.curConfigIndex] = newValue
+          this.configs[this.configIndex].title = newValue
+          this.update()
         },
-        get () { return this.configList[this.curConfigIndex] }
+        get () { return this.configs[this.configIndex].title }
+      },
+      configSource: {
+        set (newValue) {
+          this.configs[this.configIndex].source = newValue
+          this.update()
+        },
+        get () {
+          return this.configs[this.configIndex].source
+        }
       }
     },
     methods: {
       onScroll (e) {
         this.$refs['sourceChannel'].fixPanelsOnScroll(e)
+      },
+      addConfig () {
+        this.configIndex++
+        this.configs.push(Setup.empty())
+        this.update()
+      },
+      removeConfig () {
+        this.configIndex--
+        this.configs.splice(this.configIndex, 1)
+        this.update()
+      },
+      update () {
+        this.$emit('input', Setups.fromJson(JSON.parse(JSON.stringify(this.configs))))
+      }
+    },
+    watch: {
+      value: function () {
+        if (Array.isArray(this.value) && this.value.length > 0) {
+          this.configs = this.value
+        } else {
+          this.configs = Setups.empty()
+        }
       }
     }
   }
