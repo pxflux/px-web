@@ -9,33 +9,34 @@
       </div>
     </div>
     
-    <div>
-Unlike other media art institutions Pxflux not deal with curating,
-exhibiting, collecting, maintaining, etc. of art works. 
+    <div class="wrap-content" ref="wrap">
+      <div class="content">
+<p>Unlike other media art institutions Pxflux not deal with curating,
+exhibiting, collecting, maintaining, etc. of art works.
 Pxflux works as a host, with its own build futures.
-<em>Pxflux is a platform for making new ideas works!<em>
- 
-Pxflux consider itself as a new laboratory, or a breading platform, 
-solving difficult questions and offering users an outstanding expertise 
+<em>Pxflux is a platform for making new ideas works!</em>
+</p><p>
+Pxflux consider itself as a new laboratory, or a breading platform,
+solving difficult questions and offering users an outstanding expertise
 in all fields relevant topics related to new digital  media art.PxFlux
-atoms & digits  & pixels flux! 
+atoms & digits  & pixels flux!
 New Art Moves!
-
-PxFlux is an online open source collaborative platform and software 
-infrastructures that enable users 
-to make art, and an easy way to distribute, promote, share, 
-and collect digital art content. The digital format artworks, 
-including film,  video, 4K video, video loops, multichannel projections,  
+    </p><p>
+PxFlux is an online open source collaborative platform and software
+infrastructures that enable users
+to make art, and an easy way to distribute, promote, share,
+and collect digital art content. The digital format artworks,
+including film,  video, 4K video, video loops, multichannel projections,
 web(net) art, interactive and generative art, VR, computational works and games.
-Pxflux mission to creating a space for diverse art based  experience, 
-where  local and global network of all artists, galleries and 
-libraries  come together to share, learn  etc... 
-Platform for building useful tools securely managing and delivering artists works 
-to connected display devices of collectors, institutions, private enthusiasts and 
-commercial installations around the world. In doing so, 
-Pxflux aims to connect people emotionally, exposing global audiences 
+Pxflux mission to creating a space for diverse art based  experience,
+where  local and global network of all artists, galleries and
+libraries  come together to share, learn  etc...
+Platform for building useful tools securely managing and delivering artists works
+to connected display devices of collectors, institutions, private enthusiasts and
+commercial installations around the world. In doing so,
+Pxflux aims to connect people emotionally, exposing global audiences
 to immersive art experiences of moving applications
-
+    </p><p>
 Pxflux is a place for collaboration between artists and programmers!
 pxHost (repository)
 Environment for sketching and development tools of art projects
@@ -45,35 +46,35 @@ Presentational tools
 pxDisplay
 pxRemote
 pxStore (market place)
-Distribution & Collection management 
+Distribution & Collection management
 Sertificats
 Payments
 Promotion
-Galleries & Curated collections 
+Galleries & Curated collections
 pxCollection
 pxArchive
 Unique recording system that allows archiving the whole life cycle of the artwork.
-Records about the work starting from the first sketches and the communication between 
-artist and collaborators during the production, to the iteration reports of the final 
+Records about the work starting from the first sketches and the communication between
+artist and collaborators during the production, to the iteration reports of the final
 product during shows.
-
+    </p><p>
 
 Learn about and experience
 Learn artists and their artworks, follow….
-Accessible,without hassle of technical…. , 
-give the viewer the possibility to perceive an artwork from a 
-distance while giving the work an autonomous place no matter where it is shown: 
+Accessible,without hassle of technical…. ,
+give the viewer the possibility to perceive an artwork from a
+distance while giving the work an autonomous place no matter where it is shown:
 in a public space, a gallery or in a living room.
- 
+    </p><p>
 
 Display  ( player)
-
+    </p><p>
 Pxflux develops new software to present very autonomos work.
 The pxPlayer is a cross-platform desktop/stationery computer application whose main task is the playback of pre-recorded content as well as the real-time rendering of code-based art works.Visually, the most remarkable feature of the pxPlayer application is the absence of any user interface. The player has no buttons, no timelines, and no controls whatsoever. This is intended to remove all the destructive elements from the screen in order to give its entire space to the artwork itself. All the controls and navigational capabilities are delegated to the pxRemote app.
-
+    </p><p>
  
-Remote 
- 
+Remote
+    </p><p>
 The pxRemote is a mobile app that allows for user interaction and control of artwork. It is also
 a browser for our library of works, as well as a communication tool for comments, reviews, and
 sharing across social media networks. It is designed to work on any modern smartphone or
@@ -89,11 +90,14 @@ Among the traditional video formats, we currently fully support the rendering of
 WebGL, WebVR, and HTML5. Further on in the development will be support for Java
 applications and frameworks like Processing and rendering of Pure-Data patches. We also
 support the basic use of HTTP Live Streaming.
+    </p><p>
 Our remote control and the player will provide various permission levels for the access and
 control of the content. This will enable many different uses, from an exhibition visitor using
 their phone to get information on the work being shown, to possibility of multiuser control of
 the interactive artwork, to an owner of the player using their ‘remote control’ to get full access
-to the player and the screen settings.</div></main>
+to the player and the screen settings.</p>
+      </div>
+    </div></main>
 </template>
 <script>
   import Color from '../../assets/js/color'
@@ -102,7 +106,7 @@ to the player and the screen settings.</div></main>
   export default {
     data () {
       return {
-        slogan: 'Flux of picture elements', // 'Art in flux of pixels',
+        slogan: 'Art lives in flux of pixels', // 'Flux of picture elements', // 'Art in flux of pixels',
         logo: null,
         pixelRatio: window.devicePixelRatio || 1
       }
@@ -164,6 +168,7 @@ to the player and the screen settings.</div></main>
               subtitle.style.left = cssPx * (this.logo.logoLeftSpx + 1) + 'px'
               subtitle.style.top = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + 'px'
             }
+            this.$refs['wrap'].style.marginTop = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + 50 + 'px'
           })
         })
       })
@@ -217,6 +222,9 @@ to the player and the screen settings.</div></main>
     position: relative;
     flex-grow: 2;
     
+    .wrap-content{
+      margin-top: 20rem;
+    }
     .subtitle {
       position: absolute;
       display: flex;
