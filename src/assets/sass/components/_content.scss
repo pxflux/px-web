@@ -13,15 +13,14 @@ main {
 
 .wrap-content {
   display: flex;
+  padding-top: calc(#{$module-size} + 1px);
 
   &:not(.grid) {
     flex-flow: row nowrap;
   }
-
   &.grid, &.wrap-forms {
     display: flex;
     flex-flow: row wrap;
-
     a {
       color: #292929;
     }
@@ -32,7 +31,8 @@ main {
 
   .content {
     flex-grow: 1;
-    padding: $module-size / 4;
+    padding: calc(#{$module-size / 4} - 1px) $module-size / 4;
+    background: $bg-semi-transparent-color;
     @include weider-then-iphon5{
 
     }

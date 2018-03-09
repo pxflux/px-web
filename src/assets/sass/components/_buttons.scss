@@ -271,18 +271,11 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
 }
 
 i, .icon {
-  &.edit {
-    &:after {content: 'Edit'}
-  }
-  &.ok {
-    &:after {content: 'OK'}
-  }
-  &.save {
-    &:after {content: 'Save'}
-  }
-  &.cancel-text {
-    &:after {content: 'Cancel'}
-  }
+  &.edit { &:after {content: 'Edit'} }
+  &.change { &:after {content: 'Change'} }
+  &.ok { &:after {content: 'OK'} }
+  &.save { &:after {content: 'Save'} }
+  &.cancel-text { &:after {content: 'Cancel'} }
   &.plus {
     @include button-icon(plus)
   }

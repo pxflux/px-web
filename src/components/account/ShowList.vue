@@ -1,19 +1,23 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content">
-      <ul>
-        <li v-for="show in accountShows" :key="show['.key']">
-          <router-link :to="'/account/show/' + show['.key']">{{ show.title }}</router-link>
-        </li>
-      </ul>
-      <span class="nothing-found" v-if="accountShows.length == 0">Shows not found.</span>
-      <router-link to="/account/show/new">Add Show</router-link>
+    <div class="wrap-content">
+      <div class="content">
+        <div v-if="userAccount" class="wrap-content">
+          <ul>
+            <li v-for="show in accountShows" :key="show['.key']">
+              <router-link :to="'/account/show/' + show['.key']">{{ show.title }}</router-link>
+            </li>
+          </ul>
+          <span class="nothing-found" v-if="accountShows.length == 0">Shows not found.</span>
+          <router-link to="/account/show/new">Add Show</router-link>
+        </div>
+      </div>
     </div>
   </main>
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
   import firebase from '../../firebase-app'
 
   export default {
@@ -35,7 +39,7 @@
 
       init () {
         if (this.accountId) {
-          this.setRef({key: 'accountShows', ref: firebase.database().ref('accounts/' + this.accountId + '/shows')})
+          this.setRef({ key: 'accountShows', ref: firebase.database().ref('accounts/' + this.accountId + '/shows') })
         }
       }
     },

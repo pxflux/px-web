@@ -1,6 +1,6 @@
 @import "buttons";
 
-$input-padding-x: $module-size / 8;
+$input-padding-x: $module-size / 4;
 $input-padding-y: 0rem;
 
 .button, button{
@@ -9,7 +9,7 @@ $input-padding-y: 0rem;
   }
 }
 
-input, textarea, .editable.with-submit{
+input, textarea{
   border: none;
   padding: $input-padding-y $input-padding-x;
   width: 100%;
@@ -23,33 +23,60 @@ input, textarea, .editable.with-submit{
   }
 }
 
+ul{
+  li{
+    min-height: $module-size;
+    background: $bg-semi-transparent-color;
+
+    &.card{
+      display: flex;
+      flex-flow: row nowrap;
+      align-content: center;
+      height: $module-size;
+      max-width: 6 * $module-size;
+      margin-bottom: $module-size/4;
+      image{
+        flex-shrink: 0;
+      }
+      span{
+        flex-grow: 1;
+        padding: 0 $input-padding-x;
+        line-height: $module-size;
+      }
+    }
+  }
+}
+
 .editable-with-submit{
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+  //background: $bg-color;
 
   .editable {
     display: inline-block;
     word-break: break-all;
     max-width: initial;
+    padding-right: $input-padding-x;
+
     @include weider-then-phone {
       width: auto;
     }
-    &:focus {
-      /*background: red;*/
-    }
   }
   .button {
-    display: inline-block;
     position: relative;
-    &.frameless{background: transparent}
-
-    //vertical-align: middle;
+    width: auto;
+    padding: 0 $module-size / 4;
+    background: transparentize($bg-color, 0.6);
   }
   .button-group {
-    display: inline-block;
-    vertical-align: middle;
-    //flex-flow: row nowrap;
+    display: flex;
+    flex-flow: row nowrap;
+
+    button:first-child{
+      border: 1px $outline-color;
+      border-style: none solid;
+    }
   }
 }
 
@@ -60,7 +87,7 @@ input, textarea, .editable.with-submit{
     outline: none;
   }
   &[contenteditable="true"]{
-    position: relative;
+      position: relative;
       color: $interactive-color;
     &:after{
       content: '';
@@ -70,11 +97,8 @@ input, textarea, .editable.with-submit{
       min-height: $module-size;
       @include centered();
       z-index: -1;
-      //border-bottom: 1px solid transparentize($interactive-color, 0.8);
-      //background: pink;
     }
     &:focus:after{
-      //border-bottom: 1px solid $interactive-color;
     }
   }
 }

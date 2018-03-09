@@ -8,10 +8,10 @@
         <section class="staff">
           <h2>People</h2>
           <ul>
-            <li v-for="person in people" :key="user['.key']">
+            <li v-for="person in people" :key="user['.key']" class="card">
               <img v-if="person.photoUrl" :src="person.photoUrl" :alt="person.displayName" class="user-photo" width="48"
                    height="48">
-              {{ person.displayName }}
+              <span>{{ person.displayName }}</span>
             </li>
           </ul>
           <h2>Invitations</h2>
@@ -118,7 +118,10 @@
   }
 </script>
 <style lang="scss">
-  .h[contenteditable="true"]{
   
+  .staff{
+    img{
+      filter: grayscale(100%);
+    }
   }
 </style>

@@ -1,13 +1,15 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content">
-      <ul>
-        <li v-for="player in accountPlayers" :key="player['.key']">
-          {{ player.pin }}
-        </li>
-      </ul>
-      <span class="nothing-found" v-if="accountPlayers.length === 0">Players not found.</span>
-      <router-link to="/account/player/new">Add Player</router-link>
+      <div class="content">
+        <ul>
+          <li v-for="player in accountPlayers" :key="player['.key']">
+            {{ player.pin }}
+          </li>
+        </ul>
+        <span class="nothing-found" v-if="accountPlayers.length === 0">Players not found.</span>
+        <router-link to="/account/player/new">Add Player</router-link>
+      </div>
     </div>
   </main>
 </template>
@@ -35,7 +37,10 @@
 
       init () {
         if (this.accountId) {
-          this.setRef({key: 'accountPlayers', ref: firebase.database().ref('accounts/' + this.accountId + '/players')})
+          this.setRef({
+            key: 'accountPlayers',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/players')
+          })
         }
       }
     },

@@ -1,27 +1,28 @@
 <template>
   <div class="editable-with-submit">
-      <span :contenteditable="editable"
-            tabindex="0"
-            ref="txt"
-            :class="stringClass"
-            class="editable with-submit"></span>
-    <div v-if="!editable"
+    <span :contenteditable="editable"
+          tabindex="0"
+          ref="txt"
+          :class="stringClass"
+          class="editable with-submit">
+    </span>
+    <button v-if="!editable"
          @click="makeEditable"
          class="button frameless"
          contenteditable="false">
-      <i class="edit"></i>
-    </div>
+      Change
+    </button>
     <div v-else=""
          class="button-group"
          contenteditable="false">
-          <span @click="cancel"
-                class="button frameless">
-            <i class="cancel-text"></i>
-          </span>
-      <span @click="submit"
+      <button @click="cancel"
             class="button frameless">
-            <i class="save"></i>
-          </span>
+            Cancel
+      </button>
+      <button @click="submit"
+            class="button frameless">
+            <b>Save</b>
+      </button>
     </div>
   </div>
 </template>
@@ -45,6 +46,7 @@
         this.backup = this.$refs.txt.innerText
         this.editable = true
         this.$refs.txt.focus()
+        this.setCaret()
       },
       submit () {
         this.$emit('input', this.$refs.txt.innerText)
@@ -57,7 +59,18 @@
       blur () {
         this.$refs.txt.blur()
         this.editable = false
+      },
+      setCaret () {
+        const el = this.$refs.txt
+        const range = document.createRange()
+        const sel = window.getSelection()
+        range.setStart(el.childNodes[0], el.innerText.length)
+        range.collapse(true)
+        sel.removeAllRanges()
+        sel.addRange(range)
+        el.focus()
       }
+
     },
     mounted () {
       this.$refs.txt.innerText = this.value
@@ -83,10 +96,3 @@
     }
   }
 </script>
-<style lang="scss" scoped>
-  @import "../../../assets/sass/vars";
-  @import "../../../assets/sass/mixins";
-  
-  .editable-with-submit {
-  }
-</style>
