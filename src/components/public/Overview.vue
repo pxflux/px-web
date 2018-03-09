@@ -10,28 +10,37 @@
     </div>
     
     <div>
-Unlike other media art institutions  Pxflux  not deal with curating, exhibiting, collecting, maintaining, etc. of art works. 
+Unlike other media art institutions Pxflux not deal with curating,
+exhibiting, collecting, maintaining, etc. of art works. 
 Pxflux works as a host, with its own build futures.
 <em>Pxflux is a platform for making new ideas works!<em>
  
-Pxflux consider itself as a new laboratory, or a breading platform, solving difficult questions and offering users an outstanding expertise in all fields relevant topics related to new digital  media art.PxFlux
+Pxflux consider itself as a new laboratory, or a breading platform, 
+solving difficult questions and offering users an outstanding expertise 
+in all fields relevant topics related to new digital  media art.PxFlux
 atoms & digits  & pixels flux! 
 New Art Moves!
 
-PxFlux is an online open source collaborative platform and software infrastructures that enable users 
-to make art, and an easy way to distribute, promote, share, and collect digital art content. The digital format artworks, including film,  video, 4K video, video loops, multichannel projections,  web(net) art, interactive and generative art, VR, computational works and games.
-Pxflux mission to creating a space for diverse art based  experience, where  local and global network of all artists, galleries and libraries  come together to share, learn  etc... Platform for building useful tools securely managing and delivering artists works to connected display devices of collectors, institutions, private enthusiasts and commercial installations around the world. In doing so, Pxflux aims to connect people emotionally, exposing global audiences to immersive art experiences of moving applications
+PxFlux is an online open source collaborative platform and software 
+infrastructures that enable users 
+to make art, and an easy way to distribute, promote, share, 
+and collect digital art content. The digital format artworks, 
+including film,  video, 4K video, video loops, multichannel projections,  
+web(net) art, interactive and generative art, VR, computational works and games.
+Pxflux mission to creating a space for diverse art based  experience, 
+where  local and global network of all artists, galleries and 
+libraries  come together to share, learn  etc... 
+Platform for building useful tools securely managing and delivering artists works 
+to connected display devices of collectors, institutions, private enthusiasts and 
+commercial installations around the world. In doing so, 
+Pxflux aims to connect people emotionally, exposing global audiences 
+to immersive art experiences of moving applications
 
-
-
-
-pxFlux:
+Pxflux is a place for collaboration between artists and programmers!
 pxHost (repository)
-Environment for sketching and development of art projects
-Place for collaboration between artists and programmers!
-Collaboration & development tools
-pxRepository + git Server!
-Environment for testing (on pxDisplay with pxRemote)
+Environment for sketching and development tools of art projects
+Integrateted git
+Environment for testing work (on pxDisplay with pxRemote)
 Presentational tools
 pxDisplay
 pxRemote
@@ -44,12 +53,17 @@ Galleries & Curated collections
 pxCollection
 pxArchive
 Unique recording system that allows archiving the whole life cycle of the artwork.
-Records about the work starting from the first sketches and the communication between artist and collaborators during the production, to the iteration reports of the final product during shows..( Git?)
+Records about the work starting from the first sketches and the communication between 
+artist and collaborators during the production, to the iteration reports of the final 
+product during shows.
 
 
 Learn about and experience
 Learn artists and their artworks, follow….
-Accessible,without hassle of technical…. , give the viewer the possibility to perceive an artwork from a distance while giving the work an autonomous place no matter where it is shown: in a public space, a gallery or in a living room.
+Accessible,without hassle of technical…. , 
+give the viewer the possibility to perceive an artwork from a 
+distance while giving the work an autonomous place no matter where it is shown: 
+in a public space, a gallery or in a living room.
  
 
 Display  ( player)
