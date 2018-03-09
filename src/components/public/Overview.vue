@@ -8,7 +8,9 @@
         <span v-for="l in w" ref="subtitleLetters">{{l}}</span>
       </div>
     </div>
-  <Unlike other media art institutions  Pxflux  not deal with curating, exhibiting, collecting, maintaining, etc. of art works. 
+    
+    <div>
+Unlike other media art institutions  Pxflux  not deal with curating, exhibiting, collecting, maintaining, etc. of art works. 
 Pxflux works as a host, with its own build futures.
 <em>Pxflux is a platform for making new ideas works!<em>
  
@@ -20,15 +22,7 @@ PxFlux is an online open source collaborative platform and software infrastructu
 to make art, and an easy way to distribute, promote, share, and collect digital art content. The digital format artworks, including film,  video, 4K video, video loops, multichannel projections,  web(net) art, interactive and generative art, VR, computational works and games.
 Pxflux mission to creating a space for diverse art based  experience, where  local and global network of all artists, galleries and libraries  come together to share, learn  etc... Platform for building useful tools securely managing and delivering artists works to connected display devices of collectors, institutions, private enthusiasts and commercial installations around the world. In doing so, Pxflux aims to connect people emotionally, exposing global audiences to immersive art experiences of moving applications
 
-1Production
-2: Connectivity and Collaboration
-3. Publishing, distributing, sharing
-4.Record, documentation and archive
-5. Marketing
 
-
-
-The platform build from necessity of find solutions to produce, show, document, archive, distribute digital art . PxFlux is concentrate on screen-based art, that is, art whose primary medium of visual output is the screen, be it monitors, projections, handheld devices, or the like. This includes (but is not limited to) video, video loops, multichannel projections,  web(net) art, interactive and generative art, VR, and games.
 
 
 pxFlux:
@@ -85,7 +79,7 @@ Our remote control and the player will provide various permission levels for the
 control of the content. This will enable many different uses, from an exhibition visitor using
 their phone to get information on the work being shown, to possibility of multiuser control of
 the interactive artwork, to an owner of the player using their ‘remote control’ to get full access
-to the player and the screen settings.</main>
+to the player and the screen settings.</div></main>
 </template>
 <script>
   import Color from '../../assets/js/color'
