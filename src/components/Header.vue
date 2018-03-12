@@ -2,7 +2,7 @@
   <header class="main">
     <div class="wrap">
       <router-link to="/">
-        <div id="px-logo-box" class="px-logo flick">
+        <div id="px-logo-box" class="px-logo">
           <canvas id="px-logo"></canvas>
           <span class="label beta"></span>
         </div>

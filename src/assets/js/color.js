@@ -158,9 +158,9 @@ Color.prototype = {
    * @param {number=} lOffset
    */
   offset: function (hOffset, sOffset, lOffset) {
-    var h = this.raw[ 0 ]
-    var s = this.raw[ 1 ]
-    var l = this.raw[ 2 ]
+    let h = this.raw[ 0 ]
+    let s = this.raw[ 1 ]
+    let l = this.raw[ 2 ]
     if (typeof hOffset !== 'undefined') {
       h = (h + hOffset) % 360
     }
