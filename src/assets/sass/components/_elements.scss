@@ -3,7 +3,7 @@
 $input-padding-x: $module-size / 4;
 $input-padding-y: 0rem;
 
-.button, button{
+.button, button {
   &:not(.frameless) {
     @include hairline-border();
   }
@@ -52,7 +52,7 @@ ul {
   flex-flow: row wrap;
   align-items: center;
   //background: $bg-color;
-
+  //
   .editable {
     display: inline-block;
     word-break: break-all;
@@ -66,16 +66,28 @@ ul {
   .button {
     position: relative;
     width: auto;
+    height: $module-size / 2;
+    min-height: $module-size / 2;
+    line-height: $module-size / 2;
     padding: 0 $module-size / 4;
-    background: transparentize($bg-color, 0.6);
+    background: transparentize($bg-color, 0.3);
+    border: 1px $bg-color;
+    border-style: none solid;
+  }
+  .button-wrap{
+    height: $module-size;
+    padding-top: $module-size / 4;
   }
   .button-group {
     display: flex;
     flex-flow: row nowrap;
 
-    button:first-child {
-      border: 1px $outline-color;
-      border-style: none solid;
+    button {
+    border-style: none solid none none;
+      border-color: $outline-color;
+      &:first-child {
+        border-style: none solid;
+      }
     }
   }
 }

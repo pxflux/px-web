@@ -6,15 +6,15 @@
           :class="stringClass"
           class="editable with-submit">
     </span>
-    <button v-if="!editable"
-            @click="makeEditable"
-            class="button frameless"
-            contenteditable="false">
-      Change
-    </button>
-    <div v-else=""
-         class="button-group"
-         contenteditable="false">
+    <div v-if="!editable" class="button-wrap">
+      <button @click="makeEditable"
+              class="button frameless"
+              contenteditable="false">
+        Change
+      </button>
+    </div>
+    <div v-else="" class="button-group button-wrap">
+      
       <button @click="cancel"
               class="button frameless">
         Cancel
@@ -31,9 +31,9 @@
   export default {
     name: 'editable-string',
     props: {
-      value: {default: '', type: String},
-      stringClass: {default: '', type: String},
-      multiLine: {default: false, type: Boolean}
+      value: { default: '', type: String },
+      stringClass: { default: '', type: String },
+      multiLine: { default: false, type: Boolean }
     },
     data () {
       return {
@@ -75,17 +75,15 @@
     mounted () {
       this.$refs.txt.innerText = this.value
       this.$refs.txt.addEventListener('keydown', (e) => {
-        console.log('--> this.multiLine: >>>>>>')
-        console.log(this.multiLine)
         if (!this.multiLine) {
-          console.log('--> e: >>>>>>')
-          console.log(e)
-          if (e.key === 13) { // ENTER
+          if (e.keyCode === 13) { // ENTER
             this.submit()
+            e.preventDefault()
           }
-          if (e.key === 27) { // ESC
-            this.cancel()
-          }
+        }
+        if (e.keyCode === 27) { // ESC
+          this.cancel()
+          e.preventDefault()
         }
       })
     },
