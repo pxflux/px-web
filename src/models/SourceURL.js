@@ -1,5 +1,4 @@
 /** @prop {?string} type  - Possible values html, video */
-import { cleanEntries } from './CleanEntries'
 
 /** @prop {?string} url   - URL to html page or a video file or Vimeo link */
 export class SourceURL {
@@ -25,17 +24,27 @@ export class SourceURL {
   }
 
   /**
-   * @param {SourceURL} original
+   * @param {string} prefix
    * @return {Object}
    */
-  updatedEntries (original) {
+  toEntries (prefix) {
     const data = {}
-    if (this.type !== original.type) {
-      data.type = this.type
+    data[prefix + 'type'] = this.type
+    data[prefix + 'url'] = this.url
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {SourceURL} original
+   */
+  updatedEntries (prefix, data, original) {
+    if (this.type === original.type) {
+      delete data[prefix + 'type']
     }
-    if (this.url !== original.url) {
-      data.url = this.url
+    if (this.url === original.url) {
+      delete data[prefix + 'url']
     }
-    return cleanEntries(data)
   }
 }

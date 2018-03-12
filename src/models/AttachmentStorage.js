@@ -1,5 +1,3 @@
-import { cleanEntries } from './CleanEntries'
-
 /**
  * @property {?string} displayUrl
  * @property {?string} storageUrl
@@ -32,17 +30,27 @@ export class AttachmentStorage {
   }
 
   /**
-   * @param {AttachmentStorage} origin
+   * @param {string} prefix
    * @return {Object}
    */
-  updatedEntries (origin) {
+  toEntries (prefix) {
     const data = {}
-    if (this.displayUrl !== origin.displayUrl) {
-      data.displayUrl = this.displayUrl
+    data[prefix + 'displayUrl'] = this.displayUrl
+    data[prefix + 'storageUrl'] = this.storageUrl
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {AttachmentStorage} origin
+   */
+  updatedEntries (prefix, data, origin) {
+    if (this.displayUrl === origin.displayUrl) {
+      delete data[prefix + 'displayUrl']
     }
-    if (this.storageUrl !== origin.storageUrl) {
-      data.storageUrl = this.storageUrl
+    if (this.storageUrl === origin.storageUrl) {
+      delete data[prefix + 'storageUrl']
     }
-    return cleanEntries(data)
   }
 }

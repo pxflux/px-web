@@ -17,15 +17,31 @@ export class ImageAttachment extends Attachment {
     super('image', storage, caption, ratio)
   }
 
+  /**
+   * @return {ImageAttachment}
+   */
   static empty () {
     return new ImageAttachment(AttachmentStorage.empty(), '', null)
   }
 
+  /**
+   * @param value
+   * @return {ImageAttachment}
+   */
   static fromJson (value) {
     const attachment = Attachment.fromJson(value)
     if (attachment === null) {
       return this.empty()
     }
     return new ImageAttachment(attachment.storage, attachment.caption, attachment.ratio)
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {ImageAttachment} origin
+   */
+  updatedImageEntries (prefix, data, origin) {
+    super.updatedEntries(prefix, data, origin)
   }
 }

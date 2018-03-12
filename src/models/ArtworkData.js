@@ -1,7 +1,6 @@
 import { ContributorRefs } from './ContributorRef'
 import { Setups } from './Setup'
 import { Controls } from './Control'
-import { cleanEntries } from './CleanEntries'
 
 /**
  * @property {boolean} published
@@ -20,7 +19,7 @@ export class Artwork {
     this.title = title
     this.artists = artists
     this.credits = credits
-    this.year = year
+    this.year = isNaN(year) ? 0 : year
     this.description = description
     this.setups = setups
     this.controls = controls
@@ -28,7 +27,8 @@ export class Artwork {
   }
 
   static empty () {
-    return new Artwork(false, null, [], [], null, null, Setups.empty(), [], null)
+    return new Artwork(false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, Setups.empty(),
+      Controls.empty(), null)
   }
 
   /**
@@ -39,33 +39,59 @@ export class Artwork {
       return null
     }
     return new Artwork(value.published, value.title, ContributorRefs.fromJson(value.artists),
-      ContributorRefs.fromJson(value.credits), value.year, value.description, Setups.fromJson(value.setups),
-      Controls.fromJson(value.controls), value.version)
+      ContributorRefs.fromJson(value.credits), Number.parseInt(value.year), value.description,
+      Setups.fromJson(value.setups), Controls.fromJson(value.controls), value.version)
   }
 
   /**
+   * @param {string} prefix
+   * @return {Object}
+   */
+  toEntries (prefix) {
+    const data = {}
+    data[prefix + 'published'] = this.published
+    data[prefix + 'title'] = this.title
+    Object.assign(data, ContributorRefs.toEntries(prefix + 'artists/', this.artists))
+    Object.assign(data, ContributorRefs.toEntries(prefix + 'credits/', this.credits))
+    data[prefix + 'year'] = this.year
+    data[prefix + 'description'] = this.description
+    Object.assign(data, Setups.toEntries(prefix + 'setups/', this.setups))
+    Object.assign(data, Controls.toEntries(prefix + 'controls/', this.controls))
+    return data
+  }
+
+  /**
+   * @param {string} prefix
    * @param {Artwork} original
    * @return {Object}
    */
-  updatedEntries (original) {
-    const data = {}
-    if (this.published !== original.published) {
-      data.published = this.published
-    }
-    if (this.title !== original.title) {
-      data.title = this.title
-    }
-    data.artists = ContributorRefs.updatedEntries(this.artists)
-    data.credits = ContributorRefs.updatedEntries(this.credits)
-    if (this.year !== original.year) {
-      data.year = this.year
-    }
-    if (this.description !== original.description) {
-      data.description = this.description
-    }
-    data.setups = Setups.updatedEntries(original.setups, this.setups)
-    data.controls = this.controls.map(value => value.updatedEntries())
+  toUpdates (prefix, original) {
+    const data = this.toEntries(prefix)
+    this.updatedEntries(prefix, data, original)
+    return data
+  }
 
-    return cleanEntries(data)
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {Artwork} original
+   */
+  updatedEntries (prefix, data, original) {
+    if (this.published === original.published) {
+      delete data[prefix + 'published']
+    }
+    if (this.title === original.title) {
+      delete data[prefix + 'title']
+    }
+    ContributorRefs.updatedEntries(prefix + 'artists/', data, original.artists, this.artists)
+    ContributorRefs.updatedEntries(prefix + 'credits/', data, original.credits, this.credits)
+    if (this.year === original.year) {
+      delete data[prefix + 'year']
+    }
+    if (this.description === original.description) {
+      delete data[prefix + 'description']
+    }
+    Setups.updatedEntries(prefix + 'setups/', data, original.setups, this.setups)
+    Controls.updatedEntries(prefix + 'controls/', data, original.controls, this.controls)
   }
 }

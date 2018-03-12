@@ -67,9 +67,9 @@
   // https://github.com/hilongjw/vue-dragging *
 
   import { mapActions, mapState } from 'vuex'
-  import { log } from '../../helper'
-  import firebase, { store } from '../../firebase-app'
+  import firebase from '../../firebase-app'
   import { Artwork } from '../../models/ArtworkData'
+  import { log } from '../../helper'
 
   import RemoteControlEditor from '../elements/RemoteControlEditor'
   import ContributorsEditor from '../elements/ContributorsEditor'
@@ -139,6 +139,13 @@
         if (!this.accountId) {
           return
         }
+        const path = 'accounts/' + this.accountId + '/artworks/'
+        const id = this.isNew ? firebase.database().ref(path).push().key : this.artworkId
+        const original = this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork)
+        firebase.database().ref().update(this.artwork.toUpdates(path + id + '/', original)).then(function (ref) {
+          this.$router.push('/artwork/' + id)
+        }.bind(this)).catch(log())
+
         // const artwork = Artwork(this.accountArtwork)
         // this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
         //   const data = { fullName: artist.fullName }
@@ -148,10 +155,11 @@
         //   artwork.artists[artist['.key']] = data
         // })
         // artwork.controls = this.selectedControls
-        const data = this.artwork.updatedEntries(this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork))
-        store(this.accountId, this.artworkId, 'artworks', data, this.imageRemoved, this.imageFile).then(function (ref) {
-          this.$router.push('/artwork/' + ref.key)
-        }.bind(this)).catch(log())
+        // const prefix = 'accounts/' + this.accountId + '/artworks/' + this.artworkId + '/'
+        // const data = this.artwork.toEntries(prefix, this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork))
+        // store(this.accountId, this.artworkId, 'artworks', data, this.imageRemoved, this.imageFile).then(function (ref) {
+        //   this.$router.push('/artwork/' + ref.key)
+        // }.bind(this)).catch(log())
       }
     },
     watch: {
