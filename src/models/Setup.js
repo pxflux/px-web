@@ -1,18 +1,24 @@
 import { SourceURL } from './SourceURL'
 import { VideoAttachment } from './VideoAttachment'
 import { ImageAttachment } from './ImageAttachment'
-import { cleanEntries } from './CleanEntries'
 
+/**
+ * @property {number} order
+ * @property {?string} title
+ * @property {SourceURL} source
+ * @property {ImageAttachment} thumbnail
+ * @property {VideoAttachment} preview
+ */
 export class Setup {
   /**
-   * @param order
-   * @param title
+   * @param {number} order
+   * @param {?string} title
    * @param {SourceURL} source
    * @param {ImageAttachment} thumbnail
    * @param {VideoAttachment} preview
    */
   constructor (order, title, source, thumbnail, preview) {
-    this.order = order
+    this.order = isNaN(order) ? 0 : order
     this.title = title
     this.source = source
     this.thumbnail = thumbnail
@@ -27,36 +33,50 @@ export class Setup {
     if (typeof value !== 'object') {
       return null
     }
-    return new Setup(value.order, value.title, SourceURL.fromJson(value.source),
+    return new Setup(Number.parseInt(value.order), value.title, SourceURL.fromJson(value.source),
       ImageAttachment.fromJson(value.thumbnail), VideoAttachment.fromJson(value.preview))
   }
 
   /**
+   * @param {string} prefix
    * @return {Object}
    */
-  updatedEntries (original) {
+  toEntries (prefix) {
     const data = {}
-    if (this.order !== original.order) {
-      data.order = this.order
-    }
-    if (this.title !== original.title) {
-      data.title = this.title
-    } else if (this.title === null) {
-      data.title = 'Simple'
-    }
-    data.source = this.source.updatedEntries(original.source)
-    data.thumbnail = this.thumbnail.updatedEntries(original.thumbnail)
-    data.preview = this.preview.updatedEntries(original.preview)
+    data[prefix + 'title'] = this.title ? this.title : 'Simple'
+    Object.assign(data, this.source.toEntries(prefix + 'source/'))
+    Object.assign(data, this.thumbnail.toEntries(prefix + 'thumbnail/'))
+    Object.assign(data, this.preview.toEntries(prefix + 'preview/'))
+    return data
+  }
 
-    return cleanEntries(data)
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {Setup} original
+   */
+  updatedEntries (prefix, data, original) {
+    if (this.title === original.title) {
+      delete data[prefix + 'title']
+    }
+    this.source.updatedEntries(prefix + 'source/', data, original.source)
+    this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, original.thumbnail)
+    this.preview.updatedEntries(prefix + 'preview/', data, original.preview)
   }
 }
 
 export class Setups {
+  /**
+   * @return {Setup[]}
+   */
   static empty () {
     return [Setup.empty()]
   }
 
+  /**
+   * @param value
+   * @return {Setup[]}
+   */
   static fromJson (value) {
     if (typeof value === 'object') {
       return Object.keys(value).map(key => Setup.fromJson(Object.assign(value[key], {order: key})))
@@ -68,15 +88,29 @@ export class Setups {
   }
 
   /**
-   * @param {Setup[]} originals
+   * @param {string} prefix
    * @param {Setup[]} values
    * @return {Object}
    */
-  static updatedEntries (originals, values) {
-    return values.map(value => {
-      const data = originals.filter(setup => setup.order === value.order)
-      const original = data.length > 0 ? data[0] : Setup.empty()
-      return value.updatedEntries(original)
-    }).filter(_ => _ !== null)
+  static toEntries (prefix, values) {
+    const data = {}
+    values.forEach(value => {
+      Object.assign(data, value.toEntries(prefix + value.order + '/'))
+    })
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {Setup[]} originals
+   * @param {Setup[]} values
+   */
+  static updatedEntries (prefix, data, originals, values) {
+    values.forEach(value => {
+      const items = originals.filter(item => item.order === value.order)
+      const original = items.length > 0 ? items[0] : Setup.empty()
+      value.updatedEntries(prefix + value.order + '/', data, original)
+    })
   }
 }

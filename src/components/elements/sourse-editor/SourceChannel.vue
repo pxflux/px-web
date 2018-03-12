@@ -159,14 +159,21 @@
       })
     },
     methods: {
+      setSource (url) {
+        this.source = url
+        this.sourceIsOK = false
+        this.sourceDescription = 'URL (HTML/Javascript or Vimeo video link)'
+        this.outputsPanelOpen = false
+      },
       updateSource () {
         this.sourceDescription = ''
         const url = this.source
         if (this.getVimeoVideoIdFromUrl(url)) {
           this.getVimeoVideoInfo(url, (/** @type VimeoVideoInfo */ vimeoInfo) => {
             this.sourceDescription = `Vimeo video ${vimeoInfo.width} x ${vimeoInfo.height} px | [${vimeoInfo.duration}]`
+            this.sourceIsOK = true
+            this.$emit('input', new SourceURL(null, this.source))
           })
-          this.sourceIsOK = true
         } else {
           const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(url)
           axios.post(requestUrl).then(function (response) {
@@ -175,10 +182,12 @@
               response.data.hasOwnProperty('Content-Type')) {
               this.sourceDescription = response.data['Content-Type']
               this.sourceIsOK = true
+              this.$emit('input', new SourceURL(null, this.source))
             } else {
               this.sourceDescription = 'The URL is not valid.'
-              this.sourceIsOK = false
               this.outputsPanelOpen = false
+              this.sourceIsOK = false
+              this.$emit('input', SourceURL.empty())
             }
           }.bind(this))
         }
@@ -291,12 +300,7 @@
     },
     watch: {
       value: function () {
-        this.source = this.value.url
-      },
-      sourceIsOK: function () {
-        if (this.sourceIsOK) {
-          this.$emit('input', new SourceURL(null, this.source))
-        }
+        this.setSource(this.value.url)
       }
     }
   }

@@ -1,7 +1,6 @@
 import { Attachment } from './Attachment'
 import { AttachmentStorage } from './AttachmentStorage'
 import { ImageAttachment } from './ImageAttachment'
-import { cleanEntries } from './CleanEntries'
 
 /**
  * @property {?string} type
@@ -40,15 +39,26 @@ export class VideoAttachment extends Attachment {
   }
 
   /**
-   * @param {VideoAttachment} origin
+   * @param {string} prefix
    * @return {Object}
    */
-  updatedEntries (origin) {
-    const data = super.updatedEntries(origin) || {}
-    if (this.duration !== origin.duration) {
-      data.duration = this.duration
+  toEntries (prefix) {
+    const data = super.toEntries(prefix)
+    data[prefix + 'duration'] = this.duration
+    Object.assign(data, this.thumbnail.toEntries(prefix + 'thumbnail/'))
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {VideoAttachment} origin
+   */
+  updatedEntries (prefix, data, origin) {
+    super.updatedEntries(prefix, data, origin)
+    if (this.duration === origin.duration) {
+      delete data[prefix + 'duration']
     }
-    data.thumbnail = this.thumbnail.updatedEntries(origin.thumbnail)
-    return cleanEntries(data)
+    this.thumbnail.updatedImageEntries(prefix + 'thumbnail/', data, origin.thumbnail)
   }
 }

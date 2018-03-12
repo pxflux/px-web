@@ -1,5 +1,4 @@
 import { AttachmentStorage } from './AttachmentStorage'
-import { cleanEntries } from './CleanEntries'
 
 /**
  * @property {?string} type
@@ -17,7 +16,7 @@ export class Attachment {
     this.type = type
     this.storage = storage
     this.caption = caption
-    this.ratio = ratio
+    this.ratio = isNaN(ratio) ? null : ratio
   }
 
   static empty () {
@@ -31,25 +30,38 @@ export class Attachment {
     if (typeof value !== 'object') {
       return null
     }
-    return new Attachment(value.type, AttachmentStorage.fromJson(value.storage), value.caption, value.ratio)
+    return new Attachment(value.type, AttachmentStorage.fromJson(value.storage), value.caption,
+      Number.parseFloat(value.ratio))
   }
 
   /**
-   * @param {Attachment} origin
+   * @param {string} prefix
    * @return {Object}
    */
-  updatedEntries (origin) {
+  toEntries (prefix) {
     const data = {}
-    if (this.type !== origin.type) {
-      data.type = this.type
+    data[prefix + 'type'] = this.type
+    Object.assign(data, this.storage.toEntries(prefix + 'storage/'))
+    data[prefix + 'caption'] = this.caption
+    data[prefix + 'ratio'] = this.ratio
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {Attachment} origin
+   */
+  updatedEntries (prefix, data, origin) {
+    if (this.type === origin.type) {
+      delete data[prefix + 'type']
     }
-    data.storage = this.storage.updatedEntries(origin.storage)
-    if (this.caption !== origin.caption) {
-      data.caption = this.caption
+    this.storage.updatedEntries(prefix + 'storage/', data, origin.storage)
+    if (this.caption === origin.caption) {
+      delete data[prefix + 'caption']
     }
-    if (this.ratio !== origin.ratio) {
-      data.ratio = this.ratio
+    if (this.ratio === origin.ratio) {
+      delete data[prefix + 'ratio']
     }
-    return cleanEntries(data)
   }
 }
