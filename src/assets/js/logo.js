@@ -28,6 +28,9 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
   const canvas = document.getElementById(canvasID)
   const ctx = canvas.getContext('2d')
 
+  const buffer = document.createElement('canvas')
+  const bufferCtx = buffer.getContext('2d')
+
   const gradient = options.gradient  // new Gradient([bgColor.offset(45, 100)]);
   let gradientPosition = 0
   const gradientStep = 0.05
@@ -41,11 +44,17 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
   let logoTopSpx = 0
   let logoLeftSpx = 0
   let gridAlreadyDrawn = false
-  let mainColor = true
+  let mainColor = '#00ff60'
 
   this.logoTopSpx = 0
   this.logoLeftSpx = 0
   this.logoH = 0
+
+  const extrudeShapes = {
+    walls: [], floors: [], ceilings: []
+  }
+  const extrudeColors = { walls: '#00ff60', ceilings: '#78019a', floors: '#78019a' }
+  let extrudeAngleDegree = 45
 
   // Listen for the event.
   window.addEventListener('changeMainColor', function (e) {
@@ -62,6 +71,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
     if (!url) url = imgURL
     modelPixels = new ImgPixels(url)
     modelPixels.readPixels(function () {
+      setupExtrude()
       setLogoCanvasSize(options.width)
       gridAlreadyDrawn = false
       _this.draw()
@@ -74,17 +84,23 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     const pixSize = _this.sPX // -1;
     const colorWidth = 1 / modelPixels.width
-    mainColor = new Color(null, 5, 5)
+    mainColor = new Color(142, 100, 50)
+
+    if (options.fillParent) {
+      drawExtrudeShapes()
+      // drawExtrudeShapes(extrudeShapes.floors, extrudeColors[1])
+    }
 
     for (let y = 0; y < modelPixels.height; y++) {
       const pxY = pixSize * (y + logoTopSpx)
 
-      for (let x = 0; x < modelPixels.width; x++) {
+      for (let x = modelPixels.width - 1; x >= 0; x--) {
         const pxX = pixSize * (x + logoLeftSpx)
         const px = modelPixels.pixTable[x][y]
         if (px.a === 0) {
           continue
         }
+
         if (options.gradient) {
           let pxLum = px.lum
 
@@ -105,7 +121,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
               col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBAString(px.a)
             }
           } else {
-            col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBAString(px.a)
+            col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBString()
           }
           ctx.fillStyle = col // px.colorString
         }
@@ -142,6 +158,135 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
         requestAnimationFrame(_this.draw)
       }, 0)
     }
+  }
+
+  function drawExtrudeShapes () {
+    const width = extrudeShapes.walls.length
+    const keys = extrudeAngleDegree > 0 ? ['walls', 'floors'] : (extrudeAngleDegree < 0 ? ['walls', 'ceilings'] : ['walls'])
+    for (let x = 0; x < width; x++) {
+      keys.forEach(key => {
+        if (extrudeShapes[key][x]) {
+          const shapes = extrudeShapes[key][x]
+          bufferCtx.beginPath()
+          bufferCtx.fillStyle = extrudeColors[key]
+          shapes.forEach(shape => { drawShape(shape, bufferCtx) })
+          bufferCtx.fill()
+        }
+      })
+    }
+    const alpha = ctx.globalAlpha
+    ctx.globalAlpha = 0.2
+    ctx.drawImage(buffer, 0, 0)
+    ctx.globalAlpha = alpha
+  }
+
+  function drawShape (p, ctx) {
+    const pxSize = _this.sPX
+    const angleDegree = extrudeAngleDegree
+
+    const pxX1 = pxSize * (p.x1 + logoLeftSpx)
+    const pxY1 = pxSize * (p.y1 + logoTopSpx)
+    const pxX2 = pxSize * (p.x2 + logoLeftSpx)
+    const pxY2 = pxSize * (p.y2 + logoTopSpx)
+    const shape = {
+      p1: { x: pxX1, y: pxY1 },
+      p2: { x: pxX2, y: pxY2 },
+      p3: { x: -pxSize, y: getEndY(pxX2, pxY2, angleDegree, -pxSize) },
+      p4: { x: -pxSize, y: getEndY(pxX1, pxY1, angleDegree, -pxSize) }
+    }
+    ctx.moveTo(shape.p1.x, shape.p1.y)
+    ctx.lineTo(shape.p2.x, shape.p2.y)
+    ctx.lineTo(shape.p3.x, shape.p3.y)
+    ctx.lineTo(shape.p4.x, shape.p4.y)
+  }
+
+  /**
+   * @param {number} startX
+   * @param {number} startY
+   * @param {number} degrees
+   * @param {number} endX
+   * @return {number}
+   *
+   * endX +⇤––* (startX, startY)
+   *      |  / ⋱degrees
+   *      | /
+   *      ⤓/
+   * endY ?
+   */
+  function getEndY (startX, startY, degrees, endX) {
+    const angle = degrees * Math.PI / 180
+    const adjacentLeg = startX - endX
+    const oppositeLeg = adjacentLeg * Math.tan(angle)
+    return oppositeLeg + startY
+  }
+
+  function setupExtrude () {
+    extrudeShapes.floors = []
+    extrudeShapes.ceilings = []
+    extrudeShapes.walls = []
+    for (let y = 0; y < modelPixels.height; y++) {
+      for (let x = modelPixels.width - 1; x >= 0; x--) {
+        const px = modelPixels.pixTable[x][y]
+        if (px.a === 0) continue
+        // setup walls
+        if (x > 0 && modelPixels.pixTable[x - 1][y].a === 0) {
+          if (!extrudeShapes.walls[x]) {
+            extrudeShapes.walls[x] = []
+            extrudeShapes.walls[x].push({ x1: x, y1: y, x2: x, y2: y + 1 })
+          } else {
+            const wallsX = extrudeShapes.walls[x]
+            const lasIndex = wallsX.length - 1
+            if (wallsX[lasIndex].y2 === y) {
+              // merge walls
+              wallsX[lasIndex].y2 = y + 1
+            } else {
+              extrudeShapes.walls[x].push({ x1: x, y1: y, x2: x, y2: y + 1 })
+            }
+          }
+        }
+        // setup floors
+        if (y === modelPixels.height - 1 ||
+          (y < modelPixels.height - 1 && modelPixels.pixTable[x][y + 1].a === 0)) {
+          if (!extrudeShapes.floors[x]) extrudeShapes.floors[x] = []
+          if (x < modelPixels.width - 1 && extrudeShapes.floors[x + 1]) {
+            let merged = false
+            extrudeShapes.floors[x + 1].forEach(floor => {
+              if (floor && floor.y1 === y + 1) {
+                // merge floors
+                extrudeShapes.floors[x].push({ x1: x, y1: y + 1, x2: floor.x2, y2: y + 1 })
+                floor = null
+                merged = true
+              }
+            })
+            if (!merged) extrudeShapes.floors[x].push({ x1: x, y1: y + 1, x2: x + 1, y2: y + 1 })
+          } else {
+            extrudeShapes.floors[x].push({ x1: x, y1: y + 1, x2: x + 1, y2: y + 1 })
+          }
+        }
+        // setup ceilings
+        if (y === 0 ||
+          (y > 0 && modelPixels.pixTable[x][y - 1].a === 0)) {
+          if (!extrudeShapes.ceilings[x]) extrudeShapes.ceilings[x] = []
+          if (x < modelPixels.width - 1 && extrudeShapes.ceilings[x + 1]) {
+            let merged = false
+            extrudeShapes.ceilings[x + 1].forEach(ceiling => {
+              if (ceiling && ceiling.y1 === y) {
+                // merge ceilings
+                extrudeShapes.ceilings[x].push({ x1: x, y1: y, x2: ceiling.x2, y2: y })
+                ceiling = null
+                merged = true
+              }
+            })
+            if (!merged) extrudeShapes.ceilings[x].push({ x1: x, y1: y, x2: x + 1, y2: y })
+          } else {
+            extrudeShapes.ceilings[x].push({ x1: x, y1: y, x2: x + 1, y2: y })
+          }
+        }
+      }
+    }
+    extrudeShapes.floors.reverse()
+    extrudeShapes.ceilings.reverse()
+    extrudeShapes.walls.reverse()
   }
 
   function setLogoCanvasSize (desiredWidth) {
@@ -193,6 +338,9 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
       canvas.style.width = w + 'px'
       canvas.style.height = h + 'px'
     }
+    buffer.width = canvas.width
+    buffer.height = canvas.height
+
     if (_this.sPX !== previousSpx) {
       const event = new CustomEvent('changePxSize', { detail: _this.sPX })
       window.dispatchEvent(event)
