@@ -48,8 +48,8 @@
           </div>
         </section>
         <footer class="editor-section">
-          <router-link v-if="isNew" to="/account/artworks">Cancel</router-link>
-          <router-link v-if="! isNew" :to="'/account/artwork/' + artworkId">Cancel</router-link>
+          <router-link v-if="isNew" to="/artworks">Cancel</router-link>
+          <router-link v-if="! isNew" :to="'/artwork/' + artworkId">Cancel</router-link>
           <button v-if="isNew" @click="submitArtwork">Create</button>
           <button v-if="! isNew" @click="submitArtwork">Save</button>
         </footer>
@@ -90,7 +90,7 @@
       this.init()
     },
     computed: {
-      ...mapState(['userAccount', 'accountArtwork', 'artists']),
+      ...mapState(['userAccount', 'accountArtwork']),
 
       accountId () {
         if (!this.userAccount) {
@@ -126,14 +126,7 @@
         } else {
           this.source = null
         }
-        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
       },
-      // /**
-      //  * @param {Control[]} controls
-      //  */
-      // setControls (controls) {
-      //   this.selectedControls = controls
-      // },
       submitArtwork () {
         if (!this.accountId) {
           return
@@ -141,19 +134,12 @@
         const path = 'accounts/' + this.accountId + '/artworks/'
         const id = this.isNew ? firebase.database().ref(path).push().key : this.artworkId
         const original = this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork)
-        firebase.database().ref().update(this.artwork.toUpdates(path + id + '/', original)).then(function (ref) {
+        const values = this.artwork.toUpdates(path + id + '/', original)
+        firebase.database().ref().update(values).then(function (ref) {
           this.$router.push('/artwork/' + id)
         }.bind(this)).catch(log())
 
         // const artwork = Artwork(this.accountArtwork)
-        // this.artists.filter(artist => this.selectedArtistIds.includes(artist['.key'])).forEach(artist => {
-        //   const data = { fullName: artist.fullName }
-        //   if (artist.photoUrl) {
-        //     data.photoUrl = artist.photoUrl
-        //   }
-        //   artwork.artists[artist['.key']] = data
-        // })
-        // artwork.controls = this.selectedControls
         // const prefix = 'accounts/' + this.accountId + '/artworks/' + this.artworkId + '/'
         // const data = this.artwork.toEntries(prefix, this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork))
         // store(this.accountId, this.artworkId, 'artworks', data, this.imageRemoved, this.imageFile).then(function (ref) {

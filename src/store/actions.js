@@ -3,7 +3,7 @@ import { firebaseAction } from 'vuexfire'
 
 export default {
   setRef: firebaseAction(({bindFirebaseRef}, payload) => {
-    bindFirebaseRef(payload.key, payload.ref, {wait: true})
+    bindFirebaseRef(payload.key, payload.ref, {wait: false})
   }),
   unsetRef: firebaseAction(({unbindFirebaseRef}, key) => {
     unbindFirebaseRef(key)

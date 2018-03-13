@@ -107,10 +107,18 @@ export class Setups {
    * @param {Setup[]} values
    */
   static updatedEntries (prefix, data, originals, values) {
+    // add & updates
     values.forEach(value => {
       const items = originals.filter(item => item.order === value.order)
       const original = items.length > 0 ? items[0] : Setup.empty()
       value.updatedEntries(prefix + value.order + '/', data, original)
+    })
+    // remove
+    originals.forEach(original => {
+      const items = values.filter(item => item.order === original.order)
+      if (items.length === 0) {
+        data[prefix + original.order] = null
+      }
     })
   }
 }

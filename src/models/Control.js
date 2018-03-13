@@ -187,7 +187,7 @@ export class Controls {
   static toEntries (prefix, values) {
     const data = {}
     values.forEach(value => {
-      Object.assign(data, value.toEntries(prefix + '/' + value.id + '/'))
+      Object.assign(data, value.toEntries(prefix + value.id + '/'))
     })
     return data
   }
@@ -199,10 +199,18 @@ export class Controls {
    * @param {Control[]} values
    */
   static updatedEntries (prefix, data, originals, values) {
+    // add & updates
     values.forEach(value => {
       const items = originals.filter(item => item.order === value.order)
       const original = items.length > 0 ? items[0] : Control.empty()
       value.updatedEntries(prefix + value.order + '/', data, original)
+    })
+    // remove
+    originals.forEach(original => {
+      const items = values.filter(item => item.order === original.order)
+      if (items.length === 0) {
+        data[prefix + original.order] = null
+      }
     })
   }
 }
