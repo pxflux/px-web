@@ -108,10 +108,13 @@
               </li>
             </template>
           </ul>
-          <div class="row">
+          <div v-if="accountId" class="row">
             <router-link :to="'/account/artwork/' + artworkId + '/edit'" class="button">
-              <div class="icon edit">edit</div>
+              <div class="icon edit"></div>
             </router-link>
+            <button v-if="!accountArtwork.published" @click="togglePublished(true)">Publish</button>
+            <button v-if="accountArtwork.published" @click="togglePublished(false)">Unpublish</button>
+            <button @click="removeArtwork">Delete</button>
           </div>
         </section>
       </div>
@@ -135,10 +138,8 @@
       this.init()
     },
     computed: {
-      ...mapState(['userAccount', 'artwork', 'accountPlayers']),
-      preview () {
-        return this.artwork && this.artwork.preview ? this.artwork.preview : null
-      },
+      ...mapState(['userAccount', 'publicArtwork', 'accountArtwork', 'accountPlayers']),
+
       accountId () {
         if (!this.userAccount) {
           return null
@@ -147,6 +148,21 @@
       },
       artworkId () {
         return this.$route.params.id
+      },
+      artwork () {
+        const getValue = (value) => {
+          if (value == null) {
+            return null
+          }
+          if (value.hasOwnProperty('.value') && value['.value'] === null) {
+            return null
+          }
+          return value
+        }
+        return getValue(this.publicArtwork) || getValue(this.accountArtwork)
+      },
+      preview () {
+        return this.artwork && this.artwork.preview ? this.artwork.preview : null
       },
       image () {
         console.log('this.artwork: >>>>>> image?')
@@ -177,8 +193,12 @@
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({key: 'artwork', ref: firebase.database().ref('artworks/' + this.artworkId)})
+        this.setRef({key: 'publicArtwork', ref: firebase.database().ref('artworks/' + this.artworkId)})
         if (this.accountId) {
+          this.setRef({
+            key: 'accountArtwork',
+            ref: firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
+          })
           this.setRef({
             key: 'accountPlayers',
             ref: firebase.database().ref('accounts/' + this.accountId + '/players')
@@ -214,6 +234,21 @@
       },
       sendControl (player, position) {
         firebase.database().ref('commands/' + player.pin).push({controlId: '' + position}).catch(log)
+      },
+      togglePublished (published) {
+        if (!this.accountId) {
+          return
+        }
+        const data = {published: published}
+        firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId).update(data).catch(log)
+      },
+      removeArtwork () {
+        if (!this.accountId) {
+          return
+        }
+        firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId).remove().then(function () {
+          this.$router.push('/artworks')
+        }.bind(this)).catch(log)
       }
     },
     watch: {

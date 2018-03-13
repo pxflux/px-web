@@ -18,8 +18,6 @@ import AccountInvitationList from '@/components/account/InvitationList'
 
 import AccountPlayerNew from '@/components/account/PlayerNew'
 import AccountPlayerList from '@/components/account/PlayerList'
-import AccountArtworkList from '@/components/account/ArtworkList'
-import AccountArtworkDetail from '@/components/account/ArtworkDetail'
 import AccountArtworkIterationDetail from '@/components/account/IterationDetail'
 import AccountArtworkEditor from '@/components/account/ArtworkEditor'
 import AccountArtistList from '@/components/account/ArtistList'
@@ -56,11 +54,9 @@ export function createRouter () {
       {path: '/account/players', component: AccountPlayerList},
       {path: '/account/player/new', component: AccountPlayerNew},
 
-      {path: '/account/artworks', component: AccountArtworkList},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail},
       {path: '/account/artwork/new', component: AccountArtworkEditor, props: {isNew: true}},
       {path: '/account/artwork/:id/edit', component: AccountArtworkEditor, props: {isNew: false}},
-      {path: '/account/artwork/:id', component: AccountArtworkDetail},
 
       {path: '/account/artists', component: AccountArtistList},
       {path: '/account/artist/new', component: AccountArtistEditor, props: {isNew: true}},

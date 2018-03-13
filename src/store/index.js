@@ -28,7 +28,7 @@ export function createStore () {
       playerPin: null,
 
       artworks: [],
-      artwork: null,
+      publicArtwork: null,
       artists: [],
       artist: null,
       shows: [],
