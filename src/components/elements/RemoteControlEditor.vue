@@ -1,15 +1,9 @@
 <template>
   <div class="controls-panel">
     <div class="keypad">
-      <popper v-for="(button, i) in buttons"
-              :key="i"
-              trigger="click"
-              :options="{placement: 'bottom-start'}">
+      <popper v-for="(button, i) in buttons" :key="i" trigger="click" :options="{placement: 'bottom-start'}">
         <div class="popper">
-          <button-editor :button="button"
-                         :index="index"
-                         :title="'Button ' + (i + 1)"
-                         :bus="bus"/>
+          <remote-button-options :button="button" :index="i" :title="'Button ' + (i + 1)" :bus="bus"/>
           <div class="button frameless cancel narrow" @click="onPopperCancel(i)">
             <span class="icon cancel small"></span>
           </div>
@@ -35,99 +29,51 @@
 
 <script>
   import Vue from 'vue'
-  import { Buttons as ButtonsList } from '../../models/remote-control/RCButton'
   import Popper from 'vue-popperjs'
-  import buttonEditor from './RemoteButtonOptions'
+  import RemoteButtonOptions from './RemoteButtonOptions'
+  import { Controls } from '../../models/Control'
 
   export default {
-    components: { Popper, buttonEditor },
-    props: ['controls'],
-    computed: {},
+    components: {Popper, RemoteButtonOptions},
+    props: {
+      value: {type: Array, default: () => Controls.empty()}
+    },
+    mounted () {
+      this.bus.$on('updateButton', (index, options) => {
+        console.log('bus.on.updateButton', options)
+        this.buttons[index] = options
+        this.submit()
+      })
+    },
     data () {
       return {
+        buttons: this.setup(this.value),
         index: 0,
-        label: '',
-        keyboardType: '',
-        keyboardKeyCode: '',
-        keyboardAltKey: false,
-        keyboardCtrlKey: false,
-        keyboardShiftKey: false,
-        keyboardMetaKey: false,
-
-        x: 0,
-        buttons: new Array(9),
         bus: new Vue()
       }
     },
-    mounted () {
-      this.bus.$on('updateButton', (options, index) => {
-        this.buttons[index] = options
-      })
-    },
-    watch: {
-      controls () {
-        /** @type RCButton[] */
-        const controls = ButtonsList.fromJson(this.controls)
-        this.buttons = new Array(9)
-        if (controls.length) {
-          controls.forEach((button, i) => {
-            const order = button.order || i
-            if (order < this.buttons.length) {
-              this.buttons[order] = button
-            }
-          })
-        }
+    methods: {
+      setup (value) {
+        const buttons = new Array(9)
+        Controls.fromJson(value).forEach((button, i) => {
+          const order = button.order || i
+          if (order < buttons.length) {
+            buttons[order] = button
+          }
+        })
+        return buttons
+      },
+      onPopperCancel (i) {
+        this.buttons[i] = null
+        this.submit()
+      },
+      submit () {
+        this.$emit('input', this.buttons.slice().filter(_ => _))
       }
     },
-    methods: {
-      showKeyboardForm (n) {
-        this.index = n
-
-        const button = this.buttons[this.index] || { value: {} }
-        this.label = button.label
-        this.keyboardType = button.value.type || 'keydown'
-        this.keyboardKeyCode = button.value.keyCode || ''
-        this.keyboardAltKey = button.value.altKey || false
-        this.keyboardCtrlKey = button.value.ctrlKey || false
-        this.keyboardShiftKey = button.value.shiftKey || false
-        this.keyboardMetaKey = button.value.metaKey || false
-      },
-
-      hideKeyboardForm () {
-        this.index = -1
-      },
-
-      hasControl () {
-        return this.buttons[this.index]
-      },
-
-      addControl () {
-        const list = this.buttons.slice()
-        list[this.index] = {
-          order: this.index,
-          label: this.label,
-          type: 'keyboard',
-          value: {
-            type: this.keyboardType,
-            keyCode: this.keyboardKeyCode,
-            altKey: this.keyboardAltKey,
-            ctrlKey: this.keyboardCtrlKey,
-            shiftKey: this.keyboardShiftKey,
-            metaKey: this.keyboardMetaKey
-          }
-        }
-        this.submit(list)
-      },
-
-      removeControl () {
-        const list = this.buttons.slice()
-        list[this.index] = null
-        this.submit(list)
-      },
-
-      submit (list) {
-        this.$emit('update', list.filter(_ => _))
-        this.hideKeyboardForm()
+    watch: {
+      value: function () {
+        this.buttons = this.setup(this.value)
       }
     }
   }

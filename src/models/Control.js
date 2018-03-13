@@ -111,7 +111,7 @@ export class Control {
    * @return {Control}
    */
   static empty () {
-    return new Control(null, null, null, null, ControlValue.empty())
+    return new Control(null, null, null, 'keyboard', ControlValue.empty())
   }
 
   /**
@@ -134,7 +134,7 @@ export class Control {
     data[prefix + 'icon'] = this.icon
     data[prefix + 'label'] = this.label
     data[prefix + 'type'] = this.type
-    Object.assign(data, this.value.toEntries(prefix + 'value'))
+    Object.assign(data, this.value.toEntries(prefix + 'value/'))
     return data
   }
 

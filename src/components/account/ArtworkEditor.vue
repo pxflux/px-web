@@ -17,7 +17,7 @@
               <div class="row">
                 <label><span>Remote Control</span></label>
                 <div class="field">
-                  <remote-control-editor v-bind:controls="selectedControls" v-on:update="setControls"/>
+                  <remote-control-editor v-model="artwork.controls"/>
                 </div>
               </div>
             </section>
@@ -113,8 +113,7 @@
     },
     data () {
       return {
-        artwork: Artwork.empty(),
-        selectedControls: null
+        artwork: Artwork.empty()
       }
     },
     methods: {
@@ -129,12 +128,12 @@
         }
         this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
       },
-      /**
-       * @param {Control[]} controls
-       */
-      setControls (controls) {
-        this.selectedControls = controls
-      },
+      // /**
+      //  * @param {Control[]} controls
+      //  */
+      // setControls (controls) {
+      //   this.selectedControls = controls
+      // },
       submitArtwork () {
         if (!this.accountId) {
           return

@@ -3,20 +3,18 @@
     <header>{{title}}</header>
     <div class="option">
       <label class="first">Button Text</label>
-      <input type="text" id="label" placeholder="Button Text" v-model="buttonData.label"/>
-      
+      <input type="text" id="label" placeholder="Button Text" v-model="label"/>
       <label>Trigger Event Type</label>
-      <v-select v-model="buttonData.eventType"
-                :options="types"
-                :default-value="'keyboard'"/>
-      <div v-if="buttonData.eventType === 'keyboard'">
+      <v-select v-model="eventType" :options="types" :default-value="'keyboard'"/>
+      <div v-if="eventType === 'keyboard'">
         <label :for="'keys' + index">Keyboard Key (+ Modifier Keys)</label>
-        <div contenteditable="true"
+        <div ref="keysField"
+             contenteditable="true"
              @click="refreshHelpMessage"
              @blur="blurKyeDisplay"
              :id="'keys' + index"
-             ref="keysField"
-             class="key-code-display" placeholder="Click here to add KyeCode">
+             class="key-code-display"
+             placeholder="Click here to add KyeCode">
           {{keyCodeDisplayStr}}
           <span>{{keyCodeLiteralStr}}</span>
         </div>
@@ -24,13 +22,14 @@
           {{helpMessage}}
         </span>
       </div>
-      <div v-if="buttonData.eventType === 'custom'">
-        <label>Custom Event Name</label>
-        <input v-model="buttonData.type"/>
-        <label>Event Data</label>
-        <input v-model="buttonData.detail"/>
+      <div v-if="eventType === 'custom'">
+        <!--<label>Custom Event Name</label>-->
+        <!--<input v-model="type"/>-->
+        <!--<label>Event Data</label>-->
+        <!--<input v-model="detail"/>-->
+        Not Supported yet :(<br>Working hard to get it done soon.
       </div>
-      <div v-if="buttonData.eventType === 'mouse'" class="description">
+      <div v-if="eventType === 'mouse'" class="description">
         Not Supported yet :(<br>Working hard to get it done soon.
       </div>
     </div>
@@ -43,22 +42,23 @@
 </template>
 
 <script>
-  import { RCButton } from '../../models/remote-control/RCButton'
   import keycodes from 'keycode'
   import VSelect from './UI/Select/components/Select'
+  import { Control, ControlValue } from '../../models/Control'
 
   export default {
     name: 'remote-button-options',
-
-    components: { VSelect },
-
+    components: {VSelect},
     props: ['title', 'button', 'index', 'bus'],
 
+    computed: {},
     data () {
       return {
-        buttonData: new RCButton(),
+        label: this.button ? this.button.label : null,
+        eventType: this.button ? this.button.type : 'keyboard',
+
         types: ['keyboard', 'custom', 'mouse'],
-        keyCombination: { toHtmlString: () => { return '' } },
+        keyCombination: {toHtmlString: () => { return '' }},
         keyCodeDisplayStr: '',
         keyCodeLiteralStr: '',
         helpMessage: '',
@@ -71,7 +71,7 @@
       this.keyCombination = {
         keyCode: '',
         modifiers: [],
-        modifiersLabels: { altKey: '⌥', ctrlKey: 'Ctrl', metaKey: '⌘', shiftKey: '⇧' },
+        modifiersLabels: {altKey: '⌥', ctrlKey: 'Ctrl', metaKey: '⌘', shiftKey: '⇧'},
         modifiersCodes: [18, 17, 91, 93, 16],
         toHtmlString () {
           if (!this.keyCode) return ''
@@ -101,21 +101,14 @@
 
     watch: {
       button () {
-        this.buttonData = new RCButton(this.button)
-        console.log('WATCH--> this.buttonData: >>>>>>')
-        console.log(this.buttonData)
-        if (!this.buttonData.eventType) this.buttonData.eventType = 'keyboard'
+        this.label = this.button ? this.button.label : null
+        this.eventType = this.button ? this.button.type : 'keyboard'
       },
-      index () {
-        this.buttonData.order = this.index
-      },
-      'buttonData.eventType' () {
-        if (this.buttonData.eventType === 'keyboard') {
+      eventType () {
+        if (this.eventType === 'keyboard') {
           this.refreshHelpMessage()
           this.$nextTick(() => {
             const keyer = this.$refs.keysField
-            console.log('buttonOptions.eventType --> keyer: >>>>>>')
-            console.log(keyer)
             keyer.addEventListener('keydown', this.getKeysCombination)
             keyer.addEventListener('keyup', this.blurKyeDisplay)
           })
@@ -126,8 +119,6 @@
     methods: {
       blurKyeDisplay () {
         this.keyUpTimeout = setTimeout(() => {
-          console.log('--> this.$refs.keysField: >>>>>>')
-          console.log(this.$refs.keysField)
           this.$refs.keysField.blur()
           this.refreshHelpMessage()
         }, 200)
@@ -162,14 +153,15 @@
       },
 
       submit () {
-        const b = {
-          label: this.buttonData.label,
-          event: this.buttonData.event,
-          keyCode: this.buttonData.keyCode,
-          keyModifiers: this.buttonData.keyModifiers,
-          funcName: this.buttonData.funcName
-        }
-        this.bus.$emit('updateOutputOptions', b, this.index)
+        const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
+        const controlValue = new ControlValue('keyup', this.keyCombination.keyCode, false, false, false, false)
+        modifiers.forEach(m => {
+          if (this.keyCombination.modifiers[m] === true) {
+            controlValue[m] = true
+          }
+        })
+        const control = new Control(this.index, null, this.label, this.eventType, controlValue)
+        this.bus.$emit('updateButton', this.index, control)
       }
     }
   }
