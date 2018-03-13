@@ -1,17 +1,15 @@
 <template>
-  <v-select multiple taggable
+  <v-select class="px" multiple taggable :pushTags="true" :closeOnSelect="false"
             label="fullName"
-            :value="value"
+            :value="mutableValue"
             :options="contributors"
-            @input="updateValue"
-            :closeOnSelect="false"
-            :pushTags="true"
-            class="px">
+            @input="updateValue">
     <template slot="selected-option" slot-scope="option">
       <div class="option">{{ option.fullName }}</div>
       <!-- TODO: interface for setting the roles of contributors. Probably a popup bubble (like Popper.js) -->
       <!-- Here is a version with an extra inline select.. could work for now.. -->
-      <inline-select v-if="withRoles" :options="roles" taggable :pushTags="true"/>
+      <inline-select taggable :pushTags="true" v-if="withRoles" :value="option.role" :options="roles"
+                     @input="(val) => {updateRole(option, val)}"/>
     </template>
   </v-select>
 </template>
@@ -44,7 +42,7 @@
     },
     data () {
       return {
-        selectedIds: this.value.map(it => it.id),
+        mutableValue: this.value,
         roles: [
           'programming',
           'editing',
@@ -64,14 +62,20 @@
       },
       updateValue: function (value) {
         this.$emit('input', value)
+      },
+      updateRole: function (option, value) {
+        const selected = this.mutableValue.find(item => item.id === option.id)
+        if (selected) {
+          selected.role = value
+        }
       }
     },
     watch: {
-      $route: function (value) {
+      $route: function () {
         this.init()
       },
       value: function (value) {
-        this.selectedIds = value.map(it => it.id)
+        this.mutableValue = value
       }
     }
   }
