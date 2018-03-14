@@ -6,6 +6,7 @@ import Auth from '@/components/Auth'
 
 import Overview from '@/components/public/Overview'
 import Download from '@/components/public/Download'
+import AccountArtworkList from '@/components/account/ArtworkList'
 import ArtworkDetail from '@/components/public/Artwork'
 import ArtistDetail from '@/components/public/Artist'
 import ShowDetail from '@/components/public/Show'
@@ -54,6 +55,7 @@ export function createRouter () {
       {path: '/account/players', component: AccountPlayerList},
       {path: '/account/player/new', component: AccountPlayerNew},
 
+      {path: '/account/artworks', component: AccountArtworkList},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail},
       {path: '/account/artwork/new', component: AccountArtworkEditor, props: {isNew: true}},
       {path: '/account/artwork/:id/edit', component: AccountArtworkEditor, props: {isNew: false}},

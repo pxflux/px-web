@@ -26,7 +26,7 @@
     "vue-directive-tooltip": "^1.4.2",
     "vue-input-autowidth": "^1.0.2",
     "vue-popper-component": "^0.1.0",
-    "vue-popperjs": "^1.2.5",
+    "vue-popperjs": "^1.2.6",
     "vue-router": "^3.0.1",
     "vue-select": "^2.4.0",
     "vue-vimeo-player": "0.0.6",
