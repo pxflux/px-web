@@ -55,7 +55,7 @@ export function createRouter () {
       {path: '/account/players', component: AccountPlayerList},
       {path: '/account/player/new', component: AccountPlayerNew},
 
-      {path: '/account/artworks', component: AccountArtworkList},
+      {path: '/artworks', component: AccountArtworkList},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail},
       {path: '/account/artwork/new', component: AccountArtworkEditor, props: {isNew: true}},
       {path: '/account/artwork/:id/edit', component: AccountArtworkEditor, props: {isNew: false}},

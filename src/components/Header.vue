@@ -26,7 +26,7 @@
             </div>
           </div>
           <!-- -->
-          <router-link v-if="user" to="/account/artworks" class="button">
+          <router-link v-if="user" to="/artworks" class="button">
             <img src="/static/img/collection-a@2x.png" width="24" height="24" class="center">
           </router-link>
           <!-- -->
@@ -45,7 +45,7 @@
               <span v-else>{{ user.displayName }}</span>
             </a>
             <div class="submenu">
-              <router-link to="/account/artworks" class="button">Artworks</router-link>
+              <router-link to="/artworks" class="button">Artworks</router-link>
               <router-link to="/account/artists" class="button">Artists</router-link>
               <router-link to="/account/shows" class="button">Shows</router-link>
               <router-link to="/account/places" class="button">Places</router-link>
