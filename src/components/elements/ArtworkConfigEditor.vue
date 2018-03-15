@@ -6,10 +6,7 @@
           <span>Setup</span>
         </label>
         <div class="tabs field">
-          <div v-model="configName"
-               v-for="(config, i) in configs"
-               @click="configIndex = i"
-               class="tab"
+          <div v-for="(config, i) in configs" @click="configIndex = i" class="tab"
                :class="[configIndex === i ? 'active': '']">
             {{config.title||'Simple'}}
           </div>
@@ -22,18 +19,15 @@
       <div class="config-editor">
         <div class="row">
           <label class="with-icon" @click="renameConfigOpen = !renameConfigOpen">
-          <span class="icon small"
-                :class="[renameConfigOpen? 'cancel' : 'arrow-right']"></span>
+            <span class="icon small" :class="[renameConfigOpen? 'cancel' : 'arrow-right']"></span>
             <span>Rename</span>
           </label>
           <div v-if="renameConfigOpen" class="field">
-            <input id="configName" type="text" v-model="configName"/>
+            <input type="text" v-model="configName"/>
           </div>
         </div>
         <section class="scene" v-on:scroll="onScroll">
-          <source-channel
-            ref="sourceChannel"
-            v-model="configSource"/>
+          <source-channel ref="sourceChannel" v-model="configSource"/>
         </section>
         <!--<div class="row">-->
         <!--<label><span>Required Equipment</span></label>-->

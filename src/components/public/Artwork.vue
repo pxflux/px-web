@@ -74,38 +74,33 @@
               <div class="icon plus"></div>
             </div>
           </div>
-          <ul v-if="accountPlayers.length">
-            <template v-for="player in accountPlayers">
-              <li class="row" :key="player['__key']">
-                <template v-if="!launched(player)">
-                  <div
-                    class="cell row-header"
-                    @click="launch(player)">
+          <ul v-if="players.length">
+            <template v-for="player in players">
+              <template v-if="!player.isArtworkLaunched(artworkId)">
+                <li class="row" :key="player.key">
+                  <div class="cell row-header" @click="launch(player)">
                     Preview on Display <span class="accent">{{ player.pin }}</span>
                   </div>
                   <div class="button" @click="launch(player)">
                     <div class="icon display play"></div>
                   </div>
-                </template>
-                <template v-if="launched(player)">
-                  <div
-                    class="cell row-header active"
-                    @click="stop(player)">
+                </li>
+              </template>
+              <template v-if="player.isArtworkLaunched(artworkId)">
+                <li class="row" :key="player.key">
+                  <div class="cell row-header active" @click="stop(player)">
                     Stop Preview on <span class="accent">{{ player.pin }}</span>
                   </div>
                   <div class="button" @click="stop(player)">
                     <div class="icon stop"></div>
                   </div>
-                </template>
-              </li>
-              <li v-if="launched(player)" :key="player['__key']-remote" class="display-controls">
-                <div class="header">Remote for <span class="accent">{{ player.pin }}</span></div>
-                <remote-control
-                  :controls="controls"
-                  :displayId="player.pin"
-                  v-on:select="sendControl(player, $event)">
-                </remote-control>
-              </li>
+                </li>
+                <li v-if="player.artwork.controls.length" :key="player.key + '-remote'" class="display-controls">
+                  <div class="header">Remote for <span class="accent">{{ player.pin }}</span></div>
+                  <remote-control :controls="player.artwork.controls" :displayId="player.pin"
+                                  v-on:select="sendControl(player, $event)"/>
+                </li>
+              </template>
             </template>
           </ul>
           <div v-if="accountId" class="row">
@@ -128,6 +123,9 @@
   import AttachmentPanel from '../elements/AttachmentsPanel'
   import RemoteControl from '../elements/RemoteControl'
   import { log } from '../../helper'
+  import { PlayerArtwork } from '../../models/PlayerArtwork'
+  import { Artwork } from '../../models/ArtworkData'
+  import { Player } from '../../models/Player'
 
   export default {
     components: {
@@ -146,6 +144,12 @@
         }
         return this.userAccount['.key']
       },
+      players () {
+        if (this.accountPlayers) {
+          return this.accountPlayers.map(player => Player.fromJson(player))
+        }
+        return []
+      },
       artworkId () {
         return this.$route.params.id
       },
@@ -159,7 +163,8 @@
           }
           return value
         }
-        return getValue(this.publicArtwork) || getValue(this.accountArtwork)
+        const value = getValue(this.publicArtwork) || getValue(this.accountArtwork)
+        return value ? Artwork.fromJson(value) : null
       },
       preview () {
         return this.artwork && this.artwork.preview ? this.artwork.preview : null
@@ -181,12 +186,6 @@
         return Object.keys(this.artwork.shows || {}).map(id => {
           return {...this.artwork.shows[id], ...{'.key': id}}
         })
-      },
-      controls () {
-        if (this.artwork) {
-          return this.artwork.controls || []
-        }
-        return []
       }
     },
     methods: {
@@ -205,26 +204,15 @@
           })
         }
       },
-      launched (player) {
-        if (!this.accountId || !this.artwork || !player.artwork) {
-          return false
-        }
-        return this.artworkId === player.artwork.key
-      },
       launch (player) {
         if (!this.accountId || !this.artwork) {
           return
         }
-        const data = {
-          artwork: {
-            key: this.artwork['.key'],
-            url: this.artwork.url,
-            title: this.artwork.title,
-            author: this.artists.map(artist => artist.fullName).join(', '),
-            controls: this.artwork.controls
-          }
-        }
-        firebase.database().ref('accounts/' + this.accountId + '/players/' + player['.key']).update(data).catch(log)
+        const path = 'accounts/' + this.accountId + '/players/' + player['.key'] + '/artwork/'
+        const values = PlayerArtwork.fromArtwork(this.artworkId, this.artwork).toUpdates(path, PlayerArtwork.empty())
+        firebase.database().ref(path).remove().then(() => {
+          return firebase.database().ref().update(values)
+        }).catch(log)
       },
       stop (player) {
         if (!this.accountId || !this.artwork) {

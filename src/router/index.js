@@ -6,7 +6,7 @@ import Auth from '@/components/Auth'
 
 import Overview from '@/components/public/Overview'
 import Download from '@/components/public/Download'
-import AccountArtworkList from '@/components/account/ArtworkList'
+import ArtworkList from '@/components/public/ArtworkList'
 import ArtworkDetail from '@/components/public/Artwork'
 import ArtistDetail from '@/components/public/Artist'
 import ShowDetail from '@/components/public/Show'
@@ -41,7 +41,10 @@ export function createRouter () {
       {path: '/auth', component: Auth, name: 'auth'},
 
       {path: '/download', component: Download, name: 'download'},
+
+      {path: '/artworks', component: ArtworkList},
       {path: '/artwork/:id', component: ArtworkDetail, name: 'artwork-detail'},
+
       {path: '/artist/:id', component: ArtistDetail, name: 'artist-detail'},
       {path: '/show/:id', component: ShowDetail, name: 'show-detail'},
       {path: '/place/:id', component: PlaceDetail, name: 'place-detail'},
@@ -55,7 +58,6 @@ export function createRouter () {
       {path: '/account/players', component: AccountPlayerList},
       {path: '/account/player/new', component: AccountPlayerNew},
 
-      {path: '/artworks', component: AccountArtworkList},
       {path: '/account/artwork/:artworkId/iterations/:id', component: AccountArtworkIterationDetail},
       {path: '/account/artwork/new', component: AccountArtworkEditor, props: {isNew: true}},
       {path: '/account/artwork/:id/edit', component: AccountArtworkEditor, props: {isNew: false}},
