@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content wrap-forms">
+    <div v-if="artwork" class="wrap-content wrap-forms">
       <form id="form-artwork" v-on:submit.prevent>
         <section class="editor-section">
           <div class="row">
@@ -100,15 +100,6 @@
       },
       artworkId () {
         return this.$route.params.id
-      },
-      published () {
-        return this.accountArtwork && this.accountArtwork.published ? this.accountArtwork.published : false
-      },
-      image () {
-        return this.accountArtwork && this.accountArtwork.image ? this.accountArtwork.image : {
-          displayUrl: null,
-          storageUri: null
-        }
       }
     },
     data () {

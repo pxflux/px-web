@@ -6,12 +6,12 @@
 
 export class ContributorRef {
   /**
-   * @param {?string} id
+   * @param {?string} key
    * @param {?string} fullName
    * @param {?string} role
    */
-  constructor (id, fullName, role) {
-    this.id = id || null
+  constructor (key, fullName, role) {
+    this.key = key || null
     this.fullName = fullName || null
     this.role = role || null
   }
@@ -28,8 +28,8 @@ export class ContributorRef {
    * @return {ContributorRef}
    */
   static fromJson (value) {
-    const id = value.hasOwnProperty('.key') ? value['.key'] : value.id
-    return new ContributorRef(id, value.fullName, value.role)
+    const key = value.hasOwnProperty('.key') ? value['.key'] : value.key
+    return new ContributorRef(key, value.fullName, value.role)
   }
 
   /**
@@ -72,7 +72,7 @@ export class ContributorRefs {
    */
   static fromJson (value) {
     if (typeof value === 'object') {
-      return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], {id: key})))
+      return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], {key: key})))
     }
     if (Array.isArray(value)) {
       return value.map(it => ContributorRef.fromJson(it))
@@ -88,7 +88,7 @@ export class ContributorRefs {
   static toEntries (prefix, values) {
     const data = {}
     values.forEach(value => {
-      Object.assign(data, value.toEntries(prefix + value.id + '/'))
+      Object.assign(data, value.toEntries(prefix + value.key + '/'))
     })
     return data
   }
@@ -102,15 +102,15 @@ export class ContributorRefs {
   static updatedEntries (prefix, data, originals, values) {
     // add & updates
     values.forEach(value => {
-      const items = originals.filter(item => item.id === value.id)
+      const items = originals.filter(item => item.key === value.key)
       const original = items.length > 0 ? items[0] : ContributorRef.empty()
-      value.updatedEntries(prefix + value.id + '/', data, original)
+      value.updatedEntries(prefix + value.key + '/', data, original)
     })
     // remove
     originals.forEach(original => {
-      const items = values.filter(item => item.id === original.id)
+      const items = values.filter(item => item.key === original.key)
       if (items.length === 0) {
-        data[prefix + original.id] = null
+        data[prefix + original.key] = null
       }
     })
   }

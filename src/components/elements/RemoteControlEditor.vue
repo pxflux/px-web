@@ -54,14 +54,13 @@
     },
     methods: {
       setup (value) {
-        const buttons = new Array(9)
-        Controls.fromJson(value).forEach((button, i) => {
-          const order = button.order || i
-          if (order < buttons.length) {
-            buttons[order] = button
+        const data = new Array(9)
+        value.forEach(control => {
+          if (control.order < data.length) {
+            data[control.order] = control
           }
         })
-        return buttons
+        return data
       },
       onPopperCancel (i) {
         this.buttons[i] = null
@@ -72,8 +71,8 @@
       }
     },
     watch: {
-      value: function () {
-        this.buttons = this.setup(this.value)
+      value: function (value) {
+        this.buttons = this.setup(value)
       }
     }
   }

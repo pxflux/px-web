@@ -1,12 +1,12 @@
 <template>
   <main v-if="artwork">
-    <attachment-panel v-if="image" :preview="preview" :image="image"/>
+    <attachment-panel :artwork="artwork"/>
     <div class="wrap-content">
       <div class="content">
         <h1 :title="artwork.title">{{ artwork.title }}</h1>
-        <ul v-if="artists.length" class="by-string">
-          <li v-for="artist in artists" :key="artist['__key']">
-            <router-link :to="'/artist/' + artist['.key']">{{ artist.fullName }}</router-link>
+        <ul v-if="artwork.artists.length" class="by-string">
+          <li v-for="artist in artwork.artists" :key="artist.key">
+            <router-link :to="'/artist/' + artist.key">{{ artist.fullName }}</router-link>
           </li>
         </ul>
         <p class="work-meta caption">
@@ -17,42 +17,6 @@
         </p>
         <section class="description">
           {{ this.artwork.description }}
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod ipsum in dolor convallis viverra.
-            Nam ut laoreet turpis, vitae dictum turpis. Etiam eu tellus sit amet enim porta blandit. Pellentesque cursus
-            vehicula purus ac imperdiet. Nunc lacinia ipsum nec urna laoreet, id aliquam risus luctus. Praesent et sem
-            aliquet, tincidunt nisl et, lobortis purus. Integer massa justo, pellentesque eget iaculis sed, sagittis eu
-            urna. Quisque bibendum, quam vel iaculis pretium, nibh velit volutpat risus, eget pulvinar urna velit vel
-            nunc. Donec lacinia sem non tellus pretium ultrices. Mauris tristique lacinia sollicitudin. Curabitur sed
-            nibh eu nisi sollicitudin tristique eu eu sem. Suspendisse arcu quam, imperdiet ut posuere ut, suscipit non
-            dolor. Nunc porta eu mi nec porttitor.</p>
-          <p>Donec sed justo vestibulum, tempor nulla eget, tempor dui. Quisque nec aliquam odio, ac consequat orci.
-            Vivamus consectetur tortor id arcu viverra, at congue ante interdum. Donec ac lectus vitae felis laoreet
-            euismod quis sed purus. Vivamus ut elementum lorem, sit amet congue sem. Mauris tempus bibendum mauris, nec
-            malesuada nisl ornare ac. Quisque pellentesque, sem nec malesuada tempus, enim ligula aliquam ex, a
-            ultricies velit dolor ut mauris. Sed finibus mi nec fermentum malesuada. Sed a molestie est. Sed vulputate,
-            libero a pellentesque pellentesque, massa justo viverra odio, id tincidunt sapien lorem et lorem. Sed
-            elementum libero sit amet ante scelerisque, scelerisque sodales dolor euismod. Ut sed euismod arcu. Praesent
-            purus leo, elementum nec porttitor a, pharetra at risus. Mauris ultricies fermentum finibus. Pellentesque
-            aliquet ex sit amet massa suscipit, eu mattis nibh auctor. Pellentesque mattis semper augue, eu egestas
-            sapien blandit nec.</p>
-          <p>Praesent rhoncus semper orci at interdum. Morbi eu augue non augue aliquet ullamcorper. Etiam luctus
-            gravida lorem vel accumsan. Cras rhoncus porttitor porttitor. Aenean tincidunt varius auctor. Proin arcu
-            diam, lobortis vel ipsum non, rhoncus tincidunt risus. Sed non vulputate justo, at dapibus enim. Integer
-            lobortis nibh ante. Aliquam condimentum ullamcorper sem. Vestibulum porttitor sit amet leo at tristique.
-            Nullam ac mauris non orci lacinia imperdiet. Donec feugiat elit sit amet arcu consequat, eget tempor eros
-            ornare. Vestibulum dapibus at orci at aliquet.</p>
-          <p>Fusce vehicula orci tortor, et hendrerit nisl aliquam eu. Donec bibendum sem id tellus congue viverra.
-            Donec mattis tempus lectus, vel viverra augue malesuada vel. Suspendisse vitae mattis nibh. Integer erat
-            turpis, suscipit in facilisis a, consectetur eget ante. Suspendisse lacinia interdum quam, ut ultricies arcu
-            rutrum ac. Vestibulum non purus suscipit, consectetur erat id, ullamcorper nulla. Aenean sed est enim. Lorem
-            ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p>Pellentesque quis purus a nisi vehicula blandit. Fusce at ex nisi. Nulla tristique nec dolor non finibus.
-            Etiam porttitor posuere facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-            inceptos himenaeos. Nunc faucibus eu elit ut aliquet. Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit. Maecenas aliquam at odio ut pharetra. Cras magna felis, fermentum ac augue eu, varius tempus augue.
-            Aenean molestie quam eget erat elementum, sit amet elementum eros consectetur. In molestie placerat dolor
-            lobortis interdum. Aliquam nec ligula mauris. Sed sit amet eleifend augue. Vivamus cursus sagittis sem, at
-            tincidunt purus rhoncus sed. Praesent nec pulvinar erat, non tempor dui. Cras a eros felis.</p>
         </section>
       </div>
 
@@ -107,8 +71,8 @@
             <router-link :to="'/account/artwork/' + artworkId + '/edit'" class="button">
               <div class="icon edit"></div>
             </router-link>
-            <button v-if="!accountArtwork.published" @click="togglePublished(true)">Publish</button>
-            <button v-if="accountArtwork.published" @click="togglePublished(false)">Unpublish</button>
+            <button v-if="!artwork.published" @click="togglePublished(true)">Publish</button>
+            <button v-if="artwork.published" @click="togglePublished(false)">Unpublish</button>
             <button @click="removeArtwork">Delete</button>
           </div>
         </section>
@@ -136,7 +100,7 @@
       this.init()
     },
     computed: {
-      ...mapState(['userAccount', 'publicArtwork', 'accountArtwork', 'accountPlayers']),
+      ...mapState(['userAccount', 'accountArtwork', 'accountPlayers']),
 
       accountId () {
         if (!this.userAccount) {
@@ -163,36 +127,23 @@
           }
           return value
         }
-        const value = getValue(this.publicArtwork) || getValue(this.accountArtwork)
+        const value = getValue(this.accountArtwork)
         return value ? Artwork.fromJson(value) : null
       },
       preview () {
         return this.artwork && this.artwork.preview ? this.artwork.preview : null
       },
       image () {
-        console.log('this.artwork: >>>>>> image?')
-        console.log(this.artwork)
         return this.artwork && this.artwork.image ? this.artwork.image : {
           displayUrl: null,
           storageUri: null
         }
-      },
-      artists () {
-        return Object.keys(this.artwork.artists || {}).map(id => {
-          return {...this.artwork.artists[id], ...{'.key': id}}
-        })
-      },
-      shows () {
-        return Object.keys(this.artwork.shows || {}).map(id => {
-          return {...this.artwork.shows[id], ...{'.key': id}}
-        })
       }
     },
     methods: {
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({key: 'publicArtwork', ref: firebase.database().ref('artworks/' + this.artworkId)})
         if (this.accountId) {
           this.setRef({
             key: 'accountArtwork',
@@ -208,7 +159,7 @@
         if (!this.accountId || !this.artwork) {
           return
         }
-        const path = 'accounts/' + this.accountId + '/players/' + player['.key'] + '/artwork/'
+        const path = 'accounts/' + this.accountId + '/players/' + player.key + '/artwork/'
         const values = PlayerArtwork.fromArtwork(this.artworkId, this.artwork).toUpdates(path, PlayerArtwork.empty())
         firebase.database().ref(path).remove().then(() => {
           return firebase.database().ref().update(values)
@@ -218,7 +169,7 @@
         if (!this.accountId || !this.artwork) {
           return
         }
-        firebase.database().ref('accounts/' + this.accountId + '/players/' + player['.key'] + '/artwork').remove().catch(log)
+        firebase.database().ref('accounts/' + this.accountId + '/players/' + player.key + '/artwork').remove().catch(log)
       },
       sendControl (player, position) {
         firebase.database().ref('commands/' + player.pin).push({controlId: '' + position}).catch(log)

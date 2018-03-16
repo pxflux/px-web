@@ -8,7 +8,7 @@ import { ImageAttachment } from './ImageAttachment'
  * @property {?string} caption
  * @property {?number} ratio
  * @property {number} duration
- * @property {ImageAttachment} thumbnail
+ * @property {?ImageAttachment} thumbnail
  */
 export class VideoAttachment extends Attachment {
   /**
@@ -16,7 +16,7 @@ export class VideoAttachment extends Attachment {
    * @param {?string} caption
    * @param {?number} ratio
    * @param {number} duration
-   * @param {ImageAttachment} thumbnail
+   * @param {?ImageAttachment} thumbnail
    */
   constructor (storage, caption, ratio, duration, thumbnail) {
     super('video', storage, caption, ratio)
@@ -31,7 +31,7 @@ export class VideoAttachment extends Attachment {
   static fromJson (value) {
     const attachment = Attachment.fromJson(value)
     if (attachment === null) {
-      return this.empty()
+      return null
     }
     return new VideoAttachment(attachment.storage, attachment.caption, attachment.ratio, value.duration,
       ImageAttachment.fromJson(value.thumbnail)
@@ -45,7 +45,11 @@ export class VideoAttachment extends Attachment {
   toEntries (prefix) {
     const data = super.toEntries(prefix)
     data[prefix + 'duration'] = this.duration
-    Object.assign(data, this.thumbnail.toEntries(prefix + 'thumbnail/'))
+    if (this.thumbnail === null) {
+      data[prefix + 'thumbnail'] = null
+    } else {
+      Object.assign(data, this.thumbnail.toEntries(prefix + 'thumbnail/'))
+    }
     return data
   }
 
@@ -59,6 +63,8 @@ export class VideoAttachment extends Attachment {
     if (this.duration === origin.duration) {
       delete data[prefix + 'duration']
     }
-    this.thumbnail.updatedImageEntries(prefix + 'thumbnail/', data, origin.thumbnail)
+    if (this.thumbnail !== null) {
+      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, origin.thumbnail)
+    }
   }
 }

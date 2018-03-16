@@ -3,6 +3,7 @@ import { Setups } from './Setup'
 import { Controls } from './Control'
 
 /**
+ * @property {?string} key
  * @property {boolean} published
  * @property {?string} title
  * @property {ContributorRef[]} artists
@@ -11,10 +12,10 @@ import { Controls } from './Control'
  * @property {?string} description
  * @property {Setup[]} setups
  * @property {Control[]} controls
- * @property {?string} version
  */
 export class Artwork {
-  constructor (published, title, artists, credits, year, description, setups, controls, version) {
+  constructor (key, published, title, artists, credits, year, description, setups, controls) {
+    this.key = key
     this.published = published
     this.title = title
     this.artists = artists
@@ -23,11 +24,10 @@ export class Artwork {
     this.description = description
     this.setups = setups
     this.controls = controls
-    this.version = version
   }
 
   static empty () {
-    return new Artwork(false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, Setups.empty(),
+    return new Artwork(null, false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, Setups.empty(),
       Controls.empty(), null)
   }
 
@@ -38,9 +38,10 @@ export class Artwork {
     if (typeof value !== 'object') {
       return null
     }
-    return new Artwork(value.published, value.title, ContributorRefs.fromJson(value.artists),
+    const key = value.hasOwnProperty('.key') ? value['.key'] : value.key
+    return new Artwork(key, value.published, value.title, ContributorRefs.fromJson(value.artists),
       ContributorRefs.fromJson(value.credits), Number.parseInt(value.year), value.description,
-      Setups.fromJson(value.setups), Controls.fromJson(value.controls), value.version)
+      Setups.fromJson(value.setups), Controls.fromJson(value.controls))
   }
 
   /**

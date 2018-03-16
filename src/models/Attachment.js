@@ -41,7 +41,11 @@ export class Attachment {
   toEntries (prefix) {
     const data = {}
     data[prefix + 'type'] = this.type
-    Object.assign(data, this.storage.toEntries(prefix + 'storage/'))
+    if (this.storage === null) {
+      data[prefix + 'storage'] = null
+    } else {
+      Object.assign(data, this.storage.toEntries(prefix + 'storage/'))
+    }
     data[prefix + 'caption'] = this.caption
     data[prefix + 'ratio'] = this.ratio
     return data
@@ -56,7 +60,9 @@ export class Attachment {
     if (this.type === origin.type) {
       delete data[prefix + 'type']
     }
-    this.storage.updatedEntries(prefix + 'storage/', data, origin.storage)
+    if (this.storage !== null) {
+      this.storage.updatedEntries(prefix + 'storage/', data, origin.storage)
+    }
     if (this.caption === origin.caption) {
       delete data[prefix + 'caption']
     }

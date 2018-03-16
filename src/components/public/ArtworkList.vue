@@ -1,24 +1,19 @@
 <template>
   <main>
     <div v-if="userAccount" class="wrap-content grid" id="main-grid">
-      <ArtworkItem v-for="artwork in accountArtworks"
-                   :artwork="artwork" :key="artwork['.key']"
-                   :uri="'/artwork/' + artwork['.key']">
-      </ArtworkItem>
-      <router-link to="/account/artwork/new"
-                   class="grid-cell button frameless"
-                   title="Add Artwork">
+      <ArtworkItem v-for="artwork in artworks" :artwork="artwork" :key="artwork.key" :uri="'/artwork/' + artwork.key"/>
+      <router-link to="/account/artwork/new" class="grid-cell button frameless" title="Add Artwork">
         <i class="plus large"></i>
       </router-link>
     </div>
-    <span class="nothing-found" v-if="accountArtworks.length === 0">Artworks not found.</span>
   </main>
 </template>
 
 <script>
-  import ArtworkItem from '../elements/ArtworkItem'
   import firebase from '../../firebase-app'
   import { mapActions, mapState } from 'vuex'
+  import { Artwork } from '../../models/ArtworkData'
+  import ArtworkItem from '../elements/ArtworkItem'
 
   export default {
     components: {
@@ -35,6 +30,12 @@
           return null
         }
         return this.userAccount['.key']
+      },
+      artworks () {
+        if (this.accountArtworks) {
+          return this.accountArtworks.map(it => Artwork.fromJson(it))
+        }
+        return []
       }
     },
     methods: {

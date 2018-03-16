@@ -1,12 +1,12 @@
 import { SourceURL } from './SourceURL'
 import { VideoAttachment } from './VideoAttachment'
-import { ImageAttachment } from './ImageAttachment'
+import { ImageAttachments } from './ImageAttachment'
 
 /**
  * @property {number} order
  * @property {?string} title
  * @property {SourceURL} source
- * @property {ImageAttachment} thumbnail
+ * @property {ImageAttachment[]} thumbnails
  * @property {VideoAttachment} preview
  */
 export class Setup {
@@ -14,19 +14,19 @@ export class Setup {
    * @param {number} order
    * @param {?string} title
    * @param {SourceURL} source
-   * @param {ImageAttachment} thumbnail
-   * @param {VideoAttachment} preview
+   * @param {?ImageAttachment[]} thumbnails
+   * @param {?VideoAttachment} preview
    */
-  constructor (order, title, source, thumbnail, preview) {
+  constructor (order, title, source, thumbnails, preview) {
     this.order = isNaN(order) ? 0 : order
     this.title = title
     this.source = source
-    this.thumbnail = thumbnail
+    this.thumbnails = thumbnails
     this.preview = preview
   }
 
   static empty () {
-    return new Setup(0, null, SourceURL.empty(), ImageAttachment.empty(), VideoAttachment.empty())
+    return new Setup(0, null, SourceURL.empty(), ImageAttachments.empty(), VideoAttachment.empty())
   }
 
   static fromJson (value) {
@@ -34,7 +34,7 @@ export class Setup {
       return null
     }
     return new Setup(Number.parseInt(value.order), value.title, SourceURL.fromJson(value.source),
-      ImageAttachment.fromJson(value.thumbnail), VideoAttachment.fromJson(value.preview))
+      ImageAttachments.fromJson(value.thumbnails), VideoAttachment.fromJson(value.preview))
   }
 
   /**
@@ -45,8 +45,12 @@ export class Setup {
     const data = {}
     data[prefix + 'title'] = this.title ? this.title : 'Simple'
     Object.assign(data, this.source.toEntries(prefix + 'source/'))
-    Object.assign(data, this.thumbnail.toEntries(prefix + 'thumbnail/'))
-    Object.assign(data, this.preview.toEntries(prefix + 'preview/'))
+    Object.assign(data, ImageAttachments.toEntries(prefix + 'thumbnails/', this.thumbnails))
+    if (this.preview === null) {
+      data[prefix + 'preview'] = null
+    } else {
+      Object.assign(data, this.preview.toEntries(prefix + 'preview/'))
+    }
     return data
   }
 
@@ -60,8 +64,10 @@ export class Setup {
       delete data[prefix + 'title']
     }
     this.source.updatedEntries(prefix + 'source/', data, original.source)
-    this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, original.thumbnail)
-    this.preview.updatedEntries(prefix + 'preview/', data, original.preview)
+    ImageAttachments.updatedEntries(prefix + 'thumbnails/', data, original.thumbnails, this.thumbnails)
+    if (this.preview !== null) {
+      this.preview.updatedEntries(prefix + 'preview/', data, original.preview)
+    }
   }
 }
 

@@ -2,6 +2,7 @@ import { Attachment } from './Attachment'
 import { AttachmentStorage } from './AttachmentStorage'
 
 /**
+ * @property {number} order
  * @property {?string} type
  * @property {?string} caption
  * @property {?AttachmentStorage} link
@@ -9,19 +10,21 @@ import { AttachmentStorage } from './AttachmentStorage'
  */
 export class ImageAttachment extends Attachment {
   /**
+   * @param {number} order
    * @param {?AttachmentStorage} storage
    * @param {?string} caption
    * @param {?number} ratio
    */
-  constructor (storage, caption, ratio) {
+  constructor (order, storage, caption, ratio) {
     super('image', storage, caption, ratio)
+    this.order = isNaN(order) ? 0 : order
   }
 
   /**
    * @return {ImageAttachment}
    */
   static empty () {
-    return new ImageAttachment(AttachmentStorage.empty(), '', null)
+    return new ImageAttachment(0, AttachmentStorage.empty(), '', null)
   }
 
   /**
@@ -31,17 +34,66 @@ export class ImageAttachment extends Attachment {
   static fromJson (value) {
     const attachment = Attachment.fromJson(value)
     if (attachment === null) {
-      return this.empty()
+      return null
     }
-    return new ImageAttachment(attachment.storage, attachment.caption, attachment.ratio)
+    return new ImageAttachment(Number.parseInt(value.order), attachment.storage, attachment.caption, attachment.ratio)
+  }
+}
+
+export class ImageAttachments {
+  /**
+   * @return {ImageAttachment[]}
+   */
+  static empty () {
+    return []
+  }
+
+  /**
+   * @param value
+   * @return {ImageAttachment[]}
+   */
+  static fromJson (value) {
+    if (typeof value === 'object') {
+      return Object.keys(value).map(key => ImageAttachment.fromJson(Object.assign(value[key], {order: key})))
+    }
+    if (Array.isArray(value)) {
+      return value.map(it => ImageAttachment.fromJson(it))
+    }
+    return []
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {ImageAttachment[]} values
+   * @return {Object}
+   */
+  static toEntries (prefix, values) {
+    const data = {}
+    values.forEach(value => {
+      Object.assign(data, value.toEntries(prefix + value.order + '/'))
+    })
+    return data
   }
 
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {ImageAttachment} origin
+   * @param {ImageAttachment[]} originals
+   * @param {ImageAttachment[]} values
    */
-  updatedImageEntries (prefix, data, origin) {
-    super.updatedEntries(prefix, data, origin)
+  static updatedEntries (prefix, data, originals, values) {
+    // add & updates
+    values.forEach(value => {
+      const items = originals.filter(item => item.order === value.order)
+      const original = items.length > 0 ? items[0] : ImageAttachment.empty()
+      value.updatedEntries(prefix + value.order + '/', data, original)
+    })
+    // remove
+    originals.forEach(original => {
+      const items = values.filter(item => item.order === original.order)
+      if (items.length === 0) {
+        data[prefix + original.order] = null
+      }
+    })
   }
 }
