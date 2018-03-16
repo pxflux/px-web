@@ -7,8 +7,8 @@ import { PlayerArtwork } from './PlayerArtwork'
  */
 export class Player {
   constructor (key, pin, artwork) {
-    this.key = key
-    this.pin = pin
+    this.key = key || null
+    this.pin = pin || null
     this.artwork = artwork
   }
 
@@ -20,7 +20,7 @@ export class Player {
    * @param {object} value
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     const id = value.hasOwnProperty('.key') ? value['.key'] : value.key

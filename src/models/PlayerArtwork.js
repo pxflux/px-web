@@ -8,9 +8,9 @@ import { Controls } from './Control'
  */
 export class PlayerArtwork {
   constructor (key, title, url, controls) {
-    this.key = key
-    this.title = title
-    this.url = url
+    this.key = key || null
+    this.title = title || null
+    this.url = url || null
     this.controls = controls
   }
 
@@ -34,7 +34,7 @@ export class PlayerArtwork {
    * @param {object} value
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     return new PlayerArtwork(value.key, value.title, value.url, Controls.fromJson(value.controls))

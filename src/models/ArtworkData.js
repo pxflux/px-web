@@ -15,13 +15,13 @@ import { Controls } from './Control'
  */
 export class Artwork {
   constructor (key, published, title, artists, credits, year, description, setups, controls) {
-    this.key = key
-    this.published = published
-    this.title = title
+    this.key = key || null
+    this.published = published || false
+    this.title = title || null
     this.artists = artists
     this.credits = credits
     this.year = isNaN(year) ? 0 : year
-    this.description = description
+    this.description = description || null
     this.setups = setups
     this.controls = controls
   }
@@ -35,7 +35,7 @@ export class Artwork {
    * @param {object} value
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     const key = value.hasOwnProperty('.key') ? value['.key'] : value.key

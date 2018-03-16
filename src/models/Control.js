@@ -15,9 +15,9 @@ export class Control {
    */
   constructor (order, icon, label, type, value) {
     this.order = isNaN(order) ? 0 : order
-    this.icon = icon // Unicode Character or Attachment TODO: it should be of type Icon
-    this.label = label
-    this.type = type // 'keyboard'|'mouse'|'function'|'custom'
+    this.icon = icon || null // Unicode Character or Attachment TODO: it should be of type Icon
+    this.label = label || null
+    this.type = type || null // 'keyboard'|'mouse'|'function'|'custom'
     this.value = value
   }
 
@@ -33,7 +33,7 @@ export class Control {
    * @return {?Control}
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     return new Control(Number.parseInt(value.order), value.icon, value.label, value.type,
@@ -150,12 +150,12 @@ export class ControlValue {
    * @param {?boolean} metaKey
    */
   constructor (type, keyCode, altKey, ctrlKey, shiftKey, metaKey) {
-    this.type = type
+    this.type = type || null
     this.keyCode = isNaN(keyCode) ? null : keyCode
-    this.altKey = altKey
-    this.ctrlKey = ctrlKey
-    this.shiftKey = shiftKey
-    this.metaKey = metaKey
+    this.altKey = altKey || false
+    this.ctrlKey = ctrlKey || false
+    this.shiftKey = shiftKey || false
+    this.metaKey = metaKey || false
   }
 
   /**
@@ -170,7 +170,7 @@ export class ControlValue {
    * @return {?ControlValue}
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     return new ControlValue(value.type, Number.parseInt(value.keyCode), value.altKey, value.ctrlKey, value.shiftKey,

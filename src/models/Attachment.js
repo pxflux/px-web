@@ -13,9 +13,9 @@ export class Attachment {
    * @param {?number} ratio
    */
   constructor (type, storage, caption, ratio) {
-    this.type = type
+    this.type = type || null
     this.storage = storage
-    this.caption = caption
+    this.caption = caption || null
     this.ratio = isNaN(ratio) ? null : ratio
   }
 
@@ -27,7 +27,7 @@ export class Attachment {
    * @return {?Attachment}
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     return new Attachment(value.type, AttachmentStorage.fromJson(value.storage), value.caption,

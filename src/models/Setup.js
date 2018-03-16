@@ -19,7 +19,7 @@ export class Setup {
    */
   constructor (order, title, source, thumbnails, preview) {
     this.order = isNaN(order) ? 0 : order
-    this.title = title
+    this.title = title || null
     this.source = source
     this.thumbnails = thumbnails
     this.preview = preview
@@ -30,7 +30,7 @@ export class Setup {
   }
 
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     return new Setup(Number.parseInt(value.order), value.title, SourceURL.fromJson(value.source),
@@ -84,6 +84,9 @@ export class Setups {
    * @return {Setup[]}
    */
   static fromJson (value) {
+    if (!value) {
+      return []
+    }
     if (typeof value === 'object') {
       return Object.keys(value).map(key => Setup.fromJson(Object.assign(value[key], {order: key})))
     }

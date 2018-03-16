@@ -28,6 +28,9 @@ export class ContributorRef {
    * @return {ContributorRef}
    */
   static fromJson (value) {
+    if (!value && typeof value !== 'object') {
+      return null
+    }
     const key = value.hasOwnProperty('.key') ? value['.key'] : value.key
     return new ContributorRef(key, value.fullName, value.role)
   }
@@ -71,6 +74,9 @@ export class ContributorRefs {
    * @return {ContributorRef[]}
    */
   static fromJson (value) {
+    if (!value) {
+      return []
+    }
     if (typeof value === 'object') {
       return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], {key: key})))
     }

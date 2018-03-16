@@ -10,9 +10,9 @@ export class AttachmentStorage {
    * @param {?File} file
    */
   constructor (displayUrl, storageUrl, file) {
-    this.displayUrl = displayUrl
-    this.storageUrl = storageUrl
-    this.file = file
+    this.displayUrl = displayUrl || null
+    this.storageUrl = storageUrl || null
+    this.file = file || null
   }
 
   static empty () {
@@ -23,7 +23,7 @@ export class AttachmentStorage {
    * @return {?AttachmentStorage}
    */
   static fromJson (value) {
-    if (typeof value !== 'object') {
+    if (!value && typeof value !== 'object') {
       return null
     }
     return new AttachmentStorage(value.displayUrl, value.storageUrl, null)

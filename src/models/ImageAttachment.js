@@ -53,6 +53,9 @@ export class ImageAttachments {
    * @return {ImageAttachment[]}
    */
   static fromJson (value) {
+    if (!value) {
+      return []
+    }
     if (typeof value === 'object') {
       return Object.keys(value).map(key => ImageAttachment.fromJson(Object.assign(value[key], {order: key})))
     }

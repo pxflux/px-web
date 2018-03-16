@@ -7,8 +7,8 @@ export class SourceURL {
    * @param {?string} url
    */
   constructor (type, url) {
-    this.type = type
-    this.url = url
+    this.type = type || null
+    this.url = url || null
   }
 
   static empty () {
@@ -16,11 +16,13 @@ export class SourceURL {
   }
 
   /**
-   * @param {object} data
+   * @param {object} value
    */
-  static fromJson (data) {
-    if (typeof data !== 'object') return
-    return new SourceURL(data.type || null, data.url || null)
+  static fromJson (value) {
+    if (!value && typeof value !== 'object') {
+      return null
+    }
+    return new SourceURL(value.type, value.url)
   }
 
   /**
