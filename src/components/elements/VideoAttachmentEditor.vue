@@ -1,9 +1,9 @@
 <template>
   <div class="attachment">
     <div class="row">
-      <label for="url">Vimeo Url</label>
-      <input id="url" type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
+      <input type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
     </div>
+    <div class="description">right now we support only Vimeo links<br><br></div>
     <videoPlayer v-if="displayUrl && !error" :videoUrl="displayUrl" :ratio="ratio"/>
     <div v-if="displayUrl && !error" class="attachment-info">
       {{'Aspect Ratio 1 : ' + Math.round((1 / ratio) * 100) / 100}}
@@ -27,14 +27,16 @@
     },
     data () {
       return {
-        displayUrl: this.value.storage.displayUrl,
-        ratio: this.value.ratio,
+        displayUrl: '',
+        ratio: '',
         error: '',
         warning: ''
       }
     },
     methods: {
       update () {
+        console.log('--> this.displayUrl: >>>>>>')
+        console.log(this.displayUrl)
         if (this.displayUrl) {
           // Validate Vimeo url and retrieve info about the video
           const match = this.displayUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)

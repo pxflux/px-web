@@ -6,12 +6,12 @@
           <span>Setup</span>
         </label>
         <div class="tabs field">
-          <div v-for="(config, i) in configs" @click="configIndex = i" class="tab"
+          <div v-for="(config, i) in setups" @click="configIndex = i" class="tab"
                :class="[configIndex === i ? 'active': '']">
             {{config.title||'Simple'}}
           </div>
           <div class="button frameless"><span class="icon plus" @click="addConfig()"></span></div>
-          <div class="button frameless" v-if="configs.length > 1">
+          <div class="button frameless" v-if="setups.length > 1">
             <span class="icon minus" @click="removeConfig()"></span>
           </div>
         </div>
@@ -23,20 +23,28 @@
             <span>Rename</span>
           </label>
           <div v-if="renameConfigOpen" class="field">
-            <input type="text" v-model="configName"/>
+            <input type="text" v-model="setupName"/>
           </div>
         </div>
         <section class="scene" v-on:scroll="onScroll">
-          <source-channel ref="sourceChannel" v-model="configSource"/>
+          <channel-editor v-for="(channel, i) in setupChannels"
+                          ref="channelEditor"
+                          v-model="setupChannels[i]" :key="'ch'+i"/>
         </section>
-        <!--<div class="row">-->
-        <!--<label><span>Required Equipment</span></label>-->
-        <!--<div class="field"></div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-        <!--<label><span>Required Space Characteristics</span></label>-->
-        <!--<div class="field"></div>-->
-        <!--</div>-->
+        <section>
+          <div class="row">
+            <label><span>Image</span></label>
+            <div class="field">
+              <image-attachment-editor/>
+            </div>
+          </div>
+          <div class="row">
+            <label><span>Video Preview</span></label>
+            <div class="field">
+              <video-attachment-editor v-model="setups[configIndex].preview"/>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -44,71 +52,71 @@
 </template>
 
 <script>
-  import { Setup, Setups } from '../../models/Setup'
+  import { AWSetup, AWSetups } from '../../models/AWSetup'
   import VSelect from './UI/Select/components/Select'
   import ImageAttachmentEditor from './ImageAttachmentEditor'
   import VideoAttachmentEditor from './VideoAttachmentEditor'
-  import SourceChannel from './sourse-editor/SourceChannel'
+  import ChannelEditor from './sourse-editor/ChannelEditor'
 
   export default {
-    name: 'artwork-configuration-editor',
+    name: 'artwork-setup-editor',
     props: ['value'],
     components: {
       VSelect,
       ImageAttachmentEditor,
       VideoAttachmentEditor,
-      SourceChannel
+      ChannelEditor
     },
     data () {
       return {
-        configs: this.value || Setups.empty(),
+        setups: this.value || AWSetups.empty(),
         configIndex: 0,
         scrolling: false,
         renameConfigOpen: false
       }
     },
     computed: {
-      configName: {
+      setupName: {
         set (newValue) {
-          this.configs[this.configIndex].title = newValue
+          this.setups[this.configIndex].title = newValue
           this.update()
         },
-        get () { return this.configs[this.configIndex].title }
+        get () { return this.setups[this.configIndex].title }
       },
-      configSource: {
+      setupChannels: {
         set (newValue) {
-          this.configs[this.configIndex].source = newValue
+          this.setups[this.configIndex].channels = newValue
           this.update()
         },
         get () {
-          return this.configs[this.configIndex].source
+          return this.setups[this.configIndex].channels
         }
       }
     },
     methods: {
       onScroll (e) {
-        this.$refs['sourceChannel'].fixPanelsOnScroll(e)
+        this.$refs['channelEditor'].fixPanelsOnScroll(e)
       },
       addConfig () {
         this.configIndex++
-        this.configs.push(Setup.empty())
+        this.setups.push(AWSetup.empty())
         this.update()
       },
       removeConfig () {
         this.configIndex--
-        this.configs.splice(this.configIndex, 1)
+        this.setups.splice(this.configIndex, 1)
         this.update()
       },
       update () {
-        this.$emit('input', Setups.fromJson(JSON.parse(JSON.stringify(this.configs))))
+        this.$emit('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))
       }
     },
     watch: {
       value: function () {
         if (Array.isArray(this.value) && this.value.length > 0) {
-          this.configs = this.value
+          this.setups = this.value
         } else {
-          this.configs = Setups.empty()
+          this.setups = AWSetups.empty()
         }
       }
     }

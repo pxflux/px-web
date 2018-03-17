@@ -1,50 +1,60 @@
-import { SourceURL } from './SourceURL'
+import { ArrayOfType } from './utilities/ArrayOfType'
+import { AWChannel } from './AWChannel'
 import { VideoAttachment } from './VideoAttachment'
 import { ImageAttachments } from './ImageAttachment'
+// import { EquipmentSetup } from './equipment/EquipmentSetup'
 
 /**
  * @property {number} order
  * @property {?string} title
- * @property {SourceURL} source
- * @property {ImageAttachment[]} thumbnails
- * @property {VideoAttachment} preview
+ * @property {AWChannel[]} channels
+ * @property {?ImageAttachment[]} thumbnails
+ * @property {?VideoAttachment} preview
  */
-export class Setup {
+export class AWSetup {
   /**
-   * @param {number} order
-   * @param {?string} title
-   * @param {SourceURL} source
-   * @param {?ImageAttachment[]} thumbnails
-   * @param {?VideoAttachment} preview
+   * @param {object=} data
    */
-  constructor (order, title, source, thumbnails, preview) {
-    this.order = isNaN(order) ? 0 : order
-    this.title = title || null
-    this.source = source
-    this.thumbnails = thumbnails
-    this.preview = preview
+  constructor (data) {
+    this.order = 0
+    this.title = null
+    this.channels = [new AWChannel()]
+    this.thumbnails = []
+    this.preview = null
+
+    // this.description = '' // bla bla bla
+    // this.notes = [] // [bla] [bla-la]
+    // this.equipmentSetup = new EquipmentSetup()
+
+    if (data) this.fromJson(data)
   }
 
   static empty () {
-    return new Setup(0, null, SourceURL.empty(), ImageAttachments.empty(), VideoAttachment.empty())
-  }
-
-  static fromJson (value) {
-    if (!value && typeof value !== 'object') {
-      return null
-    }
-    return new Setup(Number.parseInt(value.order), value.title, SourceURL.fromJson(value.source),
-      ImageAttachments.fromJson(value.thumbnails), VideoAttachment.fromJson(value.preview))
+    return new AWSetup()
   }
 
   /**
-   * @param {string} prefix
+   * @param {object} data
+   */
+  fromJson (data) {
+    if (!data && typeof data !== 'object') return null
+
+    const n = Number.parseInt(data.order)
+    this.order = isNaN(n) ? 0 : n
+    this.title = data.title || null
+    this.channels = data.channels ? ArrayOfType.fromJson(data.channels, AWChannel) : [new AWChannel()]
+    this.thumbnails = ImageAttachments.fromJson(data.thumbnails)
+    this.preview = VideoAttachment.fromJson(data.preview)
+  }
+
+  /**
+   * @param {string} prefix - '.../setups/{index}/'
    * @return {Object}
    */
   toEntries (prefix) {
     const data = {}
-    data[prefix + 'title'] = this.title ? this.title : 'Simple'
-    Object.assign(data, this.source.toEntries(prefix + 'source/'))
+    data[prefix + 'title'] = this.title ? this.title : 'Basic'
+    Object.assign(data, ArrayOfType.toEntries(prefix + 'channels/', this.channels))
     Object.assign(data, ImageAttachments.toEntries(prefix + 'thumbnails/', this.thumbnails))
     if (this.preview === null) {
       data[prefix + 'preview'] = null
@@ -57,13 +67,13 @@ export class Setup {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Setup} original
+   * @param {AWSetup} original
    */
   updatedEntries (prefix, data, original) {
     if (this.title === original.title) {
       delete data[prefix + 'title']
     }
-    this.source.updatedEntries(prefix + 'source/', data, original.source)
+    ArrayOfType.updatedEntries(prefix + 'source/', data, original.channels, this.channels)
     ImageAttachments.updatedEntries(prefix + 'thumbnails/', data, original.thumbnails, this.thumbnails)
     if (this.preview !== null) {
       this.preview.updatedEntries(prefix + 'preview/', data, original.preview)
@@ -71,34 +81,34 @@ export class Setup {
   }
 }
 
-export class Setups {
+export class AWSetups {
   /**
-   * @return {Setup[]}
+   * @return {AWSetup[]}
    */
   static empty () {
-    return [Setup.empty()]
+    return [AWSetup.empty()]
   }
 
   /**
    * @param value
-   * @return {Setup[]}
+   * @return {AWSetup[]}
    */
   static fromJson (value) {
     if (!value) {
       return []
     }
     if (typeof value === 'object') {
-      return Object.keys(value).map(key => Setup.fromJson(Object.assign(value[key], {order: key})))
+      return Object.keys(value).map(key => new AWSetup(Object.assign(value[key], { order: key })))
     }
     if (Array.isArray(value)) {
-      return value.map(it => Setup.fromJson(it))
+      return value.map(it => AWSetup.fromJson(it))
     }
     return []
   }
 
   /**
-   * @param {string} prefix
-   * @param {Setup[]} values
+   * @param {string} prefix - '.../setups/'
+   * @param {AWSetup[]} values
    * @return {Object}
    */
   static toEntries (prefix, values) {
@@ -112,14 +122,14 @@ export class Setups {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Setup[]} originals
-   * @param {Setup[]} values
+   * @param {AWSetup[]} originals
+   * @param {AWSetup[]} values
    */
   static updatedEntries (prefix, data, originals, values) {
     // add & updates
     values.forEach(value => {
       const items = originals.filter(item => item.order === value.order)
-      const original = items.length > 0 ? items[0] : Setup.empty()
+      const original = items.length > 0 ? items[0] : AWSetup.empty()
       value.updatedEntries(prefix + value.order + '/', data, original)
     })
     // remove

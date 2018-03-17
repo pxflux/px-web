@@ -14,7 +14,7 @@
     },
     data () {
       return {
-        imageUrl: this.value.storage.displayUrl,
+        imageUrl: this.value ? this.value.storage.displayUrl : null,
         imageRemoved: false
       }
     },

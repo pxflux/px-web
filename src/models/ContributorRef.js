@@ -78,7 +78,7 @@ export class ContributorRefs {
       return []
     }
     if (typeof value === 'object') {
-      return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], {key: key})))
+      return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], { key: key })))
     }
     if (Array.isArray(value)) {
       return value.map(it => ContributorRef.fromJson(it))

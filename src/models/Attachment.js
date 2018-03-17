@@ -35,7 +35,7 @@ export class Attachment {
   }
 
   /**
-   * @param {string} prefix
+   * @param {string} prefix - '.../setups/{index}/thumbnails/{index}/'
    * @return {Object}
    */
   toEntries (prefix) {
@@ -48,6 +48,8 @@ export class Attachment {
     }
     data[prefix + 'caption'] = this.caption
     data[prefix + 'ratio'] = this.ratio
+    console.log('ATTACHMENT toEntries --> data: >>>>>>')
+    console.log(data)
     return data
   }
 
@@ -57,16 +59,17 @@ export class Attachment {
    * @param {Attachment} origin
    */
   updatedEntries (prefix, data, origin) {
-    if (this.type === origin.type) {
+    if (origin && this.type === origin.type) {
       delete data[prefix + 'type']
     }
     if (this.storage !== null) {
-      this.storage.updatedEntries(prefix + 'storage/', data, origin.storage)
+      const storage = origin ? origin.storage : null
+      this.storage.updatedEntries(prefix + 'storage/', data, storage)
     }
-    if (this.caption === origin.caption) {
+    if (origin && this.caption === origin.caption) {
       delete data[prefix + 'caption']
     }
-    if (this.ratio === origin.ratio) {
+    if (origin && this.ratio === origin.ratio) {
       delete data[prefix + 'ratio']
     }
   }

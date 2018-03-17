@@ -1,16 +1,22 @@
 <template>
   <div>
-    <img v-if="showUrl" :src="showUrl" width="100" height="100">
-    <div v-else="" class="no-image" style="width:100px; height:100px"></div>
-    <input ref="inputImage" type="file" accept="image/*" @change="uploadImage">
-    <button v-show="!this.removed && (previewUrl || imageUrl)" @click="removeImage">Remove</button>
-    <button v-show="this.removed" @click="removed = false">Undo</button>
+    <!--<img v-if="showUrl" :src="showUrl" width="100" height="100">-->
+    <!--<div v-else="" class="no-image" style="width:100px; height:100px"></div>-->
+    <!--<input ref="inputImage" type="file" accept="image/*" @change="uploadImage">-->
+    <!--<button v-show="!this.removed && (previewUrl || imageUrl)" @click="removeImage">Remove</button>-->
+    <!--<button v-show="this.removed" @click="removed = false">Undo</button>-->
+    <vue2-dropzone :options="dropZoneOptions" :id="'4541353'"/>
   </div>
 </template>
 
 <script>
+  import vue2Dropzone from 'vue2-dropzone'
+  import 'vue2-dropzone/dist/vue2Dropzone.css'
   export default {
     props: ['imageUrl'],
+    components: {
+      vue2Dropzone
+    },
     computed: {
       originalUrl: function () {
         return this.removed ? null : this.imageUrl
@@ -22,7 +28,10 @@
     data () {
       return {
         previewUrl: null,
-        removed: false
+        removed: false,
+        dropZoneOptions: {
+          url: '...'
+        }
       }
     },
     methods: {

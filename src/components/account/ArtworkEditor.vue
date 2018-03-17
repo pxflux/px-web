@@ -11,7 +11,7 @@
           </div>
           <div class="work-specifications">
             <section>
-              <artwork-config-editor v-model="artwork.setups"/>
+              <artwork-setup-editor v-model="artwork.setups"/>
             </section>
             <section>
               <div class="row">
@@ -75,7 +75,7 @@
   import ContributorsEditor from '../elements/ContributorsEditor'
   import VideoAttachmentEditor from '../elements/VideoAttachmentEditor'
   import ImageAttachmentEditor from '../elements/ImageAttachmentEditor'
-  import ArtworkConfigEditor from '../elements/ArtworkConfigEditor'
+  import ArtworkSetupEditor from '../elements/ArtworkSetupEditor'
 
   export default {
     props: ['isNew'],
@@ -84,7 +84,7 @@
       VideoAttachmentEditor,
       RemoteControlEditor,
       ContributorsEditor,
-      ArtworkConfigEditor
+      ArtworkSetupEditor
     },
     created () {
       this.init()
@@ -126,16 +126,11 @@
         const id = this.isNew ? firebase.database().ref(path).push().key : this.artworkId
         const original = this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork)
         const values = this.artwork.toUpdates(path + id + '/', original)
+        console.log('SUBMIT ARTWORK --> values: >>>>>>')
+        console.log(values)
         firebase.database().ref().update(values).then(function (ref) {
           this.$router.push('/artwork/' + id)
         }.bind(this)).catch(log())
-
-        // const artwork = Artwork(this.accountArtwork)
-        // const prefix = 'accounts/' + this.accountId + '/artworks/' + this.artworkId + '/'
-        // const data = this.artwork.toEntries(prefix, this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork))
-        // store(this.accountId, this.artworkId, 'artworks', data, this.imageRemoved, this.imageFile).then(function (ref) {
-        //   this.$router.push('/artwork/' + ref.key)
-        // }.bind(this)).catch(log())
       }
     },
     watch: {

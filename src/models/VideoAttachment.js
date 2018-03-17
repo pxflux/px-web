@@ -60,11 +60,12 @@ export class VideoAttachment extends Attachment {
    */
   updatedEntries (prefix, data, origin) {
     super.updatedEntries(prefix, data, origin)
-    if (this.duration === origin.duration) {
+    if (origin && this.duration === origin.duration) {
       delete data[prefix + 'duration']
     }
     if (this.thumbnail !== null) {
-      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, origin.thumbnail)
+      const thumbnail = origin ? origin.thumbnail : null
+      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, thumbnail)
     }
   }
 }

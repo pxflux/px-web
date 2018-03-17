@@ -1,5 +1,5 @@
 import { ContributorRefs } from './ContributorRef'
-import { Setups } from './Setup'
+import { AWSetups } from './AWSetup'
 import { Controls } from './Control'
 
 /**
@@ -10,7 +10,7 @@ import { Controls } from './Control'
  * @property {ContributorRef[]} credits
  * @property {?number} year
  * @property {?string} description
- * @property {Setup[]} setups
+ * @property {AWSetup[]} setups
  * @property {Control[]} controls
  */
 export class Artwork {
@@ -27,7 +27,7 @@ export class Artwork {
   }
 
   static empty () {
-    return new Artwork(null, false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, Setups.empty(),
+    return new Artwork(null, false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, AWSetups.empty(),
       Controls.empty(), null)
   }
 
@@ -41,7 +41,7 @@ export class Artwork {
     const key = value.hasOwnProperty('.key') ? value['.key'] : value.key
     return new Artwork(key, value.published, value.title, ContributorRefs.fromJson(value.artists),
       ContributorRefs.fromJson(value.credits), Number.parseInt(value.year), value.description,
-      Setups.fromJson(value.setups), Controls.fromJson(value.controls))
+      AWSetups.fromJson(value.setups), Controls.fromJson(value.controls))
   }
 
   /**
@@ -56,7 +56,7 @@ export class Artwork {
     Object.assign(data, ContributorRefs.toEntries(prefix + 'credits/', this.credits))
     data[prefix + 'year'] = this.year
     data[prefix + 'description'] = this.description
-    Object.assign(data, Setups.toEntries(prefix + 'setups/', this.setups))
+    Object.assign(data, AWSetups.toEntries(prefix + 'setups/', this.setups))
     Object.assign(data, Controls.toEntries(prefix + 'controls/', this.controls))
     return data
   }
@@ -68,6 +68,8 @@ export class Artwork {
    */
   toUpdates (prefix, original) {
     const data = this.toEntries(prefix)
+    console.log('ARTWORK DATA: toUpdates --> data: >>>>>>')
+    console.log(data)
     this.updatedEntries(prefix, data, original)
     return data
   }
@@ -92,7 +94,7 @@ export class Artwork {
     if (this.description === original.description) {
       delete data[prefix + 'description']
     }
-    Setups.updatedEntries(prefix + 'setups/', data, original.setups, this.setups)
+    AWSetups.updatedEntries(prefix + 'setups/', data, original.setups, this.setups)
     Controls.updatedEntries(prefix + 'controls/', data, original.controls, this.controls)
   }
 }

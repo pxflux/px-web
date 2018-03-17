@@ -50,10 +50,12 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
   this.logoLeftSpx = 0
   this.logoH = 0
 
+  const extrude = false
   const extrudeShapes = {
     walls: [], floors: [], ceilings: []
   }
-  const extrudeColors = { walls: '#00ff60', ceilings: '#78019a', floors: '#78019a' }
+  const extrudeColors = { walls: '#fff', ceilings: '#fff', floors: '#fff' }
+  const extrudeOpacity = 0.5
   let extrudeAngleDegree = 45
 
   // Listen for the event.
@@ -87,8 +89,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
     mainColor = new Color(142, 100, 50)
 
     if (options.fillParent) {
-      drawExtrudeShapes()
-      // drawExtrudeShapes(extrudeShapes.floors, extrudeColors[1])
+      if (extrude) drawExtrudeShapes()
     }
 
     for (let y = 0; y < modelPixels.height; y++) {
@@ -121,7 +122,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
               col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBAString(px.a)
             }
           } else {
-            col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBString()
+            col = px.lum > 0.999 ? px.colorString : options.mainColor.toRGBAString(px.a)
           }
           ctx.fillStyle = col // px.colorString
         }
@@ -169,13 +170,15 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
           const shapes = extrudeShapes[key][x]
           bufferCtx.beginPath()
           bufferCtx.fillStyle = extrudeColors[key]
+          bufferCtx.lineWidth = 1 / pixDensity
           shapes.forEach(shape => { drawShape(shape, bufferCtx) })
+          bufferCtx.stroke()
           bufferCtx.fill()
         }
       })
     }
     const alpha = ctx.globalAlpha
-    ctx.globalAlpha = 0.2
+    ctx.globalAlpha = extrudeOpacity
     ctx.drawImage(buffer, 0, 0)
     ctx.globalAlpha = alpha
   }
@@ -229,7 +232,7 @@ function ScalableCanvasFromImage (imgURL, canvasID, options) {
         const px = modelPixels.pixTable[x][y]
         if (px.a === 0) continue
         // setup walls
-        if (x > 0 && modelPixels.pixTable[x - 1][y].a === 0) {
+        if (x === 0 || (x > 0 && modelPixels.pixTable[x - 1][y].a === 0)) {
           if (!extrudeShapes.walls[x]) {
             extrudeShapes.walls[x] = []
             extrudeShapes.walls[x].push({ x1: x, y1: y, x2: x, y2: y + 1 })

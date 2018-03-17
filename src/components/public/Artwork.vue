@@ -11,15 +11,23 @@
         </ul>
         <p class="work-meta caption">
           <span v-show="artwork.year">{{ artwork.year }}</span>
-          <span>Here comes the short technical description</span>
+          <span>{{sourceDescription}}</span>
           <span>no sound</span>
           <span>Javascript</span>
         </p>
         <section class="description">
           {{ this.artwork.description }}
         </section>
+        <section class="credits">
+          Credits
+          <ul v-if="artwork.credits.length" class="credits-string">
+            <li v-for="person in artwork.credits" :key="person.key">
+              <span :to="'/artist/' + person.key">{{ person.fullName}}: <i>{{person.role}}</i></span>
+            </li>
+          </ul>
+        </section>
       </div>
-
+      
       <div class="sidebar">
         <section class="social">
           <div class="row">
@@ -99,8 +107,21 @@
     created () {
       this.init()
     },
+
+    data () {
+      return {
+        currentSetup: 0
+      }
+    },
+
     computed: {
       ...mapState(['userAccount', 'accountArtwork', 'accountPlayers']),
+
+      sourceDescription () {
+        if (this.artwork) {
+          return this.artwork.setups[this.currentSetup].channels[0].source.toString()
+        }
+      },
 
       accountId () {
         if (!this.userAccount) {
@@ -117,6 +138,9 @@
       artworkId () {
         return this.$route.params.id
       },
+      /**
+       * @return {?Artwork}
+       */
       artwork () {
         const getValue = (value) => {
           if (value == null) {
@@ -172,13 +196,13 @@
         firebase.database().ref('accounts/' + this.accountId + '/players/' + player.key + '/artwork').remove().catch(log)
       },
       sendControl (player, position) {
-        firebase.database().ref('commands/' + player.pin).push({controlId: '' + position}).catch(log)
+        firebase.database().ref('commands/' + player.pin).push({ controlId: '' + position }).catch(log)
       },
       togglePublished (published) {
         if (!this.accountId) {
           return
         }
-        const data = {published: published}
+        const data = { published: published }
         firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId).update(data).catch(log)
       },
       removeArtwork () {

@@ -1,5 +1,5 @@
 import { IterationComponent } from '../IterationComponent'
-import { Dimensions } from '../Dimensions'
+import { Dimensions } from '../basic/Dimensions'
 
 export class Equipment extends IterationComponent {
   /**

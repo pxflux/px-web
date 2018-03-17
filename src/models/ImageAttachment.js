@@ -66,12 +66,15 @@ export class ImageAttachments {
   }
 
   /**
-   * @param {string} prefix
+   * @param {string} prefix - '.../setups/{index}/thumbnails/'
    * @param {ImageAttachment[]} values
    * @return {Object}
    */
   static toEntries (prefix, values) {
     const data = {}
+    if (!values.length) {
+      return (data[prefix] = null)
+    }
     values.forEach(value => {
       Object.assign(data, value.toEntries(prefix + value.order + '/'))
     })

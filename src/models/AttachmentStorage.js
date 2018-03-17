@@ -5,9 +5,9 @@
  */
 export class AttachmentStorage {
   /**
-   * @param {?string} displayUrl
-   * @param {?string} storageUrl
-   * @param {?File} file
+   * @param {?string=} displayUrl
+   * @param {?string=} storageUrl
+   * @param {?File=} file
    */
   constructor (displayUrl, storageUrl, file) {
     this.displayUrl = displayUrl || null
@@ -30,7 +30,7 @@ export class AttachmentStorage {
   }
 
   /**
-   * @param {string} prefix
+   * @param {string} prefix - '.../setups/{index}/thumbnails/{index}/storage/'
    * @return {Object}
    */
   toEntries (prefix) {
@@ -46,10 +46,10 @@ export class AttachmentStorage {
    * @param {AttachmentStorage} origin
    */
   updatedEntries (prefix, data, origin) {
-    if (this.displayUrl === origin.displayUrl) {
+    if (origin && this.displayUrl === origin.displayUrl) {
       delete data[prefix + 'displayUrl']
     }
-    if (this.storageUrl === origin.storageUrl) {
+    if (origin && this.storageUrl === origin.storageUrl) {
       delete data[prefix + 'storageUrl']
     }
   }

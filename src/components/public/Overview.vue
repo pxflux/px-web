@@ -11,13 +11,13 @@
     <div class="wrap-content" ref="wrap">
       <div class="content columns">
         <div class="column">
-          pxFlux for Artists
+          <h1>for Artists</h1>
         </div>
         <div class="column">
-          pxFlux for Galleries & Curators
+          <h1>for Galleries & Curators</h1>
         </div>
         <div class="column">
-          pxFlux for Collections & Museums
+          <h1>for Collections & Museums</h1>
         </div>
         <div class="hidden">
         <p>Unlike other media art institutions Pxflux not deal with curating,
@@ -190,7 +190,7 @@
         }
         this.$nextTick(() => {
           if (subtitle) {
-            subtitle.style.left = cssPx * (this.logo.logoLeftSpx + 1) + 'px'
+            subtitle.style.left = cssPx * (this.logo.logoLeftSpx) + 'px'
             subtitle.style.top = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + 'px'
           }
           this.$refs['wrap'].style.marginTop = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + cssPx + 'px'
@@ -203,8 +203,8 @@
         const options = {
           stroke: true,
           top: 4,
-          left: 0,
-          mainColor: new Color(142, 100, 50), // new Color(203, 16, 26), //
+          left: 2,
+          mainColor: new Color(203, 16, 26), // new Color(142, 100, 50), //
           strokeColor: new Color(0).setAlpha(0.1),
           fillParent: true
         }
@@ -255,7 +255,7 @@
       display: flex;
       flex-flow: row wrap;
       top: $module-size;
-      color: #434343;
+      color: $logo-bg-color;
       font-size: $module-size;
       .word {
         display: flex;
@@ -268,7 +268,7 @@
         text-align: center;
         line-height: $module-size;
         overflow: hidden;
-        background: transparentize($bg-color, 0.7);
+        //background: $dark-bg;
       }
     }
   }

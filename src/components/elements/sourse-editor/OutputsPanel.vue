@@ -50,7 +50,7 @@
   import OutputRepresentationBar from './OutputRepresentationBar'
   import ConnectorsCanvas from './ConnectorsCanvas'
   import VueSelect from '../UI/Select/components/Select'
-  import commonResolutions from '../../../models/old-models/display-resolutions'
+  import commonResolutions from '../../../models/utilities/standard-resolutions'
 
   export default {
     name: 'outputs-panel',
