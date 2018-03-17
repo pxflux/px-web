@@ -1,10 +1,11 @@
 <template>
   <div class="attachments" id="AAA">
     <div class="display">
-      <video-player v-if="preview" :videoUrl="preview.storage.displayUrl" :ratio="preview.ratio"/>
-      <div v-if="thumbnail">
+      <video-player v-if="video" :videoUrl="video.storage.displayUrl" :ratio="video.ratio"/>
+      <div v-if="images.length" v-for="thumbnail in images" :data-ratio="thumbnail.ratio">
         <img v-show="thumbnail.displayUrl" :src="thumbnail.displayUrl">
       </div>
+      <!--<div v-if="!images.length" class="attachment placeholder"></div>-->
     </div>
     <div class="toolbar">
       <div class="controls">
@@ -39,21 +40,7 @@
     components: {
       'video-player': VideoPlayer
     },
-    props: ['artwork'],
-    computed: {
-      preview () {
-        if (this.artwork.setups.length) {
-          return this.artwork.setups[0].preview
-        }
-        return null
-      },
-      thumbnail () {
-        if (this.artwork.setups.length && this.artwork.setups[0].thumbnails.length) {
-          return this.artwork.setups[0].thumbnails[0].storage
-        }
-        return null
-      }
-    }
+    props: ['video', 'images']
   }
 </script>
 

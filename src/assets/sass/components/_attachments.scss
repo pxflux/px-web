@@ -1,19 +1,21 @@
 .attachments {
+  $attachments-height: $module-size * 6;
   .display {
     position: relative;
     display: flex;
     flex-flow: row nowrap;
-    height: $module-size * 6;
+    height: $attachments-height;
     overflow-x: scroll;
     overflow-y: hidden;
     width: 100%;
     @include checker-bg();
 
     & > * {
-      flex-grow: 1;
-      flex-shrink: 0;
+      //flex-grow: 1;
+      //flex-shrink: 0;
       max-width: calc(100vw - 2 * #{$module-size});
-      height: 100%;
+      height: $attachments-height;
+      width: calc(attr(data-ratio) * #{$attachments-height});
       position: relative;
       margin-right: $module-size;
 

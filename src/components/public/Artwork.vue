@@ -1,6 +1,6 @@
 <template>
   <main v-if="artwork">
-    <attachment-panel :artwork="artwork"/>
+    <attachment-panel :video="video" :images="images"/>
     <div class="wrap-content">
       <div class="content">
         <h1 :title="artwork.title">{{ artwork.title }}</h1>
@@ -110,7 +110,7 @@
 
     data () {
       return {
-        currentSetup: 0
+        currentSetupIndex: 0
       }
     },
 
@@ -119,7 +119,23 @@
 
       sourceDescription () {
         if (this.artwork) {
-          return this.artwork.setups[this.currentSetup].channels[0].source.toString()
+          return this.artwork.setups[this.currentSetupIndex].channels[0].source.toString()
+        }
+      },
+
+      images () {
+        return this.currentSetup ? this.currentSetup.thumbnails : []
+      },
+
+      video () {
+        return this.currentSetup ? this.currentSetup.preview : null
+      },
+
+      currentSetup () {
+        if (this.artwork && this.artwork.setups.length) {
+          return this.artwork.setups[this.currentSetupIndex]
+        } else {
+          return null
         }
       },
 

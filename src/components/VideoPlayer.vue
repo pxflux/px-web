@@ -1,7 +1,6 @@
 <template>
   <div v-if="isVimeo && videoId"
-       class="video-box proportional-height"
-       :style="'padding-top:' + heightFromWidth + '%'">
+       class="video-box" ref="videoBox">
     <vimeo-player ref="player" :video-id='videoId' :options="options"
                   @pause="setPaused(true)"
                   @play="setPaused(false)"
@@ -38,11 +37,16 @@
           fullscreen: false
         },
         playerReady: false,
-        paused: true
+        paused: true,
+        videoBoxEl: null
       }
     },
     computed: {
       heightFromWidth () {
+        if (this.ratio > 1) {
+          // landscape orientation
+
+        }
         return this.ratio ? 100 / this.ratio : 50 // %
       },
       videoId () {
@@ -55,9 +59,32 @@
         }
       }
     },
+
+    mounted () {
+      this.videoBoxEl = this.$refs['videoBox']
+      this.fitToParent()
+      window.addEventListener('resize', this.fitToParent)
+    },
+
     methods: {
+      fitToParent () {
+        const parent = this.videoBoxEl.parentElement
+        const parentRect = parent.getBoundingClientRect()
+        let pW = parentRect.right - parentRect.left
+        let h = parentRect.bottom - parentRect.top
+        let w = h * this.ratio
+        if (w > pW) {
+          w = pW
+          h = w / this.ratio
+        }
+        this.videoBoxEl.style.width = w + 'px'
+        this.videoBoxEl.style.height = h + 'px'
+      },
+
       setPaused (s) { this.paused = s },
+
       onReady () {},
+
       onLoad () {
         this.playerReady = true
         this.$nextTick(function () {
