@@ -1,10 +1,8 @@
 footer {
 	flex-shrink: 0;
-	/*background: greenyellow;*/
-  padding: 0 $module-size;
 	height: $module-size;
   .wrap {
     height: $module-size;
-    background: #5b5b5b;
+    @include checker-bg()
   }
 }

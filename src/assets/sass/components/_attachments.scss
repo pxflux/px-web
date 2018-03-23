@@ -4,7 +4,8 @@
     position: relative;
     display: flex;
     flex-flow: row nowrap;
-    height: $attachments-height;
+    min-height: $attachments-height;
+    height: calc((100vh - #{$module-size}) / 2);
     overflow-x: scroll;
     overflow-y: hidden;
     width: 100%;
@@ -15,7 +16,7 @@
       //flex-shrink: 0;
       max-width: calc(100vw - 2 * #{$module-size});
       height: $attachments-height;
-      width: calc(attr(data-ratio) * #{$attachments-height});
+      width: auto;
       position: relative;
       margin-right: $module-size;
 
