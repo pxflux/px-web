@@ -37,13 +37,9 @@
           const account = {
             accountId: this.accountId
           }
-          firebase.database().ref('player-pins/' + this.pin).once('value').then(function (snapshot) {
-            if (snapshot.exists()) {
-              return snapshot.ref.update(account)
-            }
-          }).then(function () {
-            this.$router.push('/')
-          }.bind(this)).catch(log)
+          firebase.database().ref('player-pins/' + this.pin).set(account).then(() => {
+            this.$router.push('/account/players')
+          }).catch(log)
         }
       }
     }
