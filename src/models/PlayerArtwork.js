@@ -26,8 +26,7 @@ export class PlayerArtwork {
     if (typeof artwork !== 'object') {
       return null
     }
-    const url = artwork.hasOwnProperty('setups') && artwork.setups.length ? artwork.setups[0].source.url : artwork.url
-    return new PlayerArtwork(key, artwork.title, url, Controls.fromJson(artwork.controls))
+    return new PlayerArtwork(key, artwork.title, artwork.setups[0].channels[0].source.url, Controls.fromJson(artwork.controls))
   }
 
   /**
