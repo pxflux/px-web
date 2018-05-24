@@ -3,12 +3,14 @@ import { PlayerArtwork } from './PlayerArtwork'
 /**
  * @property {?string} key
  * @property {?string} pin
+ * @property {boolean} connected
  * @property {?PlayerArtwork} artwork
  */
 export class Player {
-  constructor (key, pin, artwork) {
+  constructor (key, pin, connected, artwork) {
     this.key = key || null
     this.pin = pin || null
+    this.connected = connected || false
     this.artwork = artwork
   }
 
@@ -24,7 +26,7 @@ export class Player {
       return null
     }
     const id = value.hasOwnProperty('.key') ? value['.key'] : value.key
-    return new Player(id, value.pin, PlayerArtwork.fromJson(value.artwork))
+    return new Player(id, value.pin, value.hasOwnProperty('connections'), PlayerArtwork.fromJson(value.artwork))
   }
 
   /**
@@ -45,6 +47,7 @@ export class Player {
   toEntries (prefix) {
     const data = {}
     data[prefix + 'pin'] = this.pin
+    data[prefix + 'connected'] = this.connected
     Object.assign(data, PlayerArtwork.toEntries(prefix + 'artwork/', this.artwork))
     return data
   }
@@ -68,6 +71,9 @@ export class Player {
   updatedEntries (prefix, data, original) {
     if (this.pin === original.pin) {
       delete data[prefix + 'pin']
+    }
+    if (this.connected === original.connected) {
+      delete data[prefix + 'connected']
     }
     this.artwork.updatedEntries(prefix + 'artwork/', data, original.artwork)
   }

@@ -27,7 +27,7 @@
           </ul>
         </section>
       </div>
-      
+
       <div class="sidebar">
         <section class="social">
           <div class="row">
@@ -147,7 +147,7 @@
       },
       players () {
         if (this.accountPlayers) {
-          return this.accountPlayers.map(player => Player.fromJson(player))
+          return this.accountPlayers.map(player => Player.fromJson(player)).filter(player => player.connected)
         }
         return []
       },
