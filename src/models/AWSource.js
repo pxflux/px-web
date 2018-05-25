@@ -21,8 +21,8 @@ import { AttachmentStorage } from './AttachmentStorage'
  * @property {?number}     colorDepth
  * @property {?string}     colorProfile
  * @property {?string}     codec
- * @property {?number}     videoChannelCount
- * @property {?number}     audioChannelCount
+ * @property {?number}     videoTracksCount
+ * @property {?number}     audioTracksCount
  * @property {?ImageAttachment} thumbnail
  */
 export class AWSource {
@@ -46,8 +46,8 @@ export class AWSource {
     this.colorDepth = null
     this.colorProfile = null
     this.codec = null
-    this.videoChannelCount = null
-    this.audioChannelCount = null
+    this.videoTracksCount = null
+    this.audioTracksCount = null
     this.thumbnail = null
 
     if (data) {

@@ -21,7 +21,29 @@
   > .button{ background: transparent}
 }
 
-.config-editor {
+.channels-tab-bar{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  height: $module-size;
+
+  .tab{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: $module-size;
+    cursor: pointer;
+    *{
+      color: $link-color;
+    }
+    &.active *{
+      color: $font-color;
+    }
+  }
+}
+
+.setup-editor {
   width: 100vw;
   background: $bg-secondary-color;
   @include hairline-border();

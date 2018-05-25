@@ -27,7 +27,7 @@ export class Attachment {
    * @return {?Attachment}
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     return new Attachment(value.type, AttachmentStorage.fromJson(value.storage), value.caption,

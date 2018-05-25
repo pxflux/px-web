@@ -16,7 +16,18 @@ $channel-padding-big: $module-size;
     width: calc(100vw - #{$channel-padding-normal*2});
   }
 }
+.channel-wrapper{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  position: relative;
+  border-right: 1px dashed $outline-color;
 
+  &:last-child{
+    min-width: 100vw;
+    border-right: none;
+  }
+}
 .channel {
   position: relative;
   border-right: 1px dashed transparentize($bg-secondary-color, 0.9);
@@ -46,6 +57,7 @@ $channel-padding-big: $module-size;
       max-width: calc(100vw - #{$module-size * 2.5});
     }
   }
+
   .row {
     background: transparent;
     label{
@@ -62,6 +74,9 @@ $channel-padding-big: $module-size;
     }
   }
 
+  .outputs-editor-wrapper{
+    position: relative;
+  }
   .outputs-editor-panel,
   .source-editor-panel{
     position: relative;

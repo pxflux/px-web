@@ -25,7 +25,7 @@ form {
     @include weider-then-phone() {
       display: flex;
       flex-flow: row nowrap;
-      width: calc(100vw - #{$module-size});
+      //width: calc(100vw - #{$module-size});
     }
 
     input#title {

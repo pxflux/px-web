@@ -37,7 +37,7 @@
 
     data () {
       return {
-        channel: new AWChannel(this.value),
+        channel: (this.value instanceof AWChannel) ? this.value : new AWChannel(this.value),
         source: null,
         audioOutputs: null,
         videoOutputs: null,
@@ -50,9 +50,9 @@
 
     methods: {
       resetChannel (value) {
-        this.channel = new AWChannel(value)
+        this.channel = value instanceof AWChannel ? value : new AWChannel(value)
         this.source = this.channel.source
-        if (typeof this.source.url === 'string') {
+        if (this.source && typeof this.source.url === 'string') {
           this.source.updateUrl(this.source.url, isOK => {
             this.sourceIsOK = isOK
             this.url = this.source.url
@@ -82,6 +82,7 @@
     },
 
     mounted () {
+      // this.resetChannel()
       this.sourceDescription = this.defaultSourceDescription
     },
 

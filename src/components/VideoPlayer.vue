@@ -83,7 +83,9 @@
 
       setPaused (s) { this.paused = s },
 
-      onReady () {},
+      onReady () {
+        log(this.$refs.player)
+      },
 
       onLoad () {
         this.playerReady = true

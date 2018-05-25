@@ -27,7 +27,7 @@
           </div>
           <!-- -->
           <router-link v-if="user" to="/artworks" class="button">
-            <img src="/static/img/collection-a@2x.png" width="24" height="24" class="center">
+            <img src="/static/img/collection-v3@2x.png" width="24" height="24" class="center">
           </router-link>
           <!-- -->
           <div v-if="user" class="item-with-submenu">

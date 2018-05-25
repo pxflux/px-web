@@ -268,6 +268,18 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   &.square {
     //width: $button-height;
   }
+  &.secondary{
+    background: transparent;
+  }
+  &.top, &.right{
+    position: absolute;
+  }
+  &.top{
+    top: 0;
+  }
+  &.right{
+    right: 0;
+  }
 }
 
 i, .icon {

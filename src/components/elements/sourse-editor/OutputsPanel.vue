@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="outputs-editor-wrapper">
     <connectors-canvas v-if="outputsPanelOpen" :start-connectors="outputSockets" :end-connectors="outputBoxes"
                        :colors="colors" :trigger="trigger"/>
     <section class="outputs-editor-panel row" ref="outputEditor">

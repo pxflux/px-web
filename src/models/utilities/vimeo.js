@@ -29,6 +29,15 @@ export default {
     return url.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
   },
   /**
+   * Check to see if the URL is a Vimeo url.
+   *
+   * @param {string} url The url string.
+   * @return {boolean}
+   */
+  isVimeoUrl (url) {
+    return (/^(https?:)?\/\/((player|www).)?vimeo.com(?=$|\/)/.test(url))
+  },
+  /**
    * @param {string} url
    * @return {Promise<VimeoVideoInfo>}
    */
