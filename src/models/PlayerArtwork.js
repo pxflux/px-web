@@ -4,18 +4,20 @@ import { Controls } from './Control'
  * @property {boolean} key
  * @property {?string} title
  * @property {?string} url
+ * @property {?string} type
  * @property {Control[]} controls
  */
 export class PlayerArtwork {
-  constructor (key, title, url, controls) {
+  constructor (key, title, url, type, controls) {
     this.key = key || null
     this.title = title || null
     this.url = url || null
+    this.type = type || null
     this.controls = controls
   }
 
   static empty () {
-    return new PlayerArtwork(null, null, null, Controls.empty())
+    return new PlayerArtwork(null, null, null, null, Controls.empty())
   }
 
   /**
@@ -26,7 +28,8 @@ export class PlayerArtwork {
     if (typeof artwork !== 'object') {
       return null
     }
-    return new PlayerArtwork(key, artwork.title, artwork.setups[0].channels[0].source.url, Controls.fromJson(artwork.controls))
+    const source = artwork.setups[0].channels[0].source
+    return new PlayerArtwork(key, artwork.title, source.url, source.type, Controls.fromJson(artwork.controls))
   }
 
   /**
@@ -36,7 +39,7 @@ export class PlayerArtwork {
     if (!value && typeof value !== 'object') {
       return null
     }
-    return new PlayerArtwork(value.key, value.title, value.url, Controls.fromJson(value.controls))
+    return new PlayerArtwork(value.key, value.title, value.url, value.type, Controls.fromJson(value.controls))
   }
 
   /**
@@ -48,6 +51,7 @@ export class PlayerArtwork {
     data[prefix + 'key'] = this.key
     data[prefix + 'title'] = this.title
     data[prefix + 'url'] = this.url
+    data[prefix + 'type'] = this.type
     Object.assign(data, Controls.toEntries(prefix + 'controls/', this.controls))
     return data
   }
@@ -77,6 +81,9 @@ export class PlayerArtwork {
     }
     if (this.url === original.url) {
       delete data[prefix + 'url']
+    }
+    if (this.type === original.type) {
+      delete data[prefix + 'type']
     }
     Controls.updatedEntries(prefix + 'controls/', data, original.controls, this.controls)
   }
