@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>pxflux</title>
+  <script src="https://player.vimeo.com/api/player.js"></script>
+  <style>
+    #embed iframe,body{display:block;width:100vw;height:100vh;margin:0;padding:0}body{background:#000;color:#fff;overflow:hidden}#embed{width:100vw;height:100vh}.center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+  </style>
+</head>
+<body>
+<!--<div id="embed" data-vimeo-url="%%url%%"><span id="loading">Loading video...</span></div>-->
+<div id="embed" data-vimeo-url="https://vimeo.com/166151555"><span id="loading">Loading video...</span></div>
+<script>
+  const player = new Vimeo.Player('embed', {
+    background: true,
+    autoplay: true,
+    byline: false,
+    portrait: false,
+    title: false,
+    fullscreen: false,
+    muted: 0
+  })
+  player.on('loaded', function () {
+    document.getElementById('loading').style.display = 'none'
+    player.play()
+    player.setVolume(1)
+  })
+</script>
+</body>
+</html>

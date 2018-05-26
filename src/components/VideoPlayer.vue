@@ -16,7 +16,7 @@
 </template>
 
 <script>
-  import { vueVimeoPlayer } from 'vue-vimeo-player'
+  import vueVimeoPlayer from 'vue-vimeo-player'
   import { log } from '../helper'
   //  import axios from 'axios'
 
