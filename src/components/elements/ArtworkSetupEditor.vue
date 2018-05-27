@@ -28,20 +28,20 @@
         </div>
         <div v-if="setupChannels.length" class="channels-tab-bar row">
           <label><span>Channels</span></label>
-          <div v-for="(channel, i) in setupChannels"
+          <div v-for="i in setupChannels.length"
                class="tab channel-tab"
-               :class="[i === selectedChannelIndex? 'active': '']"
-               @click="selectChannel(i)"
-               v-scroll-to="{el: '#'+channelID(i), container: '#channels-container', x: true, y:false}">
-            <h1>{{i + 1}}</h1>
+               :class="[(i - 1) === selectedChannelIndex? 'active': '']"
+               @click="selectChannel(i - 1)"
+               v-scroll-to="{el: '#'+channelID(i - 1), container: '#channels-container', x: true, y: false}">
+            <h1>{{i}}</h1>
           </div>
           <div class="button frameless secondary" @click="addChannel()"><i class="plus"></i></div>
         </div>
         <section id="channels-container" class="scene">
-          <div v-for="(channel, i) in setupChannels" class="channel-wrapper">
-            <channel-editor v-model="setupChannels[i]" :key="'ch'+i" :id="channelID(i)"/>
-            <div v-if="i" class="button frameless secondary" @click="removeChannel()"><i
-              class="cancel-small"></i></div>
+          <div v-for="i in setupChannels.length" class="channel-wrapper">
+            <channel-editor v-model="setupChannels[i - 1]" :key="'ch' + (i - 1)" :id="channelID(i - 1)"/>
+            <div v-if="i - 1" class="button frameless secondary" @click="removeChannel()"><i class="cancel-small"></i>
+            </div>
           </div>
         </section>
         <section>
@@ -60,7 +60,7 @@
         </section>
       </div>
     </section>
-  
+
   </div>
 </template>
 
@@ -82,8 +82,9 @@
       ChannelEditor
     },
     data () {
+      let setups = this.value.length ? this.value : [AWSetup.empty()]
       return {
-        setups: this.value || AWSetups.empty(),
+        setups: setups,
         setupIndex: 0,
         scrolling: false,
         renameConfigOpen: false,
@@ -104,7 +105,8 @@
           this.update()
         },
         get () {
-          return this.setups[this.setupIndex].channels
+          let channels = this.setups[this.setupIndex].channels
+          return channels.length ? channels : [AWChannel.empty()]
         }
       }
     },
@@ -123,11 +125,11 @@
         this.update()
       },
       addChannel () {
-        this.setupChannels.push(new AWChannel())
+        this.setupChannels.push(AWChannel.empty())
         this.$nextTick(function () {
           const id = this.setupChannels.length - 1
           this.selectChannel(id)
-          this.$scrollTo('#' + this.channelID(id), { container: '#channels-container', x: true, y: false })
+          this.$scrollTo('#' + this.channelID(id), {container: '#channels-container', x: true, y: false})
         })
       },
       removeChannel (index) {
@@ -139,9 +141,6 @@
       },
       selectChannel (index) {
         this.selectedChannelIndex = index >= 0 && index < this.setupChannels.length ? index : 0
-        // const el = document.getElementById(this.channelID(index))
-        // if (!el) return
-        // const left = el.getBoundingClientRect().left
       },
       update () {
         this.$emit('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))

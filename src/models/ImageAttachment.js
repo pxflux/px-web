@@ -38,6 +38,18 @@ export class ImageAttachment extends Attachment {
     }
     return new ImageAttachment(Number.parseInt(value.order), attachment.storage, attachment.caption, attachment.ratio)
   }
+
+  /**
+   * @param {number} order
+   * @param {VimeoVideoInfo} vimeoInfo
+   */
+  static fromVimeo (order, vimeoInfo) {
+    if (!vimeoInfo && typeof vimeoInfo !== 'object') {
+      return null
+    }
+    return new ImageAttachment(order, new AttachmentStorage(vimeoInfo.thumbnail.url, null, null), vimeoInfo.description,
+      vimeoInfo.thumbnail.width / vimeoInfo.thumbnail.height)
+  }
 }
 
 export class ImageAttachments {

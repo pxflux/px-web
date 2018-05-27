@@ -8,48 +8,41 @@ import { ArrayOfType } from './utilities/ArrayOfType'
  * @property {object[]} videoOutputs
  * @property {boolean} sync
  * @property {boolean} isClockSource
- * @property {?number} syncToChannel
+ * @property {number} syncToChannel
  */
 export class AWChannel {
   /**
-   * @param {object=} data
+   * @param {number} id
+   * @param {?AWSource} source
+   * @param {object[]} audioOutputs
+   * @param {object[]} videoOutputs
+   * @param {boolean} sync
+   * @param {boolean} isClockSource
+   * @param {number} syncToChannel
    */
-  constructor (data) {
-    this.id = Date.now()
-    this.source = null
-    this.audioOutputs = []
-    this.videoOutputs = []
-    this.sync = false
-    this.isClockSource = false
-    this.syncToChannel = null
-
-    if (data) {
-      this.fromJson(data)
-    }
+  constructor (id, source, audioOutputs, videoOutputs, sync, isClockSource, syncToChannel) {
+    this.id = isNaN(id) ? 0 : id
+    this.source = source || null
+    this.audioOutputs = audioOutputs || []
+    this.videoOutputs = videoOutputs || []
+    this.sync = sync || false
+    this.isClockSource = isClockSource || false
+    this.syncToChannel = isNaN(syncToChannel) ? 0 : syncToChannel
   }
 
   static empty () {
-    return new AWChannel()
-  }
-
-  clearData () {
-    Object.keys(this).forEach(key => {
-      this[key] = Array.isArray(this[key]) ? [] : null
-    })
+    return new AWChannel(0, null, [], [], false, false, 0)
   }
 
   /**
    * @param {object} data
    */
-  fromJson (data) {
-    if (typeof data !== 'object' || data === null) return null
-    if (data.hasOwnProperty('id')) this.id = data.id
-    this.source = new AWSource(data.source)
-    this.audioOutputs = ArrayOfType.fromJson(data.audioOutputs, null) // todo instead of null mast be a constructor
-    this.videoOutputs = ArrayOfType.fromJson(data.videoOutputs, null) // todo instead of null mast be a constructor
-    this.sync = data.sync || false
-    this.isClockSource = data.isClockSource || false
-    this.syncToChannel = data.syncToChannel || null
+  static fromJson (data) {
+    if (typeof data !== 'object' || data === null) {
+      return null
+    }
+    return new AWChannel(Number.parseInt(data.id), AWSource.fromJson(data.source), ArrayOfType.fromJson(data.audioOutputs, null),
+      ArrayOfType.fromJson(data.videoOutputs, null), data.sync, data.isClockSource, Number.parseInt(data.syncToChannel))
   }
 
   /**
@@ -58,43 +51,113 @@ export class AWChannel {
    */
   toEntries (prefix) {
     const data = {}
-    Object.keys(this).forEach(key => {
-      if (this.propHasFunc('toEntries', key)) {
-        Object.assign(data, this[key].toEntries(prefix + key + '/'))
-      } else if (Array.isArray(this[key])) {
-        Object.assign(data, ArrayOfType.toEntries(prefix + 'setups/', this[key]))
-      } else {
-        data[prefix + key] = this[key]
-      }
-    })
+    data[prefix + 'id'] = this.id
+    if (this.source === null) {
+      data[prefix + 'source'] = null
+    } else {
+      Object.assign(data, this.source.toEntries(prefix + 'source/'))
+    }
+    data[prefix + 'audioOutputs'] = this.audioOutputs
+    data[prefix + 'videoOutputs'] = this.videoOutputs
+    data[prefix + 'sync'] = this.sync
+    data[prefix + 'isClockSource'] = this.isClockSource
+    data[prefix + 'syncToChannel'] = this.syncToChannel
     return data
   }
 
   /**
    * @param {string} prefix
    * @param {object} data
-   * @param {object} original
+   * @param {AWChannel} original
    */
   updatedEntries (prefix, data, original) {
-    console.log('CHANNELLLLLLLL --> original: >>>>>>')
-    console.log(original)
+    if (this.id === original.id) {
+      delete data[prefix + 'id']
+    }
+    if (this.source !== null) {
+      this.source.updatedEntries(prefix + 'source/', data, original.source)
+    }
+    if (this.audioOutputs === original.audioOutputs) {
+      delete data[prefix + 'audioOutputs']
+    }
+    if (this.videoOutputs === original.videoOutputs) {
+      delete data[prefix + 'videoOutputs']
+    }
+    if (this.sync === original.sync) {
+      delete data[prefix + 'sync']
+    }
+    if (this.isClockSource === original.isClockSource) {
+      delete data[prefix + 'isClockSource']
+    }
+    if (this.syncToChannel === original.syncToChannel) {
+      delete data[prefix + 'syncToChannel']
+    }
+  }
+
+  clearData () {
     Object.keys(this).forEach(key => {
-      if (this.propHasFunc('updatedEntries', key)) {
-        this[key].updatedEntries(prefix + key + '/', data, original[key])
-      } else if (Array.isArray(this[key])) {
-        ArrayOfType.updatedEntries(prefix + key + '/', data, original[key], this[key])
-      } else {
-        if (this[key] === original[key]) delete data[prefix + key]
-      }
+      this[key] = Array.isArray(this[key]) ? [] : null
     })
+  }
+}
+
+export class AWChannels {
+  /**
+   * @return {AWChannel[]}
+   */
+  static empty () {
+    return []
   }
 
   /**
-   * @param {string} funcName
-   * @param {string} key
-   * @return {boolean}
+   * @param value
+   * @return {AWChannel[]}
    */
-  propHasFunc (funcName, key) {
-    return this[key] !== null && typeof this[key] === 'object' && typeof this[key][funcName] === 'function'
+  static fromJson (value) {
+    if (!value) {
+      return []
+    }
+    if (typeof value === 'object') {
+      return Object.keys(value).map(key => AWChannel.fromJson(Object.assign(value[key], {id: key})))
+    }
+    if (Array.isArray(value)) {
+      return value.map(it => AWChannel.fromJson(it))
+    }
+    return []
+  }
+
+  /**
+   * @param {string} prefix - '.../setups/'
+   * @param {AWChannel[]} values
+   * @return {Object}
+   */
+  static toEntries (prefix, values) {
+    const data = {}
+    values.forEach(value => {
+      Object.assign(data, value.toEntries(prefix + value.id + '/'))
+    })
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {Object} data
+   * @param {AWChannel[]} originals
+   * @param {AWChannel[]} values
+   */
+  static updatedEntries (prefix, data, originals, values) {
+    // add & updates
+    values.forEach(value => {
+      const items = originals.filter(item => item.id === value.id)
+      const original = items.length > 0 ? items[0] : AWChannel.empty()
+      value.updatedEntries(prefix + value.id + '/', data, original)
+    })
+    // remove
+    originals.forEach(original => {
+      const items = values.filter(item => item.id === original.id)
+      if (items.length === 0) {
+        data[prefix + original.id] = null
+      }
+    })
   }
 }

@@ -1,27 +1,29 @@
 /**
+ * @param {number} w
+ * @param {number} h
  */
-
 export class Resolution {
-  constructor (data) {
-    this.w = null
-    this.h = null
-
-    if (data) {
-      this.fromJson(data)
-    }
+  /**
+   * @param {number} w
+   * @param {number} h
+   */
+  constructor (w, h) {
+    this.w = isNaN(w) ? 0 : w
+    this.h = isNaN(h) ? 0 : h
   }
 
-  toString () {
-    return `${this.w} x ${this.h} px`
+  static empty () {
+    return new Resolution(0, 0)
   }
 
   /**
    * @param {object} data
    */
-  fromJson (data) {
-    if (typeof data !== 'object') return
-    this.w = data.w
-    this.h = data.h
+  static fromJson (data) {
+    if (typeof data !== 'object') {
+      return null
+    }
+    return new Resolution(Number.parseInt(data.w), Number.parseInt(data.h))
   }
 
   /**
@@ -32,15 +34,13 @@ export class Resolution {
     const data = {}
     data[prefix + 'w'] = this.w
     data[prefix + 'h'] = this.h
-    console.log('--> data: >>>>>>')
-    console.log(data)
     return data
   }
 
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {SourceURL} original
+   * @param {Resolution} original
    */
   updatedEntries (prefix, data, original) {
     if (original && this.w === original.w) {
@@ -49,5 +49,9 @@ export class Resolution {
     if (original && this.h === original.h) {
       delete data[prefix + 'h']
     }
+  }
+
+  toString () {
+    return `${this.w} x ${this.h} px`
   }
 }
