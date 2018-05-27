@@ -2,97 +2,225 @@ import axios from 'axios'
 import vimeo from './utilities/vimeo'
 import { Resolution } from './basic/Resolution'
 import { ImageAttachment } from './ImageAttachment'
-import { AttachmentStorage } from './AttachmentStorage'
 
 /**
- * @property {?string}     url
- * @property {?string}     type - 'html' | 'vimeo' | 'video' | 'audio' | 'pd' | 'processing' | etc.
- * @property {?string}     version
- * @property {?boolean}    local - If the source is stored locally on the pxFlux server
- * @property {?string[]}   dependencies - If applicable (e.g. for Javascript), an array of external libraries, frameworks or services
- * @property {?string[]}   assets - If applicable (e.g. for HTML or Javascript), an array of external (media) files used in the source
- * @property {?number}     dataSize - In bits
- * @property {?number}     dataRate - Or bit rate
+ * @property {?string} url
+ * @property {?string} type - 'html' | 'vimeo' | 'video' | 'audio' | 'pd' | 'processing' | etc.
+ * @property {?string} version
+ * @property {boolean} local - If the source is stored locally on the pxFlux server
+ * @property {string[]} dependencies - If applicable (e.g. for Javascript), an array of external libraries, frameworks or services
+ * @property {string[]} assets - If applicable (e.g. for HTML or Javascript), an array of external (media) files used in the source
+ * @property {number} dataSize - In bits
+ * @property {number} dataRate - Or bit rate
  * @property {?Resolution} resolution
- * @property {?number}     duration
- * @property {?boolean}    loop - Whether the source is the loop
- * @property {?number}     fps - If applicable (e.g. for Video) frame per second
- * @property {?number}     pixelAspectRatio - If applicable (e.g. for Video) frame per second
- * @property {?number}     colorDepth
- * @property {?string}     colorProfile
- * @property {?string}     codec
- * @property {?number}     videoTracksCount
- * @property {?number}     audioTracksCount
+ * @property {number} duration
+ * @property {boolean} loop - Whether the source is the loop
+ * @property {number} fps - If applicable (e.g. for Video) frame per second
+ * @property {number} pixelAspectRatio - If applicable (e.g. for Video) frame per second
+ * @property {number} colorDepth
+ * @property {?string} colorProfile
+ * @property {?string} codec
+ * @property {number} videoTracksCount
+ * @property {number} audioTracksCount
  * @property {?ImageAttachment} thumbnail
  */
 export class AWSource {
   /**
-   * @param {object=} data
+   * @param {?string} url
+   * @param {?string} type
+   * @param {?string} version
+   * @param {boolean} local
+   * @param {string[]} dependencies
+   * @param {string[]} assets
+   * @param {number} dataSize
+   * @param {number} dataRate
+   * @param {?Resolution} resolution
+   * @param {number} duration
+   * @param {boolean} loop
+   * @param {number} fps
+   * @param {number} pixelAspectRatio
+   * @param {number} colorDepth
+   * @param {?string} colorProfile
+   * @param {?string} codec
+   * @param {number} videoTracksCount
+   * @param {number} audioTracksCount
+   * @param {?ImageAttachment} thumbnail
    */
-  constructor (data) {
-    this.url = null
-    this.type = null
-    this.version = null
-    this.local = null
-    this.dependencies = null
-    this.assets = null
-    this.dataSize = null
-    this.dataRate = null
-    this.resolution = null
-    this.duration = null
-    this.loop = null
-    this.fps = null
-    this.pixelAspectRatio = null
-    this.colorDepth = null
-    this.colorProfile = null
-    this.codec = null
-    this.videoTracksCount = null
-    this.audioTracksCount = null
-    this.thumbnail = null
+  constructor (url, type, version, local, dependencies, assets, dataSize, dataRate, resolution, duration, loop, fps,
+               pixelAspectRatio, colorDepth, colorProfile, codec, videoTracksCount, audioTracksCount, thumbnail) {
+    this.url = url || null
+    this.type = type || null
+    this.version = version || null
+    this.local = local || false
+    this.dependencies = dependencies || []
+    this.assets = assets || []
+    this.dataSize = isNaN(dataSize) ? 0 : dataSize
+    this.dataRate = isNaN(dataRate) ? 0 : dataRate
+    this.resolution = resolution
+    this.duration = isNaN(duration) ? 0 : duration
+    this.loop = loop || false
+    this.fps = isNaN(fps) ? 0 : fps
+    this.pixelAspectRatio = isNaN(pixelAspectRatio) ? 0 : pixelAspectRatio
+    this.colorDepth = isNaN(colorDepth) ? 0 : colorDepth
+    this.colorProfile = colorProfile || null
+    this.codec = codec || null
+    this.videoTracksCount = isNaN(videoTracksCount) ? 0 : videoTracksCount
+    this.audioTracksCount = isNaN(audioTracksCount) ? 0 : audioTracksCount
+    this.thumbnail = thumbnail || null
+  }
 
-    if (data) {
-      this.fromJson(data)
+  static empty () {
+    return new AWSource(null, null, null, false, [], [], 0, 0, null, 0, false, 0, 0, 0, null, null, 0, 0, null)
+  }
+
+  /**
+   * @param {object} data
+   */
+  static fromJson (data) {
+    if (!data && typeof data !== 'object') {
+      return null
     }
+    return new AWSource(data.url, data.type, data.version, data.local, data.dependencies, data.assets,
+      Number.parseInt(data.dataSize), Number.parseInt(data.dataRate), Resolution.fromJson(data.resolution),
+      Number.parseInt(data.duration), data.loop, Number.parseInt(data.fps), Number.parseInt(data.pixelAspectRatio),
+      Number.parseInt(data.colorDepth), data.colorProfile, data.codec, Number.parseInt(data.videoTracksCount),
+      Number.parseInt(data.audioTracksCount), ImageAttachment.fromJson(data.thumbnail))
+  }
+
+  /**
+   * @param {?string} url
+   * @param {VimeoVideoInfo} info
+   * @return {AWSource}
+   */
+  static fromVimeo (url, info) {
+    if (!info && typeof info !== 'object') {
+      return null
+    }
+    return new AWSource(url, 'vimeo', null, false, [], [], 0, 0, new Resolution(info.width, info.height),
+      info.duration, false, 0, 1, 0, null, null, 0, 0, ImageAttachment.fromVimeo(info))
   }
 
   /**
    * @param {string} url
-   * @param {function=} callbackFunc
    */
-  updateUrl (url, callbackFunc) {
-    if (typeof callbackFunc !== 'function') callbackFunc = null
+  static updateUrl (url) {
     if (vimeo.isVimeoVideoUrl(url)) {
-      vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ vimeoInfo => {
+      return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ vimeoInfo => {
         console.log(vimeoInfo)
-        this.clearData()
-        this.url = url
-        this.type = 'vimeo'
-        this.local = false
-        this.resolution = new Resolution({ w: vimeoInfo.width, h: vimeoInfo.height })
-        this.duration = vimeoInfo.duration
-        this.thumbnail = new ImageAttachment(0,
-          new AttachmentStorage(vimeoInfo.thumbnail.url, null, null),
-          vimeoInfo.description,
-          vimeoInfo.thumbnail.width / vimeoInfo.thumbnail.height)
-        this.pixelAspectRatio = 1
-        if (callbackFunc) callbackFunc(true)
+        return AWSource.fromVimeo(url, vimeoInfo)
       })
     } else {
       const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
-      axios.post(requestUrl).then((response) => {
+      return axios.post(requestUrl).then((response) => {
         console.log(response)
         if (typeof response.data === 'object' && response.data.hasOwnProperty('Content-Type')) {
-          this.clearData()
-          this.url = url
-          this.local = false
-          this.type = response.data['Content-Type']
-          this.pixelAspectRatio = 1
-          if (callbackFunc) callbackFunc(true)
+          return new AWSource(url, response.data['Content-Type'], null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
+            null, null, 0, 0, null)
         } else {
-          this.clearData()
-          if (callbackFunc) callbackFunc(false)
+          return AWSource.empty()
         }
       })
+    }
+  }
+
+  /**
+   * @param {string} prefix
+   * @return {Object}
+   */
+  toEntries (prefix) {
+    const data = {}
+    data[prefix + 'url'] = this.url
+    data[prefix + 'type'] = this.type
+    data[prefix + 'version'] = this.version
+    data[prefix + 'local'] = this.local
+    data[prefix + 'dependencies'] = this.dependencies
+    data[prefix + 'assets'] = this.assets
+    data[prefix + 'dataSize'] = this.dataSize
+    data[prefix + 'dataRate'] = this.dataRate
+    if (this.resolution === null) {
+      data[prefix + 'resolution'] = null
+    } else {
+      Object.assign(data, this.resolution.toEntries(prefix + 'resolution/'))
+    }
+    data[prefix + 'duration'] = this.duration
+    data[prefix + 'loop'] = this.loop
+    data[prefix + 'fps'] = this.fps
+    data[prefix + 'pixelAspectRatio'] = this.pixelAspectRatio
+    data[prefix + 'colorDepth'] = this.colorDepth
+    data[prefix + 'colorProfile'] = this.colorProfile
+    data[prefix + 'codec'] = this.codec
+    data[prefix + 'videoTracksCount'] = this.videoTracksCount
+    data[prefix + 'audioTracksCount'] = this.audioTracksCount
+    if (this.thumbnail === null) {
+      data[prefix + 'thumbnail'] = null
+    } else {
+      Object.assign(data, this.thumbnail.toEntries(prefix + 'thumbnail/'))
+    }
+    return data
+  }
+
+  /**
+   * @param {string} prefix
+   * @param {AWSource} data
+   * @param {AWSource} original
+   */
+  updatedEntries (prefix, data, original) {
+    if (this.url === original.url) {
+      delete data[prefix + 'url']
+    }
+    if (this.type === original.type) {
+      delete data[prefix + 'type']
+    }
+    if (this.version === original.version) {
+      delete data[prefix + 'version']
+    }
+    if (this.local === original.local) {
+      delete data[prefix + 'local']
+    }
+    if (this.dependencies === original.dependencies) {
+      delete data[prefix + 'dependencies']
+    }
+    if (this.assets === original.assets) {
+      delete data[prefix + 'assets']
+    }
+    if (this.dataSize === original.dataSize) {
+      delete data[prefix + 'dataSize']
+    }
+    if (this.dataRate === original.dataRate) {
+      delete data[prefix + 'dataRate']
+    }
+    if (this.resolution !== null) {
+      this.resolution.updatedEntries(prefix + 'resolution/', data, original.resolution)
+    }
+    if (this.duration === original.duration) {
+      delete data[prefix + 'duration']
+    }
+    if (this.loop === original.loop) {
+      delete data[prefix + 'loop']
+    }
+    if (this.fps === original.fps) {
+      delete data[prefix + 'fps']
+    }
+    if (this.pixelAspectRatio === original.pixelAspectRatio) {
+      delete data[prefix + 'pixelAspectRatio']
+    }
+    if (this.colorDepth === original.colorDepth) {
+      delete data[prefix + 'colorDepth']
+    }
+    if (this.colorProfile === original.colorProfile) {
+      delete data[prefix + 'colorProfile']
+    }
+    if (this.codec === original.codec) {
+      delete data[prefix + 'codec']
+    }
+    if (this.videoTracksCount === original.videoTracksCount) {
+      delete data[prefix + 'videoTracksCount']
+    }
+    if (this.audioTracksCount === original.audioTracksCount) {
+      delete data[prefix + 'audioTracksCount']
+    }
+    if (this.thumbnail !== null) {
+      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, original.thumbnail)
     }
   }
 
@@ -121,64 +249,5 @@ export class AWSource {
     function strPadLeft (string, pad, length) {
       return (new Array(length + 1).join(pad) + string).slice(-length)
     }
-  }
-
-  static empty () {
-    return new AWSource()
-  }
-
-  clearData () {
-    Object.keys(this).forEach(key => { this[key] = null })
-  }
-
-  /**
-   * @param {object} data
-   */
-  fromJson (data) {
-    if (!data && typeof data !== 'object') return null
-    Object.keys(this).forEach(key => {
-      switch (key) {
-        case 'resolution':
-          this.resolution = data.hasOwnProperty('resolution') ? new Resolution(data.resolution) : null
-          break
-        default:
-          this[key] = data[key] || null
-      }
-    })
-  }
-
-  /**
-   * @param {string} prefix
-   * @return {Object}
-   */
-  toEntries (prefix) {
-    const data = {}
-    Object.keys(this).forEach(key => {
-      if (this.propHasFunc('toEntries', key)) {
-        Object.assign(data, this[key].toEntries(prefix + key + '/'))
-      } else {
-        data[prefix + key] = this[key]
-      }
-    })
-    return data
-  }
-
-  /**
-   * @param {string} prefix
-   * @param {AWSource} data
-   * @param {AWSource} original
-   */
-  updatedEntries (prefix, data, original) {
-    Object.keys(this).forEach(key => {
-      if (this.propHasFunc('updatedEntries', key)) {
-        this[key].updatedEntries(prefix + key + '/', data, original ? original[key] : null)
-      } else {
-        if (original && this[key] === original[key]) delete data[prefix + key]
-      }
-    })
-  }
-
-  propHasFunc (funcName, prop) {
-    return this[prop] !== null && typeof this[prop] === 'object' && typeof this[prop][funcName] === 'function'
   }
 }

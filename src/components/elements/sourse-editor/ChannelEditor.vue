@@ -12,12 +12,12 @@
             name="sourceUrl"
             placeholder="Add source URL here"
             v-model="url"
-            v-on:paste="updateSource" @change="updateSource"/>
+            v-on:paste="setUrl" @change="setUrl"/>
           <span class="description">{{sourceDescription}}</span>
         </div>
       </div>
     </section>
-    
+
     <outputs-panel v-if="sourceIsOK" ref="outputsPanel"/>
   </div>
 </template>
@@ -26,6 +26,7 @@
   import VueSelect from '../UI/Select/components/Select'
   import OutputsPanel from './OutputsPanel'
   import { AWChannel } from '../../../models/AWChannel'
+  import { AWSource } from '../../../models/AWSource'
 
   export default {
     name: 'channel-editor',
@@ -37,8 +38,7 @@
 
     data () {
       return {
-        channel: (this.value instanceof AWChannel) ? this.value : new AWChannel(this.value),
-        source: null,
+        channel: this.value || AWChannel.empty(),
         audioOutputs: null,
         videoOutputs: null,
         url: '',
@@ -49,45 +49,53 @@
     },
 
     methods: {
-      resetChannel (value) {
-        this.channel = value instanceof AWChannel ? value : new AWChannel(value)
-        this.source = this.channel.source
-        if (this.source && typeof this.source.url === 'string') {
-          this.source.updateUrl(this.source.url, isOK => {
-            this.sourceIsOK = isOK
-            this.url = this.source.url
-            this.sourceDescription = this.source.toString()
+      setChannel (value) {
+        this.channel = value
+        if (this.channel.source && this.channel.source.url) {
+          AWSource.updateUrl(this.channel.source.url).then(source => {
+            this.sourceIsOK = true
+            this.url = source.url
+            this.channel.source = source
+            this.sourceDescription = this.channel.source.toString()
+          }).catch(err => {
+            console.log(err)
+            this.reset()
           })
         } else {
-          this.sourceIsOK = false
-          this.url = ''
-          this.sourceDescription = this.defaultSourceDescription
+          this.reset()
         }
         this.audioOutputs = this.channel.audioOutputs
         this.videoOutputs = this.channel.videoOutputs
       },
 
-      updateSource () {
-        this.sourceDescription = ''
-        this.channel.source.updateUrl(this.url, isOK => {
-          this.sourceIsOK = isOK
-          this.sourceDescription = this.channel.source.toString()
+      setUrl () {
+        AWSource.updateUrl(this.url).then(source => {
+          this.sourceIsOK = true
+          this.channel.source = source
+          this.sourceDescription = source.toString()
+          this.$emit('input', this.channel)
+        }).catch(err => {
+          console.log(err)
+          this.reset()
           this.$emit('input', this.channel)
         })
       },
-
+      reset () {
+        this.sourceIsOK = false
+        this.channel.source = AWSource.empty()
+        this.sourceDescription = this.defaultSourceDescription
+      },
       fixPanelsOnScroll (e) {
         this.$refs['outputsPanel'].fixPanelsOnScroll(e)
       }
     },
 
     mounted () {
-      // this.resetChannel()
       this.sourceDescription = this.defaultSourceDescription
     },
 
     watch: {
-      value () { this.resetChannel(this.value) }
+      value () { this.setChannel(this.value) }
     }
   }
 </script>
