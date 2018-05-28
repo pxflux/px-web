@@ -110,7 +110,7 @@ export class AWSource {
       })
     }
     const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
-    return axios.post(requestUrl).then((response) => {
+    return axios.post(requestUrl).then(response => {
       if (typeof response.data === 'object' && response.data.hasOwnProperty('Content-Type')) {
         return new AWSource(url, response.data['Content-Type'], null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
           null, null, 0, 0, null)

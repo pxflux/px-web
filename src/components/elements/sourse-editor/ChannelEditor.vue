@@ -56,12 +56,13 @@
             this.sourceIsOK = true
             this.url = source.url
             this.channel.source = source
-            this.sourceDescription = this.channel.source.toString()
+            this.sourceDescription = source.toString()
           }).catch(err => {
             console.log(err)
             this.reset()
           })
         } else {
+          this.url = ''
           this.reset()
         }
         this.audioOutputs = this.channel.audioOutputs
