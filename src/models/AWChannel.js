@@ -35,14 +35,14 @@ export class AWChannel {
   }
 
   /**
-   * @param {object} data
+   * @param {object} value
    */
-  static fromJson (data) {
-    if (typeof data !== 'object' || data === null) {
+  static fromJson (value) {
+    if (!value || typeof value !== 'object') {
       return null
     }
-    return new AWChannel(Number.parseInt(data.id), AWSource.fromJson(data.source), ArrayOfType.fromJson(data.audioOutputs, null),
-      ArrayOfType.fromJson(data.videoOutputs, null), data.sync, data.isClockSource, Number.parseInt(data.syncToChannel))
+    return new AWChannel(Number.parseInt(value.id), AWSource.fromJson(value.source), ArrayOfType.fromJson(value.audioOutputs, null),
+      ArrayOfType.fromJson(value.videoOutputs, null), value.sync, value.isClockSource, Number.parseInt(value.syncToChannel))
   }
 
   /**
@@ -51,7 +51,6 @@ export class AWChannel {
    */
   toEntries (prefix) {
     const data = {}
-    data[prefix + 'id'] = this.id
     if (this.source === null) {
       data[prefix + 'source'] = null
     } else {
@@ -71,9 +70,6 @@ export class AWChannel {
    * @param {AWChannel} original
    */
   updatedEntries (prefix, data, original) {
-    if (this.id === original.id) {
-      delete data[prefix + 'id']
-    }
     if (this.source !== null) {
       this.source.updatedEntries(prefix + 'source/', data, original.source)
     }
@@ -93,12 +89,6 @@ export class AWChannel {
       delete data[prefix + 'syncToChannel']
     }
   }
-
-  clearData () {
-    Object.keys(this).forEach(key => {
-      this[key] = Array.isArray(this[key]) ? [] : null
-    })
-  }
 }
 
 export class AWChannels {
@@ -114,7 +104,7 @@ export class AWChannels {
    * @return {AWChannel[]}
    */
   static fromJson (value) {
-    if (!value) {
+    if (!value || typeof value !== 'object') {
       return []
     }
     if (typeof value === 'object') {
@@ -124,6 +114,25 @@ export class AWChannels {
       return value.map(it => AWChannel.fromJson(it))
     }
     return []
+  }
+
+  /**
+   * @param {AWChannel[]} values
+   */
+  static append (values) {
+    const value = Object.assign(AWChannel.empty(), {id: values.length})
+    values.push(value)
+  }
+
+  /**
+   * @param {AWChannel[]} values
+   * @param {number} index
+   */
+  static remove (values, index) {
+    values.splice(index, 1)
+    for (let i = 0; i < values.length; i++) {
+      values[i].id = i
+    }
   }
 
   /**

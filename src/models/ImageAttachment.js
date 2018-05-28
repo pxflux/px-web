@@ -41,14 +41,14 @@ export class ImageAttachment extends Attachment {
 
   /**
    * @param {number} order
-   * @param {VimeoVideoInfo} vimeoInfo
+   * @param {?VimeoVideoInfo} value
    */
-  static fromVimeo (order, vimeoInfo) {
-    if (!vimeoInfo && typeof vimeoInfo !== 'object') {
+  static fromVimeo (order, value) {
+    if (!value && typeof value !== 'object') {
       return null
     }
-    return new ImageAttachment(order, new AttachmentStorage(vimeoInfo.thumbnail.url, null, null), vimeoInfo.description,
-      vimeoInfo.thumbnail.width / vimeoInfo.thumbnail.height)
+    return new ImageAttachment(order, new AttachmentStorage(value.thumbnail.url, null, null), value.description,
+      value.thumbnail.width / value.thumbnail.height)
   }
 }
 

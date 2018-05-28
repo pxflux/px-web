@@ -52,7 +52,7 @@
       setChannel (value) {
         this.channel = value
         if (this.channel.source && this.channel.source.url) {
-          AWSource.updateUrl(this.channel.source.url).then(source => {
+          AWSource.fromUrl(this.channel.source.url).then(source => {
             this.sourceIsOK = true
             this.url = source.url
             this.channel.source = source
@@ -69,7 +69,7 @@
       },
 
       setUrl () {
-        AWSource.updateUrl(this.url).then(source => {
+        AWSource.fromUrl(this.url).then(source => {
           this.sourceIsOK = true
           this.channel.source = source
           this.sourceDescription = source.toString()

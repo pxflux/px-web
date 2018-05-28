@@ -22,7 +22,7 @@ export class Player {
    * @param {object} value
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     const id = value.hasOwnProperty('.key') ? value['.key'] : value.key

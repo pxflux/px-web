@@ -33,7 +33,6 @@ export default {
     getVimeoVideoInfo (url) {
       const embedUrl = 'https://vimeo.com/api/oembed.json?url=' + encodeURIComponent(url) + '&maxwidth=90000'
       return axios.get(embedUrl).then(function (response) {
-        console.log(response)
         /**
          * @type {{
                *   account_type: string

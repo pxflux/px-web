@@ -74,53 +74,50 @@ export class AWSource {
   }
 
   /**
-   * @param {object} data
+   * @param {object} value
    */
-  static fromJson (data) {
-    if (!data && typeof data !== 'object') {
+  static fromJson (value) {
+    if (!value || typeof value !== 'object') {
       return null
     }
-    return new AWSource(data.url, data.type, data.version, data.local, data.dependencies, data.assets,
-      Number.parseInt(data.dataSize), Number.parseInt(data.dataRate), Resolution.fromJson(data.resolution),
-      Number.parseInt(data.duration), data.loop, Number.parseInt(data.fps), Number.parseInt(data.pixelAspectRatio),
-      Number.parseInt(data.colorDepth), data.colorProfile, data.codec, Number.parseInt(data.videoTracksCount),
-      Number.parseInt(data.audioTracksCount), ImageAttachment.fromJson(data.thumbnail))
+    return new AWSource(value.url, value.type, value.version, value.local, value.dependencies, value.assets,
+      Number.parseInt(value.dataSize), Number.parseInt(value.dataRate), Resolution.fromJson(value.resolution),
+      Number.parseInt(value.duration), value.loop, Number.parseInt(value.fps), Number.parseInt(value.pixelAspectRatio),
+      Number.parseInt(value.colorDepth), value.colorProfile, value.codec, Number.parseInt(value.videoTracksCount),
+      Number.parseInt(value.audioTracksCount), ImageAttachment.fromJson(value.thumbnail))
   }
 
   /**
    * @param {?string} url
-   * @param {VimeoVideoInfo} info
+   * @param {?VimeoVideoInfo} value
    * @return {AWSource}
    */
-  static fromVimeo (url, info) {
-    if (!info && typeof info !== 'object') {
+  static fromVimeo (url, value) {
+    if (!value || typeof value !== 'object') {
       return null
     }
-    return new AWSource(url, 'vimeo', null, false, [], [], 0, 0, new Resolution(info.width, info.height),
-      info.duration, false, 0, 1, 0, null, null, 0, 0, ImageAttachment.fromVimeo(info))
+    return new AWSource(url, 'vimeo', null, false, [], [], 0, 0, new Resolution(value.width, value.height),
+      value.duration, false, 0, 1, 0, null, null, 0, 0, ImageAttachment.fromVimeo(0, value))
   }
 
   /**
    * @param {string} url
    */
-  static updateUrl (url) {
+  static fromUrl (url) {
     if (vimeo.isVimeoVideoUrl(url)) {
-      return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ vimeoInfo => {
-        console.log(vimeoInfo)
-        return AWSource.fromVimeo(url, vimeoInfo)
-      })
-    } else {
-      const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
-      return axios.post(requestUrl).then((response) => {
-        console.log(response)
-        if (typeof response.data === 'object' && response.data.hasOwnProperty('Content-Type')) {
-          return new AWSource(url, response.data['Content-Type'], null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
-            null, null, 0, 0, null)
-        } else {
-          return AWSource.empty()
-        }
+      return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ info => {
+        return AWSource.fromVimeo(url, info)
       })
     }
+    const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
+    return axios.post(requestUrl).then((response) => {
+      if (typeof response.data === 'object' && response.data.hasOwnProperty('Content-Type')) {
+        return new AWSource(url, response.data['Content-Type'], null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
+          null, null, 0, 0, null)
+      } else {
+        return AWSource.empty()
+      }
+    })
   }
 
   /**

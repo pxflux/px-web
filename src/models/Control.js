@@ -33,7 +33,7 @@ export class Control {
    * @return {?Control}
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     return new Control(Number.parseInt(value.order), value.icon, value.label, value.type,
@@ -170,7 +170,7 @@ export class ControlValue {
    * @return {?ControlValue}
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     return new ControlValue(value.type, Number.parseInt(value.keyCode), value.altKey, value.ctrlKey, value.shiftKey,

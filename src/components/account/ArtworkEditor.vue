@@ -126,8 +126,6 @@
         const id = this.isNew ? firebase.database().ref(path).push().key : this.artworkId
         const original = this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork)
         const values = this.artwork.toUpdates(path + id + '/', original)
-        console.log('SUBMIT ARTWORK --> values: >>>>>>')
-        console.log(values)
         firebase.database().ref().update(values).then(function (ref) {
           this.$router.push('/artwork/' + id)
         }.bind(this)).catch(log())

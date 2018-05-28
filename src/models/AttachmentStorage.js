@@ -23,7 +23,7 @@ export class AttachmentStorage {
    * @return {?AttachmentStorage}
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     return new AttachmentStorage(value.displayUrl, value.storageUrl, null)

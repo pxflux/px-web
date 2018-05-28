@@ -1,6 +1,7 @@
 import { Attachment } from './Attachment'
 import { AttachmentStorage } from './AttachmentStorage'
 import { ImageAttachment } from './ImageAttachment'
+import vimeo from './utilities/vimeo'
 
 /**
  * @property {?string} type
@@ -36,6 +37,31 @@ export class VideoAttachment extends Attachment {
     return new VideoAttachment(attachment.storage, attachment.caption, attachment.ratio, value.duration,
       ImageAttachment.fromJson(value.thumbnail)
     )
+  }
+
+  /**
+   * @param {?string} url
+   * @param {?VimeoVideoInfo} value
+   * @return {VideoAttachment}
+   */
+  static fromVimeo (url, value) {
+    if (!value || typeof value !== 'object') {
+      return null
+    }
+    return new VideoAttachment(new AttachmentStorage(url, null, null), null, value.width / value.height, value.duration,
+      ImageAttachment.fromVimeo(0, value))
+  }
+
+  /**
+   * @param {string} url
+   */
+  static fromUrl (url) {
+    if (vimeo.isVimeoVideoUrl(url)) {
+      return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ info => {
+        return VideoAttachment.fromVimeo(url, info)
+      })
+    }
+    return VideoAttachment.empty()
   }
 
   /**

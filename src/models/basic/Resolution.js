@@ -17,13 +17,13 @@ export class Resolution {
   }
 
   /**
-   * @param {object} data
+   * @param {object} value
    */
-  static fromJson (data) {
-    if (typeof data !== 'object') {
+  static fromJson (value) {
+    if (!value || typeof value !== 'object') {
       return null
     }
-    return new Resolution(Number.parseInt(data.w), Number.parseInt(data.h))
+    return new Resolution(Number.parseInt(value.w), Number.parseInt(value.h))
   }
 
   /**

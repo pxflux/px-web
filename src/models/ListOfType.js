@@ -37,12 +37,9 @@ export class ListOfType {
     return updatedList
   }
 
-  /**
-   * @returns {ContributorRef[]}
-   */
-  fromJson (jsonData) {
-    if (typeof jsonData === 'object') {
-      this.list = Object.keys(jsonData).map(key => new this.DataType(jsonData[key]))
+  fromJson (value) {
+    if (typeof value === 'object') {
+      this.list = Object.keys(value).map(key => new this.DataType(value[key]))
     }
   }
 }

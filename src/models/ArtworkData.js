@@ -35,7 +35,7 @@ export class Artwork {
    * @param {object} value
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     const key = value.hasOwnProperty('.key') ? value['.key'] : value.key
@@ -68,8 +68,6 @@ export class Artwork {
    */
   toUpdates (prefix, original) {
     const data = this.toEntries(prefix)
-    console.log('ARTWORK DATA: toUpdates --> data: >>>>>>')
-    console.log(data)
     this.updatedEntries(prefix, data, original)
     return data
   }

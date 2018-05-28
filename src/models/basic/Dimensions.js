@@ -40,13 +40,14 @@ export class Dimensions {
   }
 
   /**
-   * @param {object} jsonData
+   * @param {object} value
    */
-  fromJson (jsonData) {
-    if (typeof jsonData !== 'object') return
-
-    this.dimensionsOrder.forEach(dim => { this[dim] = parseFloat(jsonData[dim]) })
-    this.units = jsonData.units
+  fromJson (value) {
+    if (!value || typeof value !== 'object') {
+      return null
+    }
+    this.dimensionsOrder.forEach(dim => { this[dim] = parseFloat(value[dim]) })
+    this.units = value.units
   }
 
   /**
