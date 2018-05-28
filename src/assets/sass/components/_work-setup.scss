@@ -23,7 +23,7 @@
 
 .channels-tab-bar{
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: stretch;
   height: $module-size;
 
@@ -37,8 +37,12 @@
     *{
       color: $link-color;
     }
-    &.active *{
-      color: $font-color;
+    &.active{
+      border: 1px solid $outline-color;
+      border-radius: 50%;
+      //*{
+      //  color: $font-color;
+      //}
     }
   }
 }
