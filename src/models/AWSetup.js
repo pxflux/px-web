@@ -30,14 +30,14 @@ export class AWSetup {
   }
 
   /**
-   * @param {object} data
+   * @param {object} value
    */
-  static fromJson (data) {
-    if (!data && typeof data !== 'object') {
+  static fromJson (value) {
+    if (!value || typeof value !== 'object') {
       return null
     }
-    return new AWSetup(Number.parseInt(data.order), data.title, AWChannels.fromJson(data.channels),
-      ImageAttachments.fromJson(data.thumbnails), VideoAttachment.fromJson(data.preview))
+    return new AWSetup(Number.parseInt(value.order), value.title, AWChannels.fromJson(value.channels),
+      ImageAttachments.fromJson(value.thumbnails), VideoAttachment.fromJson(value.preview))
   }
 
   /**
@@ -66,7 +66,7 @@ export class AWSetup {
     if (this.title === original.title) {
       delete data[prefix + 'title']
     }
-    AWChannels.updatedEntries(prefix + 'source/', data, original.channels, this.channels)
+    AWChannels.updatedEntries(prefix + 'channels/', data, original.channels, this.channels)
     ImageAttachments.updatedEntries(prefix + 'thumbnails/', data, original.thumbnails, this.thumbnails)
     if (this.preview !== null) {
       this.preview.updatedEntries(prefix + 'preview/', data, original.preview)
@@ -87,7 +87,7 @@ export class AWSetups {
    * @return {AWSetup[]}
    */
   static fromJson (value) {
-    if (!value) {
+    if (!value || typeof value !== 'object') {
       return []
     }
     if (typeof value === 'object') {
@@ -97,6 +97,25 @@ export class AWSetups {
       return value.map(it => AWSetup.fromJson(it))
     }
     return []
+  }
+
+  /**
+   * @param {AWSetup[]} values
+   */
+  static append (values) {
+    const value = Object.assign(AWSetup.empty(), {order: values.length})
+    values.push(value)
+  }
+
+  /**
+   * @param {AWSetup[]} values
+   * @param {number} index
+   */
+  static remove (values, index) {
+    values.splice(index, 1)
+    for (let i = 0; i < values.length; i++) {
+      values[i].order = i
+    }
   }
 
   /**

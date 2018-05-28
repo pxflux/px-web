@@ -8,21 +8,21 @@ export class ArrayOfType {
   }
 
   /**
-   * @param {object} jsonData
+   * @param {object} value
    * @param {constructor} Constructor
    * @return {*[]}
    */
-  static fromJson (jsonData, Constructor) {
+  static fromJson (value, Constructor) {
     if (!Constructor) return []
-    if (typeof jsonData === 'object' && jsonData !== null) {
+    if (typeof value === 'object' && value !== null) {
       if (typeof Constructor.fromJson === 'function') {
-        return Object.keys(jsonData).map(key => Constructor.fromJson(Object.assign(jsonData[key], { order: key })))
+        return Object.keys(value).map(key => Constructor.fromJson(Object.assign(value[key], {order: key})))
       } else {
-        return Object.keys(jsonData).map(key => new Constructor(Object.assign(jsonData[key], { order: key })))
+        return Object.keys(value).map(key => new Constructor(Object.assign(value[key], {order: key})))
       }
     }
-    if (Array.isArray(jsonData)) {
-      return jsonData.map(it => typeof Constructor.fromJson === 'function' ? Constructor.fromJson(it) : new Constructor(it))
+    if (Array.isArray(value)) {
+      return value.map(it => typeof Constructor.fromJson === 'function' ? Constructor.fromJson(it) : new Constructor(it))
     }
     return []
   }

@@ -22,11 +22,13 @@ export class EquipmentSetup {
   }
 
   /**
-   * @param {object} data
+   * @param {object} value
    */
-  fromJson (data) {
-    if (typeof data !== 'object') return
-    this.video.fromJson(data.video)
+  fromJson (value) {
+    if (!value || typeof value !== 'object') {
+      return null
+    }
+    this.video.fromJson(value.video)
   }
 
   /**

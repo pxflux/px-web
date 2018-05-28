@@ -36,7 +36,7 @@ export class PlayerArtwork {
    * @param {object} value
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     return new PlayerArtwork(value.key, value.title, value.url, value.type, Controls.fromJson(value.controls))

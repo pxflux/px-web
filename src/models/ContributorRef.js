@@ -28,7 +28,7 @@ export class ContributorRef {
    * @return {ContributorRef}
    */
   static fromJson (value) {
-    if (!value && typeof value !== 'object') {
+    if (!value || typeof value !== 'object') {
       return null
     }
     const key = value.hasOwnProperty('.key') ? value['.key'] : value.key

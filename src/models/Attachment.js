@@ -48,8 +48,6 @@ export class Attachment {
     }
     data[prefix + 'caption'] = this.caption
     data[prefix + 'ratio'] = this.ratio
-    console.log('ATTACHMENT toEntries --> data: >>>>>>')
-    console.log(data)
     return data
   }
 
