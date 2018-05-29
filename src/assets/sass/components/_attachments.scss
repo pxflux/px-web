@@ -1,5 +1,6 @@
 .attachments {
   $attachments-height: $module-size * 6;
+
   .display {
     position: relative;
     display: flex;
@@ -12,17 +13,15 @@
     @include checker-bg();
 
     & > * {
-      //flex-grow: 1;
-      //flex-shrink: 0;
-      max-width: calc(100vw - 2 * #{$module-size});
-      height: $attachments-height;
-      width: auto;
+      //max-width: calc(100vw - 2 * #{$module-size});
+      height: 100%;
+      width: calc(100vw - #{$module-size});
       position: relative;
       margin-right: $module-size;
 
       &:last-child {
-        width: 100vw;
-        max-width: 100vw;
+        //width: 100vw;
+        //max-width: 100vw;
       }
     }
 

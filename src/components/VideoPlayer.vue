@@ -1,6 +1,6 @@
 <template>
   <div v-if="isVimeo && videoId" class="video-box" ref="videoBox">
-    <vimeo-player ref="player"
+    <vimeo-player ref="player" class="vimeo-player"
                   :video-id='videoId'
                   :options="options"
                   @pause="setPaused(true)"
@@ -8,8 +8,10 @@
                   @ready="onReady"
                   @loaded="onLoad"/>
     <div class="overlay" @click="togglePlay">
-      <div class="button overlay frameless" @click="togglePlay">
-        <div class="icon" :class="{play: paused, pause: !paused}"></div>
+      <div class="button frameless"
+           :class="{play: paused, pause: !paused}"
+           @click="togglePlay">
+        <i :class="{play: paused, pause: !paused}"></i>
       </div>
     </div>
   </div>
@@ -17,9 +19,7 @@
 </template>
 
 <script>
-  import {vueVimeoPlayer} from 'vue-vimeo-player'
-  import { log } from '../helper'
-  //  import axios from 'axios'
+  import { vueVimeoPlayer } from 'vue-vimeo-player'
 
   export default {
     props: ['videoUrl', 'ratio'],
@@ -28,6 +28,7 @@
     },
     data () {
       return {
+        fillVideoBox: true, // TODO: this could be a property set by user in the artwork editor
         isVimeo: true,
         options: {
           background: true,
@@ -36,6 +37,7 @@
           portrait: false,
           title: false,
           fullscreen: false
+          // muted: false
         },
         playerReady: false,
         paused: true,
@@ -43,11 +45,12 @@
       }
     },
     computed: {
+      currentPlayerWidth () {
+        this.videoBoxEl = this.$refs['videoBox']
+        if (!this.videoBoxEl) return ''
+        return this.videoBoxEl.getBoundingClientRect().width
+      },
       heightFromWidth () {
-        if (this.ratio > 1) {
-          // landscape orientation
-
-        }
         return this.ratio ? 100 / this.ratio : 50 // %
       },
       videoId () {
@@ -58,58 +61,61 @@
         } else {
           return match[1]
         }
-      }
+      },
+      playerId () { return 'vp' + this.videoId }
     },
 
     mounted () {
-      // !!! DEBUG !!!
-      console.log('---- this: ' + (typeof this !== 'object' ? this.toString() : '⤵︎'))
-      if (typeof this === 'object') console.log(this)
-      // !!! />
-
       this.videoBoxEl = this.$refs['videoBox']
-      this.fitToParent()
+      // this.fitToParent()
       window.addEventListener('resize', this.fitToParent)
     },
 
     methods: {
       fitToParent () {
-        const parent = this.videoBoxEl.parentElement
-        const parentRect = parent.getBoundingClientRect()
-        let pW = parentRect.right - parentRect.left
-        let h = parentRect.bottom - parentRect.top
-        let w = h * this.ratio
-        if (w > pW) {
-          w = pW
+        if (!this.fillVideoBox) return // let css manage it w:100% h:100%
+
+        const iframe = this.videoBoxEl.querySelector('iframe')
+        if (!iframe) return
+        const parentRect = this.videoBoxEl.getBoundingClientRect()
+        const parentRatio = parentRect.width / parentRect.height
+
+        let w, h
+        if (this.ratio < parentRatio) {
+          // iframe is narrower then parent.. fit width
+          w = parentRect.width
           h = w / this.ratio
+        } else {
+          // fit height
+          h = parentRect.height
+          w = h * this.ratio
         }
-        this.videoBoxEl.style.width = w + 'px'
-        this.videoBoxEl.style.height = h + 'px'
+        iframe.style.width = Math.ceil(w) + 'px'
+        iframe.style.height = Math.ceil(h) + 'px'
       },
 
       setPaused (s) { this.paused = s },
 
       onReady () {
-        log(this.$refs.player)
+        // const player = this.$refs.player
       },
 
       onLoad () {
+        const player = this.$refs.player
+        if (!player) return
         this.playerReady = true
-        this.$nextTick(function () {
-          this.$refs.player.pause()
-          this.paused = true
-        })
+        player.unmute()
+
+        this.fitToParent()
       },
       togglePlay () {
-        log('this.paused::::')
-        log(this.paused.toString())
         if (this.paused) {
           this.play()
         } else {
           this.stop()
         }
       },
-      play (stop) {
+      play () {
         this.$refs.player.play()
       },
       stop () {

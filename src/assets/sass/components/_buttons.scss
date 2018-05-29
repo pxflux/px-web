@@ -138,7 +138,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   $y-shift: -50%;
 
   &:before {
-    width: $size / 2;
+    width: $size;
     height: $size;
     border-right: $line-w solid $color;
     border-left: $line-w solid $color;
@@ -146,6 +146,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
     left: 50%;
     transform: translate($x-shift, $y-shift);
   }
+  &:after{ content: none }
 }
 
 @mixin button-content( $with-icon: true ) {
@@ -160,7 +161,7 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
   @include centered();
 }
 
-@mixin button-icon($name:'', $size:$ico-size, $line-w:$ico-line-w) {
+@mixin button-icon($name:'', $size:$ico-size, $line-w:$ico-line-w, $color: $ico-color) {
   &:before, &:after {
     content: '';
     display: block;
@@ -197,10 +198,10 @@ $diagonal-factor: 1.4142135624; // diagonal of a square 1x1 (1.4142135624 is a s
     @include arrowhead(top, $size * 0.8)
 
   } @else if $name == play {
-    @include arrowhead(right, $size, 0.3rem, rgb(145, 145, 145));
+    @include arrowhead(right, $size, 0.3rem, $color);
 
   } @else if $name == pause {
-    @include button-pause($size, 0.3rem, rgb(145, 145, 145));
+    @include button-pause($size, 0.3rem, $color);
 
   } @else if $name == stop {
     &:before {

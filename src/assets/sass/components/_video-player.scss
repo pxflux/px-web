@@ -1,19 +1,23 @@
 .video-box{
   position: relative;
-  //background: $outline-color;
   height: 100%;
-  //max-height: $module-size * 8;
   width: 100%;
+  overflow: hidden;
 
-  iframe{
-    margin: 0;
-    border: none;
-    display: block;
+  .vimeo-player {
     height: 100%;
-    object-fit: contain;
-    @include centered();
-  }
+    width: 100%;
 
+    iframe {
+      margin: 0;
+      border: none;
+      display: block;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      @include centered();
+    }
+  }
   .button{
     @include centered();
     width: $module-size;
@@ -23,13 +27,21 @@
 
     $ico-size: 2.8rem;
     $ico-line-w: 0.3rem;
-    $ico-color: #000;
+    $icon-color: #000;
 
     &.play{
-      @include button-arrowhead(0, $ico-size, $ico-line-w, $ico-color);
+      @include button-arrowhead(0, $ico-size, $ico-line-w, $icon-color);
+      opacity: 1;
+      transition: opacity 100ms ease-in-out 0ms;
     }
     &.pause{
-      @include button-pause($ico-size, $ico-line-w, $ico-color);
-    };
+      @include button-pause($ico-size, $ico-line-w, $icon-color);
+      opacity: 0;
+      transition: opacity 200ms ease-in-out 1000ms;
+    }
   }
+  //&:hover .button.pause{
+  //  opacity: 1;
+  //  transition: opacity 100ms ease-in-out 0ms;
+  //}
 }
