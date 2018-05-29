@@ -4,7 +4,10 @@
       <input type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
     </div>
     <div class="description">right now we support only Vimeo links<br><br></div>
-    <videoPlayer v-if="displayUrl && !error" :videoUrl="displayUrl" :ratio="ratio"/>
+    <video-player
+            v-if="displayUrl && !error"
+            :videoUrl="displayUrl"
+            :ratio="ratio"/>
     <div v-if="displayUrl && !error" class="attachment-info">
       {{'Aspect Ratio 1 : ' + Math.round((1 / ratio) * 100) / 100}}
     </div>
@@ -15,7 +18,7 @@
 <script>
   import { VideoAttachment } from '../../models/VideoAttachment'
   import VideoPlayer from '../VideoPlayer'
-
+  
   export default {
     components: {VideoPlayer},
     props: {

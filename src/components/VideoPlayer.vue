@@ -1,7 +1,8 @@
 <template>
-  <div v-if="isVimeo && videoId"
-       class="video-box" ref="videoBox">
-    <vimeo-player ref="player" :video-id='videoId' :options="options"
+  <div v-if="isVimeo && videoId" class="video-box" ref="videoBox">
+    <vimeo-player ref="player"
+                  :video-id='videoId'
+                  :options="options"
                   @pause="setPaused(true)"
                   @play="setPaused(false)"
                   @ready="onReady"
@@ -16,7 +17,7 @@
 </template>
 
 <script>
-  import vueVimeoPlayer from 'vue-vimeo-player'
+  import {vueVimeoPlayer} from 'vue-vimeo-player'
   import { log } from '../helper'
   //  import axios from 'axios'
 
@@ -61,6 +62,11 @@
     },
 
     mounted () {
+      // !!! DEBUG !!!
+      console.log('---- this: ' + (typeof this !== 'object' ? this.toString() : '⤵︎'))
+      if (typeof this === 'object') console.log(this)
+      // !!! />
+
       this.videoBoxEl = this.$refs['videoBox']
       this.fitToParent()
       window.addEventListener('resize', this.fitToParent)

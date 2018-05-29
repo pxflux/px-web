@@ -27,7 +27,7 @@
           </ul>
         </section>
       </div>
-
+      
       <div class="sidebar">
         <section class="social">
           <div class="row">

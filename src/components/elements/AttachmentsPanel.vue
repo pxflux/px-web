@@ -35,7 +35,6 @@
 
 <script>
   import VideoPlayer from '../VideoPlayer'
-
   export default {
     components: {
       'video-player': VideoPlayer
