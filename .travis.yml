@@ -9,6 +9,9 @@ branches:
 script:
   - npm run build
 
+before_install:
+  - npm i -g firebase-tools
+
 deploy:
   skip_cleanup: true
   provider: firebase
