@@ -38,11 +38,8 @@
           <div class="button frameless secondary" @click="addChannel()"><i class="plus"></i></div>
         </div>
         <section id="channels-container" class="scene">
-          <div v-for="i in setupChannels.length" class="channel-wrapper">
-            <channel-editor :value="setupChannels[i - 1]" @input="setChannel(i - 1, $event)"/>
-            <div v-if="i - 1" class="button frameless secondary" @click="removeChannel()"><i class="cancel-small"></i>
-            </div>
-          </div>
+          <channel-editor v-for="(channel, i) in setupChannels" :key="i" :id="channelID(i)" :index="i" :value="channel"
+                          @input="setChannel(i, $event)" @remove="removeChannel($event)"/>
         </section>
         <section>
           <div class="row">

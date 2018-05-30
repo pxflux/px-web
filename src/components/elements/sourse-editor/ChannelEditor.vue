@@ -1,24 +1,22 @@
 <template>
-  <div class="channel" ref="channel">
-    <section class="source-editor-panel row" ref="sourceEditor">
-      <label for="sourceUrl">
-        <span>Source</span>
-      </label>
-      <div class="source-editor field">
-        <div class="source-wrapper">
-          <input
-            class="path"
-            id="sourceUrl"
-            name="sourceUrl"
-            placeholder="Add source URL here"
-            v-model="url"
-            v-on:paste="setUrl" @change="setUrl"/>
-          <span class="description">{{sourceDescription}}</span>
+  <div class="channel-wrapper">
+    <div class="channel" ref="channel">
+      <section class="source-editor-panel row">
+        <label>
+          <span>Source</span>
+        </label>
+        <div class="source-editor field">
+          <div class="source-wrapper">
+            <input class="path" placeholder="Add source URL here" :name="'url' + index" v-model="url"/>
+            <span v-if="error" class="description">{{error}}</span>
+            <span v-else class="description">{{sourceDescription}}</span>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <outputs-panel v-if="sourceIsOK" ref="outputsPanel"/>
+      <outputs-panel v-if="this.channel.source" ref="outputsPanel"/>
+    </div>
+    <div v-if="index" class="button frameless secondary" @click="removeChannel()"><i class="cancel-small"></i></div>
   </div>
 </template>
 
@@ -30,73 +28,61 @@
 
   export default {
     name: 'channel-editor',
-    props: ['value'],
+    props: ['index', 'value'],
     components: {
       VueSelect,
       OutputsPanel
     },
 
+    computed: {
+      url: {
+        set (newValue) {
+          this.sourceUrl = newValue
+          this.setUrl(newValue)
+        },
+        get () {
+          if (this.sourceUrl !== null) {
+            return this.sourceUrl
+          }
+          return this.channel.source ? this.channel.source.url : null
+        }
+      },
+      sourceDescription () {
+        return this.channel.source ? this.channel.source.toString() : 'URL (HTML/Javascript or Vimeo video link)'
+      }
+    },
     data () {
       return {
         channel: this.value || AWChannel.empty(),
-        audioOutputs: null,
-        videoOutputs: null,
-        url: '',
-        sourceIsOK: false,
-        sourceDescription: '',
-        defaultSourceDescription: 'URL (HTML/Javascript or Vimeo video link)'
+        sourceUrl: null,
+        error: ''
       }
     },
 
     methods: {
-      setChannel (value) {
-        this.channel = value
-        if (this.channel.source && this.channel.source.url) {
-          AWSource.fromUrl(this.channel.source.url).then(source => {
-            this.sourceIsOK = true
-            this.url = source.url
-            this.channel.source = source
-            this.sourceDescription = source.toString()
-          }).catch(err => {
-            console.log(err)
-            this.reset()
-          })
-        } else {
-          this.url = ''
-          this.reset()
-        }
-        this.audioOutputs = this.channel.audioOutputs
-        this.videoOutputs = this.channel.videoOutputs
+      removeChannel () {
+        this.$emit('remove', this.index)
       },
 
-      setUrl () {
-        AWSource.fromUrl(this.url).then(source => {
-          this.sourceIsOK = true
+      setUrl (url) {
+        console.log(url)
+        AWSource.fromUrl(url).then(source => {
           this.channel.source = source
-          this.sourceDescription = source.toString()
+          this.error = ''
           this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
         }).catch(err => {
-          console.log(err)
-          this.reset()
-          this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
+          this.error = err.message
         })
-      },
-      reset () {
-        this.sourceIsOK = false
-        this.channel.source = AWSource.empty()
-        this.sourceDescription = this.defaultSourceDescription
       },
       fixPanelsOnScroll (e) {
         this.$refs['outputsPanel'].fixPanelsOnScroll(e)
       }
     },
 
-    mounted () {
-      this.sourceDescription = this.defaultSourceDescription
-    },
-
     watch: {
-      value () { this.setChannel(this.value) }
+      value (newValue) {
+        this.channel = newValue
+      }
     }
   }
 </script>

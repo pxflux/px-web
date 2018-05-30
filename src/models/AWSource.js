@@ -104,13 +104,23 @@ export class AWSource {
    * @param {string} url
    */
   static fromUrl (url) {
+    if (!url) {
+      return Promise.reject(new Error('Empty url'))
+    }
     if (vimeo.isVimeoVideoUrl(url)) {
       return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ info => {
         return AWSource.fromVimeo(url, info)
       })
     }
     const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
-    return axios.post(requestUrl).then(response => {
+    return axios.post(requestUrl).catch(function (error) {
+      if (error.response) {
+        throw new Error(error.response.data)
+      } else if (error.request) {
+        throw new Error('network/request-failed')
+      }
+      throw new Error('network/invalid-request')
+    }).then(response => {
       if (typeof response.data === 'object' && response.data.hasOwnProperty('Content-Type')) {
         return new AWSource(url, response.data['Content-Type'], null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
           null, null, 0, 0, null)
