@@ -1,21 +1,18 @@
 <template>
-  <div v-if="isVimeo && videoId" class="video-box" ref="videoBox">
+  <div v-if="videoId" class="video-box" ref="videoBox">
     <vimeo-player ref="player" class="vimeo-player"
                   :video-id='videoId'
-                  :options="options"
+                  :options="{background:true, autoplay:false, byline:false, portrait:false, title:false, fullscreen:false}"
                   @pause="setPaused(true)"
                   @play="setPaused(false)"
-                  @ready="onReady"
                   @loaded="onLoad"/>
     <div class="overlay" @click="togglePlay">
-      <div class="button frameless"
-           :class="{play: paused, pause: !paused}"
-           @click="togglePlay">
+      <div class="button frameless" :class="{play: paused, pause: !paused}" @click="togglePlay">
         <i :class="{play: paused, pause: !paused}"></i>
       </div>
     </div>
   </div>
-  <div v-else="">Video ID is not valid.</div>
+  <div v-else>Video ID is not valid.</div>
 </template>
 
 <script>
@@ -29,28 +26,17 @@
     data () {
       return {
         fillVideoBox: true, // TODO: this could be a property set by user in the artwork editor
-        isVimeo: true,
-        options: {
-          background: true,
-          autoplay: false,
-          byline: false,
-          portrait: false,
-          title: false,
-          fullscreen: false
-        },
         paused: true,
         videoBoxEl: null
       }
     },
     computed: {
       videoId () {
-        if (Number.isInteger(this.videoUrl)) return this.videoUrl
-        const match = this.videoUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
-        if (!match) {
-          return null
-        } else {
-          return match[1]
+        if (Number.isInteger(this.videoUrl)) {
+          return this.videoUrl
         }
+        const match = this.videoUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
+        return match ? match[1] : null
       },
       playerId () { return 'vp' + this.videoId }
     },
@@ -83,16 +69,12 @@
         iframe.style.height = Math.ceil(h) + 'px'
       },
 
-      setPaused (s) { this.paused = s },
-
-      onReady () {
-        // const player = this.$refs.player
-      },
+      setPaused (paused) { this.paused = paused },
 
       onLoad () {
         const player = this.$refs.player
         if (!player) return
-        player.unmute()
+        // player.unmute()
 
         this.fitToParent()
       },

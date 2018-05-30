@@ -151,7 +151,6 @@
         }
       },
       update () {
-        console.log('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))
         this.$emit('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))
       },
       channelID (index) { return 'ch' + index }

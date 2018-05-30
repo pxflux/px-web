@@ -104,13 +104,13 @@ export class AWSource {
    * @param {string} url
    */
   static fromUrl (url) {
-    if (!url) {
-      return Promise.reject(new Error('Empty url'))
-    }
     if (vimeo.isVimeoVideoUrl(url)) {
       return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ info => {
         return AWSource.fromVimeo(url, info)
       })
+    }
+    if (!url) {
+      return Promise.reject(new Error('Empty url'))
     }
     const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
     return axios.post(requestUrl).catch(function (error) {

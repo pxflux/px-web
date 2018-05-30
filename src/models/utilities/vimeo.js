@@ -21,21 +21,14 @@ import axios from 'axios'
 
 export default {
   /**
-   * @param {string} url
+   * @param {?string} url
    * @return {boolean}
    */
   isVimeoVideoUrl (url) {
-    if (!url) return false
+    if (!url || !(typeof (url) === 'string' || url instanceof String)) {
+      return false
+    }
     return url.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
-  },
-  /**
-   * Check to see if the URL is a Vimeo url.
-   *
-   * @param {string} url The url string.
-   * @return {boolean}
-   */
-  isVimeoUrl (url) {
-    return (/^(https?:)?\/\/((player|www).)?vimeo.com(?=$|\/)/.test(url))
   },
   /**
    * @param {string} url

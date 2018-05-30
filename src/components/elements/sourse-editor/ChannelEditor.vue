@@ -7,7 +7,7 @@
         </label>
         <div class="source-editor field">
           <div class="source-wrapper">
-            <input class="path" placeholder="Add source URL here" :name="'url' + index" v-model="url"/>
+            <input type="url" :name="'url' + index" v-model="url" class="path" placeholder="Add source URL here"/>
             <span v-if="error" class="description">{{error}}</span>
             <span v-else class="description">{{sourceDescription}}</span>
           </div>
@@ -55,7 +55,7 @@
       return {
         channel: this.value || AWChannel.empty(),
         sourceUrl: null,
-        error: ''
+        error: null
       }
     },
 
@@ -81,7 +81,7 @@
 
     watch: {
       value (newValue) {
-        this.channel = newValue
+        this.channel = newValue || AWChannel.empty()
       }
     }
   }

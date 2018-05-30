@@ -61,7 +61,7 @@ export class VideoAttachment extends Attachment {
         return VideoAttachment.fromVimeo(url, info)
       })
     }
-    return VideoAttachment.empty()
+    return Promise.resolve(null)
   }
 
   /**
