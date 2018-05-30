@@ -58,7 +58,7 @@ export class PlayerArtwork {
 
   /**
    * @param {string} prefix
-   * @param {Artwork} original
+   * @param {PlayerArtwork} original
    * @return {Object}
    */
   toUpdates (prefix, original) {
@@ -70,21 +70,22 @@ export class PlayerArtwork {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Artwork} original
+   * @param {PlayerArtwork} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.key === original.key) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || PlayerArtwork.empty()
+    if (this.key === origin.key) {
       delete data[prefix + 'key']
     }
-    if (this.title === original.title) {
+    if (this.title === origin.title) {
       delete data[prefix + 'title']
     }
-    if (this.url === original.url) {
+    if (this.url === origin.url) {
       delete data[prefix + 'url']
     }
-    if (this.type === original.type) {
+    if (this.type === origin.type) {
       delete data[prefix + 'type']
     }
-    Controls.updatedEntries(prefix + 'controls/', data, original.controls, this.controls)
+    Controls.updatedEntries(prefix + 'controls/', data, origin.controls, this.controls)
   }
 }

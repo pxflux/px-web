@@ -60,16 +60,17 @@ export class AWSetup {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {AWSetup} original
+   * @param {AWSetup} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.title === original.title) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || AWSetup.empty()
+    if (this.title === origin.title) {
       delete data[prefix + 'title']
     }
-    AWChannels.updatedEntries(prefix + 'channels/', data, original.channels, this.channels)
-    ImageAttachments.updatedEntries(prefix + 'thumbnails/', data, original.thumbnails, this.thumbnails)
+    AWChannels.updatedEntries(prefix + 'channels/', data, origin.channels, this.channels)
+    ImageAttachments.updatedEntries(prefix + 'thumbnails/', data, origin.thumbnails, this.thumbnails)
     if (this.preview !== null) {
-      this.preview.updatedEntries(prefix + 'preview/', data, original.preview)
+      this.preview.updatedEntries(prefix + 'preview/', data, origin.preview)
     }
   }
 }
@@ -140,9 +141,8 @@ export class AWSetups {
   static updatedEntries (prefix, data, originals, values) {
     // add & updates
     values.forEach(value => {
-      const items = originals.filter(item => item.order === value.order)
-      const original = items.length > 0 ? items[0] : AWSetup.empty()
-      value.updatedEntries(prefix + value.order + '/', data, original)
+      const original = originals.find(item => item.order === value.order)
+      value.updatedEntries(prefix + value.order + '/', data, original || AWSetup.empty())
     })
     // remove
     originals.forEach(original => {

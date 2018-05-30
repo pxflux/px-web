@@ -75,24 +75,25 @@ export class Artwork {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Artwork} original
+   * @param {Artwork} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.published === original.published) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || Artwork.empty()
+    if (this.published === origin.published) {
       delete data[prefix + 'published']
     }
-    if (this.title === original.title) {
+    if (this.title === origin.title) {
       delete data[prefix + 'title']
     }
-    ContributorRefs.updatedEntries(prefix + 'artists/', data, original.artists, this.artists)
-    ContributorRefs.updatedEntries(prefix + 'credits/', data, original.credits, this.credits)
-    if (this.year === original.year) {
+    ContributorRefs.updatedEntries(prefix + 'artists/', data, origin.artists, this.artists)
+    ContributorRefs.updatedEntries(prefix + 'credits/', data, origin.credits, this.credits)
+    if (this.year === origin.year) {
       delete data[prefix + 'year']
     }
-    if (this.description === original.description) {
+    if (this.description === origin.description) {
       delete data[prefix + 'description']
     }
-    AWSetups.updatedEntries(prefix + 'setups/', data, original.setups, this.setups)
-    Controls.updatedEntries(prefix + 'controls/', data, original.controls, this.controls)
+    AWSetups.updatedEntries(prefix + 'setups/', data, origin.setups, this.setups)
+    Controls.updatedEntries(prefix + 'controls/', data, origin.controls, this.controls)
   }
 }

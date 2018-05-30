@@ -51,18 +51,16 @@ export class Dimensions {
   }
 
   /**
-   * @param {Dimensions} original
+   * @param {Dimensions} origin
    * @return {object}
    */
-  updatedEntries (original) {
+  updatedEntries (origin) {
     const updated = {}
-
     Object.keys(this).forEach(key => {
-      if (this[key] !== original[key]) {
+      if (this[key] !== origin[key]) {
         updated[key] = this[key]
       }
     })
-
     return updated
   }
 

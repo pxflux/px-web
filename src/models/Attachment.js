@@ -54,20 +54,20 @@ export class Attachment {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Attachment} origin
+   * @param {Attachment} from
    */
-  updatedEntries (prefix, data, origin) {
-    if (origin && this.type === origin.type) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || Attachment.empty()
+    if (this.type === origin.type) {
       delete data[prefix + 'type']
     }
     if (this.storage !== null) {
-      const storage = origin ? origin.storage : null
-      this.storage.updatedEntries(prefix + 'storage/', data, storage)
+      this.storage.updatedEntries(prefix + 'storage/', data, origin.storage)
     }
-    if (origin && this.caption === origin.caption) {
+    if (this.caption === origin.caption) {
       delete data[prefix + 'caption']
     }
-    if (origin && this.ratio === origin.ratio) {
+    if (this.ratio === origin.ratio) {
       delete data[prefix + 'ratio']
     }
   }

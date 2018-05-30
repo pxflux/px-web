@@ -39,7 +39,7 @@
         </div>
         <section id="channels-container" class="scene">
           <div v-for="i in setupChannels.length" class="channel-wrapper">
-            <channel-editor v-model="setupChannels[i - 1]" :key="'ch' + (i - 1)" :id="channelID(i - 1)"/>
+            <channel-editor :value="setupChannels[i - 1]" @input="setChannel(i - 1, $event)"/>
             <div v-if="i - 1" class="button frameless secondary" @click="removeChannel()"><i class="cancel-small"></i>
             </div>
           </div>
@@ -99,15 +99,9 @@
         },
         get () { return this.setups[this.setupIndex].title }
       },
-      setupChannels: {
-        set (newValue) {
-          this.setups[this.setupIndex].channels[newValue.id] = newValue
-          this.update()
-        },
-        get () {
-          let channels = this.setups[this.setupIndex].channels
-          return channels.length ? channels : [AWChannel.empty()]
-        }
+      setupChannels () {
+        let channels = this.setups[this.setupIndex].channels
+        return channels.length ? channels : [AWChannel.empty()]
       }
     },
     methods: {
@@ -140,6 +134,11 @@
           this.$scrollTo('#' + this.channelID(this.channelIndex), {container: '#channels-container', x: true, y: false})
         })
       },
+      setChannel (index, event) {
+        console.log('setChannel', event)
+        this.setups[this.setupIndex].channels[index] = event
+        this.update()
+      },
       removeChannel (index) {
         AWChannels.remove(this.setups[this.setupIndex].channels, index)
         this.selectChannel(index - 1)
@@ -155,6 +154,7 @@
         }
       },
       update () {
+        console.log('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))
         this.$emit('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))
       },
       channelID (index) { return 'ch' + index }
@@ -164,7 +164,7 @@
         if (Array.isArray(this.value) && this.value.length > 0) {
           this.setups = this.value
         } else {
-          this.setups = AWSetups.empty()
+          this.setups = [AWSetup.empty()]
         }
       }
     }
