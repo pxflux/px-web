@@ -82,16 +82,16 @@ export class VideoAttachment extends Attachment {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {VideoAttachment} origin
+   * @param {VideoAttachment} from
    */
-  updatedEntries (prefix, data, origin) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || VideoAttachment.empty()
     super.updatedEntries(prefix, data, origin)
-    if (origin && this.duration === origin.duration) {
+    if (this.duration === origin.duration) {
       delete data[prefix + 'duration']
     }
     if (this.thumbnail !== null) {
-      const thumbnail = origin ? origin.thumbnail : null
-      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, thumbnail)
+      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, origin.thumbnail)
     }
   }
 }

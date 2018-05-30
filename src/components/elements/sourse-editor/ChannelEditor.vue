@@ -74,11 +74,11 @@
           this.sourceIsOK = true
           this.channel.source = source
           this.sourceDescription = source.toString()
-          this.$emit('input', this.channel)
+          this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
         }).catch(err => {
           console.log(err)
           this.reset()
-          this.$emit('input', this.channel)
+          this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
         })
       },
       reset () {

@@ -43,13 +43,14 @@ export class AttachmentStorage {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {AttachmentStorage} origin
+   * @param {AttachmentStorage} from
    */
-  updatedEntries (prefix, data, origin) {
-    if (origin && this.displayUrl === origin.displayUrl) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || AttachmentStorage.empty()
+    if (this.displayUrl === origin.displayUrl) {
       delete data[prefix + 'displayUrl']
     }
-    if (origin && this.storageUrl === origin.storageUrl) {
+    if (this.storageUrl === origin.storageUrl) {
       delete data[prefix + 'storageUrl']
     }
   }

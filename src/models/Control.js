@@ -55,19 +55,20 @@ export class Control {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Control} original
+   * @param {Control} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.icon === original.icon) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || Control.empty()
+    if (this.icon === origin.icon) {
       delete data[prefix + 'icon']
     }
-    if (this.label === original.label) {
+    if (this.label === origin.label) {
       delete data[prefix + 'label']
     }
-    if (this.type === original.type) {
+    if (this.type === origin.type) {
       delete data[prefix + 'type']
     }
-    this.value.updatedEntries(prefix + 'value/', data, original.value)
+    this.value.updatedEntries(prefix + 'value/', data, origin.value)
   }
 }
 
@@ -194,25 +195,26 @@ export class ControlValue {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {ControlValue} original
+   * @param {ControlValue} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.type === original.type) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || ControlValue.empty()
+    if (this.type === origin.type) {
       delete data[prefix + 'type']
     }
-    if (this.keyCode === original.keyCode) {
+    if (this.keyCode === origin.keyCode) {
       delete data[prefix + 'keyCode']
     }
-    if (this.altKey === original.altKey) {
+    if (this.altKey === origin.altKey) {
       delete data[prefix + 'altKey']
     }
-    if (this.ctrlKey === original.ctrlKey) {
+    if (this.ctrlKey === origin.ctrlKey) {
       delete data[prefix + 'ctrlKey']
     }
-    if (this.shiftKey === original.shiftKey) {
+    if (this.shiftKey === origin.shiftKey) {
       delete data[prefix + 'shiftKey']
     }
-    if (this.metaKey === original.metaKey) {
+    if (this.metaKey === origin.metaKey) {
       delete data[prefix + 'metaKey']
     }
   }

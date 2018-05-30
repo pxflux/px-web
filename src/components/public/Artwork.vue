@@ -27,7 +27,7 @@
           </ul>
         </section>
       </div>
-      
+
       <div class="sidebar">
         <section class="social">
           <div class="row">
@@ -110,7 +110,7 @@
 
     data () {
       return {
-        currentSetupIndex: 0
+        setupIndex: 0
       }
     },
 
@@ -118,22 +118,22 @@
       ...mapState(['userAccount', 'accountArtwork', 'accountPlayers']),
 
       sourceDescription () {
-        if (this.artwork) {
-          return this.artwork.setups[this.currentSetupIndex].channels[0].source.toString()
+        if (this.setup && this.setup.channels.length) {
+          return this.setup.channels[0].source.toString()
         }
       },
 
       images () {
-        return this.currentSetup ? this.currentSetup.thumbnails : []
+        return this.setup ? this.setup.thumbnails : []
       },
 
       video () {
-        return this.currentSetup ? this.currentSetup.preview : null
+        return this.setup ? this.setup.preview : null
       },
 
-      currentSetup () {
+      setup () {
         if (this.artwork && this.artwork.setups.length) {
-          return this.artwork.setups[this.currentSetupIndex]
+          return this.artwork.setups[this.setupIndex]
         } else {
           return null
         }

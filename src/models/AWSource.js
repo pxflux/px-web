@@ -159,65 +159,66 @@ export class AWSource {
   /**
    * @param {string} prefix
    * @param {AWSource} data
-   * @param {AWSource} original
+   * @param {AWSource} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.url === original.url) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || AWSource.empty()
+    if (this.url === origin.url) {
       delete data[prefix + 'url']
     }
-    if (this.type === original.type) {
+    if (this.type === origin.type) {
       delete data[prefix + 'type']
     }
-    if (this.version === original.version) {
+    if (this.version === origin.version) {
       delete data[prefix + 'version']
     }
-    if (this.local === original.local) {
+    if (this.local === origin.local) {
       delete data[prefix + 'local']
     }
-    if (this.dependencies === original.dependencies) {
+    if (this.dependencies === origin.dependencies) {
       delete data[prefix + 'dependencies']
     }
-    if (this.assets === original.assets) {
+    if (this.assets === origin.assets) {
       delete data[prefix + 'assets']
     }
-    if (this.dataSize === original.dataSize) {
+    if (this.dataSize === origin.dataSize) {
       delete data[prefix + 'dataSize']
     }
-    if (this.dataRate === original.dataRate) {
+    if (this.dataRate === origin.dataRate) {
       delete data[prefix + 'dataRate']
     }
     if (this.resolution !== null) {
-      this.resolution.updatedEntries(prefix + 'resolution/', data, original.resolution)
+      this.resolution.updatedEntries(prefix + 'resolution/', data, origin.resolution)
     }
-    if (this.duration === original.duration) {
+    if (this.duration === origin.duration) {
       delete data[prefix + 'duration']
     }
-    if (this.loop === original.loop) {
+    if (this.loop === origin.loop) {
       delete data[prefix + 'loop']
     }
-    if (this.fps === original.fps) {
+    if (this.fps === origin.fps) {
       delete data[prefix + 'fps']
     }
-    if (this.pixelAspectRatio === original.pixelAspectRatio) {
+    if (this.pixelAspectRatio === origin.pixelAspectRatio) {
       delete data[prefix + 'pixelAspectRatio']
     }
-    if (this.colorDepth === original.colorDepth) {
+    if (this.colorDepth === origin.colorDepth) {
       delete data[prefix + 'colorDepth']
     }
-    if (this.colorProfile === original.colorProfile) {
+    if (this.colorProfile === origin.colorProfile) {
       delete data[prefix + 'colorProfile']
     }
-    if (this.codec === original.codec) {
+    if (this.codec === origin.codec) {
       delete data[prefix + 'codec']
     }
-    if (this.videoTracksCount === original.videoTracksCount) {
+    if (this.videoTracksCount === origin.videoTracksCount) {
       delete data[prefix + 'videoTracksCount']
     }
-    if (this.audioTracksCount === original.audioTracksCount) {
+    if (this.audioTracksCount === origin.audioTracksCount) {
       delete data[prefix + 'audioTracksCount']
     }
     if (this.thumbnail !== null) {
-      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, original.thumbnail)
+      this.thumbnail.updatedEntries(prefix + 'thumbnail/', data, origin.thumbnail)
     }
   }
 

@@ -66,15 +66,16 @@ export class Player {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Player} original
+   * @param {Player} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.pin === original.pin) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || Player.empty()
+    if (this.pin === origin.pin) {
       delete data[prefix + 'pin']
     }
-    if (this.connected === original.connected) {
+    if (this.connected === origin.connected) {
       delete data[prefix + 'connected']
     }
-    this.artwork.updatedEntries(prefix + 'artwork/', data, original.artwork)
+    this.artwork.updatedEntries(prefix + 'artwork/', data, origin.artwork)
   }
 }

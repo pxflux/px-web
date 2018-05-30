@@ -49,13 +49,14 @@ export class ContributorRef {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {ContributorRef} original
+   * @param {ContributorRef} from
    */
-  updatedEntries (prefix, data, original) {
-    if (this.fullName === original.fullName) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || ContributorRef.empty()
+    if (this.fullName === origin.fullName) {
       delete data[prefix + 'fullName']
     }
-    if (this.role === original.role) {
+    if (this.role === origin.role) {
       delete data[prefix + 'role']
     }
   }
@@ -78,7 +79,7 @@ export class ContributorRefs {
       return []
     }
     if (typeof value === 'object') {
-      return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], { key: key })))
+      return Object.keys(value).map(key => ContributorRef.fromJson(Object.assign(value[key], {key: key})))
     }
     if (Array.isArray(value)) {
       return value.map(it => ContributorRef.fromJson(it))

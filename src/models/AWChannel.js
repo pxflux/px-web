@@ -67,25 +67,26 @@ export class AWChannel {
   /**
    * @param {string} prefix
    * @param {object} data
-   * @param {AWChannel} original
+   * @param {AWChannel} from
    */
-  updatedEntries (prefix, data, original) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || AWChannel.empty()
     if (this.source !== null) {
-      this.source.updatedEntries(prefix + 'source/', data, original.source)
+      this.source.updatedEntries(prefix + 'source/', data, origin.source)
     }
-    if (this.audioOutputs === original.audioOutputs) {
+    if (this.audioOutputs === origin.audioOutputs) {
       delete data[prefix + 'audioOutputs']
     }
-    if (this.videoOutputs === original.videoOutputs) {
+    if (this.videoOutputs === origin.videoOutputs) {
       delete data[prefix + 'videoOutputs']
     }
-    if (this.sync === original.sync) {
+    if (this.sync === origin.sync) {
       delete data[prefix + 'sync']
     }
-    if (this.isClockSource === original.isClockSource) {
+    if (this.isClockSource === origin.isClockSource) {
       delete data[prefix + 'isClockSource']
     }
-    if (this.syncToChannel === original.syncToChannel) {
+    if (this.syncToChannel === origin.syncToChannel) {
       delete data[prefix + 'syncToChannel']
     }
   }
@@ -157,9 +158,8 @@ export class AWChannels {
   static updatedEntries (prefix, data, originals, values) {
     // add & updates
     values.forEach(value => {
-      const items = originals.filter(item => item.id === value.id)
-      const original = items.length > 0 ? items[0] : AWChannel.empty()
-      value.updatedEntries(prefix + value.id + '/', data, original)
+      const original = originals.find(item => item.id === value.id)
+      value.updatedEntries(prefix + value.id + '/', data, original || AWChannel.empty())
     })
     // remove
     originals.forEach(original => {

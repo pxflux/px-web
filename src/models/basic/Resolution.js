@@ -40,13 +40,14 @@ export class Resolution {
   /**
    * @param {string} prefix
    * @param {Object} data
-   * @param {Resolution} original
+   * @param {Resolution} from
    */
-  updatedEntries (prefix, data, original) {
-    if (original && this.w === original.w) {
+  updatedEntries (prefix, data, from) {
+    const origin = from || Resolution.empty()
+    if (this.w === origin.w) {
       delete data[prefix + 'w']
     }
-    if (original && this.h === original.h) {
+    if (this.h === origin.h) {
       delete data[prefix + 'h']
     }
   }
