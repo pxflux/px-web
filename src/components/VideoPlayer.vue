@@ -37,22 +37,12 @@
           portrait: false,
           title: false,
           fullscreen: false
-          // muted: false
         },
-        playerReady: false,
         paused: true,
         videoBoxEl: null
       }
     },
     computed: {
-      currentPlayerWidth () {
-        this.videoBoxEl = this.$refs['videoBox']
-        if (!this.videoBoxEl) return ''
-        return this.videoBoxEl.getBoundingClientRect().width
-      },
-      heightFromWidth () {
-        return this.ratio ? 100 / this.ratio : 50 // %
-      },
       videoId () {
         if (Number.isInteger(this.videoUrl)) return this.videoUrl
         const match = this.videoUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
@@ -67,7 +57,6 @@
 
     mounted () {
       this.videoBoxEl = this.$refs['videoBox']
-      // this.fitToParent()
       window.addEventListener('resize', this.fitToParent)
     },
 
@@ -103,7 +92,6 @@
       onLoad () {
         const player = this.$refs.player
         if (!player) return
-        this.playerReady = true
         player.unmute()
 
         this.fitToParent()

@@ -18,6 +18,10 @@ form {
 
   > .row, section > .row{
     margin-top: $module-size / 2;
+
+    &:last-child{
+      padding-bottom: $module-size / 2;
+    }
   }
   .row {
     min-height: $module-size;
@@ -25,7 +29,7 @@ form {
     @include weider-then-phone() {
       display: flex;
       flex-flow: row nowrap;
-      //width: calc(100vw - #{$module-size});
+      align-items: flex-start;
     }
 
     input#title {
@@ -43,9 +47,20 @@ form {
       max-width: 12 * $module-size;
       min-height: $module-size;
       padding: 0;
+      transition: all 200ms;
+
       &.closed {
-        border: 0.5px rgba(0, 0, 0, 0.1);
-        border-style: dotted none;
+        height: $module-size;
+      }
+
+      .row{
+        // NESTED ROW
+        flex-flow: column;
+        label{
+          margin-top: $module-size / 2;
+          min-height: $module-size / 2;
+          text-align: start;
+        }
       }
 
       > input,
@@ -58,10 +73,6 @@ form {
         }
       }
 
-      > span {
-        //@include centeredVertical();
-      }
-
       > .description {
         display: block;
         padding: $module-size / 4;
@@ -71,7 +82,6 @@ form {
     input, textarea, select {
       position: relative;
       border: none;
-      //box-shadow: none;
       height: 100%;
       min-height: $module-size;
       padding: 0 $module-size / 4;

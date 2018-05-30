@@ -1,8 +1,23 @@
 footer {
 	flex-shrink: 0;
+  display: flex;
+  flex-flow: row nowrap;
 	height: $module-size;
+
   .wrap {
     height: $module-size;
     @include checker-bg()
+  }
+
+  &.editor-section{
+    position: fixed;
+    justify-content: center;
+    width: 100%;
+    bottom: 0;
+    background: $bg-secondary-color;
+    @include weider-then-phone{
+      justify-content: unset;
+      padding-left: $module-size * 2.5;
+    }
   }
 }

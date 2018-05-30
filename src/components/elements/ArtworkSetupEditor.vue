@@ -46,15 +46,15 @@
         </section>
         <section>
           <div class="row">
-            <label><span>Images</span></label>
-            <div class="field">
-              <image-attachment-editor/>
-            </div>
-          </div>
-          <div class="row">
             <label><span>Video Preview</span></label>
             <div class="field">
               <video-attachment-editor v-model="setups[setupIndex].preview"/>
+            </div>
+          </div>
+          <div class="row">
+            <label><span>Images</span></label>
+            <div class="field">
+              <image-attachment-editor/>
             </div>
           </div>
         </section>

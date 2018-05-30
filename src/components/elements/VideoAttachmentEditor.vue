@@ -1,7 +1,8 @@
 <template>
   <div class="attachment">
     <div class="row">
-      <input type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
+      <!--<label for="video-attachment-url"></label>-->
+      <input id="video-attachment-url" type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
     </div>
     <div class="description">right now we support only Vimeo links<br><br></div>
     <video-player
@@ -10,6 +11,10 @@
             :ratio="ratio"/>
     <div v-if="displayUrl && !error" class="attachment-info">
       {{'Aspect Ratio 1 : ' + Math.round((1 / ratio) * 100) / 100}}
+    </div>
+    <div class="row">
+      <label for="video-attachment-caption">Caption</label>
+      <textarea id="video-attachment-caption" v-model="caption" v-on:change="update"></textarea>
     </div>
     <div v-if="error" class="warning">{{ error }}</div>
   </div>
@@ -28,7 +33,8 @@
       return {
         displayUrl: '',
         ratio: 1,
-        error: null
+        error: null,
+        caption: ''
       }
     },
     methods: {
@@ -37,6 +43,7 @@
           if (attachment) {
             this.ratio = attachment.ratio
             this.error = null
+            attachment.caption = this.caption
           } else {
             this.error = 'It doesn\'t look like a correct Vimeo url or from <b>Basic</b> Vimeo account.'
           }

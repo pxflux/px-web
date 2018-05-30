@@ -48,10 +48,10 @@
           </div>
         </section>
         <footer class="editor-section">
-          <router-link v-if="isNew" to="/artworks">Cancel</router-link>
-          <router-link v-if="! isNew" :to="'/artwork/' + artworkId">Cancel</router-link>
-          <button v-if="isNew" @click="submitArtwork">Create</button>
-          <button v-if="! isNew" @click="submitArtwork">Save</button>
+          <router-link v-if="isNew" to="/artworks" class="button frameless">Cancel</router-link>
+          <router-link v-if="! isNew" :to="'/artwork/' + artworkId" class="button frameless">Cancel</router-link>
+          <button v-if="isNew" @click="submitArtwork" class="frameless">Create</button>
+          <button v-if="! isNew" @click="submitArtwork" class="frameless">Save</button>
         </footer>
       </form>
     </div>

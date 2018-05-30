@@ -40,9 +40,6 @@
     &.active{
       border: 1px solid $outline-color;
       border-radius: 50%;
-      //*{
-      //  color: $font-color;
-      //}
     }
   }
 }
@@ -63,11 +60,10 @@
     }
   }
   .scene {
-    min-height: $module-size * 5;
-    margin: 0;
-
+    //min-height: $module-size * 5;
     display: flex;
     flex-flow: row nowrap;
+    margin: 0;
     width: 100%;
     overflow-x: scroll;
   }

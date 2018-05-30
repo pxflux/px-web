@@ -14,12 +14,12 @@ input, textarea {
   padding: $input-padding-y $input-padding-x;
   width: 100%;
   min-height: $module-size;
-  max-width: 30rem;
-  @include hairline-border();
+  //max-width: 30rem;
+  //@include hairline-border();
 
   &:focus {
     outline: none;
-    @include hairline-border(false, true, #000);
+    @include hairline-border(false, all, #000);
   }
 }
 
