@@ -31,6 +31,14 @@ export default {
     return url.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
   },
   /**
+   * @param {?string} url
+   * @return {?number}
+   */
+  getVimeoId (url) {
+    const match = url.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
+    return match ? match[1] : null
+  },
+  /**
    * @param {string} url
    * @return {Promise<VimeoVideoInfo>}
    */

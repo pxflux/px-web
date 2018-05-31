@@ -1,16 +1,15 @@
 <template>
-  <div class="panel" v-model="numOutputs" :class="type" ref="panel">
+  <div class="panel" :class="value.code" ref="panel">
     <div class="button frameless">
-      <div class="icon minus" @click="changeNumberOutputs(-1)"></div>
+      <div class="icon minus" @click="remove()"></div>
     </div>
     <div class="button frameless">
-      <div class="icon plus" @click="changeNumberOutputs(1)"></div>
+      <div class="icon plus" @click="append()"></div>
     </div>
     <div class="connectors">
-      <header>{{ outputTitle }}</header>
+      <header>{{value.title}}</header>
       <div class="sockets">
-        <span v-for="i in numSockets"
-              class="socket" :class="type" ref="sockets"></span>
+        <span v-for="i in value.data.length" class="socket" :class="value.code" ref="sockets"></span>
       </div>
     </div>
   </div>
@@ -19,63 +18,59 @@
 <script>
   export default {
     name: 'output-control-panel',
-    props: ['numOutputs', 'outputTitle', 'type'],
+    props: ['value'],
+
     data () {
       return {
-        numSockets: this.numOutputs
+        numSockets: 0
       }
-    },
-    computed: {
-      className () {
-        return this.outputTitle.toLowerCase()
-      }
-    },
-    mounted () {
-      this.changeNumberOutputs(0)
     },
     methods: {
-      changeNumberOutputs (n) {
-        this.numSockets += n
-        if (this.numSockets < 0) this.numSockets = 0
-        if (this.numSockets > 18) this.numSockets = 18
-        this.$nextTick(() => { // just to let sockets to be updated first
-          const bounds = this.collectSocketBounds()
-          this.$emit('update', bounds, this.type)
-        })
+      append () {
+        if (this.numSockets < 18) {
+          this.numSockets += 1
+          this.$emit('append', this.value.code)
+        }
+      },
+      remove () {
+        if (this.numSockets > 0) {
+          this.numSockets -= 1
+          this.$emit('remove', this.value.code)
+        }
       },
       collectSocketBounds () {
-        const panelBounds = this.$refs.panel.getBoundingClientRect()
         const bounds = []
-        this.$refs.sockets.forEach(socketEl => {
-          bounds.push({
-            type: 'socket',
-            objectBounds: this.modifyBoundingRect(socketEl, panelBounds)
+        if (this.$refs.sockets) {
+          const panelBounds = this.$refs.panel.getBoundingClientRect()
+          this.$refs.sockets.forEach(el => {
+            const socketBounds = el.getBoundingClientRect()
+            bounds.push({
+              type: 'socket',
+              objectBounds: {
+                left: socketBounds.left,
+                top: socketBounds.top,
+                right: socketBounds.right,
+                bottom: panelBounds.bottom,
+                x: socketBounds.x,
+                y: socketBounds.y,
+                width: socketBounds.width,
+                height: panelBounds.bottom - socketBounds.top
+              }
+            })
           })
-        })
-        return bounds
-      },
-      modifyBoundingRect (socketEl, panelBounds) {
-        const socketBounds = socketEl.getBoundingClientRect()
-        return {
-          left: socketBounds.left,
-          top: socketBounds.top,
-          right: socketBounds.right,
-          bottom: panelBounds.bottom,
-          x: socketBounds.x,
-          y: socketBounds.y,
-          width: socketBounds.width,
-          height: panelBounds.bottom - socketBounds.top
         }
+        return bounds
       }
     }
   }
 </script>
+
 <style lang="scss" scoped>
   @import "../../../assets/sass/vars";
   @import "../../../assets/sass/mixins";
   @import "../../../assets/sass/hidpi";
   @import "../../../assets/sass/components/hairline";
-  
+
   .panel {
     width: 50%;
     display: flex;
@@ -84,7 +79,7 @@
     position: relative;
     background: $bg-color;
     @include hairline-border($positionRelative: true, $side: all, $color: #808080, $bg-color: $dark-bg);
-    
+
     &.video {
       flex-flow: row-reverse nowrap;
     }
@@ -106,13 +101,13 @@
       flex-grow: 1;
       width: 2.5 * $module-size;
       padding: 0 12px;
-      
+
       .sockets {
         display: flex;
         flex-flow: wrap;
         justify-content: center;
         align-items: center;
-        
+
         .socket {
           display: block;
           width: 6px;
@@ -126,7 +121,7 @@
           &.video {
             background: $video-color;
           }
-          
+
         }
       }
     }

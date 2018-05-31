@@ -14,7 +14,7 @@
         </div>
       </section>
 
-      <outputs-panel v-if="this.channel.source" ref="outputsPanel"/>
+      <outputs-panel v-if="channel.source" ref="outputsPanel" :value="channel" @input="setChannel($event)"/>
     </div>
     <div v-if="index" class="button frameless secondary" @click="removeChannel()"><i class="cancel-small"></i></div>
   </div>
@@ -63,9 +63,7 @@
       removeChannel () {
         this.$emit('remove', this.index)
       },
-
       setUrl (url) {
-        console.log(url)
         AWSource.fromUrl(url).then(source => {
           this.channel.source = source
           this.error = ''
@@ -73,6 +71,9 @@
         }).catch(err => {
           this.error = err.message
         })
+      },
+      setChannel (channel) {
+        this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(channel))))
       },
       fixPanelsOnScroll (e) {
         this.$refs['outputsPanel'].fixPanelsOnScroll(e)

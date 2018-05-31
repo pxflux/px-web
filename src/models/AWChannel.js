@@ -1,11 +1,12 @@
 import { AWSource } from './AWSource'
-import { ArrayOfType } from './utilities/ArrayOfType'
+import { AWVideoOutputs } from './AWVideoOutput'
+import { AWAudioOutputs } from './AWAudioOutput'
 
 /**
  * @property {number} id
  * @property {?AWSource} source
- * @property {object[]} audioOutputs
- * @property {object[]} videoOutputs
+ * @property {AWAudioOutput[]} audioOutputs
+ * @property {AWVideoOutput[]} videoOutputs
  * @property {boolean} sync
  * @property {boolean} isClockSource
  * @property {number} syncToChannel
@@ -14,8 +15,8 @@ export class AWChannel {
   /**
    * @param {number} id
    * @param {?AWSource} source
-   * @param {object[]} audioOutputs
-   * @param {object[]} videoOutputs
+   * @param {AWAudioOutput[]} audioOutputs
+   * @param {AWVideoOutput[]} videoOutputs
    * @param {boolean} sync
    * @param {boolean} isClockSource
    * @param {number} syncToChannel
@@ -23,15 +24,15 @@ export class AWChannel {
   constructor (id, source, audioOutputs, videoOutputs, sync, isClockSource, syncToChannel) {
     this.id = isNaN(id) ? 0 : id
     this.source = source || null
-    this.audioOutputs = audioOutputs || []
-    this.videoOutputs = videoOutputs || []
+    this.audioOutputs = audioOutputs
+    this.videoOutputs = videoOutputs
     this.sync = sync || false
     this.isClockSource = isClockSource || false
     this.syncToChannel = isNaN(syncToChannel) ? 0 : syncToChannel
   }
 
   static empty () {
-    return new AWChannel(0, null, [], [], false, false, 0)
+    return new AWChannel(0, null, AWAudioOutputs.empty(), AWVideoOutputs.empty(), false, false, 0)
   }
 
   /**
@@ -41,8 +42,12 @@ export class AWChannel {
     if (!value || typeof value !== 'object') {
       return null
     }
-    return new AWChannel(Number.parseInt(value.id), AWSource.fromJson(value.source), ArrayOfType.fromJson(value.audioOutputs, null),
-      ArrayOfType.fromJson(value.videoOutputs, null), value.sync, value.isClockSource, Number.parseInt(value.syncToChannel))
+    return new AWChannel(Number.parseInt(value.id), AWSource.fromJson(value.source), AWAudioOutputs.fromJson(value.audioOutputs),
+      AWVideoOutputs.fromJson(value.videoOutputs), value.sync, value.isClockSource, Number.parseInt(value.syncToChannel))
+  }
+
+  toString () {
+    return AWVideoOutputs.toString(this.videoOutputs) + ' | ' + AWAudioOutputs.toString(this.audioOutputs)
   }
 
   /**
@@ -56,8 +61,8 @@ export class AWChannel {
     } else {
       Object.assign(data, this.source.toEntries(prefix + 'source/'))
     }
-    data[prefix + 'audioOutputs'] = this.audioOutputs
-    data[prefix + 'videoOutputs'] = this.videoOutputs
+    Object.assign(data, AWAudioOutputs.toEntries(prefix + 'audioOutputs/', this.audioOutputs))
+    Object.assign(data, AWVideoOutputs.toEntries(prefix + 'videoOutputs/', this.videoOutputs))
     data[prefix + 'sync'] = this.sync
     data[prefix + 'isClockSource'] = this.isClockSource
     data[prefix + 'syncToChannel'] = this.syncToChannel
@@ -74,12 +79,8 @@ export class AWChannel {
     if (this.source !== null) {
       this.source.updatedEntries(prefix + 'source/', data, origin.source)
     }
-    if (this.audioOutputs === origin.audioOutputs) {
-      delete data[prefix + 'audioOutputs']
-    }
-    if (this.videoOutputs === origin.videoOutputs) {
-      delete data[prefix + 'videoOutputs']
-    }
+    AWAudioOutputs.updatedEntries(prefix + 'audioOutputs/', data, origin.audioOutputs, this.audioOutputs)
+    AWVideoOutputs.updatedEntries(prefix + 'videoOutputs/', data, origin.videoOutputs, this.videoOutputs)
     if (this.sync === origin.sync) {
       delete data[prefix + 'sync']
     }
@@ -159,7 +160,7 @@ export class AWChannels {
     // add & updates
     values.forEach(value => {
       const original = originals.find(item => item.id === value.id)
-      value.updatedEntries(prefix + value.id + '/', data, original || AWChannel.empty())
+      value.updatedEntries(prefix + value.id + '/', data, original)
     })
     // remove
     originals.forEach(original => {

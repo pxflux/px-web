@@ -9,13 +9,13 @@
 </template>
 
 <script>
-  import autosize from 'autosize'
+  import autoSize from 'autosize'
 
   export default {
     name: 'autosize-textarea',
     props: ['value', 'placeholder', 'css-class'],
     mounted () {
-      autosize(this.$el)
+      autoSize(this.$el)
     },
     methods: {
       input (e) {

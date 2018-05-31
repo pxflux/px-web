@@ -132,7 +132,6 @@
         })
       },
       setChannel (index, event) {
-        console.log('setChannel', event)
         this.setups[this.setupIndex].channels[index] = event
         this.update()
       },

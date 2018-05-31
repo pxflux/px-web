@@ -1,49 +1,41 @@
 <template>
   <div>
-    <div class="row output-bar-holder" :class="type">
+    <div class="row output-bar-holder" :class="value.code">
       <label>
-        <span>{{type}}</span>
+        <span>{{value.title}}</span>
       </label>
-      <div class="output-bar" :class="type">
-        <popper v-if="type==='video'"
-                v-for="(output, i) in outputs"
-                trigger="click"
-                :options="{placement: 'bottom-start'}"
-                :key="i"
-                ref="popups">
-          <div class="popper">
-            <video-options
-              :output="output"
-              :title="'Screen ' + outputName(output, i)"
-              :index="i"
-              :bus="bus"/>
-            <div class="button frameless cancel narrow" @click="onPopperCancel(i)">
-              <span class="icon cancel small"></span>
+      <div class="output-bar" :class="value.code">
+        <template v-if="value.code === 'video'">
+          <popper v-for="(output, i) in outputs"
+                  trigger="click" :options="{placement: 'bottom-start'}" :key="i" ref="popups">
+            <div class="popper">
+              <video-options :output="output" :title="'Screen ' + outputName(output, i)" :index="i" :bus="bus"/>
+              <div class="button frameless cancel narrow" @click="onPopperCancel(i)">
+                <span class="icon cancel small"></span>
+              </div>
             </div>
-          </div>
 
-          <div class="output-box" :class="[type, outputClassName(output)]"
-               ref="boxes"
-               slot="reference">
+            <div class="output-box" :class="[value.code, outputClassName(output)]" ref="boxes" slot="reference">
+              <div class="description">
+                <span class="name">{{outputName(output, i)}}</span>
+                <span class="type">{{value.code}}</span>
+                <span class="description">{{outputDescription(output)}}</span>
+              </div>
+              <div class="icon drop-down small"></div>
+            </div>
+          </popper>
+        </template>
+
+        <template v-if="value.code === 'audio'">
+          <div v-for="(output, i) in outputs"
+               class="output-box" :class="[value.code, outputClassName(output)]" ref="boxes" @click="openOptions(i)">
             <div class="description">
               <span class="name">{{outputName(output, i)}}</span>
-              <span class="type">{{output.type}}</span>
+              <span class="type">{{outputType(value.code)}}</span>
               <span class="description">{{outputDescription(output)}}</span>
             </div>
-            <div v-if="type==='video'" class="icon drop-down small"></div>
           </div>
-        </popper>
-
-        <div v-if="type==='audio'" v-for="(output, i) in outputs"
-             class="output-box" :class="[type, outputClassName(output)]"
-             ref="boxes"
-             @click="openOptions(i)">
-          <div class="description">
-            <span class="name">{{outputName(output, i)}}</span>
-            <span class="type">{{outputType(output.type)}}</span>
-            <span class="description">{{outputDescription(output)}}</span>
-          </div>
-        </div>
+        </template>
       </div>
     </div>
 
@@ -53,88 +45,34 @@
 
 <script>
   import Vue from 'vue'
-  import Popper from 'vue-popperjs' // 'popper.js' //
+  import Popper from 'vue-popperjs'
   import VideoOptions from './OutputVideoOptions'
-
-  // import 'vue-popperjs/dist/css/vue-popper.css'
-
-  /**
-   * @typedef {{
-   *  type: 'projection'
-   *  resolution: [0, 0]
-   *  orientation: 'landscape'
-   * }} OutputGeneric
-   /**
-   * @prop {string} type
-   */
-  class AudioOutput {
-    constructor () {
-      this.type = 'loudspeaker'
-    }
-  }
-
-  /**
-   * @prop {string} type
-   */
-  class VideoOutput {
-    constructor () {
-      this.type = 'projection'
-      this.resolution = [1920, 1080]
-      this.orientation = 'landscape'
-    }
-  }
 
   export default {
     name: 'output-representation-bar',
     components: {
       Popper, VideoOptions
     },
-    props: [
-      'type',
-      'outputList',
-      'outputsNumber',
-      'trigger'
-    ],
+    props: ['value', 'trigger'],
+
+    computed: {},
     data () {
       return {
-        numberAudioOutputs: 0,
-        numberVideoOutputs: 0,
-        /** @type [] */
-        outputs: this.outputList,
+        outputs: this.value.data || [],
         /** @type ClientRect[] */
         boxes: [],
         showPopperParentVar: true,
-        bus: new Vue(),
-        showDrawer: false
+        showDrawer: false,
+        bus: new Vue()
       }
     },
     mounted () {
       this.bus.$on('updateOutputOptions', (options, index) => {
-        this.outputs[index] = options
+        // this.outputs[index] = options
         this.onPopperCancel(index)
-
         this.update()
       })
       this.update()
-    },
-    watch: {
-      outputsNumber () {
-        if (this.outputsNumber < this.outputs.length) {
-          this.outputs = this.outputs.slice(0, this.outputsNumber)
-        } else if (this.outputsNumber > this.outputs.length) {
-          const numToAdd = this.outputsNumber - this.outputs.length
-          for (let i = 0; i < numToAdd; i++) {
-            const output = this.type === 'audio' ? new AudioOutput() : new VideoOutput()
-            this.outputs.push(output)
-          }
-        }
-        this.update()
-      },
-      trigger () {
-        this.$nextTick(() => {
-          this.update()
-        })
-      }
     },
     methods: {
       openOptions (refIndex) {
@@ -142,7 +80,7 @@
         const popper = document.querySelector('.popper.template')
         const anotherPopper = new Popper(reference, popper, {
           modifiers: {
-            preventOverflow: { boundariesElement: 'viewport' }
+            preventOverflow: {boundariesElement: 'viewport'}
           }
         })
         return anotherPopper
@@ -155,35 +93,37 @@
       },
 
       updateOutputOptions (options, outputIndex) {
-        this.outputs[outputIndex] = options
+        // this.outputs[outputIndex] = options
         this.onPopperCancel(outputIndex)
         this.update()
       },
 
       update () {
         this.$nextTick(() => {
-          this.$emit('update', this.type, this.outputs)
+          this.$emit('update', this.value.code, this.outputs)
         })
       },
       collectBoxes () {
         const bounds = []
-        this.$refs.boxes.forEach((boxEl, i) => {
-          const output = this.outputs[i]
-          bounds.push({ type: output.type, objectBounds: boxEl.getBoundingClientRect() })
-        })
+        if (this.$refs.boxes) {
+          this.$refs.boxes.forEach((el, i) => {
+            const output = this.outputs[i]
+            bounds.push({type: output.type, objectBounds: el.getBoundingClientRect()})
+          })
+        }
         return bounds
       },
       outputName (output, n) {
         n++
-        switch (this.type) {
+        switch (this.value.code) {
           case 'video':
             return n
           case 'audio':
             const names = ['Mono', 'L', 'R']
             let name = n
-            if (this.outputsNumber === 2) {
+            if (this.value.data.length === 2) {
               name = names[n]
-            } else if (this.outputsNumber === 1) {
+            } else if (this.value.data.length === 1) {
               name = names[0]
             }
             return name
@@ -201,7 +141,7 @@
        * @return {string}
        */
       outputDescription (output) {
-        if (this.type === 'video') {
+        if (this.value.code === 'video') {
           return 'Any resolution'
         }
       },
@@ -211,6 +151,28 @@
        */
       outputClassName (output) {
         return output.type.toLowerCase().replace(' ', '-')
+      }
+    },
+    watch: {
+      value (newValue) {
+        this.outputs = newValue.data || []
+      },
+      // value () {
+      //   if (this.value.data.length < this.outputs.length) {
+      //     this.outputs = this.outputs.slice(0, this.value.data.length)
+      //   } else if (this.value.data.length > this.outputs.length) {
+      //     const numToAdd = this.value.data.length - this.outputs.length
+      //     for (let i = 0; i < numToAdd; i++) {
+      //       const output = this.value.type === 'audio' ? new AudioOutput() : new VideoOutput()
+      //       this.outputs.push(output)
+      //     }
+      //   }
+      //   this.update()
+      // },
+      trigger () {
+        this.$nextTick(() => {
+          this.update()
+        })
       }
     }
   }

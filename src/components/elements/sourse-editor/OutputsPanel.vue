@@ -1,44 +1,41 @@
 <template>
   <div class="outputs-editor-wrapper">
-    <connectors-canvas v-if="outputsPanelOpen" :start-connectors="outputSockets" :end-connectors="outputBoxes"
+    <connectors-canvas v-if="panelOpened" :start-connectors="outputSockets" :end-connectors="outputBoxes"
                        :colors="colors" :trigger="trigger"/>
     <section class="outputs-editor-panel row" ref="outputEditor">
-      <label class="with-icon" @click="outputsPanelOpen = !outputsPanelOpen">
-        <span class="icon arrow-right small" :class="[outputsPanelOpen? 'open' : '']"></span>
+      <label class="with-icon" @click="panelOpened = !panelOpened">
+        <span class="icon arrow-right small" :class="[panelOpened? 'open' : '']"></span>
         <span>Outputs</span>
       </label>
 
-      <div v-if="outputsPanelOpen" class="outputs-control-panel field">
+      <div v-if="panelOpened" class="outputs-control-panel field">
         <output-control-panel
           ref="outputControls"
-          v-for="(output, i) in outputTypes"
+          v-for="(outputType, i) in outputTypes"
           :key="i"
-          :num-outputs="numberOutputs[output.type]"
-          :output-title="output.title"
-          :type="output.type"
-          v-on:update="updateOutputsNumber(...arguments)"/>
+          :value="outputType"
+          v-on:append="appendOutputs($event)"
+          v-on:remove="removeOutputs($event)"/>
       </div>
-      <div v-else="" class="field closed" @click="outputsPanelOpen = !outputsPanelOpen">
-        <span class="description">{{outputsSummary()}}</span>
+      <div v-else="" class="field closed" @click="panelOpened = !panelOpened">
+        <span class="description">{{description}}</span>
       </div>
     </section>
 
     <section>
-      <div v-if="outputsPanelOpen" class="outputs-presentation">
+      <div v-if="panelOpened" class="outputs-presentation">
         <output-representation-bar
           ref="outputBars"
-          v-for="(output, i) in outputTypes"
+          v-for="(outputType, i) in outputTypes"
           :key="i"
-          :type="output.type"
-          :outputs-number="numberOutputs[output.type]"
-          :output-list="outputs[output.type]"
-          v-on:update="updateOutputs(...arguments)"
-          :trigger="barTrigger"/>
+          :value="outputType"
+          :trigger="barTrigger"
+          v-on:update="updateOutputs(...arguments)"/>
       </div>
-      <div v-if="outputsPanelOpen" class="row">
+      <div v-if="panelOpened" class="row">
         <label><span>Summary</span></label>
         <div class="field">
-          <span class="description">{{outputsSummary()}}</span>
+          <span class="description">{{description}}</span>
         </div>
       </div>
     </section>
@@ -50,34 +47,42 @@
   import OutputRepresentationBar from './OutputRepresentationBar'
   import ConnectorsCanvas from './ConnectorsCanvas'
   import VueSelect from '../UI/Select/components/Select'
-  import commonResolutions from '../../../models/utilities/standard-resolutions'
+  import { AWChannel } from '../../../models/AWChannel'
+  import { AWAudioOutputs } from '../../../models/AWAudioOutput'
+  import { AWVideoOutputs } from '../../../models/AWVideoOutput'
 
   export default {
     name: 'outputs-panel',
-
     components: {
       OutputControlPanel,
       OutputRepresentationBar,
       ConnectorsCanvas,
       VueSelect
     },
+    props: {
+      value: AWChannel
+    },
+
+    computed: {
+      outputTypes () {
+        return [
+          {code: 'audio', title: 'Audio', data: this.channel.audioOutputs},
+          {code: 'video', title: 'Video', data: this.channel.videoOutputs}
+        ]
+      },
+      description () {
+        return this.channel.toString()
+      }
+    },
     data () {
       return {
-        outputsPanelOpen: false,
-        channelObject: null,
-        outputs: {
-          audio: [{type: 'loudspeaker'}, {type: 'loudspeaker'}],
-          video: [{type: 'any', resolution: [0, 0], orientation: 'landscape'}]
-        },
-        numberOutputs: {audio: 2, video: 1},
+        channel: this.value || AWChannel.empty(),
+
+        panelOpened: false,
         /** @type GroupedConnectors[] */
         outputSockets: [],
         /** @type GroupedConnectors[] */
         outputBoxes: [],
-        outputTypes: [
-          {type: 'audio', title: 'Audio'},
-          {type: 'video', title: 'Video'}
-        ],
         colors: {
           video: 'rgba(115, 253, 234, 0.6)',
           audio: 'rgba(248, 186, 0, 0.6)'
@@ -95,8 +100,31 @@
       })
     },
     methods: {
+      update () {
+        this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
+        this.refreshOutputConnections()
+      },
+      appendOutputs (type) {
+        if (type === 'audio') {
+          AWAudioOutputs.append(this.channel.audioOutputs)
+          this.update()
+        }
+        if (type === 'video') {
+          AWVideoOutputs.append(this.channel.videoOutputs)
+          this.update()
+        }
+      },
+      removeOutputs (type) {
+        if (type === 'audio') {
+          AWAudioOutputs.remove(this.channel.audioOutputs)
+          this.update()
+        }
+        if (type === 'video') {
+          AWVideoOutputs.remove(this.channel.videoOutputs)
+          this.update()
+        }
+      },
       updateOutputs (type, outputs) {
-        this.outputs[type] = outputs
         this.refreshOutputConnections()
       },
       refreshOutputConnections () {
@@ -109,11 +137,6 @@
           })
           this.trigger++ // TODO find a better way to trigger the update in the canvas
         })
-      },
-      updateOutputsNumber (sockets, type) {
-        this.outputSockets[type] = sockets
-        this.numberOutputs[type] = sockets.length
-        this.barTrigger++ // TODO find a better way to trigger the update in the bar
       },
       fixPanelsOnScroll (e) {
         clearTimeout(this.scrollTimeout)
@@ -136,65 +159,12 @@
             this.animatePanelsLeft(targetLeft, step)
           })
         }
-      },
-      outputsSummary () {
-        if (this.channelObject && this.channelObject.hasOwnProperty('toString')) {
-          return this.channelObject.toString()
-        } else {
-          // Just for testing layout and as a simplified example:
-          const numberAudio = this.numberOutputs.audio
-          let audioDesc = 'Sound: '
-          switch (numberAudio) {
-            case 0:
-              audioDesc = 'No sound'
-              break
-            case 1:
-              audioDesc += 'mono'
-              break
-            case 2:
-              audioDesc += 'stereo'
-              break
-            default:
-              audioDesc += `${numberAudio} channels`
-          }
-          return `${this.displaysStatsString()} | ${audioDesc}`
-        }
-      },
-      displaysStatsString () {
-        const displayStats = {}
-        this.outputs.video.forEach(v => {
-          let resStr = 'any'
-          if (v.resolution[0]) {
-            const w = Math.max(v.resolution[0], v.resolution[1])
-            const h = Math.min(v.resolution[0], v.resolution[1])
-            const res = commonResolutions.closestStandardForSize({w: w, h: h})
-            resStr = res ? res.abr : `(${w} x ${h} px)`
-          }
-          if (!displayStats.hasOwnProperty(v.type)) displayStats[v.type] = {}
-          if (!displayStats[v.type].hasOwnProperty(resStr)) displayStats[v.type][resStr] = 0
-          displayStats[v.type][resStr]++
-        })
-        let displayStatsStr = ''
-        for (let type in displayStats) {
-          if (!displayStats.hasOwnProperty(type)) continue
-          for (let res in displayStats[type]) {
-            if (!displayStats[type].hasOwnProperty(res)) continue
-            let number = displayStats[type][res]
-            if (res === 'any') res = ''
-            if (type === 'any') {
-              type = 'display'
-              if (number > 1) type += 's'
-              type += ' of any type'
-            } else {
-              if (number > 1) type += 's'
-            }
-            if (number === 1) number = 'Single'
-            if (displayStatsStr) displayStatsStr += ', '
-            displayStatsStr += `${number} ${res} ${type}`
-          }
-        }
-        if (!displayStatsStr) displayStatsStr = 'No video'
-        return displayStatsStr
+      }
+    },
+
+    watch: {
+      value (newValue) {
+        this.channel = newValue || AWChannel.empty()
       }
     }
   }

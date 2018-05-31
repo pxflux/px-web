@@ -21,6 +21,21 @@
       'colors',
       'trigger'
     ],
+
+    mounted () {
+      this.ctx = this.$refs.canvas.getContext('2d')
+    },
+    watch: {
+      trigger: function () {
+        this.draw()
+      }
+    },
+
+    computed: {
+      canvasBounds () {
+        return this.$refs.canvas.parentElement.getBoundingClientRect()
+      }
+    },
     data () {
       return {
         ctx: null,
@@ -29,10 +44,6 @@
         h: 0,
         t: 0,
         l: 0,
-        /** @type PointsGroup[] */
-        startPointGroups: [],
-        /** @type PointsGroup[] */
-        endPointGroups: [],
         lineColor: this.color ? this.color : '#ccc',
         lineW: 1,
         specialTypes: [
@@ -44,30 +55,19 @@
         }
       }
     },
-    computed: {
-      canvasBounds () {
-        return this.$refs.canvas.parentElement.getBoundingClientRect()
-      }
-    },
-    watch: {
-      trigger: function () {
-        this.draw()
-      }
-    },
-    mounted () {
-      this.ctx = this.$refs.canvas.getContext('2d')
-    },
     methods: {
       draw () {
         this.updateCanvasSize()
-        this.preparePoints()
 
         const ctx = this.ctx
         const lineWidth = this.lineW * this.pixDensity
         ctx.clearRect(0, 0, this.w, this.h)
 
-        this.startPointGroups.forEach((startPointsGroup, i) => {
-          const endPointsGroup = this.endPointGroups[i]
+        /** @type PointsGroup[] */
+        const endPointGroups = this.convertGroupedConnectorsToPointsGroup(this.endConnectors)
+        this.convertGroupedConnectorsToPointsGroup(this.startConnectors).forEach((/** @type PointsGroup */ startPointsGroup, i) => {
+          /** @type PointsGroup */
+          const endPointsGroup = endPointGroups[i]
           const strokeColor = this.colors[startPointsGroup.type]
 
           startPointsGroup.points.forEach((startPoint, i) => {
@@ -138,12 +138,6 @@
 
         this.$refs.canvas.width = this.w
         this.$refs.canvas.height = this.h
-      },
-      preparePoints () {
-        /** @type PointsGroup[] */
-        this.startPointGroups = this.convertGroupedConnectorsToPointsGroup(this.startConnectors)
-        /** @type PointsGroup[] */
-        this.endPointGroups = this.convertGroupedConnectorsToPointsGroup(this.endConnectors)
       },
       convertGroupedConnectorsToPointsGroup (groupedConnectors) {
         const pointsGroup = []
