@@ -67,7 +67,7 @@ form {
       > textarea {
         width: 100% !important;
 
-        padding: 0 $module-size / 4;
+        padding: $module-size / 4;
         &.attachment {
           padding: 0;
         }
@@ -76,7 +76,6 @@ form {
       > .description {
         display: block;
         padding: $module-size / 4;
-        font-size: $font-size-body * 0.85;
       }
     }
     input, textarea, select {
@@ -84,7 +83,7 @@ form {
       border: none;
       height: 100%;
       min-height: $module-size;
-      padding: 0 $module-size / 4;
+      //padding: 0 $module-size / 4;
       margin: 0;
       display: block;
       width: 100%;
@@ -94,8 +93,8 @@ form {
       }
     }
     textarea {
-      padding-top: $module-size / 4;
-      min-height: 4 * $module-size;
+      //padding-top: $module-size / 4;
+      //min-height: 4 * $module-size;
     }
   }
 
@@ -163,7 +162,9 @@ form {
       }
     }
   }
-  .description {
+  .description, .caption {
+    font-size: $font-size-caption;
+
     $arrow-size: $module-size /4;
     &.with-arrow {
       position: relative;
@@ -175,6 +176,17 @@ form {
         top: -$arrow-size * 0.4;
         border-color: rgba(0,0,0,0.2);
       }
+    }
+  }
+
+  textarea {
+    &.caption {
+      padding: 1.25rem $module-size /4;
+      height: $module-size;
+      box-shadow: none;
+    }
+    &.autosize {
+      resize: none !important;
     }
   }
 }

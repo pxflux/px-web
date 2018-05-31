@@ -5,7 +5,6 @@
                   :options="options"
                   @pause="setPaused(true)"
                   @play="setPaused(false)"
-                  @ready="onReady"
                   @loaded="onLoad"/>
     <div class="overlay" @click="togglePlay">
       <div class="button frameless"
@@ -22,13 +21,13 @@
   import { vueVimeoPlayer } from 'vue-vimeo-player'
 
   export default {
-    props: ['videoUrl', 'ratio'],
+    props: ['videoUrl', 'ratio', 'fillParent'],
     components: {
       'vimeo-player': vueVimeoPlayer
     },
     data () {
       return {
-        fillVideoBox: true, // TODO: this could be a property set by user in the artwork editor
+        fillVideoBox: this.fillParent, // TODO: this could be a property set by user in the artwork editor
         isVimeo: true,
         options: {
           background: true,
@@ -83,17 +82,14 @@
         iframe.style.height = Math.ceil(h) + 'px'
       },
 
-      setPaused (s) { this.paused = s },
-
-      onReady () {
-        // const player = this.$refs.player
+      setPaused (s) {
+        this.paused = s
       },
 
       onLoad () {
         const player = this.$refs.player
         if (!player) return
         player.unmute()
-
         this.fitToParent()
       },
       togglePlay () {

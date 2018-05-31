@@ -2,8 +2,9 @@
   <div class="attachments" id="AAA">
     <div class="display">
       <video-player v-if="video"
-                    :videoUrl="video.storage.displayUrl"
-                    :ratio="video.ratio"/>
+                    :video-url="video.storage.displayUrl"
+                    :ratio="video.ratio"
+                    :fill-parent="true"/>
       <div v-if="images.length" v-for="thumbnail in images" :data-ratio="thumbnail.ratio">
         <img v-show="thumbnail.displayUrl" :src="thumbnail.displayUrl">
       </div>

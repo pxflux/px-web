@@ -1,21 +1,26 @@
 <template>
   <div class="attachment">
     <div class="row">
-      <!--<label for="video-attachment-url"></label>-->
-      <input id="video-attachment-url" type="url" v-model="displayUrl" v-on:paste="update" v-on:change="update"/>
+      <input
+        id="video-attachment-url"
+        type="url"
+        v-model="displayUrl"
+        v-on:paste="update"
+        v-on:change="update"
+        placeholder="Video URL (at the moment we support only Vimeo links)"
+        title="video preview url"/>
     </div>
-    <div class="description">right now we support only Vimeo links<br><br></div>
-    <video-player
-            v-if="displayUrl && !error"
-            :videoUrl="displayUrl"
-            :ratio="ratio"/>
-    <div v-if="displayUrl && !error" class="attachment-info">
-      {{'Aspect Ratio 1 : ' + Math.round((1 / ratio) * 100) / 100}}
+    <div class="video-preview-box close" ref="videoPreviewBox">
+      <video-player
+        v-if="displayUrl && !error"
+        :videoUrl="displayUrl"
+        :ratio="ratio"/>
     </div>
-    <div class="row">
-      <label for="video-attachment-caption">Caption</label>
-      <textarea id="video-attachment-caption" v-model="caption" v-on:change="update"></textarea>
-    </div>
+    <autosize-textarea
+      v-if="displayUrl && !error"
+      :model="caption"
+      :placeholder="'Caption'"
+      :css-class="'caption'"/>
     <div v-if="error" class="warning">{{ error }}</div>
   </div>
 </template>
@@ -23,9 +28,10 @@
 <script>
   import { VideoAttachment } from '../../models/VideoAttachment'
   import VideoPlayer from '../VideoPlayer'
-  
+  import AutosizeTextarea from './UI/AutosizeTextarea'
+
   export default {
-    components: {VideoPlayer},
+    components: { VideoPlayer, AutosizeTextarea },
     props: {
       value: VideoAttachment
     },
@@ -44,20 +50,35 @@
             this.ratio = attachment.ratio
             this.error = null
             attachment.caption = this.caption
+
+            this.togglePreviewBox(true)
           } else {
-            this.error = 'It doesn\'t look like a correct Vimeo url or from <b>Basic</b> Vimeo account.'
+            this.error = 'It doesn\'t look like a correct Vimeo url.'
+            this.togglePreviewBox(false)
           }
           this.$emit('input', attachment)
         }).catch(error => {
           console.log(error)
           this.error = error ? error.message : null
         })
+      },
+
+      togglePreviewBox (on) {
+        if (!this.$refs['videoPreviewBox']) return
+
+        if (on) {
+          const width = this.$refs['videoPreviewBox'].getBoundingClientRect().width
+          this.$refs['videoPreviewBox'].style.height = width / this.ratio + 'px'
+        } else {
+          this.$refs['videoPreviewBox'].style.height = 0
+        }
       }
     },
     watch: {
       value: function () {
         this.displayUrl = this.value && this.value.storage ? this.value.storage.displayUrl : ''
         this.ratio = this.value ? this.value.ratio : 1
+        this.togglePreviewBox(this.displayUrl && !this.error)
       }
     }
   }
