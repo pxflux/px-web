@@ -58,11 +58,10 @@ export class VideoAttachment extends Attachment {
   static fromUrl (url) {
     if (vimeo.isVimeoVideoUrl(url)) {
       return vimeo.getVimeoVideoInfo(url).then(/** @type VimeoVideoInfo */ info => {
-        return new Promise((resolve, reject) => { resolve(VideoAttachment.fromVimeo(url, info)) })
+        return VideoAttachment.fromVimeo(url, info)
       })
     }
-
-    return VideoAttachment.empty()
+    return Promise.resolve(null)
   }
 
   /**

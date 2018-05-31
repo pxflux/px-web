@@ -129,7 +129,6 @@
           (step < 0 && this.curPanelLeft < targetLeft)) {
           this.curPanelLeft = targetLeft
         }
-        // this.$refs.sourceEditor.style.left = this.curPanelLeft + 'px'
         this.$refs.outputEditor.style.left = this.curPanelLeft + 'px'
         this.refreshOutputConnections()
         if (this.curPanelLeft !== targetLeft) {

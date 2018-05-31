@@ -1,20 +1,12 @@
 <template>
   <div class="attachment">
     <div class="row">
-      <input
-        id="video-attachment-url"
-        type="url"
-        v-model="displayUrl"
-        v-on:paste="update"
-        v-on:change="update"
-        placeholder="Video URL (at the moment we support only Vimeo links)"
-        title="video preview url"/>
+      <input type="url" id="video-attachment-url" v-model="url" placeholder="Video URL (at the moment we support only Vimeo links)"
+             title="video preview url"/>
     </div>
+    <div class="description">right now we support only Vimeo links<br><br></div>
     <div class="video-preview-box close" ref="videoPreviewBox">
-      <video-player
-        v-if="displayUrl && !error"
-        :videoUrl="displayUrl"
-        :ratio="ratio"/>
+    <video-player v-if="displayUrl" :videoUrl="displayUrl" :ratio="ratio"/>
     </div>
     <autosize-textarea
       v-if="displayUrl && !error"
@@ -28,6 +20,7 @@
 <script>
   import { VideoAttachment } from '../../models/VideoAttachment'
   import VideoPlayer from '../VideoPlayer'
+
   import AutosizeTextarea from './UI/AutosizeTextarea'
 
   export default {
@@ -35,32 +28,64 @@
     props: {
       value: VideoAttachment
     },
+    computed: {
+      url: {
+        set (newValue) {
+          this.videoUrl = newValue
+          this.setUrl(newValue)
+        },
+        get () {
+          if (this.videoUrl !== null) {
+            return this.videoUrl
+          }
+          return this.video.storage ? this.video.storage.displayUrl : null
+        }
+      },
+      caption: {
+        set (newValue) {
+          this.videoCaption = newValue
+          this.setCaption(newValue)
+        },
+        get () {
+          if (this.videoCaption !== null) {
+            return this.videoCaption
+          }
+          return this.video.caption
+        }
+      },
+      displayUrl () {
+        return this.video.storage ? this.video.storage.displayUrl : null
+      },
+      ratio () {
+        return this.video ? this.video.ratio : 1
+      }
+    },
     data () {
       return {
-        displayUrl: '',
-        ratio: 1,
-        error: null,
-        caption: ''
+        video: this.value || VideoAttachment.empty(),
+        videoUrl: null,
+        videoCaption: null,
+        error: null
       }
     },
     methods: {
-      update () {
-        VideoAttachment.fromUrl(this.displayUrl).then(attachment => {
-          if (attachment) {
-            this.ratio = attachment.ratio
+      setUrl (url) {
+        VideoAttachment.fromUrl(url).then(video => {
+          if (video) {
             this.error = null
-            attachment.caption = this.caption
-
+            this.$emit('input', VideoAttachment.fromJson(JSON.parse(JSON.stringify(video))))
             this.togglePreviewBox(true)
           } else {
             this.error = 'It doesn\'t look like a correct Vimeo url.'
             this.togglePreviewBox(false)
           }
-          this.$emit('input', attachment)
         }).catch(error => {
-          console.log(error)
           this.error = error ? error.message : null
         })
+      },
+      setCaption (caption) {
+        this.video.caption = caption
+        this.$emit('input', VideoAttachment.fromJson(JSON.parse(JSON.stringify(this.video))))
       },
 
       togglePreviewBox (on) {
@@ -75,9 +100,8 @@
       }
     },
     watch: {
-      value: function () {
-        this.displayUrl = this.value && this.value.storage ? this.value.storage.displayUrl : ''
-        this.ratio = this.value ? this.value.ratio : 1
+      value (newValue) {
+        this.video = newValue || VideoAttachment.empty()
         this.togglePreviewBox(this.displayUrl && !this.error)
       }
     }
