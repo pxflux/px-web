@@ -4,7 +4,6 @@
       <input type="url" id="video-attachment-url" v-model="url" placeholder="Video URL (at the moment we support only Vimeo links)"
              title="video preview url"/>
     </div>
-    <div class="description">right now we support only Vimeo links<br><br></div>
     <div class="video-preview-box close" ref="videoPreviewBox">
     <video-player v-if="displayUrl" :videoUrl="displayUrl" :ratio="ratio"/>
     </div>
