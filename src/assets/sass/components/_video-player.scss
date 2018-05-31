@@ -1,5 +1,13 @@
-.video-box{
+.video-preview-box{
   position: relative;
+  height: 0;
+  padding-bottom: 50%; // will be set by a component to mirror attachment aspect ratio
+  top: 0;
+  left: 0;
+}
+
+.video-box{
+  position: absolute;
   height: 100%;
   width: 100%;
   overflow: hidden;

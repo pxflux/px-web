@@ -1,11 +1,16 @@
 <template>
   <div class="attachment">
     <div class="row">
-      <input type="url" id="video-attachment-url" v-model="url" placeholder="Video URL (at the moment we support only Vimeo links)"
+      <input type="url"
+             id="video-attachment-url"
+             v-model="url"
+             placeholder="Video URL (at the moment we support only Vimeo links)"
              title="video preview url"/>
     </div>
-    <div class="video-preview-box close" ref="videoPreviewBox">
-    <video-player v-if="displayUrl" :videoUrl="displayUrl" :ratio="ratio"/>
+    <div class="video-preview-box close"
+         ref="videoPreviewBox"
+         :style="'padding-bottom:'+ (100 / ratio) +'%'">
+      <video-player v-if="displayUrl" :videoUrl="displayUrl" :ratio="ratio"/>
     </div>
     <autosize-textarea
       v-if="displayUrl && !error"
@@ -19,7 +24,6 @@
 <script>
   import { VideoAttachment } from '../../models/VideoAttachment'
   import VideoPlayer from '../VideoPlayer'
-
   import AutosizeTextarea from './UI/AutosizeTextarea'
 
   export default {
@@ -59,6 +63,7 @@
         return this.video ? this.video.ratio : 1
       }
     },
+
     data () {
       return {
         video: this.value || VideoAttachment.empty(),
@@ -67,42 +72,35 @@
         error: null
       }
     },
+
     methods: {
       setUrl (url) {
         VideoAttachment.fromUrl(url).then(video => {
           if (video) {
             this.error = null
             this.$emit('input', VideoAttachment.fromJson(JSON.parse(JSON.stringify(video))))
-            this.togglePreviewBox(true)
           } else {
             this.error = 'It doesn\'t look like a correct Vimeo url.'
-            this.togglePreviewBox(false)
           }
         }).catch(error => {
           this.error = error ? error.message : null
         })
       },
+
       setCaption (caption) {
         this.video.caption = caption
         this.$emit('input', VideoAttachment.fromJson(JSON.parse(JSON.stringify(this.video))))
-      },
-
-      togglePreviewBox (on) {
-        if (!this.$refs['videoPreviewBox']) return
-
-        if (on) {
-          const width = this.$refs['videoPreviewBox'].getBoundingClientRect().width
-          this.$refs['videoPreviewBox'].style.height = width / this.ratio + 'px'
-        } else {
-          this.$refs['videoPreviewBox'].style.height = 0
-        }
       }
     },
+
     watch: {
       value (newValue) {
         this.video = newValue || VideoAttachment.empty()
-        this.togglePreviewBox(this.displayUrl && !this.error)
       }
+    },
+
+    mounted () {
+      // window.addEventListener('resize')
     }
   }
 </script>
