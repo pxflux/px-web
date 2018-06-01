@@ -21,17 +21,11 @@
     name: 'audio-output-representation-bar',
     props: ['value'],
 
-    data () {
-      return {
-        /** @type ClientRect[] */
-        boxes: []
-      }
-    },
     methods: {
       collectBounds () {
         const bounds = []
         if (this.$refs.boxes) {
-          this.$refs.boxes.forEach((el, i) => {
+          this.$refs.boxes.forEach(el => {
             bounds.push({type: 'projection', objectBounds: el.getBoundingClientRect()})
           })
         }

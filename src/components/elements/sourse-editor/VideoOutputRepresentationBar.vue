@@ -43,8 +43,6 @@
 
     data () {
       return {
-        /** @type ClientRect[] */
-        boxes: [],
         bus: new Vue()
       }
     },

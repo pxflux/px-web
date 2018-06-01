@@ -30,9 +30,6 @@
     },
 
     computed: {
-      canvasBounds () {
-        return this.$refs.canvas.parentElement.getBoundingClientRect()
-      },
       colors () {
         return {
           video: 'rgba(115, 253, 234, 0.6)',
@@ -67,34 +64,24 @@
         const lineWidth = this.lineW * this.pixDensity
         ctx.clearRect(0, 0, this.w, this.h)
 
-        /** @type PointsGroup[] */
-        const endPointGroups = this.convertGroupedConnectorsToPointsGroup(this.endConnectors)
-        this.convertGroupedConnectorsToPointsGroup(this.startConnectors).forEach((/** @type PointsGroup */ startPointsGroup, i) => {
-          /** @type PointsGroup */
-          const endPointsGroup = endPointGroups[i]
-          const strokeColor = this.colors[startPointsGroup.type]
+        this.convert().forEach(({startPoint, endPoint, strokeColor}) => {
+          let endY = endPoint.y
+          if (endPoint.type === 'projection') {
+            endY -= (this.options.projectionBeamH + this.options.projectorRay * 3) * this.pixDensity
+          }
+          const half = (endPoint.y - startPoint.y) / 2
+          const c1x = startPoint.x
+          const c1y = startPoint.y + half
+          const c2x = endPoint.x
+          const c2y = endY - half
 
-          startPointsGroup.points.forEach((startPoint, i) => {
-            const endPoint = endPointsGroup.points[i]
-            const half = (endPoint.y - startPoint.y) / 2
-
-            let endY = endPoint.y
-            if (endPoint.type === 'projection') {
-              endY -= (this.options.projectionBeamH + this.options.projectorRay * 3) * this.pixDensity
-            }
-            const c1x = startPoint.x
-            const c1y = startPoint.y + half
-            const c2x = endPoint.x
-            const c2y = endY - half
-
-            ctx.beginPath()
-            ctx.strokeStyle = strokeColor
-            ctx.lineWidth = lineWidth
-            ctx.moveTo(startPoint.x, startPoint.y)
-            ctx.bezierCurveTo(c1x, c1y, c2x, c2y, endPoint.x, endY)
-            ctx.stroke()
-            this.drawEndPoint(endPoint)
-          })
+          ctx.beginPath()
+          ctx.strokeStyle = strokeColor
+          ctx.lineWidth = lineWidth
+          ctx.moveTo(startPoint.x, startPoint.y)
+          ctx.bezierCurveTo(c1x, c1y, c2x, c2y, endPoint.x, endY)
+          ctx.stroke()
+          this.drawEndPoint(endPoint)
         })
       },
       /**
@@ -143,51 +130,38 @@
         this.$refs.canvas.width = this.w
         this.$refs.canvas.height = this.h
       },
-      convertGroupedConnectorsToPointsGroup (groupedConnectors) {
-        return [{
-          type: 'audio',
-          points: this.convertConnectorsToPoints(groupedConnectors.audio)
-        }, {
-          type: 'video',
-          points: this.convertConnectorsToPoints(groupedConnectors.video)
-        }]
-      },
-      /**
-       * @param {Connector[]} connectors
-       * @return {Point[]}
-       */
-      convertConnectorsToPoints (connectors) {
+      convert () {
         const canvasBounds = this.$refs.canvas.parentElement.getBoundingClientRect()
         const points = []
-        connectors.forEach(connector => {
-          let widthPlacement = connector.type === 'projection' ? 0 : 0.5
-          let heightPlacement = connector.type === 'socket' ? 1 : 0
-
-          const point = this.convertBoundsToPoint(
-            connector.objectBounds,
-            canvasBounds,
-            widthPlacement,
-            heightPlacement
-          )
-          point.type = connector.type
-          points.push(point)
+        this.startConnectors.audio.forEach((/** @type Connector */ connector, i) => {
+          points.push({
+            startPoint: this.connectorToPoint(connector, canvasBounds),
+            endPoint: this.connectorToPoint(this.endConnectors.audio[i], canvasBounds),
+            strokeColor: this.colors.audio
+          })
+        })
+        this.startConnectors.video.forEach((/** @type Connector */ connector, i) => {
+          points.push({
+            startPoint: this.connectorToPoint(connector, canvasBounds),
+            endPoint: this.connectorToPoint(this.endConnectors.video[i], canvasBounds),
+            strokeColor: this.colors.video
+          })
         })
         return points
       },
       /**
-       * @param {ClientRect} objectBounds
-       * @param {ClientRect} canvasBounds
-       * @param {number} widthPlacement
-       * @param {number} heightPlacement
-       * @return {{x: number, y: number}}
+       * @param {Connector} connector
+       * @param canvasBounds
+       * @return {Point}
        */
-      convertBoundsToPoint (objectBounds, canvasBounds, widthPlacement, heightPlacement) {
-        const x = objectBounds.left + objectBounds.width * widthPlacement - canvasBounds.left
-        const y = objectBounds.top + objectBounds.height * heightPlacement - canvasBounds.top
+      connectorToPoint (connector, canvasBounds) {
+        let widthPlacement = connector.type === 'projection' ? 0 : 0.5
+        let heightPlacement = connector.type === 'socket' ? 1 : 0
         return {
-          x: x * this.pixDensity,
-          y: y * this.pixDensity,
-          w: objectBounds.width * this.pixDensity
+          type: connector.type,
+          x: (connector.objectBounds.left + connector.objectBounds.width * widthPlacement - canvasBounds.left) * this.pixDensity,
+          y: (connector.objectBounds.top + connector.objectBounds.height * heightPlacement - canvasBounds.top) * this.pixDensity,
+          w: connector.objectBounds.width * this.pixDensity
         }
       }
     }
