@@ -9,9 +9,9 @@ import { AWVideoResolution } from './AWVideoResolution'
 export class AWVideoOutput {
   /**
    * @param {number} id
-   * @param {string} type
+   * @param {?string} type
    * @param {AWVideoResolution} resolution
-   * @param {string} orientation
+   * @param {?string} orientation
    */
   constructor (id, type, resolution, orientation) {
     this.id = isNaN(id) ? 0 : id
@@ -21,7 +21,7 @@ export class AWVideoOutput {
   }
 
   static empty () {
-    return new AWVideoOutput(0, 'any', AWVideoResolution.empty(), 'landscape')
+    return new AWVideoOutput(0, null, AWVideoResolution.empty(), null)
   }
 
   /**
@@ -31,7 +31,7 @@ export class AWVideoOutput {
     if (!value || typeof value !== 'object') {
       return null
     }
-    return new AWVideoOutput(Number.parseInt(value.id), value.type, AWVideoResolution.fromJson(value.min), value.orientation)
+    return new AWVideoOutput(Number.parseInt(value.id), value.type, AWVideoResolution.fromJson(value.resolution), value.orientation)
   }
 
   /**
@@ -92,8 +92,7 @@ export class AWVideoOutputs {
    * @param {AWVideoOutput[]} values
    */
   static append (values) {
-    const value = Object.assign(AWVideoOutput.empty(), {id: values.length})
-    values.push(value)
+    values.push(new AWVideoOutput(values.length, 'any', AWVideoResolution.empty(), 'landscape'))
   }
 
   /**

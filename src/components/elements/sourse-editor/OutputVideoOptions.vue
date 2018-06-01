@@ -1,11 +1,9 @@
 <template>
   <div class="video-options-box">
-    <header>{{title}}</header>
+    <header>Screen {{index}}</header>
     <div class="option">
       <div class="select-wrap">
-        <v-select v-model="outputOptions.type"
-                  :options="types"
-                  :default-value="'any'"/>
+        <v-select :options="types" :value="options.type" @input="setType($event)"/>
       </div>
       <div class="resolution-header">
         <label>Min</label>
@@ -13,18 +11,26 @@
         <label>Max</label>
       </div>
       <div class="resolution-row width">
-        <input v-for="(n, i) in ['Min', 'Max', 'Optimal']"
-               type="number"
-               min="0"
-               v-model="outputOptions.resolution[0]"
-               :class="[outputOptions.resolution[0] > 0 ? 'active': '']"/>
+        <input type="number" min="0" :value="options.resolution.min.w"
+               @input="setValue(options.resolution.min.w, $event)"
+               :class="[options.resolution.min.w > 0 ? 'active': '']"/>
+        <input type="number" min="0" :value="options.resolution.optimal.w"
+               @input="setValue(options.resolution.optimal.w, $event)"
+               :class="[options.resolution.optimal.w > 0 ? 'active': '']"/>
+        <input type="number" min="0" :value="options.resolution.max.w"
+               @input="setValue(options.resolution.max.w, $event)"
+               :class="[options.resolution.max.w > 0 ? 'active': '']"/>
       </div>
       <div class="resolution-row height">
-        <input v-for="(n, i) in ['Min', 'Max', 'Optimal']"
-               type="number"
-               min="0"
-               v-model="outputOptions.resolution[1]"
-               :class="[outputOptions.resolution[1] > 0 ? 'active': '']"/>
+        <input type="number" min="0" :value="options.resolution.min.h"
+               @input="setValue(options.resolution.min.h, $event)"
+               :class="[options.resolution.min.h > 0 ? 'active': '']"/>
+        <input type="number" min="0" :value="options.resolution.optimal.h"
+               @input="setValue(options.resolution.optimal.h, $event)"
+               :class="[options.resolution.optimal.h > 0 ? 'active': '']"/>
+        <input type="number" min="0" :value="options.resolution.max.h"
+               @input="setValue(options.resolution.max.h, $event)"
+               :class="[options.resolution.max.h > 0 ? 'active': '']"/>
       </div>
     </div>
     <footer>
@@ -36,37 +42,37 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import VSelect from '../UI/Select/components/Select'
+  import { AWVideoOutput } from '../../../models/AWVideoOutput'
 
   export default {
     name: 'output-video-options',
-
-    components: { VSelect },
-
-    props: ['title', 'output', 'index', 'bus'],
+    components: {VSelect},
+    props: {bus: Vue, index: Number, value: AWVideoOutput},
 
     data () {
       return {
-        outputOptions: {
-          type: 'any',
-          resolution: [0, 0],
-          orientation: 'landscape',
-          identical: false
-        },
+        options: this.value,
         types: ['any', 'monitor', 'projection', 'handheld', 'headset']
       }
     },
 
-    created () {
-      this.outputOptions.type = this.output.type
-      this.outputOptions.resolution = this.output.resolution
-      this.outputOptions.orientation = this.output.orientation
+    methods: {
+      setType (event) {
+        this.options.type = event
+      },
+      setValue (prop, event) {
+        prop = event
+      },
+      submit () {
+        this.bus.$emit('updateOutputOptions', this.options, this.index)
+      }
     },
 
-    methods: {
-      submit () {
-        // const data = { options: this.outputOptions, outputIndex: this.index }
-        this.bus.$emit('updateOutputOptions', this.outputOptions, this.index)
+    watch: {
+      value (newValue) {
+        this.options = newValue
       }
     }
   }

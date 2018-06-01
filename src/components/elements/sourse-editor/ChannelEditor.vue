@@ -73,7 +73,7 @@
         })
       },
       setChannel (channel) {
-        this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(channel))))
+        this.$emit('input', channel)
       },
       fixPanelsOnScroll (e) {
         this.$refs['outputsPanel'].fixPanelsOnScroll(e)

@@ -38,7 +38,7 @@
           this.$emit('remove', this.value.code)
         }
       },
-      collectSocketBounds () {
+      collectBounds () {
         const bounds = []
         if (this.$refs.sockets) {
           const panelBounds = this.$refs.panel.getBoundingClientRect()

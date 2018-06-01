@@ -6,8 +6,8 @@
 export class AWAudioOutput {
   /**
    * @param {number} id
-   * @param {string} type
-   * @param {string} channel
+   * @param {?string} type
+   * @param {?string} channel
    */
   constructor (id, type, channel) {
     this.id = isNaN(id) ? 0 : id
@@ -16,7 +16,7 @@ export class AWAudioOutput {
   }
 
   static empty () {
-    return new AWAudioOutput(0, 'any', 'left')
+    return new AWAudioOutput(0, null, null)
   }
 
   /**
@@ -85,8 +85,8 @@ export class AWAudioOutputs {
    * @param {AWAudioOutput[]} values
    */
   static append (values) {
-    const value = Object.assign(AWAudioOutput.empty(), {id: values.length})
-    values.push(value)
+    values.push(new AWAudioOutput(values.length, 'loudspeaker', null))
+    this.normalize(values)
   }
 
   /**
@@ -95,8 +95,22 @@ export class AWAudioOutputs {
    */
   static remove (values, index) {
     values.splice(index, 1)
+    this.normalize(values)
+  }
+
+  /**
+   * @param {AWAudioOutput[]} values
+   */
+  static normalize (values) {
     for (let i = 0; i < values.length; i++) {
       values[i].id = i
+      values[i].channel = i
+    }
+    if (values.length === 1) {
+      values[0].channel = 'Mono'
+    } else if (values.length === 2) {
+      values[0].channel = 'L'
+      values[1].channel = 'R'
     }
   }
 

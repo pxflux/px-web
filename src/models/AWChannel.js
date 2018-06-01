@@ -32,7 +32,7 @@ export class AWChannel {
   }
 
   static empty () {
-    return new AWChannel(0, null, AWAudioOutputs.empty(), AWVideoOutputs.empty(), false, false, 0)
+    return new AWChannel(0, AWSource.empty(), AWAudioOutputs.empty(), AWVideoOutputs.empty(), false, false, 0)
   }
 
   /**

@@ -27,8 +27,7 @@ export class Artwork {
   }
 
   static empty () {
-    return new Artwork(null, false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, AWSetups.empty(),
-      Controls.empty(), null)
+    return new Artwork(null, false, null, ContributorRefs.empty(), ContributorRefs.empty(), 0, null, AWSetups.empty(), Controls.empty())
   }
 
   /**

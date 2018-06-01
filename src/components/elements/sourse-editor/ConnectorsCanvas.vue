@@ -5,7 +5,7 @@
 <script>
   /**
    * @typedef {{objectBounds: ClientRect, type: string}} Connector
-   * @typedef {Object<string,Connector[]>} GroupedConnectors
+   * @typedef {{video: Connector[], audio: Connector[]}} GroupedConnectors
    *
    * @typedef {{x:number, y:number, w:number, type: string}} Point
    * @typedef {{type: string, points: Point[] }} PointsGroup
@@ -17,8 +17,6 @@
       'startConnectors',
       /** @type GroupedConnectors */
       'endConnectors',
-      /** @type Object<string,string> */
-      'colors',
       'trigger'
     ],
 
@@ -34,6 +32,12 @@
     computed: {
       canvasBounds () {
         return this.$refs.canvas.parentElement.getBoundingClientRect()
+      },
+      colors () {
+        return {
+          video: 'rgba(115, 253, 234, 0.6)',
+          audio: 'rgba(248, 186, 0, 0.6)'
+        }
       }
     },
     data () {
@@ -140,16 +144,13 @@
         this.$refs.canvas.height = this.h
       },
       convertGroupedConnectorsToPointsGroup (groupedConnectors) {
-        const pointsGroup = []
-        for (let key in groupedConnectors) {
-          if (groupedConnectors.hasOwnProperty(key)) {
-            pointsGroup.push({
-              type: key,
-              points: this.convertConnectorsToPoints(groupedConnectors[key])
-            })
-          }
-        }
-        return pointsGroup
+        return [{
+          type: 'audio',
+          points: this.convertConnectorsToPoints(groupedConnectors.audio)
+        }, {
+          type: 'video',
+          points: this.convertConnectorsToPoints(groupedConnectors.video)
+        }]
       },
       /**
        * @param {Connector[]} connectors

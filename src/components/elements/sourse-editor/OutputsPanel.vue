@@ -1,7 +1,7 @@
 <template>
   <div class="outputs-editor-wrapper">
     <connectors-canvas v-if="panelOpened" :start-connectors="outputSockets" :end-connectors="outputBoxes"
-                       :colors="colors" :trigger="trigger"/>
+                       :trigger="trigger"/>
     <section class="outputs-editor-panel row" ref="outputEditor">
       <label class="with-icon" @click="panelOpened = !panelOpened">
         <span class="icon arrow-right small" :class="[panelOpened? 'open' : '']"></span>
@@ -9,13 +9,14 @@
       </label>
 
       <div v-if="panelOpened" class="outputs-control-panel field">
-        <output-control-panel
-          ref="outputControls"
-          v-for="(outputType, i) in outputTypes"
-          :key="i"
-          :value="outputType"
-          v-on:append="appendOutputs($event)"
-          v-on:remove="removeOutputs($event)"/>
+        <output-control-panel ref="audioOutputControls"
+                              :value="{code: 'audio', title: 'Audio', data: channel.audioOutputs}"
+                              v-on:append="appendOutputs($event)"
+                              v-on:remove="removeOutputs($event)"/>
+        <output-control-panel ref="videoOutputControls"
+                              :value="{code: 'video', title: 'Video', data: channel.videoOutputs}"
+                              v-on:append="appendOutputs($event)"
+                              v-on:remove="removeOutputs($event)"/>
       </div>
       <div v-else="" class="field closed" @click="panelOpened = !panelOpened">
         <span class="description">{{description}}</span>
@@ -24,13 +25,9 @@
 
     <section>
       <div v-if="panelOpened" class="outputs-presentation">
-        <output-representation-bar
-          ref="outputBars"
-          v-for="(outputType, i) in outputTypes"
-          :key="i"
-          :value="outputType"
-          :trigger="barTrigger"
-          v-on:update="updateOutputs(...arguments)"/>
+        <audio-output-representation-bar ref="audioOutputBar" :value="channel.audioOutputs"/>
+        <video-output-representation-bar ref="videoOutputBar" :value="channel.videoOutputs"
+                                         @input="setVideoOutputs($event)"/>
       </div>
       <div v-if="panelOpened" class="row">
         <label><span>Summary</span></label>
@@ -44,7 +41,8 @@
 
 <script>
   import OutputControlPanel from './OutputControlPanel'
-  import OutputRepresentationBar from './OutputRepresentationBar'
+  import AudioOutputRepresentationBar from './AudioOutputRepresentationBar'
+  import VideoOutputRepresentationBar from './VideoOutputRepresentationBar'
   import ConnectorsCanvas from './ConnectorsCanvas'
   import VueSelect from '../UI/Select/components/Select'
   import { AWChannel } from '../../../models/AWChannel'
@@ -55,7 +53,8 @@
     name: 'outputs-panel',
     components: {
       OutputControlPanel,
-      OutputRepresentationBar,
+      AudioOutputRepresentationBar,
+      VideoOutputRepresentationBar,
       ConnectorsCanvas,
       VueSelect
     },
@@ -64,12 +63,6 @@
     },
 
     computed: {
-      outputTypes () {
-        return [
-          {code: 'audio', title: 'Audio', data: this.channel.audioOutputs},
-          {code: 'video', title: 'Video', data: this.channel.videoOutputs}
-        ]
-      },
       description () {
         return this.channel.toString()
       }
@@ -79,16 +72,11 @@
         channel: this.value || AWChannel.empty(),
 
         panelOpened: false,
-        /** @type GroupedConnectors[] */
-        outputSockets: [],
-        /** @type GroupedConnectors[] */
-        outputBoxes: [],
-        colors: {
-          video: 'rgba(115, 253, 234, 0.6)',
-          audio: 'rgba(248, 186, 0, 0.6)'
-        },
+        /** @type GroupedConnectors */
+        outputSockets: {audio: [], video: []},
+        /** @type GroupedConnectors */
+        outputBoxes: {audio: [], video: []},
         trigger: 0,
-        barTrigger: 0,
         curPanelLeft: 0,
         leftMargin: null,
         scrollTimeout: null
@@ -124,17 +112,20 @@
           this.update()
         }
       },
-      updateOutputs (type, outputs) {
-        this.refreshOutputConnections()
+      setVideoOutputs (value) {
+        this.channel.videoOutputs = value
+        this.update()
       },
       refreshOutputConnections () {
         this.$nextTick(() => { // let sockets to be updated.. if they need it
-          this.$refs.outputBars.forEach(bar => {
-            this.outputBoxes[bar.type] = bar.collectBoxes()
-          })
-          this.$refs.outputControls.forEach(bar => {
-            this.outputSockets[bar.type] = bar.collectSocketBounds()
-          })
+          this.outputBoxes = {
+            audio: this.$refs.audioOutputBar.collectBounds(),
+            video: this.$refs.videoOutputBar.collectBounds()
+          }
+          this.outputSockets = {
+            audio: this.$refs.audioOutputControls.collectBounds(),
+            video: this.$refs.videoOutputControls.collectBounds()
+          }
           this.trigger++ // TODO find a better way to trigger the update in the canvas
         })
       },

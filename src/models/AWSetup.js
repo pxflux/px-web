@@ -26,7 +26,7 @@ export class AWSetup {
   }
 
   static empty () {
-    return new AWSetup(0, null, [], [], null)
+    return new AWSetup(0, null, AWChannels.empty(), ImageAttachments.empty(), VideoAttachment.empty())
   }
 
   /**
