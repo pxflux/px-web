@@ -9,12 +9,10 @@
       </label>
 
       <div v-if="panelOpened" class="outputs-control-panel field">
-        <output-control-panel ref="audioOutputControls"
-                              :value="{code: 'audio', title: 'Audio', data: channel.audioOutputs}"
+        <output-control-panel ref="audioOutputControls" code="audio" title="Audio" :data="channel.audioOutputs"
                               v-on:append="appendOutputs($event)"
                               v-on:remove="removeOutputs($event)"/>
-        <output-control-panel ref="videoOutputControls"
-                              :value="{code: 'video', title: 'Video', data: channel.videoOutputs}"
+        <output-control-panel ref="videoOutputControls" code="video" title="Video" :data="channel.videoOutputs"
                               v-on:append="appendOutputs($event)"
                               v-on:remove="removeOutputs($event)"/>
       </div>

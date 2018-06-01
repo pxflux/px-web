@@ -1,5 +1,5 @@
 <template>
-  <div class="panel" :class="value.code" ref="panel">
+  <div class="panel" :class="code" ref="panel">
     <div class="button frameless">
       <div class="icon minus" @click="remove()"></div>
     </div>
@@ -7,9 +7,9 @@
       <div class="icon plus" @click="append()"></div>
     </div>
     <div class="connectors">
-      <header>{{value.title}}</header>
+      <header>{{title}}</header>
       <div class="sockets">
-        <span v-for="i in value.data.length" class="socket" :class="value.code" ref="sockets"></span>
+        <span v-for="i in data.length" class="socket" :class="code" ref="sockets"></span>
       </div>
     </div>
   </div>
@@ -18,11 +18,11 @@
 <script>
   export default {
     name: 'output-control-panel',
-    props: ['value'],
+    props: ['code', 'title', 'data'],
 
     data () {
       return {
-        numSockets: 0
+        numSockets: this.data ? this.data.length : 0
       }
     },
     mounted () {
@@ -34,13 +34,13 @@
       append () {
         if (this.numSockets < 18) {
           this.numSockets += 1
-          this.$emit('append', this.value.code)
+          this.$emit('append', this.code)
         }
       },
       remove () {
         if (this.numSockets > 0) {
           this.numSockets -= 1
-          this.$emit('remove', this.value.code)
+          this.$emit('remove', this.code)
         }
       },
       collectBounds () {
@@ -65,6 +65,12 @@
           })
         }
         return bounds
+      }
+    },
+
+    watch: {
+      data (newValue) {
+        this.numSockets = newValue ? newValue.length : 0
       }
     }
   }

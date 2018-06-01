@@ -110,6 +110,9 @@ export class AWVideoOutputs {
    * @param {AWVideoOutput[]} outputs
    */
   static toString (outputs) {
+    if (outputs.length === 0) {
+      return 'No video'
+    }
     const types = {}
     outputs.forEach(output => {
       let resolution = output.resolution.toString()
@@ -144,9 +147,6 @@ export class AWVideoOutputs {
         result += `${count} ${resolution} ${type}`
       })
     })
-    if (!result) {
-      return 'No video'
-    }
     return result
   }
 
