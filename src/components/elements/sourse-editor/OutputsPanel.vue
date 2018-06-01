@@ -25,7 +25,8 @@
 
     <section>
       <div v-if="panelOpened" class="outputs-presentation">
-        <audio-output-representation-bar ref="audioOutputBar" :value="channel.audioOutputs"/>
+        <audio-output-representation-bar ref="audioOutputBar" :value="channel.audioOutputs"
+                                         v-on:update="refreshOutputConnections()"/>
         <video-output-representation-bar ref="videoOutputBar" :value="channel.videoOutputs"
                                          @input="setVideoOutputs($event)"/>
       </div>

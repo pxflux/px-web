@@ -25,6 +25,11 @@
         numSockets: 0
       }
     },
+    mounted () {
+      this.$nextTick(() => { // just to let sockets to be updated first
+        this.$emit('update')
+      })
+    },
     methods: {
       append () {
         if (this.numSockets < 18) {

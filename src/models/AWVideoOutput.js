@@ -107,53 +107,43 @@ export class AWVideoOutputs {
   }
 
   /**
-   * @param {AWVideoOutput[]} videoOutputs
+   * @param {AWVideoOutput[]} outputs
    */
-  static toString (videoOutputs) {
+  static toString (outputs) {
     const types = {}
-    videoOutputs.forEach(videoOutput => {
-      let resolution = videoOutput.resolution.toString()
-      if (!types.hasOwnProperty(videoOutput.type)) {
-        types[videoOutput.type] = {}
+    outputs.forEach(output => {
+      let resolution = output.resolution.toString()
+      if (!types.hasOwnProperty(output.type)) {
+        types[output.type] = {}
       }
-      if (!types[videoOutput.type].hasOwnProperty(resolution)) {
-        types[videoOutput.type][resolution] = 0
+      if (!types[output.type].hasOwnProperty(resolution)) {
+        types[output.type][resolution] = 0
       }
-      types[videoOutput.type][resolution]++
+      types[output.type][resolution]++
     })
     let result = ''
-    for (let type in types) {
-      if (!types.hasOwnProperty(type)) {
-        continue
-      }
-      for (let res in type) {
-        if (!type.hasOwnProperty(res)) {
-          continue
-        }
-        if (res === 'any') {
-          res = ''
-        }
-        let number = type[res]
+    Object.keys(types).forEach(type => {
+      Object.keys(types[type]).forEach(resolution => {
+        let count = types[type][resolution]
         if (type === 'any') {
-          type = 'display'
-          if (number > 1) {
-            type += 's'
-          }
-          type += ' of any type'
+          type = (count > 1 ? 'displays' : 'display') + ' of any type'
         } else {
-          if (number > 1) {
+          if (count > 1) {
             type += 's'
           }
         }
-        if (number === 1) {
-          number = 'Single'
+        if (count === 1) {
+          count = 'Single'
         }
         if (result) {
           result += ', '
         }
-        result += `${number} ${res} ${type}`
-      }
-    }
+        if (resolution === 'any') {
+          resolution = ''
+        }
+        result += `${count} ${resolution} ${type}`
+      })
+    })
     if (!result) {
       return 'No video'
     }
