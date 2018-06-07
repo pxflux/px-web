@@ -1,10 +1,11 @@
 <template>
   <div class="controls-panel">
     <div class="keypad">
-      <popper v-for="(button, i) in buttons" :key="i" trigger="click" :options="{placement: 'bottom-start'}">
+      <popper v-for="(button, i) in buttons" :key="i" trigger="click" :options="{placement: 'bottom-start'}"
+              ref="popups">
         <div class="popper">
           <remote-button-options :button="button" :index="i" :title="'Button ' + (i + 1)" :bus="bus"/>
-          <div class="button frameless cancel narrow" @click="onPopperCancel(i)">
+          <div class="button frameless cancel narrow" @click="closeOptions(i)">
             <span class="icon cancel small"></span>
           </div>
         </div>
@@ -40,7 +41,7 @@
     },
     mounted () {
       this.bus.$on('updateButton', (index, options) => {
-        console.log('bus.on.updateButton', options)
+        this.closeOptions(index)
         this.buttons[index] = options
         this.submit()
       })
@@ -62,9 +63,8 @@
         })
         return data
       },
-      onPopperCancel (i) {
-        this.buttons[i] = null
-        this.submit()
+      closeOptions (index) {
+        this.$refs.popups[index].doClose()
       },
       submit () {
         this.$emit('input', this.buttons.slice().filter(_ => _))

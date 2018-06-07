@@ -37,6 +37,9 @@
       <div class="button frameless" @click="submit">
         <span>OK</span>
       </div>
+      <div v-if="button" class="button frameless" @click="clear">
+        <span>Clear</span>
+      </div>
     </footer>
   </div>
 </template>
@@ -152,6 +155,9 @@
         e.preventDefault()
       },
 
+      clear () {
+        this.bus.$emit('updateButton', this.index, null)
+      },
       submit () {
         const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
         const controlValue = new ControlValue('keyup', this.keyCombination.keyCode, false, false, false, false)
