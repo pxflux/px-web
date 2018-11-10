@@ -8,117 +8,136 @@
         <span v-for="l in w" ref="subtitleLetters">{{l}}</span>
       </div>
     </div>
+    <h1 style="margin-top: 377px; padding: 0 4rem;">
+      AN OPEN-SOURCE ECOSYSTEM FOR DIGITALLY BORN TIME-BASED ART
+    </h1>
     <div class="wrap-content" ref="wrap">
       <div class="content columns">
         <div class="column">
-          <h1>for Artists</h1>
+          <h1>TIME-BASED & DIGITAL ART NOTATION SYSTEM</h1>
+          Our Time-based & Digital Art Notation System is a specific data structure and editing environment made for generating extensive artwork related metadata. The aim of the notation system is to record work-defining properties, its conceptual dependencies, aesthetics, and behavior. As the result the notation system allows to capture the artistic intentions which could be accurately translated to different equipment and exhibiting contexts.
         </div>
         <div class="column">
-          <h1>for Galleries & Curators</h1>
+          <h1>ARTWORK PLAYER</h1>
+          The Artwork Player is a cross-platform application whose main task is the real-time rendering of code-based artworks as well as the playback of pre-recorded content as video or audio files. It’s made to support multi-channel artworks and allows synchronization of multiple audio/visual sources. Among the traditional video formats, the player currently fully support the rendering of Javascript, WebGL, WebVR, and HTML5.
         </div>
         <div class="column">
-          <h1>for Collections & Museums</h1>
+          <h1>ARTWORK REMOTE CONTROL</h1>
+          The Artwork Remote Control is a mobile app that allows for user interaction and control of artwork. It is also a tool for management of own Artwork Players and artwork libraries.
+          Artwork Remote Control also enables artists to utilize all the available sensors and controlling methods of a modern mobile device.
+        </div>
+        <div class="column">
+          <h1>CURATING/ COLLECTION MANAGEMENT TOOLS</h1>
+        </div>
+        <div class="column">
+          <h1>ITERATION REPORTS, BACKUPS & ARCHIVING</h1>
+        </div>
+        <div class="column">
+          <h1>ARTWORK DISTRIBUTION & MARKET PLACE</h1>
+        </div>
+        <div class="column">
+          <h1>LICENSING CERTIFICATION</h1>
         </div>
         <div class="hidden">
-        <p>Unlike other media art institutions Pxflux not deal with curating,
-          exhibiting, collecting, maintaining, etc. of art works.
-          Pxflux works as a host, with its own build futures.
-          <em>Pxflux is a platform for making new ideas works!</em>
-        </p>
-        <p>
-          Pxflux consider itself as a new laboratory, or a breading platform,
-          solving difficult questions and offering users an outstanding expertise
-          in all fields relevant topics related to new digital media art.PxFlux
-          atoms & digits & pixels flux!
-          New Art Moves!
-        </p>
-        <p>
-          PxFlux is an online open source collaborative platform and software
-          infrastructures that enable users
-          to make art, and an easy way to distribute, promote, share,
-          and collect digital art content. The digital format artworks,
-          including film, video, 4K video, video loops, multichannel projections,
-          web(net) art, interactive and generative art, VR, computational works and games.
-          Pxflux mission to creating a space for diverse art based experience,
-          where local and global network of all artists, galleries and
-          libraries come together to share, learn etc...
-          Platform for building useful tools securely managing and delivering artists works
-          to connected display devices of collectors, institutions, private enthusiasts and
-          commercial installations around the world. In doing so,
-          Pxflux aims to connect people emotionally, exposing global audiences
-          to immersive art experiences of moving applications
-        </p>
-        <p>
-          Pxflux is a place for collaboration between artists and programmers!
-          pxHost (repository)
-          Environment for sketching and development tools of art projects
-          Integrateted git
-          Environment for testing work (on pxDisplay with pxRemote)
-          Presentational tools
-          pxDisplay
-          pxRemote
-          pxStore (market place)
-          Distribution & Collection management
-          Sertificats
-          Payments
-          Promotion
-          Galleries & Curated collections
-          pxCollection
-          pxArchive
-          Unique recording system that allows archiving the whole life cycle of the artwork.
-          Records about the work starting from the first sketches and the communication between
-          artist and collaborators during the production, to the iteration reports of the final
-          product during shows.
-        </p>
-        <p>
-          
-          Learn about and experience
-          Learn artists and their artworks, follow….
-          Accessible,without hassle of technical…. ,
-          give the viewer the possibility to perceive an artwork from a
-          distance while giving the work an autonomous place no matter where it is shown:
-          in a public space, a gallery or in a living room.
-        </p>
-        <p>
-          
-          Display ( player)
-        </p>
-        <p>
-          Pxflux develops new software to present very autonomos work.
-          The pxPlayer is a cross-platform desktop/stationery computer application whose main task is the playback of
-          pre-recorded content as well as the real-time rendering of code-based art works.Visually, the most remarkable
-          feature of the pxPlayer application is the absence of any user interface. The player has no buttons, no
-          timelines, and no controls whatsoever. This is intended to remove all the destructive elements from the screen
-          in order to give its entire space to the artwork itself. All the controls and navigational capabilities are
-          delegated to the pxRemote app.
-        </p>
-        <p>
-          
-          Remote
-        </p>
-        <p>
-          The pxRemote is a mobile app that allows for user interaction and control of artwork. It is also
-          a browser for our library of works, as well as a communication tool for comments, reviews, and
-          sharing across social media networks. It is designed to work on any modern smartphone or
-          tablet.
-          The goal of separating the remote control and player is to give the viewer the possibility to
-          perceive an artwork from a distance while giving the work an autonomous place no matter
-          where it is shown: in a public space, a gallery or in a living room.
-          At the same time, a user can gain full control of the interactive artwork on their smartphone
-          without directly interfering with what is displayed on the screen.
-          This also enables artists to utilize all the available sensors and controlling methods of a
-          modern mobile device, thereby turning the remote control into a powerful instrument.
-          Among the traditional video formats, we currently fully support the rendering of Javascript,
-          WebGL, WebVR, and HTML5. Further on in the development will be support for Java
-          applications and frameworks like Processing and rendering of Pure-Data patches. We also
-          support the basic use of HTTP Live Streaming.
-        </p>
-        <p>
-          Our remote control and the player will provide various permission levels for the access and
-          control of the content. This will enable many different uses, from an exhibition visitor using
-          their phone to get information on the work being shown, to possibility of multiuser control of
-          the interactive artwork, to an owner of the player using their ‘remote control’ to get full access
-          to the player and the screen settings.</p>
+          <p>Unlike other media art institutions Pxflux not deal with curating,
+            exhibiting, collecting, maintaining, etc. of art works.
+            Pxflux works as a host, with its own build futures.
+            <em>Pxflux is a platform for making new ideas works!</em>
+          </p>
+          <p>
+            Pxflux consider itself as a new laboratory, or a breading platform,
+            solving difficult questions and offering users an outstanding expertise
+            in all fields relevant topics related to new digital media art.PxFlux
+            atoms & digits & pixels flux!
+            New Art Moves!
+          </p>
+          <p>
+            PxFlux is an online open source collaborative platform and software
+            infrastructures that enable users
+            to make art, and an easy way to distribute, promote, share,
+            and collect digital art content. The digital format artworks,
+            including film, video, 4K video, video loops, multichannel projections,
+            web(net) art, interactive and generative art, VR, computational works and games.
+            Pxflux mission to creating a space for diverse art based experience,
+            where local and global network of all artists, galleries and
+            libraries come together to share, learn etc...
+            Platform for building useful tools securely managing and delivering artists works
+            to connected display devices of collectors, institutions, private enthusiasts and
+            commercial installations around the world. In doing so,
+            Pxflux aims to connect people emotionally, exposing global audiences
+            to immersive art experiences of moving applications
+          </p>
+          <p>
+            Pxflux is a place for collaboration between artists and programmers!
+            pxHost (repository)
+            Environment for sketching and development tools of art projects
+            Integrateted git
+            Environment for testing work (on pxDisplay with pxRemote)
+            Presentational tools
+            pxDisplay
+            pxRemote
+            pxStore (market place)
+            Distribution & Collection management
+            Sertificats
+            Payments
+            Promotion
+            Galleries & Curated collections
+            pxCollection
+            pxArchive
+            Unique recording system that allows archiving the whole life cycle of the artwork.
+            Records about the work starting from the first sketches and the communication between
+            artist and collaborators during the production, to the iteration reports of the final
+            product during shows.
+          </p>
+          <p>
+            
+            Learn about and experience
+            Learn artists and their artworks, follow….
+            Accessible,without hassle of technical…. ,
+            give the viewer the possibility to perceive an artwork from a
+            distance while giving the work an autonomous place no matter where it is shown:
+            in a public space, a gallery or in a living room.
+          </p>
+          <p>
+            
+            Display ( player)
+          </p>
+          <p>
+            Pxflux develops new software to present very autonomos work.
+            The pxPlayer is a cross-platform desktop/stationery computer application whose main task is the playback of
+            pre-recorded content as well as the real-time rendering of code-based art works.Visually, the most remarkable
+            feature of the pxPlayer application is the absence of any user interface. The player has no buttons, no
+            timelines, and no controls whatsoever. This is intended to remove all the destructive elements from the screen
+            in order to give its entire space to the artwork itself. All the controls and navigational capabilities are
+            delegated to the pxRemote app.
+          </p>
+          <p>
+            
+            Remote
+          </p>
+          <p>
+            The pxRemote is a mobile app that allows for user interaction and control of artwork. It is also
+            a browser for our library of works, as well as a communication tool for comments, reviews, and
+            sharing across social media networks. It is designed to work on any modern smartphone or
+            tablet.
+            The goal of separating the remote control and player is to give the viewer the possibility to
+            perceive an artwork from a distance while giving the work an autonomous place no matter
+            where it is shown: in a public space, a gallery or in a living room.
+            At the same time, a user can gain full control of the interactive artwork on their smartphone
+            without directly interfering with what is displayed on the screen.
+            This also enables artists to utilize all the available sensors and controlling methods of a
+            modern mobile device, thereby turning the remote control into a powerful instrument.
+            Among the traditional video formats, we currently fully support the rendering of Javascript,
+            WebGL, WebVR, and HTML5. Further on in the development will be support for Java
+            applications and frameworks like Processing and rendering of Pure-Data patches. We also
+            support the basic use of HTTP Live Streaming.
+          </p>
+          <p>
+            Our remote control and the player will provide various permission levels for the access and
+            control of the content. This will enable many different uses, from an exhibition visitor using
+            their phone to get information on the work being shown, to possibility of multiuser control of
+            the interactive artwork, to an owner of the player using their ‘remote control’ to get full access
+            to the player and the screen settings.</p>
         </div>
       </div>
     </div>
@@ -131,7 +150,7 @@
   export default {
     data () {
       return {
-        slogan: 'Art lives in flux of pixels', // 'Flux of picture elements', // 'Art in flux of pixels',
+        slogan: 'Art that lives in flux of pixels.', // 'Flux of picture elements', // 'Art in flux of pixels',
         logo: null,
         pixelRatio: window.devicePixelRatio || 1
       }
@@ -248,7 +267,7 @@
     flex-grow: 2;
     
     .wrap-content {
-      margin-top: 20rem;
+      /*margin-top: 20rem;*/
     }
     .subtitle {
       position: absolute;
