@@ -2,6 +2,4 @@
 
 <img src="static/img/pxLogo-gr-2.svg" style="width:600px;height:auto;max-width:100%">
 
->An online platform and toolset
->for the exhibition, promotion, distribution and collection
->of time based, computational, digital art
+>An online platform and toolset for the exhibition, promotion, distribution and collection of time based, computational, digital art.
