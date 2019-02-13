@@ -12,5 +12,8 @@ service firebase.storage {
     match /accounts/{accountId}/places/{fileName} {
       allow read, write: if request.auth.token.accountId == accountId;
     }
+    match /pxfluxPlayer.app.zip {
+      allow read;
+    }
   }
 }
