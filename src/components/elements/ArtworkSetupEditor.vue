@@ -33,7 +33,7 @@
                :class="[(i - 1) === channelIndex? 'active': '']"
                @click="selectChannel(i - 1)"
                v-scroll-to="{el: '#'+channelID(i - 1), container: '#channels-container', x: true, y: false}">
-            <h1>{{i}}</h1>
+            <div class="h1">{{i}}</div>
           </div>
           <div class="button frameless secondary" @click="addChannel()"><i class="plus"></i></div>
         </div>
