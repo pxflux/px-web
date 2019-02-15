@@ -13,6 +13,7 @@ $font-size-body: 1.16666rem; // 14px
 $font-size-caption: 1rem;
 $h1-font-size: 3rem;
 $h1-line-height: 4rem;
+$h3-font-size: 1.6rem;
 
 $font-normal-wight: 300;
 $letter-spacing: 0.01em;
@@ -29,12 +30,12 @@ $dark-bg: #ffffff;
 $bg-semi-transparent-color: rgba(255, 255, 255, 0.8);
 $bg-secondary-color: #fafafa;
 $font-color: #595959;
-$link-color: #00a2ff;
+$link-color: #0063c5;
 $line-color: rgba(0, 0, 0, 0.1);
 
 $font-color-on-dark: #d6d5d5;
-$button-text-color: #00a2ff;
-$interactive-color: #00a2ff;
+$button-text-color: $link-color;
+$interactive-color: $link-color;
 
 $audio-color: #f8ba00;
 $video-color: #73fdea;

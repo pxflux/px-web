@@ -7,11 +7,15 @@
         </section>
         <section class="staff">
           <h2>People</h2>
-          <ul>
-            <li v-for="person in people" :key="user['.key']" class="card">
-              <img v-if="person.photoUrl" :src="person.photoUrl" :alt="person.displayName" class="user-photo" width="48"
-                   height="48">
-              <span>{{ person.displayName }}</span>
+          <ul class="card-stack">
+            <li v-for="person in people" :key="user['.key']" class="card thin">
+              <img v-if="person.photoUrl"
+                   :src="person.photoUrl"
+                   :alt="person.displayName"
+                   class="user-photo photo">
+              <div class="info">
+                <span>{{ person.displayName }}</span>
+              </div>
             </li>
           </ul>
           <h2>Invitations</h2>

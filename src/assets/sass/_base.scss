@@ -115,15 +115,20 @@ h2 {
   margin: 2em 0 0.5em;
 }
 
+h3, .h3 {
+  font-size: $h3-font-size;
+}
+
 h1 {
   @include typeset($roboto-mono, $h1-font-size, $lineheight: 4rem, $leader: 1rem, $trailer: 1rem);
+  margin-bottom: $module-size / 2;
 }
 
 .h1 {
   @include h-style
 }
 
-h1, .h1 {
+h1, .h1, .h3 {
   color: #000;
 }
 

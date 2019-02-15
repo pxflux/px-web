@@ -17,12 +17,8 @@
               <div class="icon plus medium"></div>
             </a>
             <div v-if="user" class="submenu">
-              <div v-on:click="goto('/account/new')" class="button">New team</div>
               <div v-on:click="goto('/account/player/new')" class="button">Add player</div>
               <div v-on:click="goto('/account/artwork/new')" class="button">New artwork</div>
-              <div v-on:click="goto('/account/artist/new')" class="button">New artist</div>
-              <div v-on:click="goto('/account/show/new')" class="button">New show</div>
-              <div v-on:click="goto('/account/place/new')" class="button">New place</div>
             </div>
           </div>
           <!-- -->
@@ -47,8 +43,6 @@
             <div class="submenu">
               <router-link to="/artworks" class="button">Artworks</router-link>
               <router-link to="/account/artists" class="button">Artists</router-link>
-              <router-link to="/account/shows" class="button">Shows</router-link>
-              <router-link to="/account/places" class="button">Places</router-link>
               <div class="sub-section">
                 <router-link to="/account/players" class="button">Players</router-link>
                 <div v-on:click="goto('/account/update')" class="button">Team profile</div>

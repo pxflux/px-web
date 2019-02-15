@@ -28,22 +28,48 @@ ul {
   li {
     min-height: $module-size;
     background: $bg-semi-transparent-color;
+  }
+}
 
-    &.card {
-      display: flex;
-      flex-flow: row nowrap;
-      align-content: center;
+.card-stack{
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
+.card {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  height: $module-size * 1.5;
+  max-width: 8 * $module-size;
+  margin-bottom: $module-size/4;
+
+  border: solid #eeeeee;
+  border-width: 1px 0 0 1px;
+  box-shadow: 1px 1px 0 #eeeeee;
+
+  background: $bg-semi-transparent-color;
+  .photo {
+    flex-shrink: 0;
+    position: relative;
+    height: calc(#{$module-size * 1.5} - 1px);
+    width: calc(#{$module-size * 1.5} - 1px);
+    background: #9e9e9e;
+    img{
+      @include centered;
+      height: $module-size * 1.5 - $module-size/3;
+    }
+  }
+  .info{
+    flex-grow: 1;
+    padding: $module-size / 4 $module-size / 2 $module-size / 4 $module-size / 4;
+  }
+  &.thin{
+    height: $module-size;
+    .photo{
       height: $module-size;
-      max-width: 6 * $module-size;
-      margin-bottom: $module-size/4;
-      image {
-        flex-shrink: 0;
-      }
-      span {
-        flex-grow: 1;
-        padding: 0 $input-padding-x;
-        line-height: $module-size;
-      }
+      width: $module-size;
     }
   }
 }
