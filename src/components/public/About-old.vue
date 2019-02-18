@@ -3,11 +3,6 @@
     <div class="logo-wrap">
       <canvas id="px-main-logo"></canvas>
     </div>
-    <!--<div class="subtitle" ref="subtitleBox">-->
-      <!--<div v-for="w in pxSubtitlesWords" class="word">-->
-        <!--<span v-for="l in w" ref="subtitleLetters">{{l}}</span>-->
-      <!--</div>-->
-    <!--</div>-->
     <div class="wrap-content" ref="wrap">
       <h1 style="padding: 0 4rem;">
         AN OPEN-SOURCE ECOSYSTEM FOR DIGITALLY BORN TIME-BASED ART

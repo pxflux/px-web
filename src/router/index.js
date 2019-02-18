@@ -4,7 +4,8 @@ import Router from 'vue-router'
 import UserUpdate from '@/components/UserUpdate'
 import Auth from '@/components/Auth'
 
-import Overview from '@/components/public/Overview'
+import About from '@/components/About'
+// import Overview from '@/components/public/About'
 import Download from '@/components/public/Download'
 import ArtworkList from '@/components/public/ArtworkList'
 import ArtworkDetail from '@/components/public/Artwork'
@@ -36,7 +37,7 @@ Vue.use(Router)
 export function createRouter () {
   return new Router({
     routes: [
-      {path: '/', component: Overview, name: 'home'},
+      {path: '/', component: About, name: 'home'},
       {path: '/user/update', component: UserUpdate, name: 'user-update'},
       {path: '/auth', component: Auth, name: 'auth'},
 
