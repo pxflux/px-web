@@ -122,19 +122,6 @@
       background: $bg-semi-transparent-color;
       line-height: $module-size /2;
       display: inline-block;
-      height: $module-size*2;
-  
-      @media (min-width: 389px) {
-        height: $module-size*1.5;
-      }
-      
-      @media (min-width: 466px) {
-        height: $module-size;
-      }
-      
-      @media (min-width: 835px) {
-        height: $module-size/2;
-      }
     }
     .content{
       margin: 0 $module-size;
