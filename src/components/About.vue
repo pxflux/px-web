@@ -3,6 +3,9 @@
     <div class="logo-box">
       <canvas id="px-main-logo"></canvas>
     </div>
+    <h2 class="subtitle">
+      AN OPEN-SOURCE ECOSYSTEM FOR DIGITALLY BORN TIME-BASED ART
+    </h2>
     <div class="content">
       <div class="content-cell with-badge one">
         <h1>TIME-BASED & DIGITAL ART NOTATION SYSTEM</h1>
@@ -113,6 +116,26 @@
     width: 100vw;
     min-height: 100vh;
     
+    .subtitle{
+      margin: 0 $module-size $module-size/2;
+      /*font-weight: 400;*/
+      background: $bg-semi-transparent-color;
+      line-height: $module-size /2;
+      display: inline-block;
+      height: $module-size*2;
+  
+      @media (min-width: 389px) {
+        height: $module-size*1.5;
+      }
+      
+      @media (min-width: 466px) {
+        height: $module-size;
+      }
+      
+      @media (min-width: 835px) {
+        height: $module-size/2;
+      }
+    }
     .content{
       margin: 0 $module-size;
       padding: 1px;
