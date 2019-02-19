@@ -1,7 +1,7 @@
-import axios from 'axios'
 import vimeo from './utilities/vimeo'
 import { Resolution } from './basic/Resolution'
 import { ImageAttachment } from './ImageAttachment'
+import contentType from '../api/content-type'
 
 /**
  * @property {?string} url
@@ -112,17 +112,9 @@ export class AWSource {
     if (!url) {
       return Promise.reject(new Error('Empty url'))
     }
-    const requestUrl = 'https://50artistsnet.ipage.com/url-to-headers/index.php?url=' + encodeURIComponent(this.url)
-    return axios.post(requestUrl).catch(function (error) {
-      if (error.response) {
-        throw new Error(error.response.data)
-      } else if (error.request) {
-        throw new Error('network/request-failed')
-      }
-      throw new Error('network/invalid-request')
-    }).then(response => {
-      if (typeof response.data === 'object' && response.data.hasOwnProperty('Content-Type')) {
-        return new AWSource(url, response.data['Content-Type'], null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
+    return contentType(url).then(response => {
+      if (response) {
+        return new AWSource(url, response, null, false, [], [], 0, 0, null, 0, false, 0, 1, 0,
           null, null, 0, 0, null)
       } else {
         return AWSource.empty()
