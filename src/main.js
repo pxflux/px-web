@@ -3,7 +3,6 @@
 import { createApp } from 'vue'
 import { createRouter } from './router'
 import { createStore } from './store'
-import { sync } from 'vuex-router-sync'
 import ProgressBar from './components/elements/ProgressBar'
 import firebaseApp from './firebase-app'
 import inputAutoWidth from 'vue-input-autowidth'
@@ -41,9 +40,6 @@ const app = createApp(App)
 // Setup router and store
 const router = createRouter()
 const store = createStore()
-
-// Sync router with store
-sync(store, router)
 
 // Install plugins
 app.use(store)

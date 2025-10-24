@@ -32,7 +32,6 @@
     "vue-vimeo-player": "^1.0.0",
     "vue3-dropzone": "^2.0.0",
     "vuex": "^4.1.0",
-    "vuex-router-sync": "^6.0.0",
     "weakmap": "0.0.6"
   },
   "devDependencies": {
