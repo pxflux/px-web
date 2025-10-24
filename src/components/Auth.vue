@@ -59,7 +59,7 @@
 </script>
 
 <style lang="sass">
-@import '~firebaseui/dist/firebaseui.css'
+@import 'firebaseui/dist/firebaseui.css'
 
 ul.firebaseui-idp-list
   margin: 0
