@@ -39,7 +39,7 @@
   import { mapActions, mapMutations, mapState } from 'vuex'
   import firebase from '@/firebase-app'
   import { log } from '../../helper'
-  import RemoteControl from '../elements/RemoteControl'
+  import RemoteControl from '../elements/RemoteControl.vue'
 
   export default {
     name: 'PlayerClient',
