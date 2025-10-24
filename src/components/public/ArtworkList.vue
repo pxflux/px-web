@@ -13,7 +13,7 @@
   import firebase from '../../firebase-app'
   import { mapActions, mapState } from 'vuex'
   import { Artwork } from '../../models/ArtworkData'
-  import ArtworkItem from '../elements/ArtworkItem'
+  import ArtworkItem from '../elements/ArtworkItem.vue'
 
   export default {
     components: {
