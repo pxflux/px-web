@@ -4,7 +4,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import firebase from 'firebase'
+  import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
   import firebaseui from 'firebaseui'
   import firebaseApp from '../firebase-app'
 
@@ -22,11 +22,11 @@
     credentialHelper: firebaseui.auth.CredentialHelper.NONE,
     signInOptions: [
       {
-        provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        provider: GoogleAuthProvider.PROVIDER_ID,
         scopes: [ 'https://www.googleapis.com/auth/plus.login' ]
       },
       {
-        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        provider: EmailAuthProvider.PROVIDER_ID,
         requireDisplayName: true
       }
     ]
@@ -34,7 +34,8 @@
 
   export default {
     mounted () {
-      ui = ui || new firebaseui.auth.AuthUI(firebaseApp.auth())
+      const auth = getAuth(firebaseApp)
+      ui = ui || new firebaseui.auth.AuthUI(auth)
       ui.start('#firebaseui-auth', uiConfig)
     },
     computed: {

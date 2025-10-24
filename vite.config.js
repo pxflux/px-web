@@ -10,6 +10,9 @@ export default defineConfig({
       '@': resolve(__dirname, 'src')
     }
   },
+  define: {
+    'process.env': {}
+  },
   server: {
     port: 8080,
     open: true,
