@@ -13,7 +13,7 @@ jobs:
   attempt-fix:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    if: contains(github.event.issue.labels.*.name, 'ai')
+    if: contains(github.event.issue.labels.*.name, 'ai') && github.event.issue.author_association == 'CONTRIBUTOR'
 
     steps:
       - name: Checkout repository
@@ -35,9 +35,8 @@ jobs:
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: 'bash'
         run: |
-          cursor-agent --force --output-format=text -p \
+          cursor-agent -p \
           "You are operating in a GitHub Actions runner to automatically analyze and fix GitHub issues.
 
           The GitHub CLI is available as \'gh\' and authenticated via \'GH_TOKEN\'. Git is available.
@@ -63,10 +62,3 @@ jobs:
           - Avoid making changes that could break existing functionality.
           - Be conservative - when in doubt, request manual review.
           - Follow the project\'s coding standards and conventions."
-
-          if [ $? -eq 0 ]; then
-            echo "✅ Code review completed successfully"
-          else
-            echo "❌ Code review failed"
-            exit 1
-          fi
