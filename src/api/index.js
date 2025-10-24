@@ -1,4 +1,4 @@
-import { getDatabase } from 'firebase/database'
+import { getDatabase, ref, get } from 'firebase/database'
 import app from '../firebase-app'
 
 const logRequests = true
@@ -6,7 +6,7 @@ const logRequests = true
 function fetch (child, relationships = []) {
   logRequests && console.log(`fetching [${child}]`)
   const db = getDatabase(app)
-  return db.ref(child).once('value')
+  return get(ref(db, child))
     .then(snapshot => {
       const data = snapshot.val()
       if (data) {
@@ -26,7 +26,7 @@ function fetch (child, relationships = []) {
             relationIds.forEach(relationId => {
               const path = name + '/' + relationId
               logRequests && console.log('fetching', path)
-              queries.push(db.ref(path).once('value')
+              queries.push(get(ref(db, path))
                 .then(snapshot => {
                   const val = snapshot.val()
                   logRequests && console.log('fetched', val)

@@ -4,7 +4,8 @@ import { createApp } from 'vue'
 import { createAppRouter } from './router'
 import { createStore } from './store'
 import ProgressBar from './components/elements/ProgressBar'
-import firebaseApp from './firebase-app'
+import firebaseApp, { auth } from './firebase-app'
+import { getDatabase, ref, onValue, off, get } from 'firebase/database'
 import inputAutoWidth from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
 import App from './components/App'
@@ -68,34 +69,37 @@ app.config.globalProperties.$bar = bar
  */
 let callback = null
 let userRef = null
-firebaseApp.auth().onAuthStateChanged(user => {
+const authInstance = auth()
+authInstance.onAuthStateChanged(user => {
   console.log('onAuthStateChanged:', user)
-  if (callback) {
-    userRef.off('value', callback)
+  if (callback && userRef) {
+    off(userRef, 'value', callback)
   }
   if (user) {
-    userRef = firebaseApp.database().ref('metadata/' + user.uid + '/refreshTime')
-    callback = userRef.on('value', (snapshot) => {
+    const db = getDatabase(firebaseApp)
+    userRef = ref(db, 'metadata/' + user.uid + '/refreshTime')
+    callback = onValue(userRef, (snapshot) => {
       console.log('onMetadataChanged:', snapshot)
       if (!snapshot.exists()) {
         return
       }
       return user.getIdToken(true).then((token) => {
-        store.commit('UPDATE_USER', {user: firebaseApp.auth().currentUser, account: firebaseApp.auth().currentUser})
+        store.commit('UPDATE_USER', {user: authInstance.currentUser, account: authInstance.currentUser})
         // console.log('getIdToken:', token)
         return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
       }).then(function (payload) {
         if (!payload.hasOwnProperty('accountId')) {
           throw new Error()
         }
-        return firebaseApp.database().ref('accounts/' + payload.accountId).once('value')
-      }).then(function (snapshot) {
-        if (!snapshot.exists()) {
-          throw new Error()
-        }
-        const account = snapshot.val()
-        account['.key'] = snapshot.key
-        store.commit('UPDATE_USER', {user: user, account: account})
+        const accountRef = ref(db, 'accounts/' + payload.accountId)
+        return get(accountRef).then(function (snapshot) {
+          if (!snapshot.exists()) {
+            throw new Error()
+          }
+          const account = snapshot.val()
+          account['.key'] = snapshot.key
+          store.commit('UPDATE_USER', {user: user, account: account})
+        })
       }).catch(function (error) {
         console.log(error)
         store.commit('UPDATE_USER', null)
