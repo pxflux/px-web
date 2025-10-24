@@ -13,7 +13,7 @@ jobs:
   attempt-fix:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    if: contains(github.event.issue.labels.*.name, 'ai') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
+    if: contains(github.event.issue.labels.*.name, 'ai')
 
     steps:
       - name: Checkout repository
@@ -48,6 +48,7 @@ jobs:
           - Issue Number: ${{ github.event.issue.number }}
           - Issue Title: ${{ github.event.issue.title }}
           - Issue Author: ${{ github.event.issue.user.login }}
+          - Issue Author Association: ${{ github.event.issue.author_association }}
           - Issue Body: ${{ github.event.issue.body }}
           - Issue Labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
 
