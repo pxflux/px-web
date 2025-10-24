@@ -36,7 +36,7 @@ jobs:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cursor-agent -p \
+          cursor-agent --force --output-format=text -p \
           "You are operating in a GitHub Actions runner to automatically analyze and fix GitHub issues.
 
           The GitHub CLI is available as \'gh\' and authenticated via \'GH_TOKEN\'. Git is available.
