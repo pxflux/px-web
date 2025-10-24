@@ -58,7 +58,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import firebase from 'firebase'
+  import { GoogleAuthProvider, EmailAuthProvider, getAuth } from 'firebase/auth'
   import firebaseApp from '../firebase-app'
 
   export default {
@@ -72,10 +72,10 @@
     computed: {
       ...mapState(['user']),
       googleFederated: function () {
-        return this.user.providerData.find(o => o.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID)
+        return this.user.providerData.find(o => o.providerId === GoogleAuthProvider.PROVIDER_ID)
       },
       emailFederated: function () {
-        return this.user.providerData.find(o => o.providerId === firebase.auth.EmailAuthProvider.PROVIDER_ID)
+        return this.user.providerData.find(o => o.providerId === EmailAuthProvider.PROVIDER_ID)
       },
       multipleAuth: function () {
         return this.user.providerData.length > 1
@@ -96,10 +96,10 @@
             console.log('Account linking error', error)
           })
         } else {
-          let credential = firebase.auth.EmailAuthProvider.credential(this.user.email, this.password)
+          let credential = EmailAuthProvider.credential(this.user.email, this.password)
           this.user.linkWithCredential(credential).then(function (user) {
             console.log('Account link', user)
-            firebaseApp.auth().currentUser.reload()
+            getAuth(firebaseApp).currentUser.reload()
             this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this), function (error) {
             console.log('Account linking error', error)
@@ -108,10 +108,10 @@
         this.password = ''
       },
       disconnectGoogle () {
-        this.user.unlink(firebase.auth.GoogleAuthProvider.PROVIDER_ID)
+        this.user.unlink(GoogleAuthProvider.PROVIDER_ID)
           .then(function (user) {
             console.log('Account unlink', user)
-            firebaseApp.auth().currentUser.reload()
+            getAuth(firebaseApp).currentUser.reload()
             this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this))
           .catch(function (error) {
@@ -119,12 +119,12 @@
           })
       },
       connectGoogle () {
-        let provider = new firebase.auth.GoogleAuthProvider()
-          .addScope('https://www.googleapis.com/auth/plus.login')
+        let provider = new GoogleAuthProvider()
+        provider.addScope('https://www.googleapis.com/auth/plus.login')
         this.user.linkWithPopup(provider)
           .then(function (result) {
             console.log('Account link', result)
-            firebaseApp.auth().currentUser.reload()
+            getAuth(firebaseApp).currentUser.reload()
             this.$store.commit('UPDATE_USER', {user: result.user})
           }.bind(this))
           .catch(function (error) {
