@@ -40,7 +40,7 @@
     computed: {
       ...mapState([ 'user' ])
     },
-    destroyed () {
+    unmounted () {
       ui.reset()
     },
     watch: {

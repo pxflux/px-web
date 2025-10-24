@@ -53,7 +53,7 @@
       }
     },
 
-    ready () {
+    mounted () {
       this.$nextTick(() => {
         if (this.showPopper) {
           this.initPopper()
@@ -71,7 +71,7 @@
       }
     },
 
-    destroyed () {
+    unmounted () {
       this.destroyPopper()
     },
 

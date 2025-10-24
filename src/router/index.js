@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import UserUpdate from '@/components/UserUpdate'
 import Auth from '@/components/Auth'
@@ -32,10 +31,9 @@ import AccountPlaceList from '@/components/account/PlaceList'
 import AccountPlaceDetail from '@/components/account/PlaceDetail'
 import AccountPlaceEditor from '@/components/account/PlaceEditor'
 
-Vue.use(Router)
-
 export function createRouter () {
-  return new Router({
+  const router = createRouter({
+    history: createWebHistory(),
     routes: [
       {path: '/', component: About, name: 'home'},
       {path: '/user/update', component: UserUpdate, name: 'user-update'},
@@ -79,4 +77,6 @@ export function createRouter () {
       {path: '/account/place/:id', component: AccountPlaceDetail}
     ]
   })
+
+  return router
 }
