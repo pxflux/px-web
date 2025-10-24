@@ -92,7 +92,7 @@
 <script>
   import { mapActions, mapState } from 'vuex'
   import firebase from '../../firebase-app'
-  import AttachmentPanel from '../elements/AttachmentsPanel'
+  import AttachmentPanel from '../elements/AttachmentsPanel.vue'
   import RemoteControl from '../elements/RemoteControl.vue'
   import { log } from '../../helper'
   import { PlayerArtwork } from '../../models/PlayerArtwork'
