@@ -27,7 +27,6 @@
     "popper.js": "^1.12.9",
     "vue": "^3.3.0",
     "vue-input-autowidth": "^2.0.0",
-    "vue-popper-component": "^2.0.0",
     "vue-router": "^4.2.0",
     "vue-scrollto": "^2.20.0",
     "vue-select": "^4.0.0",
