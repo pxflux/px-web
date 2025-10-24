@@ -3,7 +3,7 @@
 import { createApp } from 'vue'
 import { createAppRouter } from './router'
 import { createStore } from './store'
-import ProgressBar from './components/elements/ProgressBar'
+import ProgressBar from './components/elements/ProgressBar.vue'
 import firebaseApp, { auth } from './firebase-app'
 import { getDatabase, ref, onValue, off, get } from 'firebase/database'
 import inputAutoWidth from 'vue-input-autowidth'
