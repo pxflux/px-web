@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import SiteHeader from '@/components/Header'
+  import SiteHeader from '@/components/Header.vue'
   import SiteFooter from '@/components/Footer'
 
   export default {
