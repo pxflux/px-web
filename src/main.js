@@ -8,7 +8,7 @@ import firebaseApp, { auth } from './firebase-app'
 import { getDatabase, ref, onValue, off, get } from 'firebase/database'
 import inputAutoWidth from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
-import App from './components/App'
+import App from './components/App.vue'
 
 // Utility function for base64 decoding
 function b64DecodeUnicode (str) {
