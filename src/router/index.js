@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import UserUpdate from '@/components/UserUpdate'
+import UserUpdate from '@/components/UserUpdate.vue'
 import Auth from '@/components/Auth'
 
 import About from '@/components/About'
