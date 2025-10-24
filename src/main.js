@@ -1,7 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import { createApp } from 'vue'
-import { createRouter } from './router'
+import { createAppRouter } from './router'
 import { createStore } from './store'
 import ProgressBar from './components/elements/ProgressBar'
 import firebaseApp from './firebase-app'
@@ -38,7 +38,7 @@ const globalMixin = {
 const app = createApp(App)
 
 // Setup router and store
-const router = createRouter()
+const router = createAppRouter()
 const store = createStore()
 
 // Install plugins

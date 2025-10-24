@@ -3,13 +3,13 @@
 import Vue from 'vue'
 import App from './components/App'
 import { createStore } from './store'
-import { createRouter } from './router'
+import { createAppRouter } from './router'
 
 Vue.config.productionTip = false
 
 export function createApp () {
   const store = createStore()
-  const router = createRouter()
+  const router = createAppRouter()
 
   /* eslint-disable no-new */
   const app = new Vue({

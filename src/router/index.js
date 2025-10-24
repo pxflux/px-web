@@ -31,7 +31,7 @@ import AccountPlaceList from '@/components/account/PlaceList'
 import AccountPlaceDetail from '@/components/account/PlaceDetail'
 import AccountPlaceEditor from '@/components/account/PlaceEditor'
 
-export function createRouter () {
+export function createAppRouter () {
   const router = createRouter({
     history: createWebHistory(),
     routes: [
