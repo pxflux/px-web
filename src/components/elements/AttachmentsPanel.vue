@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import VideoPlayer from '../VideoPlayer'
+  import VideoPlayer from '../VideoPlayer.vue'
   export default {
     components: {
       'video-player': VideoPlayer

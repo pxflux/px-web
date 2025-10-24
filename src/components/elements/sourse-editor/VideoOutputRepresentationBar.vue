@@ -31,7 +31,7 @@
 
 <script>
   import { createApp } from 'vue'
-  import VideoOptions from './OutputVideoOptions'
+  import VideoOptions from './OutputVideoOptions.vue'
   import { AWVideoOutputs } from '../../../models/AWVideoOutput'
 
   export default {

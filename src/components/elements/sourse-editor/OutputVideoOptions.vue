@@ -43,7 +43,7 @@
 
 <script>
   import Vue from 'vue'
-  import VSelect from '../UI/Select/components/Select'
+  import VSelect from '../UI/Select/components/Select.vue'
   import { AWVideoOutput } from '../../../models/AWVideoOutput'
 
   export default {

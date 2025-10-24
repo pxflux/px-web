@@ -71,11 +71,11 @@
   import { Artwork } from '../../models/ArtworkData'
   import { log } from '../../helper'
 
-  import RemoteControlEditor from '../elements/RemoteControlEditor'
-  import ContributorsEditor from '../elements/ContributorsEditor'
-  import VideoAttachmentEditor from '../elements/VideoAttachmentEditor'
-  import ImageAttachmentEditor from '../elements/ImageAttachmentEditor'
-  import ArtworkSetupEditor from '../elements/ArtworkSetupEditor'
+  import RemoteControlEditor from '../elements/RemoteControlEditor.vue'
+  import ContributorsEditor from '../elements/ContributorsEditor.vue'
+  import VideoAttachmentEditor from '../elements/VideoAttachmentEditor.vue'
+  import ImageAttachmentEditor from '../elements/ImageAttachmentEditor.vue'
+  import ArtworkSetupEditor from '../elements/ArtworkSetupEditor.vue'
 
   export default {
     props: ['isNew'],

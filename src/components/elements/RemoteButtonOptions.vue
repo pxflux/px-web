@@ -46,7 +46,7 @@
 
 <script>
   import keycodes from 'keycode'
-  import VSelect from './UI/Select/components/Select'
+  import VSelect from './UI/Select/components/Select.vue'
   import { Control, ControlValue } from '../../models/Control'
 
   export default {

@@ -68,7 +68,7 @@
 </template>
 
 <script>
-  import vSelect from './Select'
+  import vSelect from './Select.vue'
 
   export default {
     extends: vSelect,

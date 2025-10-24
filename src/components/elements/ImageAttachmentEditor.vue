@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import ImageUpload from '../elements/ImageUpload'
+  import ImageUpload from '../elements/ImageUpload.vue'
   import { ImageAttachment } from '../../models/ImageAttachment'
   import { AttachmentStorage } from '../../models/AttachmentStorage'
 

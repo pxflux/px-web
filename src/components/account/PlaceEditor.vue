@@ -29,7 +29,7 @@
   import { mapState, mapActions } from 'vuex'
   import { log } from '../../helper'
   import firebase, { store } from '../../firebase-app'
-  import ImageUpload from '../elements/ImageUpload'
+  import ImageUpload from '../elements/ImageUpload.vue'
 
   export default {
     props: ['isNew'],
