@@ -11,7 +11,7 @@
 
 <script>
   import Vue3Dropzone from 'vue3-dropzone'
-  import 'vue3-dropzone/dist/vue3Dropzone.css'
+  import 'dropzone/dist/dropzone.css'
   export default {
     props: ['imageUrl'],
     components: {
