@@ -1,6 +1,6 @@
 // flow
 
-module.exports = {
+export default {
   watch: {
     typeAheadPointer () {
       this.maybeAdjustScroll()

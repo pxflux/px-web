@@ -52,7 +52,7 @@
   export default {
     name: 'remote-button-options',
     components: {VSelect},
-    props: ['title', 'button', 'index', 'bus'],
+    props: ['title', 'button', 'index'],
 
     computed: {},
     data () {
@@ -156,7 +156,7 @@
       },
 
       clear () {
-        this.bus.$emit('updateButton', this.index, null)
+        this.$emit('update-button', this.index, null)
       },
       submit () {
         const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
@@ -167,7 +167,7 @@
           }
         })
         const control = new Control(this.index, null, this.label, this.eventType, controlValue)
-        this.bus.$emit('updateButton', this.index, control)
+        this.$emit('update-button', this.index, control)
       }
     }
   }

@@ -94,6 +94,14 @@
         default: null
       },
 
+      /**
+       * Vue 3 modelValue prop for v-model compatibility
+       * @type {Object||String||null}
+       */
+      modelValue: {
+        default: null
+      },
+
       defaultValue: {
         default: null
       },
@@ -231,6 +239,7 @@
         type: Function,
         default: function (val) {
           this.$emit('input', val)
+          this.$emit('update:modelValue', val)
         }
       },
 
@@ -283,7 +292,7 @@
           if (typeof this.mutableOptions[0] === 'object') {
             newOption = { [this.label]: newOption }
           }
-          this.$emit('option:created', newOption)
+          this.maybePushTag(newOption)
           return newOption
         }
       },
@@ -348,6 +357,16 @@
       },
 
       /**
+       * When the modelValue prop changes (Vue 3 v-model), update
+       * the internal mutableValue.
+       * @param  {mixed} val
+       * @return {void}
+       */
+      modelValue (val) {
+        this.mutableValue = val
+      },
+
+      /**
        * Maybe run the onChange callback.
        * @param  {string|object} val
        * @param  {string|object} old
@@ -399,11 +418,13 @@
      * attach any event listeners.
      */
     created () {
-      this.mutableValue = this.value
+      // Support both Vue 2 (value) and Vue 3 (modelValue) v-model
+      this.mutableValue = this.modelValue !== null ? this.modelValue : this.value
       this.mutableOptions = this.options.slice(0)
       this.mutableLoading = this.loading
 
-      this.$on('option:created', this.maybePushTag)
+      // Vue 3: replace $on with direct method call
+      // The option:created event is handled internally now
     },
 
     methods: {
