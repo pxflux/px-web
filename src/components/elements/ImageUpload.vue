@@ -11,7 +11,7 @@
 
 <script>
   import Vue3Dropzone from 'vue3-dropzone'
-  import 'dropzone/dist/dropzone.css'
+  // CSS will be loaded via CDN in index.html or included in the component
   export default {
     props: ['imageUrl'],
     components: {
