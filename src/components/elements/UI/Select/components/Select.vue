@@ -283,7 +283,7 @@
           if (typeof this.mutableOptions[0] === 'object') {
             newOption = { [this.label]: newOption }
           }
-          this.$emit('option:created', newOption)
+          this.maybePushTag(newOption)
           return newOption
         }
       },
@@ -403,7 +403,8 @@
       this.mutableOptions = this.options.slice(0)
       this.mutableLoading = this.loading
 
-      this.$on('option:created', this.maybePushTag)
+      // Vue 3: replace $on with direct method call
+      // The option:created event is handled internally now
     },
 
     methods: {
