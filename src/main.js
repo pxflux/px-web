@@ -1,18 +1,27 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import { createApp } from './init'
-import ProgressBar from './components/elements/ProgressBar'
-import firebaseApp from './firebase-app'
+import { createApp } from 'vue'
+import { createAppRouter } from './router'
+import { createStore } from './store'
+import ProgressBar from './components/elements/ProgressBar.vue'
+import firebaseApp, { auth } from './firebase-app'
+import { getDatabase, ref, onValue, off, get } from 'firebase/database'
 import inputAutoWidth from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
+import App from './components/App.vue'
+
+// Utility function for base64 decoding
+function b64DecodeUnicode (str) {
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  }).join(''))
+}
 
 // global progress bar
-const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
-document.body.appendChild(bar.$el)
+let bar = null
 
 // a global mixin that calls `asyncData` when a route component's params change
-Vue.mixin({
+const globalMixin = {
   beforeRouteUpdate (to, from, next) {
     const {asyncData} = this.$options
     if (asyncData) {
@@ -24,12 +33,33 @@ Vue.mixin({
       next()
     }
   }
-})
+}
 
-Vue.use(inputAutoWidth)
-Vue.use(VueScrollTo)
+// Create app instance
+const app = createApp(App)
 
-const {app, router, store} = createApp()
+// Setup router and store
+const router = createAppRouter()
+const store = createStore()
+
+// Install plugins
+app.use(store)
+app.use(router)
+app.use(inputAutoWidth)
+app.use(VueScrollTo)
+
+// Add global mixin
+app.mixin(globalMixin)
+
+// Global progress bar
+bar = createApp(ProgressBar).mount('#progress-bar-placeholder')
+if (!document.getElementById('progress-bar-placeholder')) {
+  const placeholder = document.createElement('div')
+  placeholder.id = 'progress-bar-placeholder'
+  document.body.appendChild(placeholder)
+  bar = createApp(ProgressBar).mount(placeholder)
+}
+app.config.globalProperties.$bar = bar
 
 /**
  * Sync store.state.user with firebase.auth().currentUser
@@ -39,34 +69,37 @@ const {app, router, store} = createApp()
  */
 let callback = null
 let userRef = null
-firebaseApp.auth().onAuthStateChanged(user => {
+const authInstance = auth()
+authInstance.onAuthStateChanged(user => {
   console.log('onAuthStateChanged:', user)
-  if (callback) {
-    userRef.off('value', callback)
+  if (callback && userRef) {
+    off(userRef, 'value', callback)
   }
   if (user) {
-    userRef = firebaseApp.database().ref('metadata/' + user.uid + '/refreshTime')
-    callback = userRef.on('value', (snapshot) => {
+    const db = getDatabase(firebaseApp)
+    userRef = ref(db, 'metadata/' + user.uid + '/refreshTime')
+    callback = onValue(userRef, (snapshot) => {
       console.log('onMetadataChanged:', snapshot)
       if (!snapshot.exists()) {
         return
       }
       return user.getIdToken(true).then((token) => {
-        store.commit('UPDATE_USER', {user: firebaseApp.auth().currentUser, account: firebaseApp.auth().currentUser})
+        store.commit('UPDATE_USER', {user: authInstance.currentUser, account: authInstance.currentUser})
         // console.log('getIdToken:', token)
         return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
       }).then(function (payload) {
         if (!payload.hasOwnProperty('accountId')) {
           throw new Error()
         }
-        return firebaseApp.database().ref('accounts/' + payload.accountId).once('value')
-      }).then(function (snapshot) {
-        if (!snapshot.exists()) {
-          throw new Error()
-        }
-        const account = snapshot.val()
-        account['.key'] = snapshot.key
-        store.commit('UPDATE_USER', {user: user, account: account})
+        const accountRef = ref(db, 'accounts/' + payload.accountId)
+        return get(accountRef).then(function (snapshot) {
+          if (!snapshot.exists()) {
+            throw new Error()
+          }
+          const account = snapshot.val()
+          account['.key'] = snapshot.key
+          store.commit('UPDATE_USER', {user: user, account: account})
+        })
       }).catch(function (error) {
         console.log(error)
         store.commit('UPDATE_USER', null)
@@ -78,14 +111,18 @@ firebaseApp.auth().onAuthStateChanged(user => {
 })
 
 // wait until router has resolved all async before hooks and async components...
-router.onReady(() => {
+router.isReady().then(() => {
   // Add router hook for handling asyncData.
   // Doing it after initial route is resolved so that we don't double-fetch
   // the data that we already have. Using router.beforeResolve() so that all
   // async components are resolved.
   router.beforeResolve((to, from, next) => {
-    const matched = router.getMatchedComponents(to)
-    const prevMatched = router.getMatchedComponents(from)
+    const matched = to.matched.flatMap(record =>
+      Object.values(record.components).filter(c => c.asyncData)
+    )
+    const prevMatched = from.matched.flatMap(record =>
+      Object.values(record.components).filter(c => c.asyncData)
+    )
     let diffed = false
     const activated = matched.filter((c, i) => {
       return diffed || (diffed = (prevMatched[i] !== c))
@@ -105,11 +142,5 @@ router.onReady(() => {
   })
 
   // actually mount to DOM
-  app.$mount('#app')
+  app.mount('#app')
 })
-
-function b64DecodeUnicode (str) {
-  return decodeURIComponent(atob(str).split('').map(function (c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-  }).join(''))
-}

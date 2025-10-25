@@ -42,7 +42,7 @@
       },
 
       toggleTitle: function () {
-        this.$set(this.title, 'edit', !this.title.edit)
+        this.title.edit = !this.title.edit
         // Focus input field
         if (this.title.edit) {
           this.$nextTick(function () {

@@ -7,14 +7,14 @@
 </template>
 
 <script>
-  import SiteHeader from '@/components/Header'
-  import SiteFooter from '@/components/Footer'
+  import SiteHeader from '@/components/Header.vue'
+  import SiteFooter from '@/components/Footer.vue'
 
   export default {
     components: {SiteHeader, SiteFooter}
   }
 </script>
 
-<style lang="sass">
-  @import '../assets/sass/app'
+<style lang="scss">
+@import '../assets/sass/app.scss';
 </style>

@@ -23,8 +23,8 @@
 
 <script>
   import { VideoAttachment } from '../../models/VideoAttachment'
-  import VideoPlayer from '../VideoPlayer'
-  import AutosizeTextarea from './UI/AutosizeTextarea'
+  import VideoPlayer from '../VideoPlayer.vue'
+  import AutosizeTextarea from './UI/AutosizeTextarea.vue'
 
   export default {
     components: { VideoPlayer, AutosizeTextarea },

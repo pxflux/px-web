@@ -1,6 +1,9 @@
-import Firebase from 'firebase'
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref, push, update, onValue, get } from 'firebase/database'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
+import { getAuth } from 'firebase/auth'
 
-const app = Firebase.initializeApp({
+const app = initializeApp({
   apiKey: 'AIzaSyAYMwrJAFUxlY-Igs_ts-goUAkLwN2ZPKc',
   authDomain: 'pxfluxplayer.firebaseapp.com',
   databaseURL: 'https://pxfluxplayer.firebaseio.com',
@@ -24,65 +27,72 @@ export function store (accountId, id, path, data, imageRemoved, imageFile) {
 }
 
 function save (id, path, data) {
+  const db = getDatabase(app)
   if (id) {
-    const source = app.database().ref(path + '/' + id)
-    return source.update(data).then(function () {
+    const source = ref(db, path + '/' + id)
+    return update(source, data).then(function () {
       return source
     })
   } else {
-    return app.database().ref(path).push(data).then(function (ref) {
+    const newRef = ref(db, path)
+    return push(newRef, data).then(function (ref) {
       return ref
     })
   }
 }
 
-function uploadFile (ref, path, file) {
-  return ref.once('value').then(function (snapshot) {
+function uploadFile (dbRef, path, file) {
+  const storage = getStorage(app)
+  return get(dbRef).then(function (snapshot) {
     const val = snapshot.val()
     return val && val.image ? val.image.storageUri : null
   }).then(function (storageUri) {
     if (storageUri && storageUri.startsWith('gs://')) {
-      return app.storage().refFromURL(storageUri).delete()
+      return deleteObject(storageRef(storage, storageUri))
     }
   }).then(function () {
-    return ref.update({
+    return update(dbRef, {
       image: {
         displayUrl: null,
         storageUri: null
       }
     })
   }).then(function () {
-    const filePath = [path + '/' + ref.key, getFileExtension(file)].map(_ => _).join('.')
-    return app.storage().ref(filePath).put(file)
+    const filePath = [path + '/' + dbRef.key, getFileExtension(file)].map(_ => _).join('.')
+    const fileRef = storageRef(storage, filePath)
+    return uploadBytes(fileRef, file)
   }).then(function (snapshot) {
-    return ref.update({
-      image: {
-        displayUrl: snapshot.metadata.downloadURLs[0],
-        storageUri: app.storage().ref(snapshot.metadata.fullPath).toString()
-      }
+    return getDownloadURL(snapshot.ref).then(function (downloadURL) {
+      return update(dbRef, {
+        image: {
+          displayUrl: downloadURL,
+          storageUri: snapshot.ref.toString()
+        }
+      })
     })
   }).then(function () {
-    return ref
+    return dbRef
   })
 }
 
-function removeFile (ref) {
-  return ref.once('value').then(function (snapshot) {
+function removeFile (dbRef) {
+  const storage = getStorage(app)
+  return get(dbRef).then(function (snapshot) {
     const val = snapshot.val()
     return val && val.image ? val.image.storageUri : null
   }).then(function (storageUri) {
     if (storageUri && storageUri.startsWith('gs://')) {
-      return app.storage().refFromURL(storageUri).delete()
+      return deleteObject(storageRef(storage, storageUri))
     }
   }).then(function () {
-    return ref.update({
+    return update(dbRef, {
       image: {
         displayUrl: null,
         storageUri: null
       }
     })
   }).then(function () {
-    return ref
+    return dbRef
   })
 }
 
@@ -100,5 +110,7 @@ function getFileExtension (file) {
   }
   return null
 }
+
+export const auth = () => getAuth(app)
 
 export default app

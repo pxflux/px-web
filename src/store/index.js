@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore as createVuexStore } from 'vuex'
 import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
@@ -12,10 +11,8 @@ const firebaseProgress = store => {
   })
 }
 
-Vue.use(Vuex)
-
 export function createStore () {
-  return new Vuex.Store({
+  return createVuexStore({
     plugins: [firebaseProgress],
     state: {
       loading: false,

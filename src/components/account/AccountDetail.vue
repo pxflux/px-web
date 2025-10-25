@@ -44,7 +44,7 @@
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
   import firebase from '../../firebase-app'
   import { log } from '../../helper'
-  import EditableString from '../elements/UI/EditableStringWithSubmit'
+  import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
 
   export default {
     components: {EditableString},

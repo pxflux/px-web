@@ -21,8 +21,8 @@
 </template>
 
 <script>
-  import VueSelect from '../UI/Select/components/Select'
-  import OutputsPanel from './OutputsPanel'
+  import VueSelect from '../UI/Select/components/Select.vue'
+  import OutputsPanel from './OutputsPanel.vue'
   import { AWChannel } from '../../../models/AWChannel'
   import { AWSource } from '../../../models/AWSource'
 

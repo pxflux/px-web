@@ -1,10 +1,12 @@
-import Firebase from 'firebase'
+import { getDatabase, ref, get } from 'firebase/database'
+import app from '../firebase-app'
 
 const logRequests = true
 
 function fetch (child, relationships = []) {
   logRequests && console.log(`fetching [${child}]`)
-  return Firebase.database().ref(child).once('value')
+  const db = getDatabase(app)
+  return get(ref(db, child))
     .then(snapshot => {
       const data = snapshot.val()
       if (data) {
@@ -24,7 +26,7 @@ function fetch (child, relationships = []) {
             relationIds.forEach(relationId => {
               const path = name + '/' + relationId
               logRequests && console.log('fetching', path)
-              queries.push(Firebase.database().ref(path).once('value')
+              queries.push(get(ref(db, path))
                 .then(snapshot => {
                   const val = snapshot.val()
                   logRequests && console.log('fetched', val)
@@ -39,7 +41,7 @@ function fetch (child, relationships = []) {
             })
           }
         })
-        return Firebase.Promise.all(queries).then(results => {
+        return Promise.all(queries).then(results => {
           return data
         })
       } else {
@@ -53,5 +55,5 @@ export function fetchArtwork (id) {
 }
 
 export function fetchArtworks (ids) {
-  return Firebase.Promise.all(ids.map(id => fetchArtwork(id)))
+  return Promise.all(ids.map(id => fetchArtwork(id)))
 }

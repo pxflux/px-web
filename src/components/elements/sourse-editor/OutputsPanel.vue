@@ -39,11 +39,11 @@
 </template>
 
 <script>
-  import OutputControlPanel from './OutputControlPanel'
-  import AudioOutputRepresentationBar from './AudioOutputRepresentationBar'
-  import VideoOutputRepresentationBar from './VideoOutputRepresentationBar'
-  import ConnectorsCanvas from './ConnectorsCanvas'
-  import VueSelect from '../UI/Select/components/Select'
+  import OutputControlPanel from './OutputControlPanel.vue'
+  import AudioOutputRepresentationBar from './AudioOutputRepresentationBar.vue'
+  import VideoOutputRepresentationBar from './VideoOutputRepresentationBar.vue'
+  import ConnectorsCanvas from './ConnectorsCanvas.vue'
+  import VueSelect from '../UI/Select/components/Select.vue'
   import { AWChannel } from '../../../models/AWChannel'
   import { AWAudioOutputs } from '../../../models/AWAudioOutput'
   import { AWVideoOutputs } from '../../../models/AWVideoOutput'

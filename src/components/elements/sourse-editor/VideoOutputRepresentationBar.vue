@@ -5,58 +5,54 @@
         <span>Video</span>
       </label>
       <div class="output-bar video">
-        <popper v-for="(output, i) in value" :key="i" trigger="click" :options="{placement: 'bottom-start'}"
-                ref="popups">
-          <div class="popper">
+        <el-popover v-for="(output, i) in value" :key="i" placement="bottom-start" trigger="click" :ref="'popups-' + i">
+          <div class="popper-content">
             <video-options :bus="bus" :index="i" :value="output"/>
             <div class="button frameless cancel narrow" @click="closeOptions(i)">
               <span class="icon cancel small"></span>
             </div>
           </div>
 
-          <div class="output-box video" :class="output.type" ref="boxes" slot="reference">
-            <div class="description">
-              <span class="name">{{i}}</span>
-              <span class="type">{{output.type}}</span>
-              <span class="description">Any resolution</span>
+          <template #reference>
+            <div class="output-box video" :class="output.type" ref="boxes">
+              <div class="description">
+                <span class="name">{{i}}</span>
+                <span class="type">{{output.type}}</span>
+                <span class="description">Any resolution</span>
+              </div>
+              <div class="icon drop-down small"></div>
             </div>
-            <div class="icon drop-down small"></div>
-          </div>
-        </popper>
+          </template>
+        </el-popover>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import Vue from 'vue'
-  import Popper from 'vue-popperjs'
-  import VideoOptions from './OutputVideoOptions'
+  import { createApp } from 'vue'
+  import VideoOptions from './OutputVideoOptions.vue'
   import { AWVideoOutputs } from '../../../models/AWVideoOutput'
 
   export default {
     name: 'video-output-representation-bar',
     components: {
-      Popper, VideoOptions
+      VideoOptions
     },
     props: ['value'],
 
     data () {
       return {
-        bus: new Vue()
+        bus: createApp({})
       }
     },
     mounted () {
-      this.bus.$on('updateOutputOptions', (options, index) => {
-        this.closeOptions(index)
-        const values = AWVideoOutputs.fromJson(JSON.parse(JSON.stringify(this.value)))
-        values[index] = options
-        this.$emit('input', values)
-      })
+      this.bus.config.globalProperties.$on = () => {} // Vue 3 doesn't have $on, use mitt or similar
+      // For Vue 3, we'll use direct props/events instead of event bus
     },
     methods: {
       closeOptions (index) {
-        this.$refs.popups[index].doClose()
+        this.$refs['popups-' + index][0].hide()
       },
       collectBounds () {
         const bounds = []

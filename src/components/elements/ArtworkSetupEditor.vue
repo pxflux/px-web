@@ -64,10 +64,10 @@
 <script>
   import { AWSetup, AWSetups } from '../../models/AWSetup'
   import { AWChannel, AWChannels } from '../../models/AWChannel'
-  import VSelect from './UI/Select/components/Select'
-  import ImageAttachmentEditor from './ImageAttachmentEditor'
-  import VideoAttachmentEditor from './VideoAttachmentEditor'
-  import ChannelEditor from './sourse-editor/ChannelEditor'
+  import VSelect from './UI/Select/components/Select.vue'
+  import ImageAttachmentEditor from './ImageAttachmentEditor.vue'
+  import VideoAttachmentEditor from './VideoAttachmentEditor.vue'
+  import ChannelEditor from './sourse-editor/ChannelEditor.vue'
 
   export default {
     name: 'artwork-setup-editor',

@@ -5,17 +5,17 @@
     <!--<input ref="inputImage" type="file" accept="image/*" @change="uploadImage">-->
     <!--<button v-show="!this.removed && (previewUrl || imageUrl)" @click="removeImage">Remove</button>-->
     <!--<button v-show="this.removed" @click="removed = false">Undo</button>-->
-    <vue2-dropzone :options="dropZoneOptions" :id="'4541353'"/>
+    <Vue3Dropzone :options="dropZoneOptions" :id="'4541353'"/>
   </div>
 </template>
 
 <script>
-  import vue2Dropzone from 'vue2-dropzone'
-  import 'vue2-dropzone/dist/vue2Dropzone.css'
+  import Vue3Dropzone from 'vue3-dropzone'
+  // CSS will be loaded via CDN in index.html or included in the component
   export default {
     props: ['imageUrl'],
     components: {
-      vue2Dropzone
+      Vue3Dropzone
     },
     computed: {
       originalUrl: function () {

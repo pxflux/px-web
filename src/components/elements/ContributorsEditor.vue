@@ -17,8 +17,8 @@
 <script>
   import { mapActions, mapState } from 'vuex'
   import firebase from '../../firebase-app'
-  import vSelect from './UI/Select/components/Select'
-  import inlineSelect from './UI/Select/components/SelectInline'
+  import vSelect from './UI/Select/components/Select.vue'
+  import inlineSelect from './UI/Select/components/SelectInline.vue'
   import { ContributorRefs } from '../../models/ContributorRef'
 
   export default {

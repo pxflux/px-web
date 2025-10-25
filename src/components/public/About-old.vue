@@ -132,7 +132,7 @@
       }
     },
 
-    destroyed () {
+    unmounted () {
       document.body.style.removeProperty('background-image')
       document.body.style.removeProperty('background-size')
     }
