@@ -10,7 +10,6 @@ import inputAutoWidth from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
 import App from './components/App.vue'
 
-// Utility function for base64 decoding
 function b64DecodeUnicode (str) {
   return decodeURIComponent(atob(str).split('').map(function (c) {
     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
