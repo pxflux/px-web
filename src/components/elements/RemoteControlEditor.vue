@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import RemoteButtonOptions from './RemoteButtonOptions'
+  import RemoteButtonOptions from './RemoteButtonOptions.vue'
   import { Controls } from '../../models/Control'
 
   export default {
