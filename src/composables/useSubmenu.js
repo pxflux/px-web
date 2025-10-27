@@ -13,6 +13,8 @@ export function useSubmenu() {
 
   const toggleSubmenu = (event) => {
     const el = event.currentTarget
+    if (!el || !el.parentNode) return
+
     const submenu = el.parentNode.getElementsByClassName('submenu')[0]
     if (!submenu) {
       return
@@ -29,7 +31,9 @@ export function useSubmenu() {
   }
 
   const closeSubmenus = () => {
-    const openSubmenus = instance?.proxy?.$el?.querySelectorAll(`.${submenuClass.value}.open`)
+    if (!instance?.proxy?.$el || !submenuClass.value) return
+
+    const openSubmenus = instance.proxy.$el.querySelectorAll(`.${submenuClass.value}.open`)
     if (!openSubmenus) return
 
     for (let i = 0; i < openSubmenus.length; i++) {
@@ -81,6 +85,8 @@ export function useSubmenu() {
 
   const currentMenuIsOpen = (event) => {
     const el = event.currentTarget
+    if (!el || !el.parentNode) return false
+
     const submenu = el.parentNode.getElementsByClassName('submenu')[0]
     return submenu && submenu.classList.contains('open')
   }
