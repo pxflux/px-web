@@ -5,17 +5,16 @@
 <script>
   import { mapState } from 'vuex'
   import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-  import firebaseui from 'firebaseui'
+  import * as firebaseui from 'firebaseui'
   import firebaseApp from '../firebase-app'
 
   let ui
 
   /* eslint-disable no-unused-vars */
   const uiConfig = {
-    signInSuccessUrl: '/',
     callbacks: {
       // Called when the user has been successfully signed in
-      signInSuccess (user, credential, redirectUrl) {
+      signInSuccessWithAuthResult (authResult, redirectUrl) {
         return false
       }
     },

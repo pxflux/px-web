@@ -6,11 +6,10 @@ import { createStore } from './store'
 import ProgressBar from './components/elements/ProgressBar.vue'
 import firebaseApp, { auth } from './firebase-app'
 import { getDatabase, ref, onValue, off, get } from 'firebase/database'
-import inputAutoWidth from 'vue-input-autowidth'
+import { plugin as inputAutoWidth } from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
 import App from './components/App.vue'
 
-// Utility function for base64 decoding
 function b64DecodeUnicode (str) {
   return decodeURIComponent(atob(str).split('').map(function (c) {
     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
@@ -52,13 +51,12 @@ app.use(VueScrollTo)
 app.mixin(globalMixin)
 
 // Global progress bar
-bar = createApp(ProgressBar).mount('#progress-bar-placeholder')
 if (!document.getElementById('progress-bar-placeholder')) {
   const placeholder = document.createElement('div')
   placeholder.id = 'progress-bar-placeholder'
   document.body.appendChild(placeholder)
-  bar = createApp(ProgressBar).mount(placeholder)
 }
+bar = createApp(ProgressBar).mount('#progress-bar-placeholder')
 app.config.globalProperties.$bar = bar
 
 /**

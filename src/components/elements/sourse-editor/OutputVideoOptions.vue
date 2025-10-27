@@ -42,14 +42,13 @@
 </template>
 
 <script>
-  import Vue from 'vue'
   import VSelect from '../UI/Select/components/Select.vue'
   import { AWVideoOutput } from '../../../models/AWVideoOutput'
 
   export default {
     name: 'output-video-options',
     components: {VSelect},
-    props: {bus: Vue, index: Number, value: AWVideoOutput},
+    props: {bus: Object, index: Number, value: AWVideoOutput},
 
     data () {
       return {
