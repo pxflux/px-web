@@ -19,10 +19,49 @@
         duration: 3000,
         height: '2px',
         color: '#ffca2b',
-        failedColor: '#ff0000'
+        failedColor: '#ff0000',
+        _timeoutIds: [] // Track all timeouts for proper cleanup
       }
     },
+
+    beforeUnmount () {
+      // Clean up all timers and timeouts
+      this.cleanup()
+    },
+
     methods: {
+      cleanup () {
+        // Clear interval
+        if (this._timer) {
+          clearInterval(this._timer)
+          this._timer = null
+        }
+
+        // Clear all tracked timeouts
+        this._timeoutIds.forEach(timeoutId => {
+          clearTimeout(timeoutId)
+        })
+        this._timeoutIds = []
+      },
+
+      _setTimeout (callback, delay) {
+        const timeoutId = setTimeout(() => {
+          // Remove from tracking array
+          const index = this._timeoutIds.indexOf(timeoutId)
+          if (index > -1) {
+            this._timeoutIds.splice(index, 1)
+          }
+
+          // Execute callback if component is still mounted
+          if (this.$el) {
+            callback()
+          }
+        }, delay)
+
+        // Track the timeout
+        this._timeoutIds.push(timeoutId)
+        return timeoutId
+      },
       start () {
         this.show = true
         this.canSuccess = true
@@ -68,11 +107,13 @@
       hide () {
         clearInterval(this._timer)
         this._timer = null
-        setTimeout(() => {
+        this._setTimeout(() => {
           this.show = false
           this.$nextTick(() => {
-            setTimeout(() => {
-              this.percent = 0
+            this._setTimeout(() => {
+              if (this.$el) {
+                this.percent = 0
+              }
             }, 200)
           })
         }, 500)

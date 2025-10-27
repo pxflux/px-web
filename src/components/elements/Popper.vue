@@ -77,10 +77,25 @@
 
     methods: {
       initPopper () {
+        // Ensure component is still mounted before proceeding
+        if (!this.$el) return
+
+        const popperElement = this.$el.querySelector('.vue-popper-component')
+        if (!popperElement) {
+          console.warn('Popper element not found in DOM, retrying...')
+          // Retry after a short delay to allow DOM to update
+          setTimeout(() => {
+            if (this.$el && this.showPopper) {
+              this.initPopper()
+            }
+          }, 50)
+          return
+        }
+
         this.popperId = this.uuid4()
         this.popper = new Popper(
           this.$el,
-          this.$el.querySelector('.vue-popper-component'),
+          popperElement,
           {
             placement: this.placement || 'bottom',
             removeOnDestroy: true
