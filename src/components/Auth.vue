@@ -15,7 +15,7 @@
     signInSuccessUrl: '/',
     callbacks: {
       // Called when the user has been successfully signed in
-      signInSuccess (user, credential, redirectUrl) {
+      signInSuccessWithAuthResult (authResult, redirectUrl) {
         return false
       }
     },
