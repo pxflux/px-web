@@ -51,13 +51,12 @@ app.use(VueScrollTo)
 app.mixin(globalMixin)
 
 // Global progress bar
-bar = createApp(ProgressBar).mount('#progress-bar-placeholder')
 if (!document.getElementById('progress-bar-placeholder')) {
   const placeholder = document.createElement('div')
   placeholder.id = 'progress-bar-placeholder'
   document.body.appendChild(placeholder)
-  bar = createApp(ProgressBar).mount(placeholder)
 }
+bar = createApp(ProgressBar).mount('#progress-bar-placeholder')
 app.config.globalProperties.$bar = bar
 
 /**
