@@ -6,7 +6,7 @@ import { createStore } from './store'
 import ProgressBar from './components/elements/ProgressBar.vue'
 import firebaseApp, { auth } from './firebase-app'
 import { getDatabase, ref, onValue, off, get } from 'firebase/database'
-import inputAutoWidth from 'vue-input-autowidth'
+import { plugin as inputAutoWidth } from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
 import App from './components/App.vue'
 

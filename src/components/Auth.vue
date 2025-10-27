@@ -5,7 +5,7 @@
 <script>
   import { mapState } from 'vuex'
   import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-  import firebaseui from 'firebaseui'
+  import * as firebaseui from 'firebaseui'
   import firebaseApp from '../firebase-app'
 
   let ui

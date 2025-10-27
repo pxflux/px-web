@@ -1,4 +1,4 @@
-import { firebaseMutations } from 'vuexfire'
+import { vuexfireMutations } from 'vuexfire'
 
 export default {
   UPDATE_USER (state, payload) {
@@ -31,7 +31,7 @@ export default {
   REMOVE_ACCOUNT_SHOW (state) {
     state.accountShow = null
   },
-  ...firebaseMutations,
+  ...vuexfireMutations,
 
   SET_ITEMS: (state, {items}) => {
     items.forEach(item => {

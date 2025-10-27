@@ -5,17 +5,28 @@
     <!--<input ref="inputImage" type="file" accept="image/*" @change="uploadImage">-->
     <!--<button v-show="!this.removed && (previewUrl || imageUrl)" @click="removeImage">Remove</button>-->
     <!--<button v-show="this.removed" @click="removed = false">Undo</button>-->
-    <Vue3Dropzone :options="dropZoneOptions" :id="'4541353'"/>
+    <div v-bind="getRootProps()" class="dropzone">
+      <input v-bind="getInputProps()" />
+      <p>Drop files here or click to upload</p>
+    </div>
   </div>
 </template>
 
 <script>
-  import Vue3Dropzone from 'vue3-dropzone'
+  import { useDropzone } from 'vue3-dropzone'
   // CSS will be loaded via CDN in index.html or included in the component
   export default {
     props: ['imageUrl'],
-    components: {
-      Vue3Dropzone
+    setup() {
+      const { getRootProps, getInputProps } = useDropzone({
+        onDrop: (acceptedFiles) => {
+          console.log(acceptedFiles)
+        }
+      })
+      return {
+        getRootProps,
+        getInputProps
+      }
     },
     computed: {
       originalUrl: function () {
