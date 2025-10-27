@@ -12,7 +12,6 @@
 
   /* eslint-disable no-unused-vars */
   const uiConfig = {
-    signInSuccessUrl: '/',
     callbacks: {
       // Called when the user has been successfully signed in
       signInSuccessWithAuthResult (authResult, redirectUrl) {
