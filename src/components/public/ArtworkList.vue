@@ -9,58 +9,53 @@
   </main>
 </template>
 
-<script>
-  import firebaseApp from '../../firebase-app'
-  import { getDatabase, ref } from 'firebase/database'
-  import { mapState } from 'vuex'
-  import { Artwork } from '../../models/ArtworkData'
-  import ArtworkItem from '../elements/ArtworkItem.vue'
+<script setup>
+import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import firebaseApp from '../../firebase-app'
+import { getDatabase, ref as dbRef } from 'firebase/database'
+import { Artwork } from '../../models/ArtworkData'
+import ArtworkItem from '../elements/ArtworkItem.vue'
 
-  export default {
-    components: {
-      ArtworkItem
-    },
+const store = useStore()
+const route = useRoute()
+const instance = getCurrentInstance()
 
-    data() {
-      return {
-        accountArtworks: []
-      }
-    },
+const accountArtworks = ref([])
 
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount']),
+const userAccount = computed(() => store.state.userAccount)
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      artworks () {
-        if (this.accountArtworks) {
-          return this.accountArtworks.map(it => Artwork.fromJson(it))
-        }
-        return []
-      }
-    },
-    methods: {
-      init () {
-        if (this.accountId) {
-          const db = getDatabase(firebaseApp)
-          this.$databaseBind('accountArtworks', ref(db, 'accounts/' + this.accountId + '/artworks'))
-        }
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      }
-    }
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const artworks = computed(() => {
+  if (accountArtworks.value) {
+    return accountArtworks.value.map(it => Artwork.fromJson(it))
+  }
+  return []
+})
+
+const init = () => {
+  if (accountId.value) {
+    const db = getDatabase(firebaseApp)
+    instance.proxy.$databaseBind('accountArtworks', dbRef(db, 'accounts/' + accountId.value + '/artworks'))
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
 </script>

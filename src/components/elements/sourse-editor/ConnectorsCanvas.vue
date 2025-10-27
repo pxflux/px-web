@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="canvas" v-on:resize="updateCanvasSize"></canvas>
+  <canvas ref="canvas" @resize="updateCanvasSize"></canvas>
 </template>
 
 <script>

@@ -42,80 +42,74 @@
   </div>
 </template>
 
-<script>
-  import Logo from '../assets/js/logo-v2'
-  export default {
-    name: 'about-page',
-    data () {
-      return {
-        winW: 0,
-        logo: null,
-        logoWidth: 35,
-        baseSize: 48,
-        pixelRatio: window.devicePixelRatio || 1
-      }
-    },
+<script setup>
+import { ref, computed, onMounted, onBeforeMount } from 'vue'
+import Logo from '../assets/js/logo-v2'
 
-    computed: {
-      possiblePxSizes () {
-        return [48 * 2, 48 * 1.5, 48, 48 / 1.5, 48 / 2, 48 / 3, 48 / 4, 48 / 6, 48 / 8, 48 / 12, 48 / 16]
-      },
-  
-      pxSize () {
-        const w = this.winW - this.baseSize * 2
-        const checkSize = w / this.logoWidth
-        let pxSize
-        this.possiblePxSizes.reduce((pre, next) => {
-          if (pre >= checkSize && checkSize >= next) pxSize = next
-          return next
-        })
-        return pxSize
-      },
-  
-      logoURL () {
-        const el = document.getElementById('px-logo-box')
-        const style = window.getComputedStyle(el)
-        return style.backgroundImage.slice(4, -1).replace(/"/g, '')
-      }
-    },
+const winW = ref(0)
+const logo = ref(null)
+const logoWidth = ref(35)
+const baseSize = ref(48)
+const pixelRatio = ref(window.devicePixelRatio || 1)
 
-    methods: {
-      setWinWidth () {
-        this.winW = window.innerWidth
-        if (this.logo) { this.logo.setPxSize(this.pxSize) }
-        let bgSize = this.sPxToBgSize(this.pxSize)
-        const bgFile = `grid-cell-${bgSize}px-o10@${this.pixelRatio}x.png`
-        document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
-        document.body.style.backgroundSize = bgSize + 'px'
-      },
+const possiblePxSizes = computed(() => {
+  return [48 * 2, 48 * 1.5, 48, 48 / 1.5, 48 / 2, 48 / 3, 48 / 4, 48 / 6, 48 / 8, 48 / 12, 48 / 16]
+})
 
-      sPxToBgSize (n) {
-        if (n % 3 === 0) return 3
-        if (n % 2 === 0) return 2
-        return 2
-      }
-    },
-  
-    mounted () {
-      this.logo = new Logo(this.logoURL, 'px-main-logo', this.pxSize)
-      this.logo.setup()
-    },
-  
-    created () {
-      window.addEventListener('resize', this.setWinWidth)
-      this.setWinWidth()
-    }
+const pxSize = computed(() => {
+  const w = winW.value - baseSize.value * 2
+  const checkSize = w / logoWidth.value
+  let size
+  possiblePxSizes.value.reduce((pre, next) => {
+    if (pre >= checkSize && checkSize >= next) size = next
+    return next
+  })
+  return size
+})
+
+const logoURL = computed(() => {
+  const el = document.getElementById('px-logo-box')
+  if (!el) return ''
+  const style = window.getComputedStyle(el)
+  return style.backgroundImage.slice(4, -1).replace(/"/g, '')
+})
+
+const setWinWidth = () => {
+  winW.value = window.innerWidth
+  if (logo.value) {
+    logo.value.setPxSize(pxSize.value)
   }
+  const bgSize = sPxToBgSize(pxSize.value)
+  const bgFile = `grid-cell-${bgSize}px-o10@${pixelRatio.value}x.png`
+  document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
+  document.body.style.backgroundSize = bgSize + 'px'
+}
+
+const sPxToBgSize = (n) => {
+  if (n % 3 === 0) return 3
+  if (n % 2 === 0) return 2
+  return 2
+}
+
+onBeforeMount(() => {
+  window.addEventListener('resize', setWinWidth)
+  setWinWidth()
+})
+
+onMounted(() => {
+  logo.value = new Logo(logoURL.value, 'px-main-logo', pxSize.value)
+  logo.value.setup()
+})
 </script>
 
 <style lang="scss">
   @import '../assets/sass/vars';
   .about {
     padding-top: $module-size;
-    
+
     width: 100vw;
     min-height: 100vh;
-    
+
     .subtitle{
       margin: 0 $module-size $module-size/2;
       /*font-weight: 400;*/
@@ -127,16 +121,16 @@
       margin: 0 $module-size;
       padding: 1px;
       background: #eeeeee;
-      
+
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
       grid-gap: 1px;
-  
+
       .content-cell{
         position: relative;
         background: #fff;
         padding: $module-size / 2;
-        
+
         &.with-badge:before{
           content: '';
           width: $module-size / 2;
@@ -159,8 +153,8 @@
       }
     }
   }
-  
-  
+
+
   .logo-box{
     position: relative;
     margin: $module-size / 2 $module-size;

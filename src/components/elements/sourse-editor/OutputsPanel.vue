@@ -10,11 +10,11 @@
 
       <div v-if="panelOpened" class="outputs-control-panel field">
         <output-control-panel ref="audioOutputControls" code="audio" title="Audio" :data="channel.audioOutputs"
-                              v-on:append="appendOutputs($event)"
-                              v-on:remove="removeOutputs($event)"/>
+                              @append="appendOutputs($event)"
+                              @remove="removeOutputs($event)"/>
         <output-control-panel ref="videoOutputControls" code="video" title="Video" :data="channel.videoOutputs"
-                              v-on:append="appendOutputs($event)"
-                              v-on:remove="removeOutputs($event)"/>
+                              @append="appendOutputs($event)"
+                              @remove="removeOutputs($event)"/>
       </div>
       <div v-else="" class="field closed" @click="panelOpened = !panelOpened">
         <span class="description">{{description}}</span>
@@ -24,7 +24,7 @@
     <section>
       <div v-if="panelOpened" class="outputs-presentation">
         <audio-output-representation-bar ref="audioOutputBar" :value="channel.audioOutputs"
-                                         v-on:update="refreshOutputConnections()"/>
+                                         @update="refreshOutputConnections()"/>
         <video-output-representation-bar ref="videoOutputBar" :value="channel.videoOutputs"
                                          @input="setVideoOutputs($event)"/>
       </div>

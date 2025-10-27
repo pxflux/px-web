@@ -14,35 +14,39 @@
   </div>
 </template>
 
-<script>
-  export default {
-    props: ['controls'],
-    computed: {
-      buttons () {
-        let list = new Array(9)
-        if (this.controls) {
-          for (let i = 0; i < this.controls.length; i++) {
-            const control = this.controls[i]
-            const number = control ? control.order || i : i
-            if (control) {
-              control.index = i
-            }
-            list[number] = control
-          }
-        }
-        return list
-      }
-    },
+<script setup>
+import { computed } from 'vue'
 
-    methods: {
-      sendControl (n) {
-        if (n >= 0 && this.buttons.length > n) {
-          const control = this.buttons[n]
-          if (control) {
-            this.$emit('select', control.index)
-          }
-        }
+const props = defineProps({
+  controls: {
+    type: Array,
+    default: () => []
+  }
+})
+
+const emit = defineEmits(['select'])
+
+const buttons = computed(() => {
+  const list = new Array(9)
+  if (props.controls) {
+    for (let i = 0; i < props.controls.length; i++) {
+      const control = props.controls[i]
+      const number = control ? control.order || i : i
+      if (control) {
+        control.index = i
       }
+      list[number] = control
     }
   }
+  return list
+})
+
+const sendControl = (n) => {
+  if (n >= 0 && buttons.value.length > n) {
+    const control = buttons.value[n]
+    if (control) {
+      emit('select', control.index)
+    }
+  }
+}
 </script>

@@ -1,7 +1,7 @@
 <template>
   <main>
     <div v-if="artwork" class="wrap-content wrap-forms">
-      <form id="form-artwork" v-on:submit.prevent>
+      <form id="form-artwork" @submit.prevent>
         <section class="editor-section">
           <div class="row">
             <label for="title"><span>Title</span></label>

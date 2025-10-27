@@ -15,82 +15,89 @@
   <div v-else>Video ID is not valid.</div>
 </template>
 
-<script>
-  import { vueVimeoPlayer } from 'vue-vimeo-player'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { vueVimeoPlayer } from 'vue-vimeo-player'
 
-  export default {
-    props: ['videoUrl', 'ratio', 'fillParent'],
-    components: {
-      'vimeo-player': vueVimeoPlayer
-    },
-    data () {
-      return {
-        fillVideoBox: this.fillParent, // TODO: this could be a property set by user in the artwork editor
-        paused: true,
-        videoBoxEl: null
-      }
-    },
-    computed: {
-      videoId () {
-        if (Number.isInteger(this.videoUrl)) {
-          return this.videoUrl
-        }
-        const match = this.videoUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
-        return match ? match[1] : null
-      },
-      playerId () { return 'vp' + this.videoId }
-    },
-
-    mounted () {
-      this.videoBoxEl = this.$refs['videoBox']
-      window.addEventListener('resize', this.fitToParent)
-    },
-
-    methods: {
-      fitToParent () {
-        if (!this.fillVideoBox) return // let css manage it w:100% h:100%
-
-        const iframe = this.videoBoxEl.querySelector('iframe')
-        if (!iframe) return
-        const parentRect = this.videoBoxEl.getBoundingClientRect()
-        const parentRatio = parentRect.width / parentRect.height
-
-        let w, h
-        if (this.ratio < parentRatio) {
-          // iframe is narrower then parent.. fit width
-          w = parentRect.width
-          h = w / this.ratio
-        } else {
-          // fit height
-          h = parentRect.height
-          w = h * this.ratio
-        }
-        iframe.style.width = Math.ceil(w) + 'px'
-        iframe.style.height = Math.ceil(h) + 'px'
-      },
-
-      setPaused (paused) { this.paused = paused },
-
-      onLoad () {
-        const player = this.$refs.player
-        if (!player) return
-        player.unmute()
-
-        this.fitToParent()
-      },
-      togglePlay () {
-        if (this.paused) {
-          this.play()
-        } else {
-          this.stop()
-        }
-      },
-      play () {
-        this.$refs.player.play()
-      },
-      stop () {
-        this.$refs.player.pause()
-      }
-    }
+const props = defineProps({
+  videoUrl: {
+    type: [String, Number],
+    required: true
+  },
+  ratio: {
+    type: Number,
+    default: 16/9
+  },
+  fillParent: {
+    type: Boolean,
+    default: false
   }
+})
+
+const fillVideoBox = ref(props.fillParent)
+const paused = ref(true)
+const videoBoxEl = ref(null)
+const player = ref(null)
+const videoBox = ref(null)
+
+const videoId = computed(() => {
+  if (Number.isInteger(props.videoUrl)) {
+    return props.videoUrl
+  }
+  const match = props.videoUrl.match(/https:\/\/vimeo.com\/(\d+)(?=\b|\/)/)
+  return match ? match[1] : null
+})
+
+const playerId = computed(() => 'vp' + videoId.value)
+
+const fitToParent = () => {
+  if (!fillVideoBox.value) return
+
+  const iframe = videoBoxEl.value?.querySelector('iframe')
+  if (!iframe) return
+  const parentRect = videoBoxEl.value.getBoundingClientRect()
+  const parentRatio = parentRect.width / parentRect.height
+
+  let w, h
+  if (props.ratio < parentRatio) {
+    w = parentRect.width
+    h = w / props.ratio
+  } else {
+    h = parentRect.height
+    w = h * props.ratio
+  }
+  iframe.style.width = Math.ceil(w) + 'px'
+  iframe.style.height = Math.ceil(h) + 'px'
+}
+
+const setPaused = (value) => {
+  paused.value = value
+}
+
+const onLoad = () => {
+  if (!player.value) return
+  player.value.unmute()
+  fitToParent()
+}
+
+const togglePlay = () => {
+  if (paused.value) {
+    play()
+  } else {
+    stop()
+  }
+}
+
+const play = () => {
+  player.value?.play()
+}
+
+const stop = () => {
+  player.value?.pause()
+}
+
+onMounted(() => {
+  videoBoxEl.value = videoBox.value
+  window.addEventListener('resize', fitToParent)
+})
 </script>

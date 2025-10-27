@@ -2,60 +2,60 @@
   <div id="firebaseui-auth"></div>
 </template>
 
-<script>
-  import { mapState } from 'vuex'
-  import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-  import * as firebaseui from 'firebaseui'
-  import { auth } from '../firebase-app'
+<script setup>
+import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
+import * as firebaseui from 'firebaseui'
+import { auth } from '../firebase-app'
 
-  let ui
+let ui
 
-  /* eslint-disable no-unused-vars */
-  const uiConfig = {
-    callbacks: {
-      // Called when the user has been successfully signed in
-      signInSuccessWithAuthResult (authResult, redirectUrl) {
-        return false
-      }
-    },
-    // Try using popup instead of redirect
-    signInFlow: 'popup',
-    credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-    signInOptions: [
-      {
-        provider: GoogleAuthProvider.PROVIDER_ID,
-        scopes: [ 'https://www.googleapis.com/auth/plus.login' ]
-      },
-      {
-        provider: EmailAuthProvider.PROVIDER_ID,
-        requireDisplayName: true
-      }
-    ]
-  }
+const store = useStore()
+const route = useRoute()
+const router = useRouter()
 
-  export default {
-    mounted () {
-      ui = ui || new firebaseui.auth.AuthUI(auth)
-      ui.start('#firebaseui-auth', uiConfig)
+const uiConfig = {
+  callbacks: {
+    signInSuccessWithAuthResult (authResult, redirectUrl) {
+      return false
+    }
+  },
+  signInFlow: 'popup',
+  credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+  signInOptions: [
+    {
+      provider: GoogleAuthProvider.PROVIDER_ID,
+      scopes: [ 'https://www.googleapis.com/auth/plus.login' ]
     },
-    computed: {
-      ...mapState([ 'user' ])
-    },
-    unmounted () {
-      ui.reset()
-    },
-    watch: {
-      user (val) {
-        if (val) {
-          if (this.$route.query.redirect) {
-            this.$router.replace(this.$route.query.redirect)
-          } else {
-            this.$router.replace('/auth')
-          }
-        }
-      }
+    {
+      provider: EmailAuthProvider.PROVIDER_ID,
+      requireDisplayName: true
+    }
+  ]
+}
+
+const user = computed(() => store.state.user)
+
+onMounted(() => {
+  ui = ui || new firebaseui.auth.AuthUI(auth)
+  ui.start('#firebaseui-auth', uiConfig)
+})
+
+onUnmounted(() => {
+  ui.reset()
+})
+
+watch(user, (val) => {
+  if (val) {
+    if (route.query.redirect) {
+      router.replace(route.query.redirect)
+    } else {
+      router.replace('/auth')
     }
   }
+})
 </script>
 
 <style lang="sass">
