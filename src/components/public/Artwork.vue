@@ -90,8 +90,9 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { mapState } from 'vuex'
+  import firebaseApp from '../../firebase-app'
+  import { getDatabase, ref, remove, update } from 'firebase/database'
   import AttachmentPanel from '../elements/AttachmentsPanel.vue'
   import RemoteControl from '../elements/RemoteControl.vue'
   import { log } from '../../helper'
@@ -110,12 +111,14 @@
 
     data () {
       return {
-        setupIndex: 0
+        setupIndex: 0,
+        accountArtwork: null,
+        accountPlayers: []
       }
     },
 
     computed: {
-      ...mapState(['userAccount', 'accountArtwork', 'accountPlayers']),
+      ...mapState(['userAccount']),
 
       sourceDescription () {
         if (this.setup && this.setup.channels.length) {
@@ -181,28 +184,23 @@
       }
     },
     methods: {
-      ...mapActions(['setRef']),
-
       init () {
         if (this.accountId) {
-          this.setRef({
-            key: 'accountArtwork',
-            ref: firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          })
-          this.setRef({
-            key: 'accountPlayers',
-            ref: firebase.database().ref('accounts/' + this.accountId + '/players')
-          })
+          const db = getDatabase(firebaseApp)
+          this.$databaseBind('accountArtwork', ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId))
+          this.$databaseBind('accountPlayers', ref(db, 'accounts/' + this.accountId + '/players'))
         }
       },
       launch (player) {
         if (!this.accountId || !this.artwork) {
           return
         }
+        const db = getDatabase(firebaseApp)
         const path = 'accounts/' + this.accountId + '/players/' + player.key + '/artwork/'
         const values = PlayerArtwork.fromArtwork(this.artworkId, this.artwork).toUpdates(path, PlayerArtwork.empty())
-        firebase.database().ref(path).remove().then(() => {
-          return firebase.database().ref().update(values)
+        const pathRef = ref(db, path)
+        remove(pathRef).then(() => {
+          return update(ref(db), values)
         }).catch(log)
       },
       stop (player) {

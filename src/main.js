@@ -6,8 +6,10 @@ import { createStore } from './store'
 import ProgressBar from './components/elements/ProgressBar.vue'
 import firebaseApp, { auth } from './firebase-app'
 import { getDatabase, ref, onValue, off, get } from 'firebase/database'
+import { onAuthStateChanged } from 'firebase/auth'
 import { plugin as inputAutoWidth } from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
+import { VueFire, VueFireDatabaseOptionsAPI } from 'vuefire'
 import App from './components/App.vue'
 
 function b64DecodeUnicode (str) {
@@ -46,6 +48,12 @@ app.use(store)
 app.use(router)
 app.use(inputAutoWidth)
 app.use(VueScrollTo)
+app.use(VueFire, {
+  firebaseApp,
+  modules: [
+    VueFireDatabaseOptionsAPI()
+  ]
+})
 
 // Add global mixin
 app.mixin(globalMixin)
@@ -67,8 +75,7 @@ app.config.globalProperties.$bar = bar
  */
 let callback = null
 let userRef = null
-const authInstance = auth()
-authInstance.onAuthStateChanged(user => {
+onAuthStateChanged(auth, (user) => {
   console.log('onAuthStateChanged:', user)
   if (callback && userRef) {
     off(userRef, 'value', callback)
@@ -82,7 +89,7 @@ authInstance.onAuthStateChanged(user => {
         return
       }
       return user.getIdToken(true).then((token) => {
-        store.commit('UPDATE_USER', {user: authInstance.currentUser, account: authInstance.currentUser})
+        store.commit('UPDATE_USER', {user: auth.currentUser, account: auth.currentUser})
         // console.log('getIdToken:', token)
         return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
       }).then(function (payload) {

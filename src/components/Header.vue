@@ -59,8 +59,10 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
-  import firebaseApp from '../firebase-app'
+  import { mapState } from 'vuex'
+  import firebaseApp, { auth } from '../firebase-app'
+  import { signOut } from 'firebase/auth'
+  import { getDatabase, ref, set } from 'firebase/database'
   import ScalableCanvasFromImage from '../assets/js/logo'
   import ColorFlicker from '../assets/js/color-flicker'
   import SubmenuHelper from '../helpers/submenu'
@@ -69,30 +71,34 @@
   export default {
     mixins: [SubmenuHelper],
 
+    data() {
+      return {
+        accounts: []
+      }
+    },
+
     created () {
       this.init()
     },
     computed: {
-      ...mapState(['user', 'userAccount', 'accounts']),
+      ...mapState(['user', 'userAccount']),
       inactiveAccounts () {
         return this.accounts.filter(account => account['.key'] !== this.userAccount['.key'])
       }
     },
     methods: {
-      ...mapActions(['setRef']),
-
       init () {
         if (this.user) {
-          this.setRef({
-            key: 'accounts',
-            ref: firebaseApp.database().ref('users/' + this.user.uid + '/accounts')
-          })
+          const db = getDatabase(firebaseApp)
+          this.$databaseBind('accounts', ref(db, 'users/' + this.user.uid + '/accounts'))
         }
       },
 
       setAccount (accountId) {
         this.closeSubmenus()
-        firebaseApp.database().ref('users/' + this.user.uid + '/accountId').set(accountId).catch(log)
+        const db = getDatabase(firebaseApp)
+        const accountRef = ref(db, 'users/' + this.user.uid + '/accountId')
+        set(accountRef, accountId).catch(log)
       },
 
       goto (path) {
@@ -101,7 +107,7 @@
       },
 
       logOut () {
-        firebaseApp.auth().signOut()
+        signOut(auth)
         this.$router.push('/')
       },
 

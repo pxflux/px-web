@@ -28,11 +28,12 @@
     "vue": "^3.3.0",
     "vue-input-autowidth": "^2.0.0",
     "vue-router": "^4.2.0",
-    "vuexfire": "^3.0.5",
-  "vue-scrollto": "^2.20.0",
+    "vue-scrollto": "^2.20.0",
     "vue-vimeo-player": "^1.0.0",
     "vue3-dropzone": "^2.0.0",
+    "vuefire": "^3.2.2",
     "vuex": "^4.1.0",
+    "vuexfire": "^3.0.5",
     "weakmap": "0.0.6"
   },
   "devDependencies": {

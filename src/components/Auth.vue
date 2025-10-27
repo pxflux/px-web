@@ -4,9 +4,9 @@
 
 <script>
   import { mapState } from 'vuex'
-  import { getAuth, GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
+  import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
   import * as firebaseui from 'firebaseui'
-  import firebaseApp from '../firebase-app'
+  import { auth } from '../firebase-app'
 
   let ui
 
@@ -18,6 +18,8 @@
         return false
       }
     },
+    // Try using popup instead of redirect
+    signInFlow: 'popup',
     credentialHelper: firebaseui.auth.CredentialHelper.NONE,
     signInOptions: [
       {
@@ -33,7 +35,6 @@
 
   export default {
     mounted () {
-      const auth = getAuth(firebaseApp)
       ui = ui || new firebaseui.auth.AuthUI(auth)
       ui.start('#firebaseui-auth', uiConfig)
     },
@@ -46,8 +47,8 @@
     watch: {
       user (val) {
         if (val) {
-          if (this.$router.currentRoute.query.redirect) {
-            this.$router.replace(this.$router.currentRoute.query.redirect)
+          if (this.$route.query.redirect) {
+            this.$router.replace(this.$route.query.redirect)
           } else {
             this.$router.replace('/auth')
           }

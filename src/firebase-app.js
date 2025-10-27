@@ -1,16 +1,23 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, push, update, onValue, get } from 'firebase/database'
+import { getDatabase as getModularDatabase, ref as modularRef, push, update, get } from 'firebase/database'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { getAuth } from 'firebase/auth'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/database'
 
-const app = initializeApp({
+const firebaseConfig = {
   apiKey: 'AIzaSyAYMwrJAFUxlY-Igs_ts-goUAkLwN2ZPKc',
   authDomain: 'pxfluxplayer.firebaseapp.com',
   databaseURL: 'https://pxfluxplayer.firebaseio.com',
   projectId: 'pxfluxplayer',
   storageBucket: 'pxfluxplayer.appspot.com',
   messagingSenderId: '434021624365'
-})
+}
+
+const app = initializeApp(firebaseConfig)
+
+// Initialize compat app for vuexfire
+const compatApp = firebase.initializeApp(firebaseConfig, 'compat')
 
 export function store (accountId, id, path, data, imageRemoved, imageFile) {
   const promise = save(id, 'accounts/' + accountId + '/' + path, data)
@@ -111,6 +118,6 @@ function getFileExtension (file) {
   return null
 }
 
-export const auth = () => getAuth(app)
+export const auth = getAuth(app)
 
 export default app

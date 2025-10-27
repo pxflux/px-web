@@ -23,16 +23,20 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import firebaseApp from '../../firebase-app'
+  import { getDatabase, ref } from 'firebase/database'
 
   export default {
+    data() {
+      return {
+        artist: {}
+      }
+    },
+
     created () {
       this.init()
     },
     computed: {
-      ...mapState(['artist']),
-
       artistId () {
         return this.$route.params.id
       },
@@ -48,13 +52,9 @@
       }
     },
     methods: {
-      ...mapActions(['setRef']),
-
       init () {
-        this.setRef({
-          key: 'artist',
-          ref: firebase.database().ref('artists/' + this.artistId)
-        })
+        const db = getDatabase(firebaseApp)
+        this.$databaseBind('artist', ref(db, 'artists/' + this.artistId))
       }
     },
     watch: {

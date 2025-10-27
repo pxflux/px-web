@@ -15,16 +15,20 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import firebaseApp from '../../firebase-app'
+  import { getDatabase, ref } from 'firebase/database'
 
   export default {
+    data() {
+      return {
+        show: {}
+      }
+    },
+
     created () {
       this.init()
     },
     computed: {
-      ...mapState(['show']),
-
       showId () {
         return this.$route.params.id
       },
@@ -35,10 +39,9 @@
       }
     },
     methods: {
-      ...mapActions(['setRef']),
-
       init () {
-        this.setRef({key: 'show', ref: firebase.database().ref('shows/' + this.showId)})
+        const db = getDatabase(firebaseApp)
+        this.$databaseBind('show', ref(db, 'shows/' + this.showId))
       }
     },
     watch: {

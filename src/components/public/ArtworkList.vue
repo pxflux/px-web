@@ -10,8 +10,9 @@
 </template>
 
 <script>
-  import firebase from '../../firebase-app'
-  import { mapActions, mapState } from 'vuex'
+  import firebaseApp from '../../firebase-app'
+  import { getDatabase, ref } from 'firebase/database'
+  import { mapState } from 'vuex'
   import { Artwork } from '../../models/ArtworkData'
   import ArtworkItem from '../elements/ArtworkItem.vue'
 
@@ -19,11 +20,18 @@
     components: {
       ArtworkItem
     },
+
+    data() {
+      return {
+        accountArtworks: []
+      }
+    },
+
     created () {
       this.init()
     },
     computed: {
-      ...mapState(['userAccount', 'accountArtworks']),
+      ...mapState(['userAccount']),
 
       accountId () {
         if (!this.userAccount) {
@@ -39,14 +47,10 @@
       }
     },
     methods: {
-      ...mapActions(['setRef']),
-
       init () {
         if (this.accountId) {
-          this.setRef({
-            key: 'accountArtworks',
-            ref: firebase.database().ref('accounts/' + this.accountId + '/artworks')
-          })
+          const db = getDatabase(firebaseApp)
+          this.$databaseBind('accountArtworks', ref(db, 'accounts/' + this.accountId + '/artworks'))
         }
       }
     },

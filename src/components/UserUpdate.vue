@@ -58,8 +58,8 @@
 
 <script>
   import { mapState } from 'vuex'
-  import { GoogleAuthProvider, EmailAuthProvider, getAuth } from 'firebase/auth'
-  import firebaseApp from '../firebase-app'
+  import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
+  import { auth } from '../firebase-app'
 
   export default {
     data () {
@@ -99,7 +99,7 @@
           let credential = EmailAuthProvider.credential(this.user.email, this.password)
           this.user.linkWithCredential(credential).then(function (user) {
             console.log('Account link', user)
-            getAuth(firebaseApp).currentUser.reload()
+            auth.currentUser.reload()
             this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this), function (error) {
             console.log('Account linking error', error)
@@ -111,7 +111,7 @@
         this.user.unlink(GoogleAuthProvider.PROVIDER_ID)
           .then(function (user) {
             console.log('Account unlink', user)
-            getAuth(firebaseApp).currentUser.reload()
+            auth.currentUser.reload()
             this.$store.commit('UPDATE_USER', {user: user})
           }.bind(this))
           .catch(function (error) {
@@ -124,7 +124,7 @@
         this.user.linkWithPopup(provider)
           .then(function (result) {
             console.log('Account link', result)
-            getAuth(firebaseApp).currentUser.reload()
+            auth.currentUser.reload()
             this.$store.commit('UPDATE_USER', {user: result.user})
           }.bind(this))
           .catch(function (error) {

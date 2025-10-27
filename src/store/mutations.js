@@ -1,5 +1,3 @@
-import { vuexfireMutations } from 'vuexfire'
-
 export default {
   UPDATE_USER (state, payload) {
     if (payload === null) {
@@ -31,7 +29,6 @@ export default {
   REMOVE_ACCOUNT_SHOW (state) {
     state.accountShow = null
   },
-  ...vuexfireMutations,
 
   SET_ITEMS: (state, {items}) => {
     items.forEach(item => {
