@@ -67,12 +67,13 @@ import { signOut } from 'firebase/auth'
 import { getDatabase, ref as dbRef, set } from 'firebase/database'
 import ScalableCanvasFromImage from '../assets/js/logo'
 import ColorFlicker from '../assets/js/color-flicker'
-import SubmenuHelper from '../helpers/submenu'
+import { useSubmenu } from '../composables/useSubmenu'
 import { log } from '../helper'
 
 const store = useStore()
 const router = useRouter()
 const instance = getCurrentInstance()
+const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
 
 const accounts = ref([])
 
@@ -89,8 +90,6 @@ const init = () => {
     instance.proxy.$databaseBind('accounts', dbRef(db, 'users/' + user.value.uid + '/accounts'))
   }
 }
-
-const { closeSubmenus, setupSubmenusWithClass } = SubmenuHelper.methods
 
 const setAccount = (accountId) => {
   closeSubmenus()
