@@ -14,19 +14,28 @@
   </transition>
 </template>
 
-<script>
-  export default {
-    props: ['artwork', 'uri'],
-    computed: {
-      thumbnail () {
-        if (this.artwork.setups.length && this.artwork.setups[0].thumbnails.length) {
-          return this.artwork.setups[0].thumbnails[0].storage
-        }
-        return null
-      },
-      artists () {
-        return this.artwork.artists.map(artist => artist.fullName).join(', ')
-      }
-    }
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  artwork: {
+    type: Object,
+    required: true
+  },
+  uri: {
+    type: String,
+    required: true
   }
+})
+
+const thumbnail = computed(() => {
+  if (props.artwork.setups.length && props.artwork.setups[0].thumbnails.length) {
+    return props.artwork.setups[0].thumbnails[0].storage
+  }
+  return null
+})
+
+const artists = computed(() => {
+  return props.artwork.artists.map(artist => artist.fullName).join(', ')
+})
 </script>

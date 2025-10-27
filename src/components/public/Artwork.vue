@@ -16,7 +16,7 @@
           <span>Javascript</span>
         </p>
         <section class="description">
-          {{ this.artwork.description }}
+          {{ artwork.description }}
         </section>
         <section class="credits">
           Credits
@@ -70,7 +70,7 @@
                 <li v-if="player.artwork.controls.length" :key="player.key + '-remote'" class="display-controls">
                   <div class="header">Remote for <span class="accent">{{ player.pin }}</span></div>
                   <remote-control :controls="player.artwork.controls" :displayId="player.pin"
-                                  v-on:select="sendControl(player, $event)"/>
+                                  @select="sendControl(player, $event)"/>
                 </li>
               </template>
             </template>

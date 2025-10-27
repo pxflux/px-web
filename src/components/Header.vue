@@ -17,8 +17,8 @@
               <div class="icon plus medium"></div>
             </a>
             <div v-if="user" class="submenu">
-              <div v-on:click="goto('/account/player/new')" class="button">Add player</div>
-              <div v-on:click="goto('/account/artwork/new')" class="button">New artwork</div>
+              <div @click="goto('/account/player/new')" class="button">Add player</div>
+              <div @click="goto('/account/artwork/new')" class="button">New artwork</div>
             </div>
           </div>
           <!-- -->
@@ -30,7 +30,7 @@
             <a class="button submenu-trigger">{{ userAccount.title }}</a>
             <div class="submenu">
               <div v-for="account in inactiveAccounts" :key="account['.key']" class="button"
-                   v-on:click="setAccount(account['.key'])">{{ account.title }}
+                   @click="setAccount(account['.key'])">{{ account.title }}
               </div>
             </div>
           </div>
@@ -45,9 +45,9 @@
               <router-link to="/account/artists" class="button">Artists</router-link>
               <div class="sub-section">
                 <router-link to="/account/players" class="button">Players</router-link>
-                <div v-on:click="goto('/account/update')" class="button">Team profile</div>
-                <div v-on:click="goto('/user/update')" class="button">Your profile</div>
-                <div v-on:click="goto('/account/invitations')" class="button">Invitations</div>
+                <div @click="goto('/account/update')" class="button">Team profile</div>
+                <div @click="goto('/user/update')" class="button">Your profile</div>
+                <div @click="goto('/account/invitations')" class="button">Invitations</div>
                 <a @click="logOut" class="button">Logout</a>
               </div>
             </div>
@@ -58,93 +58,92 @@
   </header>
 </template>
 
-<script>
-  import { mapState } from 'vuex'
-  import firebaseApp, { auth } from '../firebase-app'
-  import { signOut } from 'firebase/auth'
-  import { getDatabase, ref, set } from 'firebase/database'
-  import ScalableCanvasFromImage from '../assets/js/logo'
-  import ColorFlicker from '../assets/js/color-flicker'
-  import SubmenuHelper from '../helpers/submenu'
-  import { log } from '../helper'
+<script setup>
+import { ref, computed, onMounted, onUpdated, watch, nextTick, getCurrentInstance } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import firebaseApp, { auth } from '../firebase-app'
+import { signOut } from 'firebase/auth'
+import { getDatabase, ref as dbRef, set } from 'firebase/database'
+import ScalableCanvasFromImage from '../assets/js/logo'
+import ColorFlicker from '../assets/js/color-flicker'
+import SubmenuHelper from '../helpers/submenu'
+import { log } from '../helper'
 
-  export default {
-    mixins: [SubmenuHelper],
+const store = useStore()
+const router = useRouter()
+const instance = getCurrentInstance()
 
-    data() {
-      return {
-        accounts: []
-      }
-    },
+const accounts = ref([])
 
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['user', 'userAccount']),
-      inactiveAccounts () {
-        return this.accounts.filter(account => account['.key'] !== this.userAccount['.key'])
-      }
-    },
-    methods: {
-      init () {
-        if (this.user) {
-          const db = getDatabase(firebaseApp)
-          this.$databaseBind('accounts', ref(db, 'users/' + this.user.uid + '/accounts'))
-        }
-      },
+const user = computed(() => store.state.user)
+const userAccount = computed(() => store.state.userAccount)
 
-      setAccount (accountId) {
-        this.closeSubmenus()
-        const db = getDatabase(firebaseApp)
-        const accountRef = ref(db, 'users/' + this.user.uid + '/accountId')
-        set(accountRef, accountId).catch(log)
-      },
+const inactiveAccounts = computed(() => {
+  return accounts.value.filter(account => account['.key'] !== userAccount.value['.key'])
+})
 
-      goto (path) {
-        this.closeSubmenus()
-        this.$router.push(path)
-      },
-
-      logOut () {
-        signOut(auth)
-        this.$router.push('/')
-      },
-
-      setFlicker () {
-        this.$nextTick(function () {
-          new ColorFlicker().flickElement()
-        })
-      }
-    },
-
-    mounted: function () {
-      let logoURL = getLogoURL()
-      const canvasID = 'px-logo'
-      const logo = new ScalableCanvasFromImage(logoURL, canvasID, { fillParent: false })
-      logo.setup()
-      this.setFlicker()
-      this.setupSubmenusWithClass('submenu', 'submenu-trigger')
-      window.addEventListener('resize', function () {
-        logo.setup(getLogoURL())
-      })
-
-      function getLogoURL () {
-        const el = document.getElementById('px-logo-box')
-        const style = window.getComputedStyle(el)
-        return style.backgroundImage.slice(4, -1).replace(/"/g, '')
-      }
-    },
-    updated: function () {
-      this.setFlicker()
-      this.$nextTick(function () {
-        this.setupSubmenusWithClass('submenu', 'submenu-trigger')
-      })
-    },
-    watch: {
-      'user' () {
-        this.init()
-      }
-    }
+const init = () => {
+  if (user.value) {
+    const db = getDatabase(firebaseApp)
+    instance.proxy.$databaseBind('accounts', dbRef(db, 'users/' + user.value.uid + '/accounts'))
   }
+}
+
+const { closeSubmenus, setupSubmenusWithClass } = SubmenuHelper.methods
+
+const setAccount = (accountId) => {
+  closeSubmenus()
+  const db = getDatabase(firebaseApp)
+  const accountRef = dbRef(db, 'users/' + user.value.uid + '/accountId')
+  set(accountRef, accountId).catch(log)
+}
+
+const goto = (path) => {
+  closeSubmenus()
+  router.push(path)
+}
+
+const logOut = () => {
+  signOut(auth)
+  router.push('/')
+}
+
+const setFlicker = () => {
+  nextTick(() => {
+    new ColorFlicker().flickElement()
+  })
+}
+
+const getLogoURL = () => {
+  const el = document.getElementById('px-logo-box')
+  const style = window.getComputedStyle(el)
+  return style.backgroundImage.slice(4, -1).replace(/"/g, '')
+}
+
+onMounted(() => {
+  init()
+
+  let logoURL = getLogoURL()
+  const canvasID = 'px-logo'
+  const logo = new ScalableCanvasFromImage(logoURL, canvasID, { fillParent: false })
+  logo.setup()
+  setFlicker()
+  setupSubmenusWithClass('submenu', 'submenu-trigger')
+
+  window.addEventListener('resize', () => {
+    logo.setup(getLogoURL())
+  })
+})
+
+onUpdated(() => {
+  setFlicker()
+  nextTick(() => {
+    setupSubmenusWithClass('submenu', 'submenu-trigger')
+  })
+})
+
+watch(user, () => {
+  init()
+})
 </script>

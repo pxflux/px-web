@@ -28,7 +28,7 @@
           <p class="work-meta caption">
             <span v-show="artwork.year">{{ artwork.year }}</span>
           </p>
-          <remote-control v-if="controls.length > 0" :controls="controls" v-on:select="sendControl($event)"/>
+          <remote-control v-if="controls.length > 0" :controls="controls" @select="sendControl($event)"/>
         </template>
       </div>
     </div>
