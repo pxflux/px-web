@@ -19,27 +19,27 @@ $breakpoint-map: (
   0: (
     start: 0px,
     max: 420px,
-    rootsize: $baseline
+    rootsize: 12px
   ),
   1: (
     start: 480px,
     max: 560px,
-    rootsize: $baseline
+    rootsize: 12px
   ),
   2: (
     start: 768px,
     max: 840px,
-    rootsize: $baseline
+    rootsize: 12px
   ),
   3: (
     start: 980px,
     max: 1080px,
-    rootsize: $baseline
+    rootsize: 12px
   ),
   4: (
     start: 1280px,
     max: 1440px,
-    rootsize: $baseline
+    rootsize: 12px
   )
 );
 // Set cap height to set to the baseline.
