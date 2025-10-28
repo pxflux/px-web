@@ -1,6 +1,6 @@
 @use 'sass:math';
 @use 'sass:color';
-@import "buttons";
+@use "buttons" as *;
 
 $input-padding-x: math.div($module-size, 4);
 $input-padding-y: 0rem;

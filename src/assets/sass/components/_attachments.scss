@@ -1,4 +1,6 @@
 @use 'sass:math';
+@use '../vars' as *;
+@use '../mixins' as *;
 
 .attachments {
   $attachments-height: $module-size * 6;

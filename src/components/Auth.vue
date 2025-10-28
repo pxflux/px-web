@@ -59,7 +59,7 @@ watch(user, (val) => {
 </script>
 
 <style lang="sass">
-@import 'firebaseui/dist/firebaseui.css'
+@use 'firebaseui/dist/firebaseui.css' as *
 
 ul.firebaseui-idp-list
   margin: 0

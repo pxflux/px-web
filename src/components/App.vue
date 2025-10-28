@@ -12,5 +12,5 @@ import SiteFooter from '@/components/Footer.vue'
 </script>
 
 <style lang="scss">
-@import '../assets/sass/app.scss';
+@use '../assets/sass/app.scss' as *;
 </style>

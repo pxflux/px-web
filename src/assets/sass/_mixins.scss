@@ -1,4 +1,5 @@
 @use 'sass:math';
+@use 'vars' as *;
 
 /// Remove the unit of a length
 /// @param {Number} $number - Number to remove unit from

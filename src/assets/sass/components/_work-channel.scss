@@ -7,7 +7,7 @@ $channel-padding-small: math.div($module-size, 4);
 $channel-padding-normal: math.div($module-size, 2);
 $channel-padding-big: $module-size;
 
-@import "work_outputs";
+@use "work_outputs" as *;
 
 @mixin channel-editor-panel-width(){
   width: calc(100vw - #{$channel-padding-small*2});

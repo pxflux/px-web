@@ -10,6 +10,11 @@
 @use 'sass:list';
 @use 'sass:meta';
 @use 'sass:string';
+@use 'config' as *;
+@use 'map-helpers' as *;
+@use 'toolsets/toolset__units' as *;
+@use 'media' as *;
+@use 'debug' as *;
 
 // type shorthand helpers
 // get font family

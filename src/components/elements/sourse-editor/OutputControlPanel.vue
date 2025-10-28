@@ -78,10 +78,10 @@
 
 <style lang="scss" scoped>
   @use 'sass:color';
-  @import "../../../assets/sass/vars";
-  @import "../../../assets/sass/mixins";
-  @import "../../../assets/sass/hidpi";
-  @import "../../../assets/sass/components/hairline";
+  @use "../../../assets/sass/vars" as *;
+  @use "../../../assets/sass/mixins" as *;
+  @use "../../../assets/sass/hidpi" as *;
+  @use "../../../assets/sass/components/hairline" as *;
 
   .panel {
     width: 50%;

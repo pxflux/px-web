@@ -5,6 +5,7 @@
 // Megatype: https://github.com/StudioThick/megatype
 // =====================================================
 
+@use 'config' as *;
 
 // better text decoration
 @mixin text-link($color: $link-color, $hover: $color, $offset: $link-offset, $opacity: $link-underline-opacity, $hover-opacity: $link-underline-hover-opacity) {

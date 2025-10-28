@@ -6,6 +6,7 @@
 // =====================================================
 
 @use 'sass:math';
+@use '../config' as *;
 
 // Returns a unitless number
 @function no-unit($n) {

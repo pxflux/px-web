@@ -69,11 +69,11 @@
 
 <style lang="scss" scoped>
   @use 'sass:math';
-  @import "../../../assets/sass/vars";
-  @import "../../../assets/sass/mixins";
-  @import "../../../assets/sass/hidpi";
-  @import "../../../assets/sass/components/hairline";
-  @import "../../../assets/sass/components/buttons";
+  @use "../../../assets/sass/vars" as *;
+  @use "../../../assets/sass/mixins" as *;
+  @use "../../../assets/sass/hidpi" as *;
+  @use "../../../assets/sass/components/hairline" as *;
+  @use "../../../assets/sass/components/buttons" as *;
 
   $audio-bar-height: $module-size * 2;
   $video-box-height: $module-size * 2;

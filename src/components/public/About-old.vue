@@ -139,27 +139,27 @@
   }
 </script>
 <style lang="scss">
-  @import "../../assets/sass/vars";
-  @import "../../assets/sass/mixins";
-  
+  @use "../../assets/sass/vars" as *;
+  @use "../../assets/sass/mixins" as *;
+
   body, #app {
     min-height: 100vh;
     width: 100vw;
     position: relative;
   }
-  
+
   #app {
     display: flex;
     flex-flow: column nowrap;
-    
+
   }
-  
+
   main.home {
     margin-top: 0;
     width: 100vw;
     position: relative;
     flex-grow: 2;
-    
+
     .wrap-content {
       /*margin-top: 20rem;*/
     }
@@ -185,17 +185,17 @@
       }
     }
   }
-  
+
   footer {
-  
+
   }
-  
+
   .logo-wrap {
     position: absolute;
     width: 100%;
     height: 100%;
   }
-  
+
   #px-main-logo {
     display: block;
     position: absolute;

@@ -1,8 +1,8 @@
 @use 'sass:math';
-@import "buttons";
-@import "popper";
-@import "select";
-@import "contributor-select";
+@use "buttons" as *;
+@use "popper" as *;
+@use "select" as *;
+@use "contributor-select" as *;
 
 #form-artwork {
   max-width: $content-max-width + $module-size * 2.5;

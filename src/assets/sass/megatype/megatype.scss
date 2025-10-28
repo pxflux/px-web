@@ -10,27 +10,24 @@
 /* CSS compiled from SCSS */
 /* --------------------------------------- */
 
-// toggle debug
-$debug-allow: false !default;
-
 // helper functions
 // must be before config so that variables can use them
-@import "megatype/map-helpers";
+@forward "megatype/map-helpers";
 
 // import site base
-@import "megatype/config";
+@forward "megatype/config";
 
 // custom toolsets
-@import "megatype/toolsets/toolset__units";
-@import "megatype/toolsets/toolset__easing";
+@forward "megatype/toolsets/toolset__units";
+@forward "megatype/toolsets/toolset__easing";
 
 // import mixins
-@import "megatype/media";
-@import "megatype/container";
-@import "megatype/typography";
-@import "megatype/debug";
-@import "megatype/text-link";
+@forward "megatype/media";
+@forward "megatype/container";
+@forward "megatype/typography";
+@forward "megatype/debug";
+@forward "megatype/text-link";
 
 // import test css — enable to output some test styles
-// @import "megatype/test/globals";
-// @import "megatype/test/typography";
+// @forward "megatype/test/globals";
+// @forward "megatype/test/typography";

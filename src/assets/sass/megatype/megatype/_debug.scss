@@ -6,6 +6,8 @@
 // =====================================================
 
 @use 'sass:math';
+@use 'config' as *;
+@use 'toolsets/toolset__easing' as *;
 
 // debug breakpoints
 @mixin debug-breakpoints{

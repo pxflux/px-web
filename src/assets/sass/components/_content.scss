@@ -1,4 +1,6 @@
 @use 'sass:math';
+@use "attachments" as *;
+@use "sidebar" as *;
 
 main {
   margin-top: $module-size; // + $outline-width;
@@ -192,6 +194,3 @@ iframe.work-preview {
   width: 100%;
   height: 100%;
 }
-
-@import "attachments";
-@import "sidebar";

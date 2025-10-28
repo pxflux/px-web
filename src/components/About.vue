@@ -104,7 +104,7 @@ onMounted(() => {
 
 <style lang="scss">
   @use 'sass:math';
-  @import '../assets/sass/vars';
+  @use '../assets/sass/vars' as *;
   .about {
     padding-top: $module-size;
 

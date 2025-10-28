@@ -5,6 +5,10 @@
 // Megatype: https://github.com/StudioThick/megatype
 // =====================================================
 
+@use 'config' as *;
+@use 'map-helpers' as *;
+@use 'media' as *;
+
 // sets containers for all breakpoints. It is important to use this to avoid incorrect breakpoint values due to type scaling
 @mixin set-container {
     @include all-breakpoints {

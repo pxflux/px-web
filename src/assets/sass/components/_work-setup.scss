@@ -1,6 +1,6 @@
 @use 'sass:math';
 @use 'sass:color';
-@import "work-channel";
+@use "work-channel" as *;
 
 .tabs {
   position: relative;
