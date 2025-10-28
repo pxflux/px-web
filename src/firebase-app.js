@@ -33,18 +33,14 @@ export function store (accountId, id, path, data, imageRemoved, imageFile) {
   return promise
 }
 
-function save (id, path, data) {
-  const db = getDatabase(app)
+async function save (id, path, data) {
+  const db = getModularDatabase(app)
   if (id) {
-    const source = ref(db, path + '/' + id)
-    return update(source, data).then(function () {
-      return source
-    })
+    const source = modularRef(db, path + '/' + id)
+    await update(source, data)
+    return source
   } else {
-    const newRef = ref(db, path)
-    return push(newRef, data).then(function (ref) {
-      return ref
-    })
+    return push(modularRef(db, path), data)
   }
 }
 
@@ -120,4 +116,5 @@ function getFileExtension (file) {
 
 export const auth = getAuth(app)
 
-export default app
+export { compatApp as default }
+export { app as firebaseApp }

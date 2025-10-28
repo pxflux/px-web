@@ -102,7 +102,7 @@
         }
         store(this.accountId, this.artistId, 'artists', artist, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/artist/' + ref.key)
-        }.bind(this)).catch(log())
+        }.bind(this)).catch(log)
       }
     },
     watch: {

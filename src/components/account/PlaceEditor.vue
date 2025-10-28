@@ -97,7 +97,7 @@
         }
         store(this.accountId, this.placeId, 'places', place, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/place/' + ref.key)
-        }.bind(this)).catch(log())
+        }.bind(this)).catch(log)
       }
     },
     watch: {

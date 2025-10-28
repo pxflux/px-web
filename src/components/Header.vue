@@ -62,7 +62,7 @@
 import { ref, computed, onMounted, onUpdated, watch, nextTick, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import firebaseApp, { auth } from '../firebase-app'
+import { firebaseApp, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
 import { getDatabase, ref as dbRef, set } from 'firebase/database'
 import ScalableCanvasFromImage from '../assets/js/logo'

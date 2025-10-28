@@ -109,7 +109,7 @@
         })
         store(this.accountId, this.showId, 'shows', show, this.imageRemoved, this.imageFile).then(function (ref) {
           this.$router.push('/account/show/' + ref.key)
-        }.bind(this)).catch(log())
+        }.bind(this)).catch(log)
       }
     },
     watch: {

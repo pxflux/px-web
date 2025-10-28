@@ -13,7 +13,7 @@
 import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import firebaseApp from '../../firebase-app'
+import { firebaseApp } from '../../firebase-app'
 import { getDatabase, ref as dbRef } from 'firebase/database'
 import { Artwork } from '../../models/ArtworkData'
 import ArtworkItem from '../elements/ArtworkItem.vue'

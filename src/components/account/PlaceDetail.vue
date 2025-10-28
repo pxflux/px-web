@@ -55,7 +55,7 @@
         if (!this.accountId) {
           return
         }
-        store(this.accountId, this.placeId, 'places', {published: published}).catch(log())
+        store(this.accountId, this.placeId, 'places', {published: published}).catch(log)
       },
       removePlace () {
         if (!this.accountId) {

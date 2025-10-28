@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import firebaseApp from '../../firebase-app'
+  import { firebaseApp } from '../../firebase-app'
   import { getDatabase, ref } from 'firebase/database'
 
   export default {

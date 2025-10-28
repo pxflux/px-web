@@ -128,7 +128,7 @@
         const values = this.artwork.toUpdates(path + id + '/', original)
         firebase.database().ref().update(values).then(() => {
           this.$router.push('/artwork/' + id)
-        }).catch(log())
+        }).catch(log)
       }
     },
     watch: {

@@ -1,5 +1,5 @@
 import { getDatabase, ref, get } from 'firebase/database'
-import app from '../firebase-app'
+import { firebaseApp as app } from '../firebase-app'
 
 const logRequests = true
 

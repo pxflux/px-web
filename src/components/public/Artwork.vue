@@ -91,7 +91,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import firebaseApp from '../../firebase-app'
+  import { firebaseApp } from '../../firebase-app'
   import { getDatabase, ref, remove, update } from 'firebase/database'
   import AttachmentPanel from '../elements/AttachmentsPanel.vue'
   import RemoteControl from '../elements/RemoteControl.vue'
