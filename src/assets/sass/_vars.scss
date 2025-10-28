@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 $debug-allow: false;
 
 ///////////////
@@ -6,8 +8,8 @@ $base-size: 12;
 
 $baseline: $base-size * 1px;
 $module-size: 4rem;
-$two-thirds: $module-size / 3 * 2;
-$three-quarters: $module-size / 4 * 3;
+$two-thirds: math.div($module-size, 3) * 2;
+$three-quarters: math.div($module-size, 4) * 3;
 
 $font-size-body: 1.16666rem; // 14px
 $font-size-caption: 1rem;
@@ -46,6 +48,6 @@ $keypad-button-size: $module-size * 2;
 $options-padding: $two-thirds;
 
 $outline-color: rgba(0, 0, 0, 0.1);
-$outline-width: 1rem / $base-size;
+$outline-width: math.div(1rem, $base-size);
 
 

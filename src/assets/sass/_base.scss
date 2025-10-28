@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 //@import url('https://fonts.googleapis.com/css?family=Work+Sans:300,400,600&subset=latin-ext');
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500');
 //@import url('https://fonts.googleapis.com/css?family=Overpass+Mono:300,600&subset=latin-ext');
@@ -121,7 +123,7 @@ h3, .h3 {
 
 h1 {
   @include typeset($roboto-mono, $h1-font-size, $lineheight: 4rem, $leader: 1rem, $trailer: 1rem);
-  margin-bottom: $module-size / 2;
+  margin-bottom: math.div($module-size, 2);
 }
 
 .h1 {

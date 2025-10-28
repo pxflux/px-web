@@ -103,6 +103,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+  @use 'sass:math';
   @import '../assets/sass/vars';
   .about {
     padding-top: $module-size;
@@ -111,10 +112,10 @@ onMounted(() => {
     min-height: 100vh;
 
     .subtitle{
-      margin: 0 $module-size $module-size/2;
+      margin: 0 $module-size math.div($module-size, 2);
       /*font-weight: 400;*/
       background: $bg-semi-transparent-color;
-      line-height: $module-size /2;
+      line-height: math.div($module-size, 2);
       display: inline-block;
     }
     .content{
@@ -129,12 +130,12 @@ onMounted(() => {
       .content-cell{
         position: relative;
         background: #fff;
-        padding: $module-size / 2;
+        padding: math.div($module-size, 2);
 
         &.with-badge:before{
           content: '';
-          width: $module-size / 2;
-          height: $module-size / 2;
+          width: math.div($module-size, 2);
+          height: math.div($module-size, 2);
           position: absolute;
           top: 0;
           left: 0;
@@ -157,7 +158,7 @@ onMounted(() => {
 
   .logo-box{
     position: relative;
-    margin: $module-size / 2 $module-size;
+    margin: math.div($module-size, 2) $module-size;
   }
   canvas{
     display: block;

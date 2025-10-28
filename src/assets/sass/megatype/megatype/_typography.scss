@@ -5,35 +5,40 @@
 // Megatype: https://github.com/StudioThick/megatype
 // =====================================================
 
+@use 'sass:math';
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+@use 'sass:string';
 
 // type shorthand helpers
 // get font family
 @function font-family-of($type) {
-    @return unquote(map-get($type, font-family));
+    @return string.unquote(map.get($type, font-family));
 }
 
 @function font-family-fallback-of($type) {
-    @return unquote(map-get($type, font-family-fallback));
+    @return string.unquote(map.get($type, font-family-fallback));
 }
 
 // get bold weight
 @function bold-of($type) {
-    @return map-get($type, bold);
+    @return map.get($type, bold);
 }
 
 // get regular weight
 @function regular-of($type) {
-    @return map-get($type, regular);
+    @return map.get($type, regular);
 }
 
 // get cap-height
 @function cap-height-of($type) {
-    @return map-get($type, cap-height);
+    @return map.get($type, cap-height);
 }
 
 // get cap-height weight
 @function italic-of($type) {
-    @return map-get($type, italic);
+    @return map.get($type, italic);
 }
 
 
@@ -43,7 +48,7 @@
     // we will want to update this value before calculating rootsize, just in case it's updated by the user
     $sizes: ();
     @each $break in $breaks {
-        $sizes: join($sizes, map-get(map-get($breakpoint-map, $break), rootsize));
+        $sizes: list.join($sizes, map.get(map.get($breakpoint-map, $break), rootsize));
     }
 
     html {
@@ -51,17 +56,17 @@
         $default-break-key: $default-break + 1;
 
         // set default
-        font-size: nth($sizes, $default-break-key) / 16px * 100%;
+        font-size: math.div(list.nth($sizes, $default-break-key), 16px) * 100%;
 
         // get default size, and next size
-        $min-size: nth($sizes, $default-break-key) * nth($sizes, 1)/nth($sizes, 2);
-        $max-size: nth($sizes, $default-break-key);
-        $min-width: break-get(nth($breaks, 2), start) / 2;
-        $max-width: break-get(nth($breaks, 2), start);
+        $min-size: list.nth($sizes, $default-break-key) * math.div(list.nth($sizes, 1), list.nth($sizes, 2));
+        $max-size: list.nth($sizes, $default-break-key);
+        $min-width: math.div(break-get(list.nth($breaks, 2), start), 2);
+        $max-width: break-get(list.nth($breaks, 2), start);
 
         @if ($baseline-scaling == true) {
             @if $default-break == 0 {
-                @media screen and (min-width: px-to-em(break-get(nth($breaks, 1), start) / 2)) {
+                @media screen and (min-width: px-to-em(math.div(break-get(list.nth($breaks, 1), start), 2))) {
                     font-size: calc(#{$min-size} + #{no-unit($max-size) - no-unit($min-size)} * (100vw - #{$min-width}) / #{no-unit($max-width) - no-unit($min-width)});
                 }
             } @else {
@@ -74,22 +79,22 @@
         @if $default-break + 1 < $breakpoint-count {
             @for $i from $default-break-key + 1 through $breakpoint-count {
                 @include min-width($i - 1) {
-                    $min-size: nth($sizes, $i);
-                    $min-width: break-get(nth($breaks, $i), start);
+                    $min-size: list.nth($sizes, $i);
+                    $min-width: break-get(list.nth($breaks, $i), start);
 
-                    font-size: $min-size / 16px * 100%;
+                    font-size: math.div($min-size, 16px) * 100%;
 
                     @if ($baseline-scaling == true) {
                         @if $default-break == 0 {
                             @if $i < $breakpoint-count {
-                                $max-size: nth($sizes, $i + 1);
-                                $max-width: break-get(nth($breaks, $i + 1), start);
+                                $max-size: list.nth($sizes, $i + 1);
+                                $max-width: break-get(list.nth($breaks, $i + 1), start);
                             } @else {
                                 // largest breakpoint. Keep the scaling consitent with the previous breakpoint
-                                $size-diff: nth($sizes, $i) - nth($sizes, $i - 1);
-                                $width-diff: break-get(nth($breaks, $i), start) - break-get(nth($breaks, $i - 1), start);
-                                $max-size: nth($sizes, $i) + $size-diff;
-                                $max-width: break-get(nth($breaks, $i), start) + $width-diff;
+                                $size-diff: list.nth($sizes, $i) - list.nth($sizes, $i - 1);
+                                $width-diff: break-get(list.nth($breaks, $i), start) - break-get(list.nth($breaks, $i - 1), start);
+                                $max-size: list.nth($sizes, $i) + $size-diff;
+                                $max-width: break-get(list.nth($breaks, $i), start) + $width-diff;
                             }
 
                             font-size: calc(#{$min-size} + #{no-unit($max-size) - no-unit($min-size)} * (100vw - #{$min-width}) / #{no-unit($max-width) - no-unit($min-width)});
@@ -109,7 +114,7 @@
                     $min-size: nth($sizes, $i);
                     $min-width: break-get(nth($breaks, $i), start);
 
-                    font-size: $min-size / 16px * 100%;
+                    font-size: math.div($min-size, 16px) * 100%;
 
                     @if ($baseline-scaling == true) {
                         @if $default-break == 0 {
@@ -143,50 +148,50 @@
 // Set type, measuring from baseline and cap-height
 // output is affected by $baseline-snap config; will snap to nearest baseline if so
 @mixin typeset($font, $fontsize, $lineheight, $leader: 0px, $trailer: 0px, $snap: $baseline-snap, $use-subdivisions: $baseline-subdivisions) {
-    $context: index($breaks, $current-breakpoint);
+    $context: list.index($breaks, $current-breakpoint);
 
     // Lets write some tests first
     // This way we can disallow unintended values and catch unexpected errors
 
     // throw error if all values aren't numbers
-    @if type-of($fontsize) != number {
+    @if meta.type-of($fontsize) != number {
         @error "#{$fontsize} is not a valid format for the typeset mixin: $fontsize must be a number";
     }
-    @if type-of($lineheight) != number {
+    @if meta.type-of($lineheight) != number {
         @error "#{$lineheight} is not a valid format for the typeset mixin: $lineheight must be a number";
     }
-    @if type-of($leader) != number {
+    @if meta.type-of($leader) != number {
         @error "#{$leader} is not a valid format for the typeset mixin: $leader must be a number";
     }
-    @if type-of($trailer) != number {
+    @if meta.type-of($trailer) != number {
         @error "#{$trailer} is not a valid format for the typeset mixin: $trailer must be a number";
     }
 
     // throw error if $font is not a map
-    @if type-of($font) != map {
+    @if meta.type-of($font) != map {
         @error "#{$font} is not a valid config for the typeset mixin: $font must be a valid typeface map";
-    } @else if map-has-key($font, cap-height) == false {
+    } @else if map.has-key($font, cap-height) == false {
         // throw error if $font has no cap-height
         @error "#{inspect($font)} map contains no cap-height key: $font must be a valid typeface map";
     }
 
     // throw error if incorrect format provided
-    @if unitless($fontsize) == false and unit($fontsize) != "px" and unit($fontsize) != "rem" or type-of($fontsize) != number {
+    @if math.is-unitless($fontsize) == false and math.unit($fontsize) != "px" and math.unit($fontsize) != "rem" or meta.type-of($fontsize) != number {
         @error "#{$fontsize} is not a valid format for the typeset mixin: $fontsize must be provided as unitless, px, or rem";
     }
-    @if unitless($lineheight) == false and unit($lineheight) != "px" and unit($lineheight) != "rem" {
+    @if math.is-unitless($lineheight) == false and math.unit($lineheight) != "px" and math.unit($lineheight) != "rem" {
         @error "#{$lineheight} is not a valid format for the typeset mixin: $lineheight must be provided as unitless, px, or rem";
     }
-    @if unitless($leader) == false and unit($leader) != "px" and unit($leader) != "rem" {
+    @if math.is-unitless($leader) == false and math.unit($leader) != "px" and math.unit($leader) != "rem" {
         @error "#{$leader} is not a valid format for the typeset mixin: $leader must be provided as unitless, px, or rem";
     }
-    @if unitless($trailer) == false and unit($trailer) != "px" and unit($trailer) != "rem" {
+    @if math.is-unitless($trailer) == false and math.unit($trailer) != "px" and math.unit($trailer) != "rem" {
         @error "#{$trailer} is not a valid format for the typeset mixin: $trailer must be provided as unitless, px, or rem";
     }
 
     // check min-font-size, if provided
     @if $min-font-size != false {
-        @if unitless($min-font-size) == false and unit($min-font-size) != "px" and unit($min-font-size) != "rem" {
+        @if math.is-unitless($min-font-size) == false and math.unit($min-font-size) != "px" and math.unit($min-font-size) != "rem" {
             @error "#{$min-font-size} is not a valid format : $min-font-size must be provided as unitless, px, or rem";
         }
     }
@@ -194,39 +199,39 @@
 
     // Start by converting all unitless values to rem, and then to pixels
     // If unitless values provided, convert to rem (remember; 1rem = 1 baseline unit)
-    @if unitless($fontsize) {
+    @if math.is-unitless($fontsize) {
         $fontsize: $fontsize * 1rem;
     }
-    @if unitless($lineheight) {
+    @if math.is-unitless($lineheight) {
         $lineheight: $lineheight * 1rem;
     }
     // only convert leader and trailer if snap is off
-    @if unitless($leader) {
+    @if math.is-unitless($leader) {
         $leader: $leader * 1rem;
     }
-    @if unitless($trailer) {
+    @if math.is-unitless($trailer) {
         $trailer: $trailer * 1rem;
     }
     @if $min-font-size != false {
-        @if unitless($min-font-size) {
+        @if math.is-unitless($min-font-size) {
             $min-font-size: $min-font-size * 1rem;
         }
         //  Converting min font size to pixels
-        @if unit($min-font-size) == "rem" {
+        @if math.unit($min-font-size) == "rem" {
             $min-font-size: rem-to-px($min-font-size);
         }
     }
 
-    @if unit($fontsize) == "rem" {
+    @if math.unit($fontsize) == "rem" {
         $fontsize: rem-to-px($fontsize);
     }
-    @if unit($lineheight) == "rem" {
+    @if math.unit($lineheight) == "rem" {
         $lineheight: rem-to-px($lineheight);
     }
-    @if unit($leader) == "rem" {
+    @if math.unit($leader) == "rem" {
         $leader: rem-to-px($leader);
     }
-    @if unit($trailer) == "rem" {
+    @if math.unit($trailer) == "rem" {
         $trailer: rem-to-px($trailer);
     }
 
@@ -241,10 +246,10 @@
     }
 
     // We also need to store our cap-height
-    $cap-height: map-get($font, cap-height);
+    $cap-height: map.get($font, cap-height);
 
     // Store cap position
-    $cap-position: map-get($font, cap-position);
+    $cap-position: map.get($font, cap-position);
 
     // check cap position is non-null, otherwise assign default of 0.5
     @if $cap-position == null {
@@ -272,19 +277,19 @@
     // if baseline snap is on, we'll round these values to 1 baseline unit (1rem)
     @if $snap == true {
         // set default for subdivisions if not set, or explicitly turned off
-        @if type-of($use-subdivisions) != number {
+        @if meta.type-of($use-subdivisions) != number {
             $use-subdivisions: 1;
         }
 
         @if $use-subdivisions > 1 and $current-rootsize % $use-subdivisions > 0 {
-            @warn "You have specified a baseline subdivision (#{$use-subdivisions}) for break #{$current-breakpoint} (rootsize #{$current-rootsize}) that will not resolve to whole pixel line-heights (#{$current-rootsize} / #{$use-subdivisions} = #{$current-rootsize / $use-subdivisions}). This will cause severe rounding errors in browsers that will push your type off the grid; it is recommended you review your settings.";
+            @warn "You have specified a baseline subdivision (#{$use-subdivisions}) for break #{$current-breakpoint} (rootsize #{$current-rootsize}) that will not resolve to whole pixel line-heights (#{$current-rootsize} / #{$use-subdivisions} = #{math.div($current-rootsize, $use-subdivisions)}). This will cause severe rounding errors in browsers that will push your type off the grid; it is recommended you review your settings.";
         }
         // starting with lineheight, convert to rem and round the value, then convert back to px
-        $lineheight: rem-to-px(round(px-to-rem($lineheight * $use-subdivisions))) / $use-subdivisions;
+        $lineheight: math.div(rem-to-px(math.round(px-to-rem($lineheight * $use-subdivisions))), $use-subdivisions);
     }
 
     // compute an integer and set the line height
-    $lh-integer: no-unit($lineheight / $fontsize);
+    $lh-integer: no-unit(math.div($lineheight, $fontsize));
 
     line-height: $lh-integer;
 
@@ -304,7 +309,7 @@
     // first we need to shift our type to sit on the baseline. For this we'll use relative positioning and top
     // we'll avoid collapsing margins by using padding above, and margin below
     $type-proportion: $fs-calc * $cap-height; // height in px of type itself (this is the space taken up between the real baseline and cap height)
-    $type-space: 1px * ($lh-calc - $type-proportion) / 2; // extra space below baseline, and above cap height
+    $type-space: 1px * math.div(($lh-calc - $type-proportion), 2); // extra space below baseline, and above cap height
 
     // calculate cap-shift. This is the space in pixels that a typeface needs to move to be centered in it's line-height
     $cap-shift: $fontsize * $cap-offset - 0.75px;
@@ -319,13 +324,13 @@
         // calculate remainder of top value that doesn't sit on grid. we need to correct for this
         $modulo: ($leader + $lineheight - 2 * $type-space) % $current-rootsize;
 
-        @if ($modulo < $current-rootsize / 2) {
+        @if ($modulo < math.div($current-rootsize, 2)) {
             $shift: -$modulo;
         } @else {
             $shift: $current-rootsize - $modulo;
         }
 
-        // @debug $current-breakpoint $leader $modulo $current-rootsize / 2 $modulo < $current-rootsize / 2 $shift;
+        // @debug $current-breakpoint $leader $modulo math.div($current-rootsize, 2) $modulo < math.div($current-rootsize, 2) $shift;
     }
 
     // $type-top: $leader;
@@ -333,7 +338,7 @@
     $type-bottom: $trailer - $type-space + $type-top + $cap-shift;
 
     @if $snap == true {
-        $type-bottom: rem-to-px(round(px-to-rem($type-bottom)));
+        $type-bottom: rem-to-px(math.round(px-to-rem($type-bottom)));
     }
 
     position: relative;

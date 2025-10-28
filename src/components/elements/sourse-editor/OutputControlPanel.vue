@@ -77,6 +77,7 @@
 </script>
 
 <style lang="scss" scoped>
+  @use 'sass:color';
   @import "../../../assets/sass/vars";
   @import "../../../assets/sass/mixins";
   @import "../../../assets/sass/hidpi";
@@ -98,7 +99,7 @@
       background: transparent;
       .icon:before,
       .icon:after {
-        border-color: darken($font-color-on-dark, 30%);
+        border-color: color.adjust($font-color-on-dark, $lightness: -30%);
       }
     }
     header {

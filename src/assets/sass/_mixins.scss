@@ -1,9 +1,11 @@
+@use 'sass:math';
+
 /// Remove the unit of a length
 /// @param {Number} $number - Number to remove unit from
 /// @return {Number} - Unitless number
 @function strip-unit($number) {
   @if type-of($number) == 'number' and not unitless($number) {
-    @return $number / ($number * 0 + 1);
+    @return math.div($number, ($number * 0 + 1));
   }
   @return $number;
 }
@@ -13,10 +15,10 @@
   $x0: 1;
   $x1: $x0;
   @for $i from 1 through 10 {
-    $x1: $x0 - ($x0 * $x0 - abs($unitless)) / (2 * $x0);
+    $x1: $x0 - math.div(($x0 * $x0 - abs($unitless)), (2 * $x0));
     $x0: $x1;
   }
-  @return $x1 * ($r/$r); // get back to units
+  @return $x1 * math.div($r, $r); // get back to units
 }
 
 @mixin grey-outline(){
@@ -36,17 +38,17 @@
   transform: translate(0, -50% + $y-shift);
 }
 
-@mixin checker-bg ($color:#1a1a1a, $size: $module-size/4, $url:"/static/img/checker-12-tr@1x.png"){
+@mixin checker-bg ($color:#1a1a1a, $size: math.div($module-size, 4), $url:"/static/img/checker-12-tr@1x.png"){
   background: $color url($url) repeat fixed 0 0;
   background-size: $size;
 }
-@mixin checker-bg-20 ($color:#1a1a1a, $size: $module-size/4 ){
+@mixin checker-bg-20 ($color:#1a1a1a, $size: math.div($module-size, 4) ){
   @include checker-bg($color, $size, "/static/img/checker-12-tr20@2x.png");
 }
-@mixin checker-bg-10 ($color:#1a1a1a, $size: $module-size/4 ){
+@mixin checker-bg-10 ($color:#1a1a1a, $size: math.div($module-size, 4) ){
   @include checker-bg($color, $size, "/static/img/checker-48-tr10@2x.png");
 }
-@mixin checker-bg-5 ($color:#1a1a1a, $size: $module-size/4 ){
+@mixin checker-bg-5 ($color:#1a1a1a, $size: math.div($module-size, 4) ){
   @include checker-bg($color, $size, "/static/img/checker-48-tr5@2x.png");
 }
 

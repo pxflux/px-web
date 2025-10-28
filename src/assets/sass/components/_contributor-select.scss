@@ -1,3 +1,6 @@
+@use 'sass:math';
+@use 'sass:color';
+
 .v-select.px {
   font-family: font-family-of($work-sans) !important;
   cursor: unset;
@@ -21,7 +24,7 @@
 
   .open-indicator {
     @include button($w: $two-thirds, $h: $two-thirds);
-    @include button-icon(plus, $module-size/3);
+    @include button-icon(plus, math.div($module-size, 3));
 
     position: absolute !important;
     left: 0 !important;
@@ -30,7 +33,7 @@
     cursor: pointer !important;
   }
   &.open .open-indicator{
-    @include button-icon(cancel, $module-size/3);
+    @include button-icon(cancel, math.div($module-size, 3));
   }
 
   .selected-tag{
@@ -40,7 +43,7 @@
     height: $two-thirds;
     line-height: $two-thirds;
     margin: 0;
-    padding: 0 $module-size/4 0 0;
+    padding: 0 math.div($module-size, 4) 0 0;
     background: transparent;
     white-space: nowrap;
 
@@ -57,7 +60,7 @@
       min-height: 0;
       min-width: 0;
       font-weight: 300;
-      margin-right: $module-size/8;
+      margin-right: math.div($module-size, 8);
 
       &:before{
         content: none;
@@ -69,10 +72,10 @@
   }
   &.single {
     .open-indicator {
-      @include button-icon(drop-down, $module-size/4);
+      @include button-icon(drop-down, math.div($module-size, 4));
     }
     &.open .open-indicator{
-      @include button-icon(drop-down-open, $module-size/4);
+      @include button-icon(drop-down-open, math.div($module-size, 4));
     }
     button.clear {
       display: none;
@@ -81,7 +84,7 @@
       display: block;
     }
     .selected-tag {
-      padding-left: $two-thirds + $module-size/8;
+      padding-left: $two-thirds + math.div($module-size, 8);
       pointer-events: none;
     }
   }
@@ -96,7 +99,7 @@
   input[type="search"],
   input[type="search"]:focus,
   ul.dropdown-menu li{
-    padding-left: $two-thirds + $module-size/8;
+    padding-left: $two-thirds + math.div($module-size, 8);
     a{
       padding-left:0;
     }
@@ -107,13 +110,13 @@
   }
   ul.dropdown-menu{
     //margin-top: -1px; // compencate fore a strange gap between the menu and the panel above
-    padding: $module-size/4 0 ;
+    padding: math.div($module-size, 4) 0 ;
     background: $bg-secondary-color;
     box-shadow: 1px 1px 0 0 #575757, -1px 1px 0 0 #575757;
 
     li{
       a{
-        color: transparentize($font-color, 0.5);
+        color: color.adjust($font-color, $alpha: -0.5);
       }
       &.active{ display: none }
       &.highlight{
@@ -126,11 +129,11 @@
   }
 }
 .inline-select{
-  $h: $module-size/2;
+  $h: math.div($module-size, 2);
   font-size: $font-size-caption;
   height: $h;
   display: inline-block;
-  margin-top: ($two-thirds - $h)/2;
+  margin-top: math.div(($two-thirds - $h), 2);
   position: relative;
 
   .dropdown-toggle{
@@ -166,7 +169,7 @@
     line-height: $h;
     pointer-events: none;
     cursor: pointer !important;
-    padding: 0 $module-size/4;
+    padding: 0 math.div($module-size, 4);
     background: $bg-secondary-color;
     white-space: nowrap;
   }
@@ -175,7 +178,7 @@
     input[type="search"]:focus {
       position: relative;
       opacity: 1;
-      padding: 0 0 0 $module-size/4;
+      padding: 0 0 0 math.div($module-size, 4);
       z-index: 100;
     }
     button.cancel{

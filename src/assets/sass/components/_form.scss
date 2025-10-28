@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import "buttons";
 @import "popper";
 @import "select";
@@ -13,14 +14,14 @@ form {
   flex-grow: 1;
 
   section {
-    margin-bottom: $module-size / 2;
+    margin-bottom: math.div($module-size, 2);
   }
 
   > .row, section > .row{
-    margin-top: $module-size / 2;
+    margin-top: math.div($module-size, 2);
 
     &:last-child{
-      padding-bottom: $module-size / 2;
+      padding-bottom: math.div($module-size, 2);
     }
   }
   .row {
@@ -57,8 +58,8 @@ form {
         // NESTED ROW
         flex-flow: column;
         label{
-          margin-top: $module-size / 2;
-          min-height: $module-size / 2;
+          margin-top: math.div($module-size, 2);
+          min-height: math.div($module-size, 2);
           text-align: start;
         }
       }
@@ -67,7 +68,7 @@ form {
       > textarea {
         width: 100% !important;
 
-        padding: $module-size / 4;
+        padding: math.div($module-size, 4);
         &.attachment {
           padding: 0;
         }
@@ -75,7 +76,7 @@ form {
 
       > .description {
         display: block;
-        padding: $module-size / 4;
+        padding: math.div($module-size, 4);
       }
     }
     input, textarea, select {
@@ -102,14 +103,14 @@ form {
     min-height: $module-size;
     .tab {
       line-height: $module-size;
-      padding: 0 $module-size/4;
+      padding: 0 math.div($module-size, 4);
     }
   }
 
   input,
   textarea,
   [contenteditable="true"] {
-    padding: 0 $module-size / 4;
+    padding: 0 math.div($module-size, 4);
     @include hairline-border();
   }
 
@@ -118,7 +119,7 @@ form {
     position: relative;
     min-height: $module-size;
     font-size: $font-size-caption;
-    padding: $module-size/4;
+    padding: math.div($module-size, 4);
 
     @include weider-then-phone() {
       flex-shrink: 0;
@@ -132,7 +133,7 @@ form {
       @include weider-then-phone {
         display: block;
         width: 100%;
-        padding: 0 $module-size / 4 0 0;
+        padding: 0 math.div($module-size, 4) 0 0;
       }
     }
 
@@ -144,7 +145,7 @@ form {
       cursor: pointer;
 
       @include weider-then-phone {
-        padding: 0 $module-size / 4 0 0;
+        padding: 0 math.div($module-size, 4) 0 0;
         justify-content: flex-end;
       }
 
@@ -165,7 +166,7 @@ form {
   .description, .caption {
     font-size: $font-size-caption;
 
-    $arrow-size: $module-size /4;
+    $arrow-size: math.div($module-size, 4);
     &.with-arrow {
       position: relative;
       display: block;
@@ -181,7 +182,7 @@ form {
 
   textarea {
     &.caption {
-      padding: 1.25rem $module-size /4;
+      padding: 1.25rem math.div($module-size, 4);
       height: $module-size;
       box-shadow: none;
     }

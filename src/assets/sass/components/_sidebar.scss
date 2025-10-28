@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .sidebar{
   min-width: 5.5 * $module-size;
   font-size: $font-size-caption;
@@ -8,7 +10,7 @@
     justify-content: flex-end;
 
     .row-header{
-      padding: 0 $module-size/4;
+      padding: 0 math.div($module-size, 4);
       text-align: end;
       line-height: $module-size;
       width: 4.5 * $module-size;
@@ -23,7 +25,7 @@
   }
 
   .display-controls {
-    $module-qwarter: $module-size / 4;
+    $module-qwarter: math.div($module-size, 4);
     padding:0 $module-qwarter $module-qwarter;
     @include hairline-border();
     @include checker-bg();

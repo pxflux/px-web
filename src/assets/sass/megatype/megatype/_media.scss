@@ -5,6 +5,9 @@
 // Megatype: https://github.com/StudioThick/megatype
 // =====================================================
 
+@use 'sass:math';
+@use 'sass:meta';
+@use 'sass:map';
 
 
 // Media queries. Accepts px or em
@@ -12,8 +15,8 @@
 // Parts based on https://gist.github.com/timknight/03e6335b8816aa534cf7
 @mixin media($min: 0, $max: 0) {
     // Type of break variable
-    $min-val: type-of($min);
-    $min-unit: unit($min);
+    $min-val: meta.type-of($min);
+    $min-unit: math.unit($min);
 
     $max-val: '';
     $max-unit: '';
@@ -21,16 +24,16 @@
     // Make sure breakpoints aren't the same, or provided as the first breakpoint key (0)
     @if $min != $max or $min == 0 {
         @if $max != 0 {
-            $max-val: type-of($max);
-            $max-unit: unit($max);
+            $max-val: meta.type-of($max);
+            $max-unit: math.unit($max);
         }
 
         @if $min-unit == "px" {
-            $min: no-unit($min) / 16 * 1em;
+            $min: math.div(no-unit($min), 16) * 1em;
         }
 
         @if $max-unit == "px" {
-            $max: no-unit($max) / 16 * 1em;
+            $max: math.div(no-unit($max), 16) * 1em;
         }
 
         $query: "all" !default;
@@ -38,8 +41,8 @@
         // If it is a number then we can proceed
         @if $min-val == number or $max-val == number {
             // first, lets kick any breakpoint variables back to the breakpoint-layout mixin, which can handle these
-            @if unitless($min) and unitless($max) {
-                @if map-has-key($breakpoint-map, $min) {
+            @if math.is-unitless($min) and math.is-unitless($max) {
+                @if map.has-key($breakpoint-map, $min) {
                     // make current breakpoint context available in global scope
                     $current-breakpoint: $min !global;
                     $current-rootsize: break-get($min, rootsize) !global;
@@ -50,7 +53,7 @@
                         $minw: break-get($min, start);
                         $maxw: none;
 
-                        @if map-has-key($breakpoint-map, $max) {
+                        @if map.has-key($breakpoint-map, $max) {
                             $maxw: break-get($max, start) - 1px;
                         } @else {
                             @warn "#{$max} is not a valid breakpoint number";

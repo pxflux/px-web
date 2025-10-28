@@ -1,7 +1,10 @@
+@use 'sass:math';
+@use 'sass:color';
+
 $font-size-source: 110%;
 $source-input-height: 1.5 * $module-size;
-$channel-padding-small: $module-size / 4;
-$channel-padding-normal: $module-size / 2;
+$channel-padding-small: math.div($module-size, 4);
+$channel-padding-normal: math.div($module-size, 2);
 $channel-padding-big: $module-size;
 
 @import "work_outputs";
@@ -30,7 +33,7 @@ $channel-padding-big: $module-size;
 }
 .channel {
   position: relative;
-  border-right: 1px dashed transparentize($bg-secondary-color, 0.9);
+  border-right: 1px dashed color.adjust($bg-secondary-color, $alpha: -0.9);
   padding: $channel-padding-small;
 
   @include weider-then-iphon5 {
@@ -118,8 +121,8 @@ $channel-padding-big: $module-size;
 
       span, input {
         display: block;
-        min-height: $module-size/2;
-        padding: $module-size/4;
+        min-height: math.div($module-size, 2);
+        padding: math.div($module-size, 4);
       }
     }
     .button {

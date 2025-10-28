@@ -5,6 +5,7 @@
 // Megatype: https://github.com/StudioThick/megatype
 // =====================================================
 
+@use 'sass:math';
 
 // debug breakpoints
 @mixin debug-breakpoints{
@@ -62,10 +63,10 @@
                         // for horizontal grid, starts at center, is more complex to draw
                         linear-gradient(to right,
                             transparent 0px,
-                            transparent $current-rootsize / 2 - 1px,
-                            transparentize(darken($debug-base, 5%), 0.9) $current-rootsize / 2 - 1px,
-                            transparentize(darken($debug-base, 5%), 0.9) $current-rootsize / 2,
-                            transparent $current-rootsize / 2,
+                            transparent math.div($current-rootsize, 2) - 1px,
+                            transparentize(darken($debug-base, 5%), 0.9) math.div($current-rootsize, 2) - 1px,
+                            transparentize(darken($debug-base, 5%), 0.9) math.div($current-rootsize, 2),
+                            transparent math.div($current-rootsize, 2),
                             transparent $current-rootsize);
                     background-repeat: repeat;
                     background-position: center top;
@@ -92,7 +93,7 @@
 @mixin debug-rootsize($sizes) {
     @if $debug-allow == true and $debug-type == true {
         &:after {
-            content: 'rootsize: ' + nth($sizes, 1) + ' (' + nth($sizes, 1) / 16px * 100% + ')';
+            content: 'rootsize: ' + nth($sizes, 1) + ' (' + math.div(nth($sizes, 1), 16px) * 100% + ')';
             display: inline-block;
             position: fixed;
             top: 0;
@@ -112,7 +113,7 @@
             z-index: 1000;
 
             @include all-breakpoints {
-                content: 'rootsize: ' + break-get($current-breakpoint, rootsize) + ' (' + break-get($current-breakpoint, rootsize) / 16px * 100% + ')';
+                content: 'rootsize: ' + break-get($current-breakpoint, rootsize) + ' (' + math.div(break-get($current-breakpoint, rootsize), 16px) * 100% + ')';
             }
         }
     }

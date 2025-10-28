@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 header.main {
   position: fixed;
   width: 100%;
@@ -21,7 +23,7 @@ header.main {
     background-size: 0;
 
     @include weider-then-phone() {
-      width: round($module-size * 2.5);
+      width: math.round($module-size * 2.5);
       background: $logo-bg-color url("/static/img/pxflux-logo-Xc.png") no-repeat;
       background-size: 0;
     }

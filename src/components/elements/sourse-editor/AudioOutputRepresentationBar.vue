@@ -36,6 +36,7 @@
 </script>
 
 <style lang="scss" scoped>
+  @use 'sass:math';
   @import "../../../assets/sass/vars";
   @import "../../../assets/sass/mixins";
   @import "../../../assets/sass/hidpi";
@@ -70,7 +71,7 @@
       flex-grow: 0;
       display: flex;
       align-items: center;
-      margin-right: $module-size / 8;
+      margin-right: math.div($module-size, 8);
 
       width: $module-size * 2;
       height: $module-size;
@@ -85,8 +86,8 @@
         position: absolute;
         top: 0;
         right: 0;
-        width: $module-size/2;
-        height: $module-size/2;
+        width: math.div($module-size, 2);
+        height: math.div($module-size, 2);
         @include button-icon(drop-down);
         &:before {
           border-color: #c7c7c7;
@@ -98,13 +99,13 @@
         span {
           display: block;
           &:last-child, &.type {
-            font-size: $font-size-caption / 1.2;
+            font-size: math.div($font-size-caption, 1.2);
           }
         }
       }
     }
     .output-box.video {
-      $screen-width: $module-size * 2 * (16/9);
+      $screen-width: $module-size * 2 * math.div(16, 9);
 
       background: #fff;
       height: $module-size * 2;
@@ -112,7 +113,7 @@
       position: relative;
 
       &.projection {
-        margin-top: $module-size/4;
+        margin-top: math.div($module-size, 4);
       }
     }
   }

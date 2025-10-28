@@ -1,4 +1,6 @@
-$select-padding: $module-size/3;
+@use 'sass:math';
+
+$select-padding: math.div($module-size, 3);
 $select-line-height: $three-quarters;
 
 .v-select {
@@ -79,7 +81,7 @@ $select-line-height: $three-quarters;
     z-index: 1000;
     min-width: 3 * $module-size;
     width: 100%;
-    padding: $module-size/8 0;
+    padding: math.div($module-size, 8) 0;
     margin: 0;
     overflow-y: scroll;
     box-shadow: 1px 1px 0 $font-color, -1px 1px 0 $font-color, 0 5px 15px 0 rgba(0, 0, 0, .15);

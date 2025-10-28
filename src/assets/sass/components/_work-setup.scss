@@ -1,14 +1,16 @@
+@use 'sass:math';
+@use 'sass:color';
 @import "work-channel";
 
 .tabs {
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  color: transparentize($font-color, 0.85);
+  color: color.adjust($font-color, $alpha: -0.85);
 
   > * {
     position: relative !important;
-    padding: 0 $module-size / 4;
+    padding: 0 math.div($module-size, 4);
     line-height: $module-size;
     cursor: pointer;
   }
