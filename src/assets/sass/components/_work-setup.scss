@@ -1,5 +1,8 @@
 @use 'sass:math';
 @use 'sass:color';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'hairline' as *;
 @use "work-channel" as *;
 
 .tabs {

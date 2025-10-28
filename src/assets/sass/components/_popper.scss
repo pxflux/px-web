@@ -1,5 +1,7 @@
 @use 'sass:math';
 @use 'sass:color';
+@use '../vars' as *;
+@use '../mixins' as *;
 
 $pop-arrow-size: math.div($module-size, 8);
 $pop-bg-color: color.adjust($bg-color, $alpha: -0.1);

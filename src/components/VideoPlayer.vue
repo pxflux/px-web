@@ -1,11 +1,6 @@
 <template>
   <div v-if="videoId" class="video-box" ref="videoBox">
-    <vimeo-player ref="player" class="vimeo-player"
-                  :video-id='videoId'
-                  :options="{background:true, autoplay:false, byline:false, portrait:false, title:false, fullscreen:false}"
-                  @pause="setPaused(true)"
-                  @play="setPaused(false)"
-                  @loaded="onLoad"/>
+    <div ref="vimeoContainer" class="vimeo-player"></div>
     <div class="overlay" @click="togglePlay">
       <div class="button frameless" :class="{play: paused, pause: !paused}" @click="togglePlay">
         <i :class="{play: paused, pause: !paused}"></i>
@@ -16,8 +11,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { vueVimeoPlayer } from 'vue-vimeo-player'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import Player from '@vimeo/player'
 
 const props = defineProps({
   videoUrl: {
@@ -36,9 +31,9 @@ const props = defineProps({
 
 const fillVideoBox = ref(props.fillParent)
 const paused = ref(true)
-const videoBoxEl = ref(null)
-const player = ref(null)
 const videoBox = ref(null)
+const vimeoContainer = ref(null)
+let player = null
 
 const videoId = computed(() => {
   if (Number.isInteger(props.videoUrl)) {
@@ -48,14 +43,12 @@ const videoId = computed(() => {
   return match ? match[1] : null
 })
 
-const playerId = computed(() => 'vp' + videoId.value)
-
 const fitToParent = () => {
   if (!fillVideoBox.value) return
 
-  const iframe = videoBoxEl.value?.querySelector('iframe')
+  const iframe = videoBox.value?.querySelector('iframe')
   if (!iframe) return
-  const parentRect = videoBoxEl.value.getBoundingClientRect()
+  const parentRect = videoBox.value.getBoundingClientRect()
   const parentRatio = parentRect.width / parentRect.height
 
   let w, h
@@ -75,8 +68,8 @@ const setPaused = (value) => {
 }
 
 const onLoad = () => {
-  if (!player.value) return
-  player.value.unmute()
+  if (!player) return
+  player.setVolume(1)
   fitToParent()
 }
 
@@ -89,15 +82,40 @@ const togglePlay = () => {
 }
 
 const play = () => {
-  player.value?.play()
+  player?.play()
 }
 
 const stop = () => {
-  player.value?.pause()
+  player?.pause()
+}
+
+const initPlayer = () => {
+  if (!vimeoContainer.value || !videoId.value) return
+
+  player = new Player(vimeoContainer.value, {
+    id: videoId.value,
+    background: true,
+    autoplay: false,
+    byline: false,
+    portrait: false,
+    title: false,
+    fullscreen: false
+  })
+
+  player.on('play', () => setPaused(false))
+  player.on('pause', () => setPaused(true))
+  player.on('loaded', onLoad)
 }
 
 onMounted(() => {
-  videoBoxEl.value = videoBox.value
+  initPlayer()
   window.addEventListener('resize', fitToParent)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', fitToParent)
+  if (player) {
+    player.destroy()
+  }
 })
 </script>

@@ -1,6 +1,7 @@
 @use 'sass:math';
 @use '../vars' as *;
 @use '../mixins' as *;
+@use 'hairline' as *;
 
 .sidebar{
   min-width: 5.5 * $module-size;

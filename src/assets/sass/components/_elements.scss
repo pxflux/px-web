@@ -1,5 +1,8 @@
 @use 'sass:math';
 @use 'sass:color';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'hairline' as *;
 @use "buttons" as *;
 
 $input-padding-x: math.div($module-size, 4);

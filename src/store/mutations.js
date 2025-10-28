@@ -3,7 +3,7 @@ export default {
     if (payload === null) {
       state.user = null
       state.userAccount = null
-      state.accounts = []
+      state.accounts = {}
       state.account = null
       state.accountArtworks = []
       state.accountArtwork = null

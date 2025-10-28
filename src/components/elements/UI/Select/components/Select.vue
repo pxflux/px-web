@@ -16,7 +16,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </span>
-      
+
       <input
         ref="search"
         v-model="search"
@@ -36,7 +36,7 @@
         :readonly="!searchable"
         :id="inputId"
         aria-label="Search for option"/>
-      
+
       <button
         v-show="showClearButton"
         :disabled="disabled"
@@ -46,14 +46,14 @@
         title="Clear selection">
         <i class="cancel small"></i>
       </button>
-      
+
       <i v-if="!noDrop" ref="openIndicator" role="presentation" class="open-indicator"></i>
-      
+
       <slot name="spinner">
         <div class="spinner" v-show="mutableLoading">Loading...</div>
       </slot>
     </div>
-    
+
     <transition :name="transition">
       <ul ref="dropdownMenu" v-if="dropdownOpen" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
         <li v-for="(option, index) in filteredOptions" v-bind:key="index"
@@ -699,11 +699,12 @@
         }
         let options = this.mutableOptions.filter((option) => {
           if (typeof option === 'object' && option.hasOwnProperty(this.label)) {
-            return option[this.label].toLowerCase().indexOf(this.search.toLowerCase()) > -1
+            const label = option[this.label]
+            return label && label.toLowerCase().indexOf(this.search.toLowerCase()) > -1
           } else if (typeof option === 'object' && !option.hasOwnProperty(this.label)) {
             return console.warn(`[vue-select warn]: Label key "option.${this.label}" does not exist in options object.\nhttp://sagalbot.github.io/vue-select/#ex-labels`)
           }
-          return option.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          return option && option.toLowerCase().indexOf(this.search.toLowerCase()) > -1
         })
         if (this.taggable && this.search.length && !this.optionExists(this.search)) {
           options.unshift(this.search)

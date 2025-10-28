@@ -1,4 +1,8 @@
 @use 'sass:math';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'hairline' as *;
+@use 'buttons' as *;
 
 $select-padding: math.div($module-size, 3);
 $select-line-height: $three-quarters;

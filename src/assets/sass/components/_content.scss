@@ -1,4 +1,7 @@
 @use 'sass:math';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'hairline' as *;
 @use "attachments" as *;
 @use "sidebar" as *;
 

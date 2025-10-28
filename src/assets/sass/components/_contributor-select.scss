@@ -1,8 +1,13 @@
 @use 'sass:math';
 @use 'sass:color';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use '../base' as *;
+@use '../megatype/megatype' as megatype;
+@use 'buttons' as *;
 
 .v-select.px {
-  font-family: font-family-of($work-sans) !important;
+  font-family: megatype.font-family-of($work-sans) !important;
   cursor: unset;
 
   *{

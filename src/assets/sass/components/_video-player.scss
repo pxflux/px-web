@@ -1,3 +1,7 @@
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'buttons' as *;
+
 .video-preview-box{
   position: relative;
   height: 0;

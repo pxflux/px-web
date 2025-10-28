@@ -1,5 +1,6 @@
 @use 'sass:math';
 @use 'vars' as *;
+@use 'components/hairline' as *;
 
 /// Remove the unit of a length
 /// @param {Number} $number - Number to remove unit from

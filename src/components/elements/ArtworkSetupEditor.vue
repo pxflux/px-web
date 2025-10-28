@@ -61,107 +61,105 @@
   </div>
 </template>
 
-<script>
+<script setup>
+  import { ref, computed, watch, nextTick } from 'vue'
   import { AWSetup, AWSetups } from '../../models/AWSetup'
   import { AWChannel, AWChannels } from '../../models/AWChannel'
-  import VSelect from './UI/Select/components/Select.vue'
   import ImageAttachmentEditor from './ImageAttachmentEditor.vue'
   import VideoAttachmentEditor from './VideoAttachmentEditor.vue'
   import ChannelEditor from './sourse-editor/ChannelEditor.vue'
 
-  export default {
-    name: 'artwork-setup-editor',
-    props: ['value'],
-    components: {
-      VSelect,
-      ImageAttachmentEditor,
-      VideoAttachmentEditor,
-      ChannelEditor
+  const props = defineProps({
+    value: Array
+  })
+
+  const emit = defineEmits(['input'])
+
+  const setups = ref((props.value && props.value.length) ? props.value : [AWSetup.empty()])
+  const setupIndex = ref(0)
+  const renameConfigOpen = ref(false)
+  const channelIndex = ref(0)
+
+  const setupName = computed({
+    get() {
+      return setups.value[setupIndex.value].title
     },
-    data () {
-      let setups = this.value.length ? this.value : [AWSetup.empty()]
-      return {
-        setups: setups,
-        setupIndex: 0,
-        scrolling: false,
-        renameConfigOpen: false,
-        channelIndex: 0
-      }
-    },
-    computed: {
-      setupName: {
-        set (newValue) {
-          this.setups[this.setupIndex].title = newValue
-          this.update()
-        },
-        get () { return this.setups[this.setupIndex].title }
-      },
-      setupChannels () {
-        let channels = this.setups[this.setupIndex].channels
-        return channels.length ? channels : [AWChannel.empty()]
-      }
-    },
-    methods: {
-      // onScroll (e) {
-      //   this.$refs['channelEditor'].fixPanelsOnScroll(e)
-      // },
-      addSetup () {
-        AWSetups.append(this.setups)
-        this.selectSetup(this.setups.length)
-        this.update()
-      },
-      removeSetup () {
-        AWSetups.remove(this.setups, this.setupIndex)
-        this.selectSetup(this.setupIndex - 1)
-        this.update()
-      },
-      selectSetup (index) {
-        if (index < 0) {
-          this.setupIndex = 0
-        } else if (index >= this.setups.length) {
-          this.setupIndex = this.setups.length - 1
-        } else {
-          this.setupIndex = index
-        }
-      },
-      addChannel () {
-        AWChannels.append(this.setups[this.setupIndex].channels)
-        this.selectChannel(this.setups[this.setupIndex].channels.length)
-        this.$nextTick(() => {
-          this.$scrollTo('#' + this.channelID(this.channelIndex), {container: '#channels-container', x: true, y: false})
-        })
-      },
-      setChannel (index, event) {
-        this.setups[this.setupIndex].channels[index] = event
-        this.update()
-      },
-      removeChannel (index) {
-        AWChannels.remove(this.setups[this.setupIndex].channels, index)
-        this.selectChannel(index - 1)
-        this.update()
-      },
-      selectChannel (index) {
-        if (index < 0) {
-          this.channelIndex = 0
-        } else if (index >= this.setups[this.setupIndex].channels.length) {
-          this.channelIndex = this.setups[this.setupIndex].channels.length - 1
-        } else {
-          this.channelIndex = index
-        }
-      },
-      update () {
-        this.$emit('input', AWSetups.fromJson(JSON.parse(JSON.stringify(this.setups))))
-      },
-      channelID (index) { return 'ch' + index }
-    },
-    watch: {
-      value: function () {
-        if (Array.isArray(this.value) && this.value.length > 0) {
-          this.setups = this.value
-        } else {
-          this.setups = [AWSetup.empty()]
-        }
-      }
+    set(newValue) {
+      setups.value[setupIndex.value].title = newValue
+      update()
+    }
+  })
+
+  const setupChannels = computed(() => {
+    let channels = setups.value[setupIndex.value].channels
+    return channels.length ? channels : [AWChannel.empty()]
+  })
+
+  const addSetup = () => {
+    AWSetups.append(setups.value)
+    selectSetup(setups.value.length)
+    update()
+  }
+
+  const removeSetup = () => {
+    AWSetups.remove(setups.value, setupIndex.value)
+    selectSetup(setupIndex.value - 1)
+    update()
+  }
+
+  const selectSetup = (index) => {
+    if (index < 0) {
+      setupIndex.value = 0
+    } else if (index >= setups.value.length) {
+      setupIndex.value = setups.value.length - 1
+    } else {
+      setupIndex.value = index
     }
   }
+
+  const addChannel = () => {
+    AWChannels.append(setups.value[setupIndex.value].channels)
+    selectChannel(setups.value[setupIndex.value].channels.length)
+    nextTick(() => {
+      const scrollToElement = document.querySelector('#' + channelID(channelIndex.value))
+      if (scrollToElement) {
+        scrollToElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+      }
+    })
+  }
+
+  const setChannel = (index, event) => {
+    setups.value[setupIndex.value].channels[index] = event
+    update()
+  }
+
+  const removeChannel = (index) => {
+    AWChannels.remove(setups.value[setupIndex.value].channels, index)
+    selectChannel(index - 1)
+    update()
+  }
+
+  const selectChannel = (index) => {
+    if (index < 0) {
+      channelIndex.value = 0
+    } else if (index >= setups.value[setupIndex.value].channels.length) {
+      channelIndex.value = setups.value[setupIndex.value].channels.length - 1
+    } else {
+      channelIndex.value = index
+    }
+  }
+
+  const update = () => {
+    emit('input', AWSetups.fromJson(JSON.parse(JSON.stringify(setups.value))))
+  }
+
+  const channelID = (index) => 'ch' + index
+
+  watch(() => props.value, (newValue) => {
+    if (Array.isArray(newValue) && newValue.length > 0) {
+      setups.value = newValue
+    } else {
+      setups.value = [AWSetup.empty()]
+    }
+  })
 </script>

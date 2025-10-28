@@ -1,4 +1,6 @@
 @use 'sass:math';
+@use '../vars' as *;
+@use '../mixins' as *;
 
 @function no-unit($n) {
   @return math.div($n, ($n * 0 + 1))

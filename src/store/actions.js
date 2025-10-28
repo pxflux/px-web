@@ -1,6 +1,9 @@
 import { fetchArtworks } from '../api'
 
 export default {
+  setRef: ({state}, {key, ref}) => {
+    state[key] = ref
+  },
   FETCH_ITEMS: ({commit, state}, {ids}) => {
     // only fetch items that we do not already have, or has expired (3 minutes)
     const now = Date.now()

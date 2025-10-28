@@ -1,3 +1,5 @@
+@use '../hidpi' as *;
+
 /** Mixin stack for hairline borders on HiDPI screens
 *  [1] Sets a standard border for all devices
 *  [2] Matches devices with a HiDPI screen resolution

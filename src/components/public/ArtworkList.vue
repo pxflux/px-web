@@ -10,19 +10,19 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { firebaseApp } from '../../firebase-app'
-import { getDatabase, ref as dbRef } from 'firebase/database'
+import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
 import { Artwork } from '../../models/ArtworkData'
 import ArtworkItem from '../elements/ArtworkItem.vue'
 
 const store = useStore()
 const route = useRoute()
-const instance = getCurrentInstance()
 
 const accountArtworks = ref([])
+let accountArtworksUnsubscribe = null
 
 const userAccount = computed(() => store.state.userAccount)
 
@@ -35,15 +35,33 @@ const accountId = computed(() => {
 
 const artworks = computed(() => {
   if (accountArtworks.value) {
-    return accountArtworks.value.map(it => Artwork.fromJson(it))
+    if (Array.isArray(accountArtworks.value)) {
+      return accountArtworks.value.map(it => Artwork.fromJson(it))
+    } else {
+      return Object.keys(accountArtworks.value).map(key => {
+        return Artwork.fromJson(Object.assign({}, accountArtworks.value[key], { key }))
+      })
+    }
   }
   return []
 })
 
 const init = () => {
+  if (accountArtworksUnsubscribe) {
+    accountArtworksUnsubscribe()
+  }
   if (accountId.value) {
     const db = getDatabase(firebaseApp)
-    instance.proxy.$databaseBind('accountArtworks', dbRef(db, 'accounts/' + accountId.value + '/artworks'))
+    const artworksRef = dbRef(db, 'accounts/' + accountId.value + '/artworks')
+    accountArtworksUnsubscribe = onValue(artworksRef, (snapshot) => {
+      if (snapshot.exists()) {
+        accountArtworks.value = snapshot.val()
+      } else {
+        accountArtworks.value = []
+      }
+    }, (error) => {
+      console.error('Error loading artworks:', error)
+    })
   }
 }
 

@@ -10,6 +10,8 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { plugin as inputAutoWidth } from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
 import { VueFire, VueFireDatabaseOptionsAPI } from 'vuefire'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 import App from './components/App.vue'
 
 function b64DecodeUnicode (str) {
@@ -48,6 +50,7 @@ app.use(store)
 app.use(router)
 app.use(inputAutoWidth)
 app.use(VueScrollTo)
+app.use(ElementPlus)
 app.use(VueFire, {
   firebaseApp,
   modules: [

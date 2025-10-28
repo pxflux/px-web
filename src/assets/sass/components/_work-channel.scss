@@ -1,5 +1,8 @@
 @use 'sass:math';
 @use 'sass:color';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'hairline' as *;
 
 $font-size-source: 110%;
 $source-input-height: 1.5 * $module-size;

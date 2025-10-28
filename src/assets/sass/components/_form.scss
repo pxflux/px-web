@@ -1,4 +1,7 @@
 @use 'sass:math';
+@use '../vars' as *;
+@use '../mixins' as *;
+@use 'hairline' as *;
 @use "buttons" as *;
 @use "popper" as *;
 @use "select" as *;

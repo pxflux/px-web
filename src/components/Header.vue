@@ -64,7 +64,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { firebaseApp, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
-import { getDatabase, ref as dbRef, set } from 'firebase/database'
+import { getDatabase, ref as dbRef, set, onValue, off } from 'firebase/database'
 import ScalableCanvasFromImage from '../assets/js/logo'
 import ColorFlicker from '../assets/js/color-flicker'
 import { useSubmenu } from '../composables/useSubmenu'
@@ -75,19 +75,33 @@ const router = useRouter()
 const instance = getCurrentInstance()
 const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
 
-const accounts = ref([])
+const accounts = ref({})
+let accountsUnsubscribe = null
 
 const user = computed(() => store.state.user)
 const userAccount = computed(() => store.state.userAccount)
 
 const inactiveAccounts = computed(() => {
-  return accounts.value.filter(account => account['.key'] !== userAccount.value['.key'])
+  const accountsArray = Array.isArray(accounts.value) ? accounts.value : Object.values(accounts.value)
+  return accountsArray.filter(account => account && account['.key'] !== userAccount.value?.['.key'])
 })
 
 const init = () => {
+  if (accountsUnsubscribe) {
+    accountsUnsubscribe()
+  }
   if (user.value) {
     const db = getDatabase(firebaseApp)
-    instance.proxy.$databaseBind('accounts', dbRef(db, 'users/' + user.value.uid + '/accounts'))
+    const accountsRef = dbRef(db, 'users/' + user.value.uid + '/accounts')
+    accountsUnsubscribe = onValue(accountsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        accounts.value = snapshot.val()
+      } else {
+        accounts.value = {}
+      }
+    }, (error) => {
+      log('Error loading accounts:', error)
+    })
   }
 }
 
@@ -144,5 +158,12 @@ onUpdated(() => {
 
 watch(user, () => {
   init()
-})
+}, { immediate: false })
+
+watch(() => {
+  if (accountsUnsubscribe) {
+    accountsUnsubscribe()
+    accountsUnsubscribe = null
+  }
+}, { immediate: false })
 </script>
