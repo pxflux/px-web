@@ -46,9 +46,9 @@
           </li>
         </ul>
         <h2>Email Preferences</h2>
-        <form>
+        <form @submit.prevent="updateEmailPreferences">
           <label for="receive_emails">Receive Emails</label>
-          <input type="checkbox" id="receive_emails" name="receive_emails" checked="checked">
+          <input type="checkbox" id="receive_emails" name="receive_emails" v-model="receiveEmails">
           <button class="right">Save Changes</button>
         </form>
       </div>
@@ -57,10 +57,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-import { auth } from '../firebase-app'
+import { auth, db } from '../firebase-app'
+import { ref as modularRef, update, get } from 'firebase/database'
 
 const store = useStore()
 const user = computed(() => store.state.user)
@@ -68,6 +69,7 @@ const user = computed(() => store.state.user)
 const displayName = ref(user.value?.displayName || '')
 const email = ref(user.value?.email || '')
 const password = ref('')
+const receiveEmails = ref(false)
 
 const googleFederated = computed(() => {
   return user.value?.providerData.find(o => o.providerId === GoogleAuthProvider.PROVIDER_ID)
@@ -133,4 +135,36 @@ const connectGoogle = () => {
       console.log('Account linking error', error)
     })
 }
+
+const loadEmailPreferences = async () => {
+  if (!user.value?.uid) return
+  try {
+    const preferencesRef = modularRef(db, `users/${user.value.uid}/preferences`)
+    const snapshot = await get(preferencesRef)
+    const preferences = snapshot.val()
+    if (preferences && preferences.receiveEmails !== undefined) {
+      receiveEmails.value = preferences.receiveEmails
+    }
+  } catch (error) {
+    console.error('Error loading email preferences:', error)
+  }
+}
+
+const updateEmailPreferences = async () => {
+  if (!user.value?.uid) return
+  try {
+    const preferencesRef = modularRef(db, `users/${user.value.uid}/preferences`)
+    await update(preferencesRef, {
+      receiveEmails: receiveEmails.value,
+      updatedAt: new Date().toISOString()
+    })
+    console.log('Email preferences saved successfully')
+  } catch (error) {
+    console.error('Error saving email preferences:', error)
+  }
+}
+
+onMounted(() => {
+  loadEmailPreferences()
+})
 </script>
