@@ -83,7 +83,7 @@ onAuthStateChanged(auth, (user) => {
       }).then(function (payload) {
         console.log('Token payload:', payload)
         if (!payload.hasOwnProperty('accountId')) {
-          console.log('No accountId in token payload, fetching from user accounts')
+          console.warn('No accountId in token payload, fetching from user accounts')
           const accountsRef = ref(db, 'users/' + user.uid + '/accounts')
           return get(accountsRef).then(function (snapshot) {
             if (snapshot.exists()) {
@@ -105,7 +105,9 @@ onAuthStateChanged(auth, (user) => {
                 }
               }
             } else {
-              console.log('No user accounts found')
+              console.warn('No user accounts found for authenticated user:', user.email)
+              // User exists but has no accounts - they may need to be invited
+              store.commit('UPDATE_USER', {user: user, account: null})
             }
           })
         }
@@ -121,7 +123,11 @@ onAuthStateChanged(auth, (user) => {
           store.commit('UPDATE_USER', {user: user, account: account})
         })
       }).catch(function (error) {
-        console.log('Error fetching account:', error.message || error)
+        console.error('Error fetching account:', error.message || error)
+        // If account fetching fails, still update the user but show an error state
+        store.commit('UPDATE_USER', {user: user, account: null})
+        // You could dispatch a notification action here if you have a notification system
+        console.warn('User authenticated but no valid account found. User may need to be invited to an account.')
       })
     })
   } else {
