@@ -44,62 +44,23 @@
   </main>
 </template>
 
-<script>
-  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
-  import { computed, ref, watch } from 'vue'
-
-  export default {
-    setup() {
-      const { data: config, bind } = useFirebaseBinding('config')
-      const loading = ref(true)
-
-      // Watch for config changes to determine loading state
-      watch(config, (newConfig) => {
-        loading.value = newConfig === null
-      }, { immediate: true })
-
-      const distribute = computed(() => {
-        if (config.value && config.value.distribute) {
-          return config.value.distribute
-        }
-        return { macos: {} }
-      })
-
-      return {
-        config,
-        distribute,
-        loading
-      }
-    }
 <script setup>
-import { computed, watch, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { ref } from 'firebase/database'
-import { db } from '@/firebase-app'
+import { computed, ref, watch } from 'vue'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
-const storeInstance = useStore()
-const route = useRoute()
+const { data: config } = useFirebaseBinding('config')
+const loading = ref(true)
 
-const config = computed(() => storeInstance.state.config)
+// Watch for config changes to determine loading state
+watch(config, (newConfig) => {
+  loading.value = newConfig === null
+}, { immediate: true })
 
 const distribute = computed(() => {
-  if (config.value) {
+  if (config.value && config.value.distribute) {
     return config.value.distribute
   }
   return { macos: {} }
-})
-
-const init = () => {
-  storeInstance.dispatch('setRef', { key: 'config', ref: ref(db, 'config') })
-}
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
 })
 </script>
 
