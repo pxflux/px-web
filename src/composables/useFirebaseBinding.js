@@ -1,53 +1,67 @@
-import { ref, onUnmounted, watch } from 'vue'
-import { onValue, ref as dbRef } from 'firebase/database'
-import { db } from '../firebase-app'
+import { ref, onUnmounted, watch } from "vue";
+import { onValue, ref as dbRef } from "firebase/database";
+import { db } from "../firebase-app";
 
-export function useFirebaseBinding(pathRef) {
-  const data = ref(null)
-  let unsubscribe = null
+export function useFirebaseBinding(pathRef, options = {}) {
+  const { transform, isList = true, defaultValue = [] } = options;
+  const data = ref(defaultValue);
+  let unsubscribe = null;
 
   const bind = (path) => {
-    if (unsubscribe) {
-      unsubscribe()
-    }
+    unbind();
     unsubscribe = onValue(
       dbRef(db, path),
       (snapshot) => {
         if (snapshot.exists()) {
-          data.value = snapshot.val()
+          const value = snapshot.val();
+          if (isList) {
+            if (Array.isArray(value)) {
+              data.value = transform ? transform(value) : value;
+            } else {
+              data.value = Object.keys(value).map((key) => {
+                const item = { ...value[key], ".key": key };
+                return transform ? transform(item) : item;
+              });
+            }
+          } else {
+            data.value = transform ? transform(value) : value;
+          }
         } else {
-          data.value = null
+          data.value = defaultValue;
         }
       },
       (error) => {
-        console.error('Firebase binding error:', error)
-        data.value = null
+        console.error("Firebase binding error:", error);
+        data.value = defaultValue;
       }
-    )
-  }
+    );
+  };
 
   const unbind = () => {
     if (unsubscribe) {
-      unsubscribe()
-      unsubscribe = null
+      unsubscribe();
+      unsubscribe = null;
     }
-    data.value = null
-  }
+    data.value = defaultValue;
+  };
 
   onUnmounted(() => {
-    unbind()
-  })
+    unbind();
+  });
 
-  watch(pathRef, (path) => {
-    if (path) {
-      bind(path)
-    } else {
-      unbind()
-    }
-  }, { immediate: true })
+  watch(
+    pathRef,
+    (path) => {
+      if (path) {
+        bind(path);
+      } else {
+        unbind();
+      }
+    },
+    { immediate: true }
+  );
 
   return {
-    data
-  }
+    data,
+  };
 }
-

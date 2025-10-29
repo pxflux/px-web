@@ -46,35 +46,10 @@
               <div class="icon plus"></div>
             </div>
           </div>
-          <ul v-if="players.length">
-            <template v-for="player in players">
-              <template v-if="!player.isArtworkLaunched(id)">
-                <li class="row" :key="player.key">
-                  <div class="cell row-header" @click="launch(player)">
-                    Preview on Display <span class="accent">{{ player.pin }}</span>
-                  </div>
-                  <div class="button" @click="launch(player)">
-                    <div class="icon display play"></div>
-                  </div>
-                </li>
-              </template>
-              <template v-if="player.isArtworkLaunched(id)">
-                <li class="row" :key="player.key">
-                  <div class="cell row-header active" @click="stop(player)">
-                    Stop Preview on <span class="accent">{{ player.pin }}</span>
-                  </div>
-                  <div class="button" @click="stop(player)">
-                    <div class="icon stop"></div>
-                  </div>
-                </li>
-                <li v-if="player.artwork.controls.length" :key="player.key + '-remote'" class="display-controls">
-                  <div class="header">Remote for <span class="accent">{{ player.pin }}</span></div>
-                  <remote-control :controls="player.artwork.controls" :displayId="player.pin"
-                    @select="sendControl(player, $event)" />
-                </li>
-              </template>
-            </template>
-          </ul>
+          <artwork-player-list
+            :account-id="accountId"
+            :artwork="artwork"
+          />
           <div v-if="accountId" class="row">
             <router-link :to="'/account/artwork/' + id + '/edit'" class="button">
               <div class="icon edit"></div>
@@ -94,49 +69,29 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
-import { db } from '../../firebase-app'
-import { ref as dbRef, remove, update } from 'firebase/database'
 import AttachmentPanel from '../elements/AttachmentsPanel.vue'
-import RemoteControl from '../elements/RemoteControl.vue'
-import { log } from '../../helper'
-import { PlayerArtwork } from '../../models/PlayerArtwork'
+import ArtworkPlayerList from './ArtworkPlayerList.vue'
 import { Artwork } from '../../models/ArtworkData'
-import { Player } from '../../models/Player'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
-const storeInstance = useStore()
+const store = useStore()
 const router = useRouter()
 const id = useRouteParams('id')
 
 const setupIndex = ref(0)
 
-const userAccount = computed(() => storeInstance.state.userAccount)
+const accountId = computed(() => store.state.userAccount ? store.state.userAccount['.key'] : null)
 
 const sourceDescription = computed(() => {
-  if (setup.value && setup.value.channels.length && setup.value.channels[0].source) {
+  if (setup.value?.channels?.[0].source) {
     return setup.value.channels[0].source.toString()
   }
 })
+const setup = computed(() => artwork.value.setups?.[setupIndex.value] ?? null)
+const images = computed(() => setup.value?.thumbnails || [])
+const video = computed(() => setup.value?.preview || null)
 
-const images = computed(() => {
-  return setup.value ? setup.value.thumbnails : []
-})
-
-const video = computed(() => {
-  return setup.value ? setup.value.preview : null
-})
-
-const setup = computed(() => {
-  if (artwork.value && artwork.value.setups.length) {
-    return artwork.value.setups[setupIndex.value]
-  } else {
-    return null
-  }
-})
-
-const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
-
-const { data: accountArtwork } = useFirebaseBinding(computed(() => {
+const { data: artwork } = useFirebaseBinding(computed(() => {
   if (id.value) {
     if (accountId.value) {
       return 'accounts/' + accountId.value + '/artworks/' + id.value
@@ -144,44 +99,7 @@ const { data: accountArtwork } = useFirebaseBinding(computed(() => {
     return 'artworks/' + id.value
   }
   return null
-}))
-
-const playersPath = computed(() => accountId.value ? 'accounts/' + accountId.value + '/players' : null)
-const { data: accountPlayersData } = useFirebaseBinding(playersPath)
-
-const accountPlayers = computed(() => {
-  if (accountPlayersData.value) {
-    return Object.keys(accountPlayersData.value).map(key => ({ ...accountPlayersData.value[key], '.key': key }))
-  }
-  return []
-})
-
-const players = computed(() => {
-  return accountPlayers.value.map(player => Player.fromJson(player)).filter(player => player.connected)
-})
-
-const artwork = computed(() => accountArtwork.value ? Artwork.fromJson(accountArtwork.value) : null)
-
-const launch = (player) => {
-  if (!accountId.value || !artwork.value) {
-    return
-  }
-  const path = 'accounts/' + accountId.value + '/players/' + player.key + '/artwork/'
-  const values = PlayerArtwork.fromArtwork(id.value, artwork.value).toUpdates(path, PlayerArtwork.empty())
-  const pathRef = dbRef(db, path)
-  remove(pathRef).then(() => {
-    return update(dbRef(db), values)
-  }).catch(log)
-}
-
-const stop = (player) => {
-  if (!accountId.value || !artwork.value) {
-    return
-  }
-}
-
-const sendControl = (player, position) => {
-}
+}), { transform: Artwork.fromJson, isList: false, defaultValue: null })
 
 const togglePublished = (published) => {
   if (!accountId.value) {
