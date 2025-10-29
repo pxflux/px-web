@@ -1,8 +1,8 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content grid" id="main-grid">
+    <div class="wrap-content grid" id="main-grid">
       <ArtworkItem v-for="artwork in artworks" :artwork="artwork" :key="artwork.key" :uri="'/artwork/' + artwork.key"/>
-      <router-link to="/account/artwork/new" class="grid-cell button frameless" title="Add Artwork">
+      <router-link v-if="accountId" to="/account/artwork/new" class="grid-cell button frameless" title="Add Artwork">
         <i class="plus large"></i>
       </router-link>
     </div>
@@ -10,69 +10,28 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { db } from '../../firebase-app'
-import { ref as dbRef, onValue } from 'firebase/database'
 import { Artwork } from '../../models/ArtworkData'
 import ArtworkItem from '../elements/ArtworkItem.vue'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const store = useStore()
-const route = useRoute()
-
-const accountArtworks = ref([])
-let accountArtworksUnsubscribe = null
-
-const userAccount = computed(() => store.state.userAccount)
-
-const accountId = computed(() => {
-  if (!userAccount.value) {
-    return null
-  }
-  return userAccount.value['.key']
-})
+const accountId = computed(() => store.state.userAccount ? store.state.userAccount['.key'] : null)
+const path = computed(() => accountId.value ? 'accounts/' + accountId.value + '/artworks' : 'artworks')
+const { data } = useFirebaseBinding(path)
 
 const artworks = computed(() => {
-  if (accountArtworks.value) {
-    if (Array.isArray(accountArtworks.value)) {
-      return accountArtworks.value.map(it => Artwork.fromJson(it))
+  if (data.value) {
+    console.log
+    if (Array.isArray(data.value)) {
+      return data.value.map(it => Artwork.fromJson(it))
     } else {
-      return Object.keys(accountArtworks.value).map(key => {
-        return Artwork.fromJson(Object.assign({}, accountArtworks.value[key], { key }))
+      return Object.keys(data.value).map(key => {
+        return Artwork.fromJson(Object.assign({}, data.value[key], { key }))
       })
     }
   }
   return []
-})
-
-const init = () => {
-  if (accountArtworksUnsubscribe) {
-    accountArtworksUnsubscribe()
-  }
-  if (accountId.value) {
-    const artworksRef = dbRef(db, 'accounts/' + accountId.value + '/artworks')
-    accountArtworksUnsubscribe = onValue(artworksRef, (snapshot) => {
-      if (snapshot.exists()) {
-        accountArtworks.value = snapshot.val()
-      } else {
-        accountArtworks.value = []
-      }
-    }, (error) => {
-      console.error('Error loading artworks:', error)
-    })
-  }
-}
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
 })
 </script>

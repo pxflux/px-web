@@ -1,25 +1,17 @@
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, watch } from 'vue'
 import { onValue, ref as dbRef } from 'firebase/database'
 import { db } from '../firebase-app'
 
-export function useFirebaseBinding(path) {
+export function useFirebaseBinding(pathRef) {
   const data = ref(null)
   let unsubscribe = null
 
-  const bind = (dbPath) => {
+  const bind = (path) => {
     if (unsubscribe) {
       unsubscribe()
     }
-
-    if (!dbPath) {
-      data.value = null
-      return
-    }
-
-    const firebaseRef = dbRef(db, dbPath)
-
     unsubscribe = onValue(
-      firebaseRef,
+      dbRef(db, path),
       (snapshot) => {
         if (snapshot.exists()) {
           data.value = snapshot.val()
@@ -46,14 +38,16 @@ export function useFirebaseBinding(path) {
     unbind()
   })
 
-  if (path) {
-    bind(path)
-  }
+  watch(pathRef, (path) => {
+    if (path) {
+      bind(path)
+    } else {
+      unbind()
+    }
+  }, { immediate: true })
 
   return {
-    data,
-    bind,
-    unbind
+    data
   }
 }
 
