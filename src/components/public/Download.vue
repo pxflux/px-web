@@ -4,7 +4,8 @@
       <div class="content">
         <h1>Download</h1>
         <div class="card-stack">
-          <a :href="distribute.macos.directUrl" class="card">
+          <!-- Show download link when available -->
+          <a v-if="distribute.macos.directUrl && distribute.macos.directUrl !== '#'" :href="distribute.macos.directUrl" class="card">
             <div class="photo">
               <img class="small player-ico" src="/static/img/pxflux-player-icon-v5-128px.png" alt="pxflux-player-icon">
             </div>
@@ -13,6 +14,30 @@
               for Mac OS (10.12)
             </div>
           </a>
+
+          <!-- Show loading state while fetching config -->
+          <div v-else-if="loading" class="card loading">
+            <div class="photo">
+              <img class="small player-ico" src="/static/img/pxflux-player-icon-v5-128px.png" alt="pxflux-player-icon">
+            </div>
+            <div class="info">
+              <span class="h3">pxPlayer</span> v.0.01 alpha<br>
+              for Mac OS (10.12)<br>
+              <small>Loading download...</small>
+            </div>
+          </div>
+
+          <!-- Show unavailable message when config is loaded but no download URL -->
+          <div v-else-if="!loading" class="card unavailable">
+            <div class="photo">
+              <img class="small player-ico" src="/static/img/pxflux-player-icon-v5-128px.png" alt="pxflux-player-icon">
+            </div>
+            <div class="info">
+              <span class="h3">pxPlayer</span> v.0.01 alpha<br>
+              for Mac OS (10.12)<br>
+              <small>Download coming soon - Firebase configuration needed</small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -20,33 +45,49 @@
 </template>
 
 <script setup>
-import { computed, watch, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { ref } from 'firebase/database'
-import { db } from '@/firebase-app'
+import { computed, ref, watch } from 'vue'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
-const storeInstance = useStore()
-const route = useRoute()
+const { data: config } = useFirebaseBinding('config')
+const loading = ref(true)
 
-const config = computed(() => storeInstance.state.config)
+// Watch for config changes to determine loading state
+watch(config, (newConfig) => {
+  loading.value = newConfig === null
+}, { immediate: true })
 
 const distribute = computed(() => {
-  if (config.value) {
+  if (config.value && config.value.distribute) {
     return config.value.distribute
   }
-  return { macos: {} }
-})
-
-const init = () => {
-  storeInstance.dispatch('setRef', { key: 'config', ref: ref(db, 'config') })
-}
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
+  // Provide fallback configuration for development/testing
+  return {
+    macos: {
+      directUrl: '#'
+    }
+  }
 })
 </script>
+
+<style scoped>
+.card.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.card.unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.card.unavailable small {
+  color: #999;
+  font-style: italic;
+}
+
+.card.loading small {
+  color: #666;
+  font-style: italic;
+}
+</style>
