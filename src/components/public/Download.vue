@@ -5,7 +5,7 @@
         <h1>Download</h1>
         <div class="card-stack">
           <!-- Show download link when available -->
-          <a v-if="distribute.macos.directUrl" :href="distribute.macos.directUrl" class="card">
+          <a v-if="distribute.macos.directUrl && distribute.macos.directUrl !== '#'" :href="distribute.macos.directUrl" class="card">
             <div class="photo">
               <img class="small player-ico" src="/static/img/pxflux-player-icon-v5-128px.png" alt="pxflux-player-icon">
             </div>
@@ -28,14 +28,14 @@
           </div>
 
           <!-- Show unavailable message when config is loaded but no download URL -->
-          <div v-else class="card unavailable">
+          <div v-else-if="!loading" class="card unavailable">
             <div class="photo">
               <img class="small player-ico" src="/static/img/pxflux-player-icon-v5-128px.png" alt="pxflux-player-icon">
             </div>
             <div class="info">
               <span class="h3">pxPlayer</span> v.0.01 alpha<br>
               for Mac OS (10.12)<br>
-              <small>Download temporarily unavailable</small>
+              <small>Download coming soon - Firebase configuration needed</small>
             </div>
           </div>
         </div>
