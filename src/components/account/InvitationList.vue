@@ -16,27 +16,29 @@
 </template>
 
 <script setup>
-import { computed, watch, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
 import { ref as dbRef, set, remove } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const store = useStore()
-const route = useRoute()
 
 const user = computed(() => store.state.user)
-const userInvitations = computed(() => store.getters.userInvitations)
 
-const init = () => {
+const path = computed(() => {
   if (user.value) {
-    store.dispatch('setRef', {
-      key: 'invitations',
-      ref: dbRef(db, 'invitations')
-    })
+    return 'invitations'
   }
-}
+  return null
+})
+
+const { data: invitations } = useFirebaseBinding(path)
+
+const userInvitations = computed(() => {
+  return invitations.value.filter(invitation => invitation.account)
+})
 
 const acceptInvitation = (invitationId) => {
   const data = {
@@ -50,16 +52,4 @@ const acceptInvitation = (invitationId) => {
 const rejectInvitation = (invitationId) => {
   remove(dbRef(db, 'invitations/' + invitationId)).catch(log)
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(user, () => {
-  init()
-})
 </script>

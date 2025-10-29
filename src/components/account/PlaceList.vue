@@ -15,17 +15,13 @@
 </template>
 
 <script setup>
-import { computed, watch, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { ref as dbRef } from 'firebase/database'
-import { db } from '../../firebase-app'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const store = useStore()
-const route = useRoute()
 
 const userAccount = computed(() => store.state.userAccount)
-const accountPlaces = computed(() => store.state.accountPlaces)
 
 const accountId = computed(() => {
   if (!userAccount.value) {
@@ -34,21 +30,12 @@ const accountId = computed(() => {
   return userAccount.value['.key']
 })
 
-const init = () => {
+const path = computed(() => {
   if (accountId.value) {
-    store.dispatch('setRef', { key: 'accountPlaces', ref: dbRef(db, 'accounts/' + accountId.value + '/places') })
+    return 'accounts/' + accountId.value + '/places'
   }
-}
-
-onMounted(() => {
-  init()
+  return null
 })
 
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
-})
+const { data: accountPlaces } = useFirebaseBinding(path)
 </script>
