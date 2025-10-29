@@ -18,73 +18,79 @@
   </main>
 </template>
 
-<script>
-  import { mapState, mapActions } from 'vuex'
-  import { ref, remove } from 'firebase/database'
-  import { log } from '../../helper'
-  import { db, store } from '../../firebase-app'
+<script setup>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { ref as dbRef, remove } from 'firebase/database'
+import { db, store } from '../../firebase-app'
+import { log } from '../../helper'
 
-  export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount', 'accountShow']),
+const storeInstance = useStore()
+const route = useRoute()
+const router = useRouter()
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      showId () {
-        return this.$route.params.id
-      },
-      image () {
-        return this.accountShow && this.accountShow.image ? this.accountShow.image : {
-          displayUrl: null,
-          storageUri: null
-        }
-      },
-      places () {
-        return Object.keys(this.accountShow.places || {}).map(id => {
-          return {...this.accountShow.places[id], ...{'.key': id}}
-        })
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const userAccount = computed(() => storeInstance.state.userAccount)
+const accountShow = computed(() => storeInstance.state.accountShow)
 
-      init () {
-        if (this.accountId) {
-          this.setRef({
-            key: 'accountShow',
-            ref: ref(db, 'accounts/' + this.accountId + '/shows/' + this.showId)
-          })
-        }
-      },
-      togglePublished (published) {
-        if (!this.accountId) {
-          return
-        }
-        store(this.accountId, this.showId, 'shows', {published: published}).catch(log)
-      },
-      removeShow () {
-        if (!this.accountId) {
-          return
-        }
-        remove(ref(db, 'accounts/' + this.accountId + '/shows/' + this.showId)).then(function () {
-          this.$router.push('/account/shows')
-        }.bind(this)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      }
-    }
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const showId = computed(() => {
+  return route.params.id
+})
+
+const image = computed(() => {
+  return accountShow.value && accountShow.value.image ? accountShow.value.image : {
+    displayUrl: null,
+    storageUri: null
+  }
+})
+
+const places = computed(() => {
+  return Object.keys(accountShow.value?.places || {}).map(id => {
+    return { ...accountShow.value.places[id], ...{ '.key': id } }
+  })
+})
+
+const init = () => {
+  if (accountId.value) {
+    storeInstance.dispatch('setRef', {
+      key: 'accountShow',
+      ref: dbRef(db, 'accounts/' + accountId.value + '/shows/' + showId.value)
+    })
+  }
+}
+
+const togglePublished = (published) => {
+  if (!accountId.value) {
+    return
+  }
+  store(accountId.value, showId.value, 'shows', { published: published }).catch(log)
+}
+
+const removeShow = () => {
+  if (!accountId.value) {
+    return
+  }
+  remove(dbRef(db, 'accounts/' + accountId.value + '/shows/' + showId.value)).then(() => {
+    router.push('/account/shows')
+  }).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
 </script>

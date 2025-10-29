@@ -22,6 +22,21 @@ function b64DecodeUnicode (str) {
 // global progress bar
 let bar = null
 
+// a global mixin that calls `asyncData` when a route component's params change
+const globalMixin = {
+  beforeRouteUpdate (to, from, next) {
+    const {asyncData} = this.$options
+    if (asyncData) {
+      asyncData({
+        store: this.$store,
+        route: to
+      }).then(next).catch(next)
+    } else {
+      next()
+    }
+  }
+}
+
 // Create app instance
 const app = createApp(App)
 
@@ -54,7 +69,7 @@ app.config.globalProperties.$bar = bar
 let callback = null
 let userRef = null
 onAuthStateChanged(auth, (user) => {
-  console.log('onAuthStateChanged:', user)
+  console.log('onAuthStateChanged:', user?.email, user?.displayName, user?.photoURL)
   if (callback && userRef) {
     off(userRef, 'value', callback)
   }
@@ -62,29 +77,51 @@ onAuthStateChanged(auth, (user) => {
     userRef = ref(db, 'metadata/' + user.uid + '/refreshTime')
     callback = onValue(userRef, (snapshot) => {
       console.log('onMetadataChanged:', snapshot)
-      if (!snapshot.exists()) {
-        return
-      }
       return user.getIdToken(true).then((token) => {
-        store.commit('UPDATE_USER', {user: auth.currentUser, account: auth.currentUser})
         // console.log('getIdToken:', token)
         return JSON.parse(b64DecodeUnicode(token.split('.')[1]))
       }).then(function (payload) {
+        console.log('Token payload:', payload)
         if (!payload.hasOwnProperty('accountId')) {
-          throw new Error()
+          console.log('No accountId in token payload, fetching from user accounts')
+          const accountsRef = ref(db, 'users/' + user.uid + '/accounts')
+          return get(accountsRef).then(function (snapshot) {
+            if (snapshot.exists()) {
+              console.log('User accounts found:', snapshot.val())
+              const accounts = snapshot.val()
+              const accountsArray = Array.isArray(accounts) ? accounts : Object.values(accounts)
+              if (accountsArray.length > 0) {
+                const firstAccount = accountsArray[0]
+                if (firstAccount && firstAccount['.key']) {
+                  const accountRef = ref(db, 'accounts/' + firstAccount['.key'])
+                  return get(accountRef).then(function (accountSnapshot) {
+                    if (accountSnapshot.exists()) {
+                      const account = accountSnapshot.val()
+                      account['.key'] = accountSnapshot.key
+                      console.log('Account fetched from user accounts:', account)
+                      store.commit('UPDATE_USER', {user: user, account: account})
+                    }
+                  })
+                }
+              }
+            } else {
+              console.log('No user accounts found')
+            }
+          })
         }
         const accountRef = ref(db, 'accounts/' + payload.accountId)
         return get(accountRef).then(function (snapshot) {
           if (!snapshot.exists()) {
-            throw new Error()
+            console.log('Account does not exist:', payload.accountId)
+            throw new Error('Account does not exist')
           }
           const account = snapshot.val()
           account['.key'] = snapshot.key
+          console.log('Account fetched:', account)
           store.commit('UPDATE_USER', {user: user, account: account})
         })
       }).catch(function (error) {
-        console.log(error)
-        store.commit('UPDATE_USER', null)
+        console.log('Error fetching account:', error.message || error)
       })
     })
   } else {
@@ -94,6 +131,35 @@ onAuthStateChanged(auth, (user) => {
 
 // wait until router has resolved all async before hooks and async components...
 router.isReady().then(() => {
+  // Add router hook for handling asyncData.
+  // Doing it after initial route is resolved so that we don't double-fetch
+  // the data that we already have. Using router.beforeResolve() so that all
+  // async components are resolved.
+  router.beforeResolve((to, from, next) => {
+    const matched = to.matched.flatMap(record =>
+      Object.values(record.components).filter(c => c.asyncData)
+    )
+    const prevMatched = from.matched.flatMap(record =>
+      Object.values(record.components).filter(c => c.asyncData)
+    )
+    let diffed = false
+    const activated = matched.filter((c, i) => {
+      return diffed || (diffed = (prevMatched[i] !== c))
+    })
+    const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _)
+    if (!asyncDataHooks.length) {
+      return next()
+    }
+
+    bar.start()
+    Promise.all(asyncDataHooks.map(hook => hook({store, route: to})))
+      .then(() => {
+        bar.finish()
+        next()
+      })
+      .catch(next)
+  })
+
   // actually mount to DOM
   app.mount('#app')
 })

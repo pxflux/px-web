@@ -58,90 +58,81 @@
   </main>
 </template>
 
-<script>
-  // SELECTs
-  // https://github.com/sagalbot/vue-select
-  // https://github.com/shentao/vue-multiselect
-  // SORTABLE
-  // https://github.com/Jexordexan/vue-slicksort
-  // https://github.com/hilongjw/vue-dragging *
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { ref as dbRef, update } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { Artwork } from '../../models/ArtworkData'
+import { log } from '../../helper'
 
-  import { mapActions, mapState } from 'vuex'
-  import { ref, push, update } from 'firebase/database'
-  import { db } from '../../firebase-app'
-  import { Artwork } from '../../models/ArtworkData'
-  import { log } from '../../helper'
+import RemoteControlEditor from '../elements/RemoteControlEditor.vue'
+import ContributorsEditor from '../elements/ContributorsEditor.vue'
+import VideoAttachmentEditor from '../elements/VideoAttachmentEditor.vue'
+import ImageAttachmentEditor from '../elements/ImageAttachmentEditor.vue'
+import ArtworkSetupEditor from '../elements/ArtworkSetupEditor.vue'
 
-  import RemoteControlEditor from '../elements/RemoteControlEditor.vue'
-  import ContributorsEditor from '../elements/ContributorsEditor.vue'
-  import VideoAttachmentEditor from '../elements/VideoAttachmentEditor.vue'
-  import ImageAttachmentEditor from '../elements/ImageAttachmentEditor.vue'
-  import ArtworkSetupEditor from '../elements/ArtworkSetupEditor.vue'
+const props = defineProps({
+  isNew: Boolean
+})
 
-  export default {
-    props: ['isNew'],
-    components: {
-      ImageAttachmentEditor,
-      VideoAttachmentEditor,
-      RemoteControlEditor,
-      ContributorsEditor,
-      ArtworkSetupEditor
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount', 'accountArtwork']),
+const storeInstance = useStore()
+const route = useRoute()
+const router = useRouter()
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      artworkId () {
-        return this.$route.params.id
-      }
-    },
-    data () {
-      return {
-        artwork: Artwork.empty()
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const artwork = ref(Artwork.empty())
+let source = null
 
-      init () {
-        if (!this.isNew && this.accountId) {
-          this.source = ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.setRef({key: 'accountArtwork', ref: this.source})
-        } else {
-          this.source = null
-        }
-      },
-      submitArtwork () {
-        if (!this.accountId) {
-          return
-        }
-        const path = 'accounts/' + this.accountId + '/artworks/'
-        const id = this.isNew ? push(ref(db, path)).key : this.artworkId
-        const original = this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork)
-        const values = this.artwork.toUpdates(path + id + '/', original)
-        update(ref(db), values).then(() => {
-          this.$router.push('/artwork/' + id)
-        }).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      },
-      'accountArtwork' () {
-        this.artwork = Artwork.fromJson(this.accountArtwork)
-      }
-    }
+const userAccount = computed(() => storeInstance.state.userAccount)
+const accountArtwork = computed(() => storeInstance.state.accountArtwork)
+
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const artworkId = computed(() => {
+  return route.params.id
+})
+
+const init = () => {
+  if (!props.isNew && accountId.value) {
+    source = dbRef(db, 'accounts/' + accountId.value + '/artworks/' + artworkId.value)
+    storeInstance.dispatch('setRef', { key: 'accountArtwork', ref: source })
+  } else {
+    source = null
+  }
+}
+
+const submitArtwork = () => {
+  if (!accountId.value) {
+    return
+  }
+  const path = 'accounts/' + accountId.value + '/artworks/'
+  const id = props.isNew ? dbRef(db, path).push().key : artworkId.value
+  const original = props.isNew ? Artwork.empty() : Artwork.fromJson(accountArtwork.value)
+  const values = artwork.value.toUpdates(path + id + '/', original)
+  update(dbRef(db), values).then(() => {
+    router.push('/artwork/' + id)
+  }).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
+
+watch(accountArtwork, () => {
+  artwork.value = Artwork.fromJson(accountArtwork.value)
+})
 </script>

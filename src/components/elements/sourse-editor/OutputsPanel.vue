@@ -38,124 +38,121 @@
   </div>
 </template>
 
-<script>
-  import OutputControlPanel from './OutputControlPanel.vue'
-  import AudioOutputRepresentationBar from './AudioOutputRepresentationBar.vue'
-  import VideoOutputRepresentationBar from './VideoOutputRepresentationBar.vue'
-  import ConnectorsCanvas from './ConnectorsCanvas.vue'
-  import VueSelect from '../UI/Select/components/Select.vue'
-  import { AWChannel } from '../../../models/AWChannel'
-  import { AWAudioOutputs } from '../../../models/AWAudioOutput'
-  import { AWVideoOutputs } from '../../../models/AWVideoOutput'
+<script setup>
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import OutputControlPanel from './OutputControlPanel.vue'
+import AudioOutputRepresentationBar from './AudioOutputRepresentationBar.vue'
+import VideoOutputRepresentationBar from './VideoOutputRepresentationBar.vue'
+import ConnectorsCanvas from './ConnectorsCanvas.vue'
+import VueSelect from '../UI/Select/components/Select.vue'
+import { AWChannel } from '../../../models/AWChannel'
+import { AWAudioOutputs } from '../../../models/AWAudioOutput'
+import { AWVideoOutputs } from '../../../models/AWVideoOutput'
 
-  export default {
-    name: 'outputs-panel',
-    components: {
-      OutputControlPanel,
-      AudioOutputRepresentationBar,
-      VideoOutputRepresentationBar,
-      ConnectorsCanvas,
-      VueSelect
-    },
-    props: {
-      value: AWChannel
-    },
+const props = defineProps({
+  value: AWChannel
+})
 
-    computed: {
-      description () {
-        return this.channel.toString()
-      }
-    },
-    data () {
-      return {
-        channel: this.value || AWChannel.empty(),
+const emit = defineEmits(['input'])
 
-        panelOpened: false,
-        /** @type GroupedConnectors */
-        outputSockets: {audio: [], video: []},
-        /** @type GroupedConnectors */
-        outputBoxes: {audio: [], video: []},
-        trigger: 0,
-        curPanelLeft: 0,
-        leftMargin: null,
-        scrollTimeout: null
-      }
-    },
-    mounted () {
-      window.addEventListener('resize', () => {
-        this.refreshOutputConnections()
-      })
-    },
-    methods: {
-      update () {
-        this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
-        this.refreshOutputConnections()
-      },
-      appendOutputs (type) {
-        if (type === 'audio') {
-          AWAudioOutputs.append(this.channel.audioOutputs)
-          this.update()
-        }
-        if (type === 'video') {
-          AWVideoOutputs.append(this.channel.videoOutputs)
-          this.update()
-        }
-      },
-      removeOutputs (type) {
-        if (type === 'audio') {
-          AWAudioOutputs.remove(this.channel.audioOutputs)
-          this.update()
-        }
-        if (type === 'video') {
-          AWVideoOutputs.remove(this.channel.videoOutputs)
-          this.update()
-        }
-      },
-      setVideoOutputs (value) {
-        this.channel.videoOutputs = value
-        this.update()
-      },
-      refreshOutputConnections () {
-        this.$nextTick(() => { // let sockets to be updated.. if they need it
-          this.outputBoxes = {
-            audio: this.$refs.audioOutputBar.collectBounds(),
-            video: this.$refs.videoOutputBar.collectBounds()
-          }
-          this.outputSockets = {
-            audio: this.$refs.audioOutputControls.collectBounds(),
-            video: this.$refs.videoOutputControls.collectBounds()
-          }
-          this.trigger++ // TODO find a better way to trigger the update in the canvas
-        })
-      },
-      fixPanelsOnScroll (e) {
-        clearTimeout(this.scrollTimeout)
-        this.scrollTimeout = setTimeout(() => {
-          this.animatePanelsLeft(e.target.scrollLeft)
-        }, 100)
-      },
-      animatePanelsLeft (targetLeft, step) {
-        if (!step) step = (targetLeft - this.curPanelLeft) / 10
-        this.curPanelLeft += step
-        if (
-          (step > 0 && this.curPanelLeft > targetLeft) ||
-          (step < 0 && this.curPanelLeft < targetLeft)) {
-          this.curPanelLeft = targetLeft
-        }
-        this.$refs.outputEditor.style.left = this.curPanelLeft + 'px'
-        this.refreshOutputConnections()
-        if (this.curPanelLeft !== targetLeft) {
-          requestAnimationFrame(() => {
-            this.animatePanelsLeft(targetLeft, step)
-          })
-        }
-      }
-    },
+const channel = ref(props.value || AWChannel.empty())
+const panelOpened = ref(false)
+const outputSockets = ref({ audio: [], video: [] })
+const outputBoxes = ref({ audio: [], video: [] })
+const trigger = ref(0)
+const curPanelLeft = ref(0)
+const scrollTimeout = ref(null)
+const outputEditor = ref(null)
+const audioOutputBar = ref(null)
+const videoOutputBar = ref(null)
+const audioOutputControls = ref(null)
+const videoOutputControls = ref(null)
 
-    watch: {
-      value (newValue) {
-        this.channel = newValue || AWChannel.empty()
-      }
-    }
+const description = computed(() => {
+  return channel.value.toString()
+})
+
+const update = () => {
+  emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(channel.value))))
+  refreshOutputConnections()
+}
+
+const appendOutputs = (type) => {
+  if (type === 'audio') {
+    AWAudioOutputs.append(channel.value.audioOutputs)
+    update()
   }
+  if (type === 'video') {
+    AWVideoOutputs.append(channel.value.videoOutputs)
+    update()
+  }
+}
+
+const removeOutputs = (type) => {
+  if (type === 'audio') {
+    AWAudioOutputs.remove(channel.value.audioOutputs)
+    update()
+  }
+  if (type === 'video') {
+    AWVideoOutputs.remove(channel.value.videoOutputs)
+    update()
+  }
+}
+
+const setVideoOutputs = (value) => {
+  channel.value.videoOutputs = value
+  update()
+}
+
+const refreshOutputConnections = () => {
+  nextTick(() => {
+    outputBoxes.value = {
+      audio: audioOutputBar.value.collectBounds(),
+      video: videoOutputBar.value.collectBounds()
+    }
+    outputSockets.value = {
+      audio: audioOutputControls.value.collectBounds(),
+      video: videoOutputControls.value.collectBounds()
+    }
+    trigger.value++
+  })
+}
+
+const fixPanelsOnScroll = (e) => {
+  clearTimeout(scrollTimeout.value)
+  scrollTimeout.value = setTimeout(() => {
+    animatePanelsLeft(e.target.scrollLeft)
+  }, 100)
+}
+
+const animatePanelsLeft = (targetLeft, step) => {
+  if (!step) step = (targetLeft - curPanelLeft.value) / 10
+  curPanelLeft.value += step
+  if (
+    (step > 0 && curPanelLeft.value > targetLeft) ||
+    (step < 0 && curPanelLeft.value < targetLeft)) {
+    curPanelLeft.value = targetLeft
+  }
+  outputEditor.value.style.left = curPanelLeft.value + 'px'
+  refreshOutputConnections()
+  if (curPanelLeft.value !== targetLeft) {
+    requestAnimationFrame(() => {
+      animatePanelsLeft(targetLeft, step)
+    })
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    refreshOutputConnections()
+  })
+})
+
+watch(() => props.value, (newValue) => {
+  channel.value = newValue || AWChannel.empty()
+})
+
+defineExpose({
+  fixPanelsOnScroll
+})
 </script>

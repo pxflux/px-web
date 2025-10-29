@@ -9,69 +9,68 @@
   </main>
 </template>
 
-<script>
-  import { mapState, mapActions } from 'vuex'
-  import { ref, update } from 'firebase/database'
-  import { db } from '../../firebase-app'
-  import { log } from '../../helper'
+<script setup>
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref as dbRef, update } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { log } from '../../helper'
 
-  export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['user', 'accountIteration'])
-    },
-    data () {
-      return {
-        title: {
-          val: '',
-          edit: false
-        }
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const storeInstance = useStore()
+const route = useRoute()
 
-      init () {
-        if (this.user.uid) {
-          this.source = ref(db, 'users/' + this.user.uid + '/artworks/' + this.$route.params.artworkId + '/iterations/' + this.$route.params.id)
-          this.setRef({key: 'accountIteration', ref: this.source})
-        } else {
-          this.source = null
-        }
-      },
+const inputTitle = ref(null)
+const title = ref({
+  val: '',
+  edit: false
+})
+let source = null
 
-      toggleTitle: function () {
-        this.title.edit = !this.title.edit
-        // Focus input field
-        if (this.title.edit) {
-          this.$nextTick(function () {
-            this.$refs.inputTitle.focus()
-          })
-        }
-      },
+const user = computed(() => storeInstance.state.user)
+const accountIteration = computed(() => storeInstance.state.accountIteration)
 
-      saveTitle: function () {
-        this.toggleTitle()
-        if (this.source) {
-          update(this.source, {'title': this.title.val}).catch(log)
-        }
-      },
-
-      publishIteration () {
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'user' () {
-        this.init()
-      },
-      'accountIteration' () {
-        this.title.val = this.accountIteration.title || 'Untitled'
-      }
-    }
+const init = () => {
+  if (user.value?.uid) {
+    source = dbRef(db, 'users/' + user.value.uid + '/artworks/' + route.params.artworkId + '/iterations/' + route.params.id)
+    storeInstance.dispatch('setRef', { key: 'accountIteration', ref: source })
+  } else {
+    source = null
   }
+}
+
+const toggleTitle = () => {
+  title.value.edit = !title.value.edit
+  if (title.value.edit) {
+    nextTick(() => {
+      inputTitle.value?.focus()
+    })
+  }
+}
+
+const saveTitle = () => {
+  toggleTitle()
+  if (source) {
+    update(source, { 'title': title.value.val }).catch(log)
+  }
+}
+
+const publishIteration = () => {
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(user, () => {
+  init()
+})
+
+watch(accountIteration, () => {
+  title.value.val = accountIteration.value?.title || 'Untitled'
+})
 </script>

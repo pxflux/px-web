@@ -43,6 +43,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.0",
     "eslint-plugin-vue": "^9.17.0",
+    "firebase-tools": "^14.22.0",
     "lost": "^9.0.0",
     "megatype": "^1.1.2",
     "postcss": "^8.4.0",

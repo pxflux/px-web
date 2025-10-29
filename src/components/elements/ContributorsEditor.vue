@@ -14,70 +14,67 @@
   </v-select>
 </template>
 
-<script>
-  import { mapActions, mapState } from 'vuex'
-  import { ref } from 'firebase/database'
-  import { db } from '../../firebase-app'
-  import vSelect from './UI/Select/components/Select.vue'
-  import inlineSelect from './UI/Select/components/SelectInline.vue'
-  import { ContributorRefs } from '../../models/ContributorRef'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref as dbRef } from 'firebase/database'
+import { db } from '../../firebase-app'
+import vSelect from './UI/Select/components/Select.vue'
+import inlineSelect from './UI/Select/components/SelectInline.vue'
+import { ContributorRefs } from '../../models/ContributorRef'
 
-  export default {
-    props: {
-      value: {type: Array, default: () => ContributorRefs.empty()},
-      withRoles: {type: Boolean, default: false}
-    },
-    components: {
-      vSelect,
-      inlineSelect
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['artists']),
+const props = defineProps({
+  value: { type: Array, default: () => ContributorRefs.empty() },
+  withRoles: { type: Boolean, default: false }
+})
 
-      contributors () {
-        return ContributorRefs.fromJson(this.artists)
-      }
-    },
-    data () {
-      return {
-        mutableValue: this.value,
-        roles: [
-          'programming',
-          'editing',
-          'sound',
-          'music',
-          'production',
-          'manager',
-          'assistance'
-        ]
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const emit = defineEmits(['input'])
 
-      init () {
-        this.setRef({key: 'artists', ref: ref(db, 'artists')})
-      },
-      updateValue: function (value) {
-        this.$emit('input', value)
-      },
-      updateRole: function (option, value) {
-        const selected = this.mutableValue.find(item => item.id === option.id)
-        if (selected) {
-          selected.role = value
-        }
-      }
-    },
-    watch: {
-      $route: function () {
-        this.init()
-      },
-      value: function (value) {
-        this.mutableValue = value
-      }
-    }
+const storeInstance = useStore()
+const route = useRoute()
+
+const mutableValue = ref(props.value)
+const roles = ref([
+  'programming',
+  'editing',
+  'sound',
+  'music',
+  'production',
+  'manager',
+  'assistance'
+])
+
+const artists = computed(() => storeInstance.state.artists)
+
+const contributors = computed(() => {
+  return ContributorRefs.fromJson(artists.value)
+})
+
+const init = () => {
+  storeInstance.dispatch('setRef', { key: 'artists', ref: dbRef(db, 'artists') })
+}
+
+const updateValue = (value) => {
+  emit('input', value)
+}
+
+const updateRole = (option, value) => {
+  const selected = mutableValue.value.find(item => item.id === option.id)
+  if (selected) {
+    selected.role = value
   }
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(() => props.value, (value) => {
+  mutableValue.value = value
+})
 </script>

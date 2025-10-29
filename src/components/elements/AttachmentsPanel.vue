@@ -36,14 +36,13 @@
   </div>
 </template>
 
-<script>
-  import VideoPlayer from '../VideoPlayer.vue'
-  export default {
-    components: {
-      'video-player': VideoPlayer
-    },
-    props: ['video', 'images']
-  }
+<script setup>
+import VideoPlayer from '../VideoPlayer.vue'
+
+defineProps({
+  video: Object,
+  images: Array
+})
 </script>
 
 <style scoped>

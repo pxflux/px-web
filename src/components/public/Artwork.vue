@@ -89,161 +89,202 @@
   </main>
 </template>
 
-<script>
-  import { mapState } from 'vuex'
-  import { db } from '../../firebase-app'
-  import { ref, remove, update, push } from 'firebase/database'
-  import AttachmentPanel from '../elements/AttachmentsPanel.vue'
-  import RemoteControl from '../elements/RemoteControl.vue'
-  import { log } from '../../helper'
-  import { PlayerArtwork } from '../../models/PlayerArtwork'
-  import { Artwork } from '../../models/ArtworkData'
-  import { Player } from '../../models/Player'
-  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+<script setup>
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { firebaseApp } from '../../firebase-app'
+import { getDatabase, ref as dbRef, remove, update, onValue, get } from 'firebase/database'
+import AttachmentPanel from '../elements/AttachmentsPanel.vue'
+import RemoteControl from '../elements/RemoteControl.vue'
+import { log } from '../../helper'
+import { PlayerArtwork } from '../../models/PlayerArtwork'
+import { Artwork } from '../../models/ArtworkData'
+import { Player } from '../../models/Player'
 
-  export default {
-    components: {
-      AttachmentPanel,
-      RemoteControl
-    },
-    setup() {
-      const { data: accountArtwork, bind: bindArtwork } = useFirebaseBinding()
-      const { data: accountPlayers, bind: bindPlayers } = useFirebaseBinding()
+const storeInstance = useStore()
+const route = useRoute()
+const router = useRouter()
 
-      return {
-        accountArtwork,
-        accountPlayers,
-        bindArtwork,
-        bindPlayers
-      }
-    },
-    created () {
-      this.init()
-    },
+const setupIndex = ref(0)
+const accountArtwork = ref(null)
+const accountPlayers = ref([])
+let accountArtworkUnsubscribe = null
+let accountPlayersUnsubscribe = null
 
-    data () {
-      return {
-        setupIndex: 0
-      }
-    },
+const userAccount = computed(() => storeInstance.state.userAccount)
 
-    computed: {
-      ...mapState(['userAccount']),
-
-      sourceDescription () {
-        if (this.setup && this.setup.channels && this.setup.channels.length && this.setup.channels[0].source) {
-          return this.setup.channels[0].source.toString()
-        }
-      },
-
-      images () {
-        return this.setup ? this.setup.thumbnails : []
-      },
-
-      video () {
-        return this.setup ? this.setup.preview : null
-      },
-
-      setup () {
-        if (this.artwork && this.artwork.setups.length) {
-          return this.artwork.setups[this.setupIndex]
-        } else {
-          return null
-        }
-      },
-
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      players () {
-        if (this.accountPlayers) {
-          const players = Array.isArray(this.accountPlayers) ? this.accountPlayers : Object.values(this.accountPlayers)
-          return players.map(player => Player.fromJson(player)).filter(player => player.connected)
-        }
-        return []
-      },
-      artworkId () {
-        return this.$route.params.id
-      },
-      /**
-       * @return {?Artwork}
-       */
-      artwork () {
-        const getValue = (value) => {
-          if (value == null) {
-            return null
-          }
-          if (value.hasOwnProperty('.value') && value['.value'] === null) {
-            return null
-          }
-          return value
-        }
-        const value = getValue(this.accountArtwork)
-        return value ? Artwork.fromJson(value) : null
-      },
-      preview () {
-        return this.artwork && this.artwork.preview ? this.artwork.preview : null
-      },
-      image () {
-        return this.artwork && this.artwork.image ? this.artwork.image : {
-          displayUrl: null,
-          storageUri: null
-        }
-      }
-    },
-    methods: {
-      init () {
-        if (this.accountId) {
-          this.bindArtwork('accounts/' + this.accountId + '/artworks/' + this.artworkId)
-          this.bindPlayers('accounts/' + this.accountId + '/players')
-        }
-      },
-      launch (player) {
-        if (!this.accountId || !this.artwork) {
-          return
-        }
-        const path = 'accounts/' + this.accountId + '/players/' + player.key + '/artwork/'
-        const values = PlayerArtwork.fromArtwork(this.artworkId, this.artwork).toUpdates(path, PlayerArtwork.empty())
-        const pathRef = ref(db, path)
-        remove(pathRef).then(() => {
-          return update(ref(db), values)
-        }).catch(log)
-      },
-      stop (player) {
-        if (!this.accountId || !this.artwork) {
-          return
-        }
-        remove(ref(db, 'accounts/' + this.accountId + '/players/' + player.key + '/artwork')).catch(log)
-      },
-      sendControl (player, position) {
-        push(ref(db, 'commands/' + player.pin), { controlId: '' + position }).catch(log)
-      },
-      togglePublished (published) {
-        if (!this.accountId) {
-          return
-        }
-        const data = { published: published }
-        update(ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId), data).catch(log)
-      },
-      removeArtwork () {
-        if (!this.accountId) {
-          return
-        }
-        remove(ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId)).then(function () {
-          this.$router.push('/artworks')
-        }.bind(this)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      }
-    }
+const sourceDescription = computed(() => {
+  if (setup.value && setup.value.channels.length && setup.value.channels[0].source) {
+    return setup.value.channels[0].source.toString()
   }
+})
+
+const images = computed(() => {
+  return setup.value ? setup.value.thumbnails : []
+})
+
+const video = computed(() => {
+  return setup.value ? setup.value.preview : null
+})
+
+const setup = computed(() => {
+  if (artwork.value && artwork.value.setups.length) {
+    return artwork.value.setups[setupIndex.value]
+  } else {
+    return null
+  }
+})
+
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
+  }
+  return userAccount.value['.key']
+})
+
+const players = computed(() => {
+  if (accountPlayers.value) {
+    return accountPlayers.value.map(player => Player.fromJson(player)).filter(player => player.connected)
+  }
+  return []
+})
+
+const artworkId = computed(() => {
+  return route.params.id
+})
+
+const artwork = computed(() => {
+  const getValue = (value) => {
+    if (value == null) {
+      return null
+    }
+    if (value.hasOwnProperty('.value') && value['.value'] === null) {
+      return null
+    }
+    return value
+  }
+  const value = getValue(accountArtwork.value)
+  return value ? Artwork.fromJson(value) : null
+})
+
+const preview = computed(() => {
+  return artwork.value && artwork.value.preview ? artwork.value.preview : null
+})
+
+const image = computed(() => {
+  return artwork.value && artwork.value.image ? artwork.value.image : {
+    displayUrl: null,
+    storageUri: null
+  }
+})
+
+const init = () => {
+  if (accountArtworkUnsubscribe) {
+    accountArtworkUnsubscribe()
+  }
+  if (accountPlayersUnsubscribe) {
+    accountPlayersUnsubscribe()
+  }
+
+  const db = getDatabase(firebaseApp)
+
+  if (accountId.value) {
+    const artworkRef = dbRef(db, 'accounts/' + accountId.value + '/artworks/' + artworkId.value)
+    accountArtworkUnsubscribe = onValue(artworkRef, (snapshot) => {
+      if (snapshot.exists()) {
+        accountArtwork.value = snapshot.val()
+      } else {
+        accountArtwork.value = null
+      }
+    }, (error) => {
+      console.error('Error loading artwork:', error)
+    })
+    const playersRef = dbRef(db, 'accounts/' + accountId.value + '/players')
+    accountPlayersUnsubscribe = onValue(playersRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val()
+        accountPlayers.value = Object.keys(data).map(key => ({ ...data[key], '.key': key }))
+      } else {
+        accountPlayers.value = []
+      }
+    }, (error) => {
+      console.error('Error loading players:', error)
+    })
+  } else {
+    const publicArtworkRef = dbRef(db, 'artworks/' + artworkId.value)
+    get(publicArtworkRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        accountArtwork.value = snapshot.val()
+      } else {
+        accountArtwork.value = null
+      }
+    }).catch((error) => {
+      console.error('Error loading public artwork:', error)
+      accountArtwork.value = null
+    })
+  }
+}
+
+const launch = (player) => {
+  if (!accountId.value || !artwork.value) {
+    return
+  }
+  const db = getDatabase(firebaseApp)
+  const path = 'accounts/' + accountId.value + '/players/' + player.key + '/artwork/'
+  const values = PlayerArtwork.fromArtwork(artworkId.value, artwork.value).toUpdates(path, PlayerArtwork.empty())
+  const pathRef = dbRef(db, path)
+  remove(pathRef).then(() => {
+    return update(dbRef(db), values)
+  }).catch(log)
+}
+
+const stop = (player) => {
+  if (!accountId.value || !artwork.value) {
+    return
+  }
+}
+
+const sendControl = (player, position) => {
+}
+
+const togglePublished = (published) => {
+  if (!accountId.value) {
+    return
+  }
+}
+
+const removeArtwork = () => {
+  if (!accountId.value) {
+    return
+  }
+  router.push('/artworks')
+}
+
+const cleanup = () => {
+  if (accountArtworkUnsubscribe) {
+    accountArtworkUnsubscribe()
+    accountArtworkUnsubscribe = null
+  }
+  if (accountPlayersUnsubscribe) {
+    accountPlayersUnsubscribe()
+    accountPlayersUnsubscribe = null
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+onBeforeUnmount(() => {
+  cleanup()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
 </script>

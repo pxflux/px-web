@@ -15,65 +15,72 @@
   </div>
 </template>
 
-<script>
-  export default {
-    name: 'output-control-panel',
-    props: ['code', 'title', 'data'],
+<script setup>
+import { ref, watch, nextTick, onMounted } from 'vue'
 
-    data () {
-      return {
-        numSockets: this.data ? this.data.length : 0
-      }
-    },
-    mounted () {
-      this.$nextTick(() => { // just to let sockets to be updated first
-        this.$emit('update')
-      })
-    },
-    methods: {
-      append () {
-        if (this.numSockets < 18) {
-          this.numSockets += 1
-          this.$emit('append', this.code)
-        }
-      },
-      remove () {
-        if (this.numSockets > 0) {
-          this.numSockets -= 1
-          this.$emit('remove', this.code)
-        }
-      },
-      collectBounds () {
-        const bounds = []
-        if (this.$refs.sockets) {
-          const panelBounds = this.$refs.panel.getBoundingClientRect()
-          this.$refs.sockets.forEach(el => {
-            const socketBounds = el.getBoundingClientRect()
-            bounds.push({
-              type: 'socket',
-              objectBounds: {
-                left: socketBounds.left,
-                top: socketBounds.top,
-                right: socketBounds.right,
-                bottom: panelBounds.bottom,
-                x: socketBounds.x,
-                y: socketBounds.y,
-                width: socketBounds.width,
-                height: panelBounds.bottom - socketBounds.top
-              }
-            })
-          })
-        }
-        return bounds
-      }
-    },
+const props = defineProps({
+  code: String,
+  title: String,
+  data: Array
+})
 
-    watch: {
-      data (newValue) {
-        this.numSockets = newValue ? newValue.length : 0
-      }
-    }
+const emit = defineEmits(['update', 'append', 'remove'])
+
+const panel = ref(null)
+const sockets = ref(null)
+const numSockets = ref(props.data ? props.data.length : 0)
+
+const append = () => {
+  if (numSockets.value < 18) {
+    numSockets.value += 1
+    emit('append', props.code)
   }
+}
+
+const remove = () => {
+  if (numSockets.value > 0) {
+    numSockets.value -= 1
+    emit('remove', props.code)
+  }
+}
+
+const collectBounds = () => {
+  const bounds = []
+  if (sockets.value) {
+    const panelBounds = panel.value.getBoundingClientRect()
+    sockets.value.forEach(el => {
+      const socketBounds = el.getBoundingClientRect()
+      bounds.push({
+        type: 'socket',
+        objectBounds: {
+          left: socketBounds.left,
+          top: socketBounds.top,
+          right: socketBounds.right,
+          bottom: panelBounds.bottom,
+          x: socketBounds.x,
+          y: socketBounds.y,
+          width: socketBounds.width,
+          height: panelBounds.bottom - socketBounds.top
+        }
+      })
+    })
+  }
+  return bounds
+}
+
+onMounted(() => {
+  nextTick(() => {
+    emit('update')
+  })
+})
+
+watch(() => props.data, (newValue) => {
+  numSockets.value = newValue ? newValue.length : 0
+})
+
+defineExpose({
+  collectBounds
+})
 </script>
 
 <style lang="scss" scoped>

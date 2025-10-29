@@ -56,81 +56,81 @@
   </main>
 </template>
 
-<script>
-  import { mapState } from 'vuex'
-  import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-  import { auth } from '../firebase-app'
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
+import { auth } from '../firebase-app'
 
-  export default {
-    data () {
-      return {
-        displayName: this.$store.state.user.displayName,
-        email: this.$store.state.user.email,
-        password: ''
-      }
-    },
-    computed: {
-      ...mapState(['user']),
-      googleFederated: function () {
-        return this.user.providerData.find(o => o.providerId === GoogleAuthProvider.PROVIDER_ID)
-      },
-      emailFederated: function () {
-        return this.user.providerData.find(o => o.providerId === EmailAuthProvider.PROVIDER_ID)
-      },
-      multipleAuth: function () {
-        return this.user.providerData.length > 1
-      }
-    },
-    methods: {
-      updateProfile () {
-        this.user.updateProfile({
-          displayName: this.displayName,
-          email: this.email
-        }).catch(function (error) {
-          console.log('Account linking error', error)
-        })
-      },
-      updatePassword () {
-        if (this.emailFederated) {
-          this.user.updatePassword(this.password).catch(function (error) {
-            console.log('Account linking error', error)
-          })
-        } else {
-          let credential = EmailAuthProvider.credential(this.user.email, this.password)
-          this.user.linkWithCredential(credential).then(function (user) {
-            console.log('Account link', user)
-            auth.currentUser.reload()
-            this.$store.commit('UPDATE_USER', {user: user})
-          }.bind(this), function (error) {
-            console.log('Account linking error', error)
-          })
-        }
-        this.password = ''
-      },
-      disconnectGoogle () {
-        this.user.unlink(GoogleAuthProvider.PROVIDER_ID)
-          .then(function (user) {
-            console.log('Account unlink', user)
-            auth.currentUser.reload()
-            this.$store.commit('UPDATE_USER', {user: user})
-          }.bind(this))
-          .catch(function (error) {
-            console.log('Account unlink error', error)
-          })
-      },
-      connectGoogle () {
-        let provider = new GoogleAuthProvider()
-        provider.addScope('https://www.googleapis.com/auth/plus.login')
-        this.user.linkWithPopup(provider)
-          .then(function (result) {
-            console.log('Account link', result)
-            auth.currentUser.reload()
-            this.$store.commit('UPDATE_USER', {user: result.user})
-          }.bind(this))
-          .catch(function (error) {
-            console.log('Account linking error', error)
-          })
-      }
-    }
+const store = useStore()
+const user = computed(() => store.state.user)
+
+const displayName = ref(user.value?.displayName || '')
+const email = ref(user.value?.email || '')
+const password = ref('')
+
+const googleFederated = computed(() => {
+  return user.value?.providerData.find(o => o.providerId === GoogleAuthProvider.PROVIDER_ID)
+})
+
+const emailFederated = computed(() => {
+  return user.value?.providerData.find(o => o.providerId === EmailAuthProvider.PROVIDER_ID)
+})
+
+const multipleAuth = computed(() => {
+  return user.value?.providerData.length > 1
+})
+
+const updateProfile = () => {
+  user.value.updateProfile({
+    displayName: displayName.value,
+    email: email.value
+  }).catch((error) => {
+    console.log('Account linking error', error)
+  })
+}
+
+const updatePassword = () => {
+  if (emailFederated.value) {
+    user.value.updatePassword(password.value).catch((error) => {
+      console.log('Account linking error', error)
+    })
+  } else {
+    const credential = EmailAuthProvider.credential(user.value.email, password.value)
+    user.value.linkWithCredential(credential).then((user) => {
+      console.log('Account link', user)
+      auth.currentUser.reload()
+      store.commit('UPDATE_USER', { user: user })
+    }, (error) => {
+      console.log('Account linking error', error)
+    })
   }
+  password.value = ''
+}
+
+const disconnectGoogle = () => {
+  user.value.unlink(GoogleAuthProvider.PROVIDER_ID)
+    .then((user) => {
+      console.log('Account unlink', user)
+      auth.currentUser.reload()
+      store.commit('UPDATE_USER', { user: user })
+    })
+    .catch((error) => {
+      console.log('Account unlink error', error)
+    })
+}
+
+const connectGoogle = () => {
+  const provider = new GoogleAuthProvider()
+  provider.addScope('https://www.googleapis.com/auth/plus.login')
+  user.value.linkWithPopup(provider)
+    .then((result) => {
+      console.log('Account link', result)
+      auth.currentUser.reload()
+      store.commit('UPDATE_USER', { user: result.user })
+    })
+    .catch((error) => {
+      console.log('Account linking error', error)
+    })
+}
 </script>

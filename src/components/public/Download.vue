@@ -71,7 +71,36 @@
         loading
       }
     }
+<script setup>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref } from 'firebase/database'
+import { db } from '@/firebase-app'
+
+const storeInstance = useStore()
+const route = useRoute()
+
+const config = computed(() => storeInstance.state.config)
+
+const distribute = computed(() => {
+  if (config.value) {
+    return config.value.distribute
   }
+  return { macos: {} }
+})
+
+const init = () => {
+  storeInstance.dispatch('setRef', { key: 'config', ref: ref(db, 'config') })
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
 </script>
 
 <style scoped>

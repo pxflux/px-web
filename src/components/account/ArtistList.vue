@@ -14,44 +14,44 @@
   </main>
 </template>
 
-<script>
-  import { mapActions, mapState } from 'vuex'
-  import { ref } from 'firebase/database'
-  import { db } from '../../firebase-app'
+<script setup>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref as dbRef } from 'firebase/database'
+import { db } from '../../firebase-app'
 
-  export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount', 'accountArtists']),
+const store = useStore()
+const route = useRoute()
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const userAccount = computed(() => store.state.userAccount)
+const accountArtists = computed(() => store.state.accountArtists)
 
-      init () {
-        if (this.accountId) {
-          this.setRef({
-            key: 'accountArtists',
-            ref: ref(db, 'accounts/' + this.accountId + '/artists')
-          })
-        }
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      }
-    }
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const init = () => {
+  if (accountId.value) {
+    store.dispatch('setRef', {
+      key: 'accountArtists',
+      ref: dbRef(db, 'accounts/' + accountId.value + '/artists')
+    })
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
 </script>

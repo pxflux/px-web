@@ -10,120 +10,100 @@
         class="js-popper-close popper-close">
         <slot name="close-button">{{ closeButton }}</slot>
       </div>
-      
+
       <slot name="content">{{ content }}</slot>
-      
+
       <div class="popper__arrow" x-arrow></div>
     </div>
   </div>
 </template>
 
-<script>
-  const Popper = import('popper.js')
+<script setup>
+import { ref, nextTick, watch, onMounted, onUnmounted } from 'vue'
 
-  export default {
-    mixins: [Popper],
-    props: {
-      showPopper: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      placement: {
-        type: String,
-        required: false,
-        default: 'top'
-      },
-      content: {
-        type: String,
-        required: false,
-        default: ''
-      },
-      closeButton: {
-        type: String,
-        required: false,
-        default: null
-      }
-    },
-
-    data () {
-      return {
-        popperId: null,
-        popper: null
-      }
-    },
-
-    mounted () {
-      this.$nextTick(() => {
-        if (this.showPopper) {
-          this.initPopper()
-        }
-      })
-    },
-
-    watch: {
-      showPopper (val, oldVal) {
-        if (this.showPopper) {
-          this.$nextTick(() => {
-            this.initPopper()
-          })
-        }
-      }
-    },
-
-    unmounted () {
-      this.destroyPopper()
-    },
-
-    methods: {
-      initPopper () {
-        // Ensure component is still mounted before proceeding
-        if (!this.$el) return
-
-        const popperElement = this.$el.querySelector('.vue-popper-component')
-        if (!popperElement) {
-          console.warn('Popper element not found in DOM, retrying...')
-          // Retry after a short delay to allow DOM to update
-          setTimeout(() => {
-            if (this.$el && this.showPopper) {
-              this.initPopper()
-            }
-          }, 50)
-          return
-        }
-
-        this.popperId = this.uuid4()
-        this.popper = new Popper(
-          this.$el,
-          popperElement,
-          {
-            placement: this.placement || 'bottom',
-            removeOnDestroy: true
-          }
-        )
-      },
-
-      destroyPopper () {
-        if (this.popper) {
-          this.popper.destroy()
-          this.popper = null
-        }
-      },
-
-      uuid4 () {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-          let r, v
-          r = Math.random() * 16 | 0
-          v = c === 'x' ? r : (r & 0x3 | 0x8)
-          return v.toString(16)
-        })
-      }
-    }
+const props = defineProps({
+  showPopper: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  placement: {
+    type: String,
+    required: false,
+    default: 'top'
+  },
+  content: {
+    type: String,
+    required: false,
+    default: ''
+  },
+  closeButton: {
+    type: String,
+    required: false,
+    default: null
   }
+})
+
+const popperId = ref(null)
+let popper = null
+
+const uuid4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    let r, v
+    r = Math.random() * 16 | 0
+    v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+}
+
+const destroyPopper = () => {
+  if (popper) {
+    popper.destroy()
+    popper = null
+  }
+}
+
+const initPopper = () => {
+  const el = document.querySelector('[data-popper-root]')
+  if (!el) return
+
+  const popperElement = el.querySelector('.vue-popper-component')
+  if (!popperElement) {
+    console.warn('Popper element not found in DOM, retrying...')
+    setTimeout(() => {
+      if (props.showPopper) {
+        initPopper()
+      }
+    }, 50)
+    return
+  }
+
+  popperId.value = uuid4()
+}
+
+onMounted(() => {
+  nextTick(() => {
+    if (props.showPopper) {
+      initPopper()
+    }
+  })
+})
+
+watch(() => props.showPopper, (val) => {
+  if (val) {
+    nextTick(() => {
+      initPopper()
+    })
+  }
+})
+
+onUnmounted(() => {
+  destroyPopper()
+})
 </script>
 <style type="scss" scoped>
   $popper-background-color: gold !default;
-  
+
   .vue-popper-component {
     background: $popper-background-color;
     color: black;
@@ -136,7 +116,7 @@
     -webkit-box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-    
+
     .popper-close {
       position: absolute;
       top: 2px;
@@ -144,13 +124,13 @@
       color: black;
       background: transparent;
       border: none;
-      
+
       &:active,
       &:focus {
         outline: none;
       }
     }
-    
+
     .popper__arrow {
       width: 0;
       height: 0;
@@ -158,10 +138,10 @@
       position: absolute;
       margin: 5px;
     }
-    
+
     &[x-placement^="top"] {
       margin-bottom: 5px;
-      
+
       .popper__arrow {
         border-width: 5px 5px 0 5px;
         border-color: $popper-background-color transparent transparent transparent;
@@ -171,10 +151,10 @@
         margin-bottom: 0;
       }
     }
-    
+
     &[x-placement^="bottom"] {
       margin-top: 5px;
-      
+
       .popper__arrow {
         border-width: 0 5px 5px 5px;
         border-color: transparent transparent $popper-background-color transparent;
@@ -184,10 +164,10 @@
         margin-bottom: 0;
       }
     }
-    
+
     &[x-placement^="right"] {
       margin-left: 5px;
-      
+
       .popper__arrow {
         border-width: 5px 5px 5px 0;
         border-color: transparent $popper-background-color transparent transparent;
@@ -197,10 +177,10 @@
         margin-right: 0;
       }
     }
-    
+
     &[x-placement^="left"] {
       margin-right: 5px;
-      
+
       .popper__arrow {
         border-width: 5px 0 5px 5px;
         border-color: transparent transparent transparent $popper-background-color;

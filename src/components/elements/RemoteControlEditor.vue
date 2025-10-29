@@ -29,43 +29,43 @@
   </div>
 </template>
 
-<script>
-  import RemoteButtonOptions from './RemoteButtonOptions.vue'
-  import { Controls } from '../../models/Control'
+<script setup>
+import { ref, watch } from 'vue'
+import RemoteButtonOptions from './RemoteButtonOptions.vue'
+import { Controls } from '../../models/Control'
 
-  export default {
-    components: {RemoteButtonOptions},
-    props: {
-      modelValue: {type: Array, default: () => Controls.empty()}
-    },
-    data () {
-      return {
-        buttons: this.setup(this.modelValue),
-        index: 0
-      }
-    },
-    methods: {
-      setup (value) {
-        const data = new Array(9)
-        value.forEach(control => {
-          if (control.order < data.length) {
-            data[control.order] = control
-          }
-        })
-        return data
-      },
-      closeOptions (index) {
-        this.$refs['popups-' + index][0].hide()
-      },
-      updateButton (index, control) {
-        this.buttons[index] = control
-        this.$emit('update:modelValue', this.buttons.slice().filter(_ => _))
-      }
-    },
-    watch: {
-      modelValue: function (value) {
-        this.buttons = this.setup(value)
-      }
+const props = defineProps({
+  modelValue: { type: Array, default: () => Controls.empty() }
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const setup = (value) => {
+  const data = new Array(9)
+  value.forEach(control => {
+    if (control.order < data.length) {
+      data[control.order] = control
     }
+  })
+  return data
+}
+
+const buttons = ref(setup(props.modelValue))
+const index = ref(0)
+const popups = ref({})
+
+const closeOptions = (buttonIndex) => {
+  if (popups.value['popups-' + buttonIndex]) {
+    popups.value['popups-' + buttonIndex][0].hide()
   }
+}
+
+const updateButton = (buttonIndex, control) => {
+  buttons.value[buttonIndex] = control
+  emit('update:modelValue', buttons.value.slice().filter(_ => _))
+}
+
+watch(() => props.modelValue, (value) => {
+  buttons.value = setup(value)
+})
 </script>
