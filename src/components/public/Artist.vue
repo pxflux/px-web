@@ -23,64 +23,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
-import { firebaseApp } from '../../firebase-app'
-import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
+import { computed } from 'vue'
+import { useRouteParams } from '@vueuse/router'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
-const route = useRoute()
-const artist = ref({})
-let artistUnsubscribe = null
-
-const artistId = computed(() => {
-  return route.params.id
-})
-
-const artworks = computed(() => {
-  return Object.keys(artist.value.artworks || {}).map(id => {
-    return { ...artist.value.artworks[id], ...{ '.key': id } }
-  })
-})
-
-const shows = computed(() => {
-  return Object.keys(artist.value.shows || {}).map(id => {
-    return { ...artist.value.shows[id], ...{ '.key': id } }
-  })
-})
-
-const init = () => {
-  if (artistUnsubscribe) {
-    artistUnsubscribe()
-  }
-  const db = getDatabase(firebaseApp)
-  const artistRef = dbRef(db, 'artists/' + artistId.value)
-  artistUnsubscribe = onValue(artistRef, (snapshot) => {
-    if (snapshot.exists()) {
-      artist.value = snapshot.val()
-    } else {
-      artist.value = {}
-    }
-  }, (error) => {
-    console.error('Error loading artist:', error)
-  })
-}
-
-const cleanup = () => {
-  if (artistUnsubscribe) {
-    artistUnsubscribe()
-    artistUnsubscribe = null
-  }
-}
-
-onMounted(() => {
-  init()
-})
-
-onBeforeUnmount(() => {
-  cleanup()
-})
-
-watch(() => route.path, () => {
-  init()
-})
+const artistId = useRouteParams('id')
+const path = computed(() => artistId.value ? 'artists/' + artistId.value : null)
+const { data: artist } = useFirebaseBinding(path, { isList: false, defaultValue: {} })
+const artworks = computed(() => Object.entries(artist.value.artworks || {}).map(([ id, artwork ]) => ({ ['.key']: id, ...artwork })))
+const shows = computed(() => Object.entries(artist.value.shows || {}).map(([ id, show ]) => ({ ['.key']: id, ...show })))
 </script>

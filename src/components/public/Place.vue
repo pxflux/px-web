@@ -15,58 +15,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
-import { firebaseApp } from '../../firebase-app'
-import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
+import { computed } from 'vue'
+import { useRouteParams } from '@vueuse/router'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
-const route = useRoute()
-const place = ref({})
-let placeUnsubscribe = null
-
-const placeId = computed(() => {
-  return route.params.id
-})
-
-const shows = computed(() => {
-  return Object.keys(place.value.shows || {}).map(id => {
-    return { ...place.value.shows[id], ...{ '.key': id } }
-  })
-})
-
-const init = () => {
-  if (placeUnsubscribe) {
-    placeUnsubscribe()
-  }
-  const db = getDatabase(firebaseApp)
-  const placeRef = dbRef(db, 'places/' + placeId.value)
-  placeUnsubscribe = onValue(placeRef, (snapshot) => {
-    if (snapshot.exists()) {
-      place.value = snapshot.val()
-    } else {
-      place.value = {}
-    }
-  }, (error) => {
-    console.error('Error loading place:', error)
-  })
-}
-
-const cleanup = () => {
-  if (placeUnsubscribe) {
-    placeUnsubscribe()
-    placeUnsubscribe = null
-  }
-}
-
-onMounted(() => {
-  init()
-})
-
-onBeforeUnmount(() => {
-  cleanup()
-})
-
-watch(() => route.path, () => {
-  init()
-})
+const placeId = useRouteParams('id')
+const path = computed(() => placeId.value ? 'places/' + placeId.value : null)
+const { data: place } = useFirebaseBinding(path, { isList: false, defaultValue: {} })
+const shows = computed(() => Object.entries(place.value.shows || {}).map(([ id, show ]) => ({ ['.key']: id, ...show })))
 </script>
