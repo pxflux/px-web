@@ -26,12 +26,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
-import { ref as dbRef } from 'firebase/database'
+import { useRouter } from 'vue-router'
+import { useRouteParams } from '@vueuse/router'
 import { db, store } from '../../firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import ImageUpload from '../elements/ImageUpload.vue'
 import latinize from 'latinize'
 
@@ -40,7 +41,6 @@ const props = defineProps({
 })
 
 const storeInstance = useStore()
-const route = useRoute()
 const router = useRouter()
 
 const imageFile = ref(null)
@@ -48,7 +48,7 @@ const imageRemoved = ref(false)
 const fullName = ref('')
 
 const userAccount = computed(() => storeInstance.state.userAccount)
-const accountArtist = computed(() => storeInstance.state.accountArtist)
+const artistId = useRouteParams('id')
 
 const accountId = computed(() => {
   if (!userAccount.value) {
@@ -57,9 +57,14 @@ const accountId = computed(() => {
   return userAccount.value['.key']
 })
 
-const artistId = computed(() => {
-  return route.params.id
+const artistPath = computed(() => {
+  if (!props.isNew && accountId.value && artistId.value) {
+    return 'accounts/' + accountId.value + '/artists/' + artistId.value
+  }
+  return null
 })
+
+const { data: accountArtist } = useFirebaseBinding(artistPath, { isList: false, defaultValue: {} })
 
 const published = computed(() => {
   return accountArtist.value && accountArtist.value.published ? accountArtist.value.published : false
@@ -71,15 +76,6 @@ const image = computed(() => {
     storageUri: null
   }
 })
-
-const init = () => {
-  if (!props.isNew && accountId.value) {
-    storeInstance.dispatch('setRef', {
-      key: 'accountArtist',
-      ref: dbRef(db, 'accounts/' + accountId.value + '/artists/' + artistId.value)
-    })
-  }
-}
 
 const setImageFile = (file) => {
   imageFile.value = file
@@ -105,18 +101,6 @@ const submitArtist = () => {
     router.push('/account/artist/' + ref.key)
   }).catch(log)
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
-})
 
 watch(accountArtist, () => {
   fullName.value = accountArtist.value?.fullName

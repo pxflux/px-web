@@ -59,13 +59,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { useRouteParams } from '@vueuse/router'
 import { ref as dbRef, update } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { Artwork } from '../../models/ArtworkData'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 import RemoteControlEditor from '../elements/RemoteControlEditor.vue'
 import ContributorsEditor from '../elements/ContributorsEditor.vue'
@@ -78,14 +80,12 @@ const props = defineProps({
 })
 
 const storeInstance = useStore()
-const route = useRoute()
 const router = useRouter()
 
 const artwork = ref(Artwork.empty())
-let source = null
 
 const userAccount = computed(() => storeInstance.state.userAccount)
-const accountArtwork = computed(() => storeInstance.state.accountArtwork)
+const artworkId = useRouteParams('id')
 
 const accountId = computed(() => {
   if (!userAccount.value) {
@@ -94,18 +94,14 @@ const accountId = computed(() => {
   return userAccount.value['.key']
 })
 
-const artworkId = computed(() => {
-  return route.params.id
+const artworkPath = computed(() => {
+  if (!props.isNew && accountId.value && artworkId.value) {
+    return 'accounts/' + accountId.value + '/artworks/' + artworkId.value
+  }
+  return null
 })
 
-const init = () => {
-  if (!props.isNew && accountId.value) {
-    source = dbRef(db, 'accounts/' + accountId.value + '/artworks/' + artworkId.value)
-    storeInstance.dispatch('setRef', { key: 'accountArtwork', ref: source })
-  } else {
-    source = null
-  }
-}
+const { data: accountArtwork } = useFirebaseBinding(artworkPath, { isList: false, defaultValue: {} })
 
 const submitArtwork = () => {
   if (!accountId.value) {
@@ -119,18 +115,6 @@ const submitArtwork = () => {
     router.push('/artwork/' + id)
   }).catch(log)
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
-})
 
 watch(accountArtwork, () => {
   artwork.value = Artwork.fromJson(accountArtwork.value)

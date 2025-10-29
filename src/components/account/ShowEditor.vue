@@ -32,12 +32,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
-import { ref as dbRef } from 'firebase/database'
+import { useRouter } from 'vue-router'
+import { useRouteParams } from '@vueuse/router'
 import { db, store } from '../../firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import ImageUpload from '../elements/ImageUpload.vue'
 
 const props = defineProps({
@@ -45,7 +46,6 @@ const props = defineProps({
 })
 
 const storeInstance = useStore()
-const route = useRoute()
 const router = useRouter()
 
 const imageFile = ref(null)
@@ -54,8 +54,7 @@ const title = ref('')
 const selectedPlaceIds = ref([])
 
 const userAccount = computed(() => storeInstance.state.userAccount)
-const accountShow = computed(() => storeInstance.state.accountShow)
-const places = computed(() => storeInstance.state.places)
+const showId = useRouteParams('id')
 
 const accountId = computed(() => {
   if (!userAccount.value) {
@@ -64,9 +63,17 @@ const accountId = computed(() => {
   return userAccount.value['.key']
 })
 
-const showId = computed(() => {
-  return route.params.id
+const showPath = computed(() => {
+  if (!props.isNew && accountId.value && showId.value) {
+    return 'accounts/' + accountId.value + '/shows/' + showId.value
+  }
+  return null
 })
+
+const { data: accountShow } = useFirebaseBinding(showPath, { isList: false, defaultValue: {} })
+
+const placesPath = computed(() => 'places')
+const { data: places } = useFirebaseBinding(placesPath)
 
 const published = computed(() => {
   return accountShow.value && accountShow.value.published ? accountShow.value.published : false
@@ -78,16 +85,6 @@ const image = computed(() => {
     storageUri: null
   }
 })
-
-const init = () => {
-  if (!props.isNew && accountId.value) {
-    storeInstance.dispatch('setRef', {
-      key: 'accountShow',
-      ref: dbRef(db, 'accounts/' + accountId.value + '/shows/' + showId.value)
-    })
-  }
-  storeInstance.dispatch('setRef', { key: 'places', ref: dbRef(db, 'places') })
-}
 
 const setImageFile = (file) => {
   imageFile.value = file
@@ -113,18 +110,6 @@ const submitShow = () => {
     router.push('/account/show/' + ref.key)
   }).catch(log)
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
-})
 
 watch(accountShow, () => {
   title.value = accountShow.value?.title

@@ -41,16 +41,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
 import { ref as dbRef, set, push, remove } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
 
 const store = useStore()
-const route = useRoute()
 
 const title = ref('')
 const email = ref('')
@@ -59,24 +58,33 @@ const showInviteForm = ref(false)
 
 const user = computed(() => store.state.user)
 const userAccount = computed(() => store.state.userAccount)
-const account = computed(() => store.state.account)
-const accountInvitations = computed(() => store.getters.accountInvitations)
+
+const accountPath = computed(() => {
+  if (userAccount.value) {
+    return 'accounts/' + userAccount.value['.key']
+  }
+  return null
+})
+
+const { data: account } = useFirebaseBinding(accountPath, { isList: false, defaultValue: {} })
+
+const invitationsPath = computed(() => {
+  if (userAccount.value) {
+    return 'invitations'
+  }
+  return null
+})
+
+const { data: invitations } = useFirebaseBinding(invitationsPath)
+
+const accountInvitations = computed(() => {
+  return invitations.value.filter(invitation => invitation.account?.id === userAccount.value?.['.key'])
+})
 
 const people = computed(() => {
   const acc = account.value || {}
-  return Object.keys(acc.users || {}).map(userId => {
-    const u = acc.users[userId]
-    u['.key'] = userId
-    return u
-  })
+  return Object.entries(acc.users || {}).map(([ userId, u ]) => ({ ['.key']: userId, ...u }))
 })
-
-const init = () => {
-  if (userAccount.value) {
-    store.dispatch('setRef', { key: 'account', ref: dbRef(db, 'accounts/' + userAccount.value['.key']) })
-    store.dispatch('setRef', { key: 'invitations', ref: dbRef(db, 'invitations') })
-  }
-}
 
 const updateAccount = () => {
   showEditForm.value = false
@@ -103,18 +111,6 @@ const leaveAccount = () => {
   showEditForm.value = false
   remove(dbRef(db, 'accounts/' + userAccount.value['.key'] + '/users/' + user.value.uid)).catch(log)
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
-})
 
 watch(account, () => {
   title.value = account.value?.title

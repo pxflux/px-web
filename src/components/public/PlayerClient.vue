@@ -36,16 +36,16 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRouteParams } from '@vueuse/router'
 import { ref as dbRef, push } from 'firebase/database'
 import { db } from '@/firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import RemoteControl from '../elements/RemoteControl.vue'
 
 const storeInstance = useStore()
-const route = useRoute()
 
 const pin0 = ref('')
 const pin1 = ref('')
@@ -54,11 +54,7 @@ const pin3 = ref('')
 const pin4 = ref('')
 const pin5 = ref('')
 
-const playerPin = computed(() => storeInstance.state.playerPin)
-
-const playerId = computed(() => {
-  return route.params.id
-})
+const playerId = useRouteParams('id')
 
 const pin = computed(() => {
   return pin0.value + pin1.value + pin2.value + pin3.value + pin4.value + pin5.value
@@ -67,6 +63,15 @@ const pin = computed(() => {
 const pinReady = computed(() => {
   return pin.value > 100000
 })
+
+const playerPinPath = computed(() => {
+  if (pinReady.value) {
+    return 'player-pins/' + pin.value
+  }
+  return null
+})
+
+const { data: playerPin } = useFirebaseBinding(playerPinPath, { isList: false, defaultValue: {} })
 
 const artwork = computed(() => {
   if (playerPin.value) {
@@ -77,9 +82,7 @@ const artwork = computed(() => {
 
 const artists = computed(() => {
   if (artwork.value) {
-    return Object.keys(artwork.value.artists || {}).map(id => {
-      return { ...artwork.value.artists[id], ...{ '.key': id } }
-    })
+    return Object.entries(artwork.value.artists || {}).map(([ id, artist ]) => ({ ['.key']: id, ...artist }))
   }
   return []
 })
@@ -92,12 +95,8 @@ const controls = computed(() => {
 })
 
 const setPin = () => {
-  init()
-}
-
-const init = () => {
-  if (route.params.id > 100000 && route.params.id < 999999) {
-    const value = route.params.id.split('')
+  if (playerId.value > 100000 && playerId.value < 999999) {
+    const value = playerId.value.split('')
     if (!pin0.value) {
       pin0.value = value[0]
     }
@@ -117,21 +116,13 @@ const init = () => {
       pin5.value = value[5]
     }
   }
-  if (pinReady.value) {
-    storeInstance.commit('SET_LOADING', true)
-    storeInstance.dispatch('setRef', { key: 'playerPin', ref: dbRef(db, 'player-pins/' + pin.value) })
-  }
 }
 
 const sendControl = (position) => {
   push(dbRef(db, 'commands/' + pin.value), { controlId: '' + position }).catch(log)
 }
 
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
+watch(playerId, () => {
+  setPin()
+}, { immediate: true })
 </script>

@@ -15,14 +15,11 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import { ref as dbRef } from 'firebase/database'
-import { db } from '../../firebase-app'
+import { ref, computed, watch } from 'vue'
 import vSelect from './UI/Select/components/Select.vue'
 import inlineSelect from './UI/Select/components/SelectInline.vue'
 import { ContributorRefs } from '../../models/ContributorRef'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const props = defineProps({
   value: { type: Array, default: () => ContributorRefs.empty() },
@@ -30,9 +27,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['input'])
-
-const storeInstance = useStore()
-const route = useRoute()
 
 const mutableValue = ref(props.value)
 const roles = ref([
@@ -45,15 +39,12 @@ const roles = ref([
   'assistance'
 ])
 
-const artists = computed(() => storeInstance.state.artists)
+const artistsPath = computed(() => 'artists')
+const { data: artists } = useFirebaseBinding(artistsPath)
 
 const contributors = computed(() => {
   return ContributorRefs.fromJson(artists.value)
 })
-
-const init = () => {
-  storeInstance.dispatch('setRef', { key: 'artists', ref: dbRef(db, 'artists') })
-}
 
 const updateValue = (value) => {
   emit('input', value)
@@ -65,14 +56,6 @@ const updateRole = (option, value) => {
     selected.role = value
   }
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
 
 watch(() => props.value, (value) => {
   mutableValue.value = value

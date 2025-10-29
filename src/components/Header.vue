@@ -64,50 +64,38 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUpdated, onBeforeUnmount, watch, nextTick, getCurrentInstance } from 'vue'
+import { computed, onMounted, onUpdated, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { db, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
-import { ref as dbRef, set, onValue, off } from 'firebase/database'
+import { ref as dbRef, set } from 'firebase/database'
 import ScalableCanvasFromImage from '../assets/js/logo'
 import ColorFlicker from '../assets/js/color-flicker'
 import { useSubmenu } from '../composables/useSubmenu'
 import { log } from '../helper'
+import { useFirebaseBinding } from '../composables/useFirebaseBinding'
 
 const store = useStore()
 const router = useRouter()
-const instance = getCurrentInstance()
 const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
-
-const accounts = ref({})
-let accountsUnsubscribe = null
 
 const user = computed(() => store.state.user)
 const userAccount = computed(() => store.state.userAccount)
+
+const accountsPath = computed(() => {
+  if (user.value?.uid) {
+    return 'users/' + user.value.uid + '/accounts'
+  }
+  return null
+})
+
+const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })
 
 const inactiveAccounts = computed(() => {
   const accountsArray = Array.isArray(accounts.value) ? accounts.value : Object.values(accounts.value)
   return accountsArray.filter(account => account && account['.key'] !== userAccount.value?.['.key'])
 })
-
-const init = () => {
-  if (accountsUnsubscribe) {
-    accountsUnsubscribe()
-  }
-  if (user.value) {
-    const accountsRef = dbRef(db, 'users/' + user.value.uid + '/accounts')
-    accountsUnsubscribe = onValue(accountsRef, (snapshot) => {
-      if (snapshot.exists()) {
-        accounts.value = snapshot.val()
-      } else {
-        accounts.value = {}
-      }
-    }, (error) => {
-      log('Error loading accounts:', error)
-    })
-  }
-}
 
 const setAccount = (accountId) => {
   closeSubmenus()
@@ -139,8 +127,6 @@ const getLogoURL = () => {
 }
 
 onMounted(() => {
-  init()
-
   nextTick(() => {
     try {
       let logoURL = getLogoURL()
@@ -166,16 +152,5 @@ onUpdated(() => {
   nextTick(() => {
     setupSubmenusWithClass('submenu', 'submenu-trigger')
   })
-})
-
-watch(user, () => {
-  init()
-}, { immediate: false })
-
-onBeforeUnmount(() => {
-  if (accountsUnsubscribe) {
-    accountsUnsubscribe()
-    accountsUnsubscribe = null
-  }
 })
 </script>
