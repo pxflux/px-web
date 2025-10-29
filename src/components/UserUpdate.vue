@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
 import { auth } from '../firebase-app'
@@ -68,6 +68,17 @@ const user = computed(() => store.state.user)
 const displayName = ref(user.value?.displayName || '')
 const email = ref(user.value?.email || '')
 const password = ref('')
+
+// Update local refs when user data changes
+const updateLocalRefs = () => {
+  if (user.value) {
+    displayName.value = user.value.displayName || ''
+    email.value = user.value.email || ''
+  }
+}
+
+// Watch for user changes and update local refs
+watch(user, updateLocalRefs, { immediate: true })
 
 const googleFederated = computed(() => {
   return user.value?.providerData.find(o => o.providerId === GoogleAuthProvider.PROVIDER_ID)
@@ -82,12 +93,37 @@ const multipleAuth = computed(() => {
 })
 
 const updateProfile = () => {
-  user.value.updateProfile({
-    displayName: displayName.value,
-    email: email.value
-  }).catch((error) => {
-    console.log('Account linking error', error)
-  })
+  const promises = []
+
+  // Update display name
+  if (displayName.value !== user.value.displayName) {
+    promises.push(
+      user.value.updateProfile({
+        displayName: displayName.value
+      })
+    )
+  }
+
+  // Update email (requires separate method)
+  if (email.value !== user.value.email) {
+    promises.push(
+      user.value.updateEmail(email.value)
+    )
+  }
+
+  Promise.all(promises)
+    .then(() => {
+      // Reload the user data to get the latest profile
+      return auth.currentUser.reload()
+    })
+    .then(() => {
+      // Update the Vuex store with the new user data
+      store.commit('UPDATE_USER', { user: auth.currentUser })
+      console.log('Profile updated successfully')
+    })
+    .catch((error) => {
+      console.error('Profile update error:', error)
+    })
 }
 
 const updatePassword = () => {
