@@ -35,102 +35,103 @@
   </main>
 </template>
 
-<script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
-  import { ref, push } from 'firebase/database'
-  import { db } from '@/firebase-app'
-  import { log } from '../../helper'
-  import RemoteControl from '../elements/RemoteControl.vue'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref as dbRef, push } from 'firebase/database'
+import { db } from '@/firebase-app'
+import { log } from '../../helper'
+import RemoteControl from '../elements/RemoteControl.vue'
 
-  export default {
-    name: 'PlayerClient',
-    components: {RemoteControl},
+const storeInstance = useStore()
+const route = useRoute()
 
-    computed: {
-      ...mapState(['playerPin']),
+const pin0 = ref('')
+const pin1 = ref('')
+const pin2 = ref('')
+const pin3 = ref('')
+const pin4 = ref('')
+const pin5 = ref('')
 
-      playerId () {
-        return this.$route.params.id
-      },
-      pin () {
-        return this.pin0 + this.pin1 + this.pin2 + this.pin3 + this.pin4 + this.pin5
-      },
-      pinReady () {
-        return this.pin > 100000
-      },
-      artwork () {
-        if (this.playerPin) {
-          return this.playerPin.artwork
-        }
-        return null
-      },
-      artists () {
-        return Object.keys(this.artwork.artists || {}).map(id => {
-          return {...this.artwork.artists[id], ...{'.key': id}}
-        })
-      },
-      controls () {
-        if (this.artwork) {
-          return this.artwork.controls || []
-        }
-        return []
-      }
-    },
-    data () {
-      return {
-        pin0: '',
-        pin1: '',
-        pin2: '',
-        pin3: '',
-        pin4: '',
-        pin5: ''
-      }
-    },
-    created () {
-      this.init()
-    },
-    methods: {
-      ...mapActions(['setRef']),
-      ...mapMutations(['SET_LOADING']),
+const playerPin = computed(() => storeInstance.state.playerPin)
 
-      setPin () {
-        this.init()
-      },
-      init () {
-        if (this.$route.params.id > 100000 && this.$route.params.id < 999999) {
-          const value = this.$route.params.id.split('')
-          if (!this.pin0) {
-            this.pin0 = value[0]
-          }
-          if (!this.pin1) {
-            this.pin1 = value[1]
-          }
-          if (!this.pin2) {
-            this.pin2 = value[2]
-          }
-          if (!this.pin3) {
-            this.pin3 = value[3]
-          }
-          if (!this.pin4) {
-            this.pin4 = value[4]
-          }
-          if (!this.pin5) {
-            this.pin5 = value[5]
-          }
-        }
-        if (this.pinReady) {
-          this.SET_LOADING(true)
-          this.setRef({key: 'playerPin', ref: ref(db, 'player-pins/' + this.pin)})
-        }
-      },
-      sendControl (position) {
-        push(ref(db, 'commands/' + this.pin), {controlId: '' + position}).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      }
+const playerId = computed(() => {
+  return route.params.id
+})
+
+const pin = computed(() => {
+  return pin0.value + pin1.value + pin2.value + pin3.value + pin4.value + pin5.value
+})
+
+const pinReady = computed(() => {
+  return pin.value > 100000
+})
+
+const artwork = computed(() => {
+  if (playerPin.value) {
+    return playerPin.value.artwork
+  }
+  return null
+})
+
+const artists = computed(() => {
+  if (artwork.value) {
+    return Object.keys(artwork.value.artists || {}).map(id => {
+      return { ...artwork.value.artists[id], ...{ '.key': id } }
+    })
+  }
+  return []
+})
+
+const controls = computed(() => {
+  if (artwork.value) {
+    return artwork.value.controls || []
+  }
+  return []
+})
+
+const setPin = () => {
+  init()
+}
+
+const init = () => {
+  if (route.params.id > 100000 && route.params.id < 999999) {
+    const value = route.params.id.split('')
+    if (!pin0.value) {
+      pin0.value = value[0]
+    }
+    if (!pin1.value) {
+      pin1.value = value[1]
+    }
+    if (!pin2.value) {
+      pin2.value = value[2]
+    }
+    if (!pin3.value) {
+      pin3.value = value[3]
+    }
+    if (!pin4.value) {
+      pin4.value = value[4]
+    }
+    if (!pin5.value) {
+      pin5.value = value[5]
     }
   }
+  if (pinReady.value) {
+    storeInstance.commit('SET_LOADING', true)
+    storeInstance.dispatch('setRef', { key: 'playerPin', ref: dbRef(db, 'player-pins/' + pin.value) })
+  }
+}
+
+const sendControl = (position) => {
+  push(dbRef(db, 'commands/' + pin.value), { controlId: '' + position }).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
 </script>

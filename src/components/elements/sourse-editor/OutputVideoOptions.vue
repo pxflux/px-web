@@ -41,38 +41,33 @@
   </div>
 </template>
 
-<script>
-  import VSelect from '../UI/Select/components/Select.vue'
-  import { AWVideoOutput } from '../../../models/AWVideoOutput'
+<script setup>
+import { ref, watch } from 'vue'
+import VSelect from '../UI/Select/components/Select.vue'
+import { AWVideoOutput } from '../../../models/AWVideoOutput'
 
-  export default {
-    name: 'output-video-options',
-    components: {VSelect},
-    props: {bus: Object, index: Number, value: AWVideoOutput},
+const props = defineProps({
+  bus: Object,
+  index: Number,
+  value: AWVideoOutput
+})
 
-    data () {
-      return {
-        options: this.value,
-        types: ['any', 'monitor', 'projection', 'handheld', 'headset']
-      }
-    },
+const options = ref(props.value)
+const types = ref(['any', 'monitor', 'projection', 'handheld', 'headset'])
 
-    methods: {
-      setType (event) {
-        this.options.type = event
-      },
-      setValue (prop, event) {
-        prop = event
-      },
-      submit () {
-        this.bus.$emit('updateOutputOptions', this.options, this.index)
-      }
-    },
+const setType = (event) => {
+  options.value.type = event
+}
 
-    watch: {
-      value (newValue) {
-        this.options = newValue
-      }
-    }
-  }
+const setValue = (prop, event) => {
+  prop = event
+}
+
+const submit = () => {
+  props.bus.$emit('updateOutputOptions', options.value, props.index)
+}
+
+watch(() => props.value, (newValue) => {
+  options.value = newValue
+})
 </script>

@@ -12,68 +12,73 @@
   </main>
 </template>
 
-<script>
-  import { mapState, mapActions } from 'vuex'
-  import { ref, remove } from 'firebase/database'
-  import { log } from '../../helper'
-  import { db, store } from '../../firebase-app'
+<script setup>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { ref as dbRef, remove } from 'firebase/database'
+import { db, store } from '../../firebase-app'
+import { log } from '../../helper'
 
-  export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount', 'accountArtist']),
+const storeInstance = useStore()
+const route = useRoute()
+const router = useRouter()
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      artistId () {
-        return this.$route.params.id
-      },
-      image () {
-        return this.accountArtist && this.accountArtist.image ? this.accountArtist.image : {
-          displayUrl: null,
-          storageUri: null
-        }
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const userAccount = computed(() => storeInstance.state.userAccount)
+const accountArtist = computed(() => storeInstance.state.accountArtist)
 
-      init () {
-        if (this.accountId) {
-          this.setRef({
-            key: 'accountArtist',
-            ref: ref(db, 'accounts/' + this.accountId + '/artists/' + this.artistId)
-          })
-        }
-      },
-      togglePublished (published) {
-        if (!this.accountId) {
-          return
-        }
-        store(this.accountId, this.artistId, 'artists', {published: published}).catch(log)
-      },
-      removeArtist () {
-        if (!this.accountId) {
-          return
-        }
-        remove(ref(db, 'accounts/' + this.accountId + '/artists/' + this.artistId)).then(function () {
-          this.$router.push('/account/artists')
-        }.bind(this)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      }
-    }
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const artistId = computed(() => {
+  return route.params.id
+})
+
+const image = computed(() => {
+  return accountArtist.value && accountArtist.value.image ? accountArtist.value.image : {
+    displayUrl: null,
+    storageUri: null
+  }
+})
+
+const init = () => {
+  if (accountId.value) {
+    storeInstance.dispatch('setRef', {
+      key: 'accountArtist',
+      ref: dbRef(db, 'accounts/' + accountId.value + '/artists/' + artistId.value)
+    })
+  }
+}
+
+const togglePublished = (published) => {
+  if (!accountId.value) {
+    return
+  }
+  store(accountId.value, artistId.value, 'artists', { published: published }).catch(log)
+}
+
+const removeArtist = () => {
+  if (!accountId.value) {
+    return
+  }
+  remove(dbRef(db, 'accounts/' + accountId.value + '/artists/' + artistId.value)).then(() => {
+    router.push('/account/artists')
+  }).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
 </script>

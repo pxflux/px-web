@@ -6,7 +6,7 @@
         <h2>Shows</h2>
         <ul v-for="show in shows" :key="show['__key']">
           <li>
-            <router-link :to="'/show/' + place.key">{{ show.title }}</router-link>
+            <router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link>
           </li>
         </ul>
       </template>
@@ -14,40 +14,59 @@
   </main>
 </template>
 
-<script>
-  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+<script setup>
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import { firebaseApp } from '../../firebase-app'
+import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
 
-  export default {
-    setup() {
-      const { data: place, bind } = useFirebaseBinding()
+const route = useRoute()
+const place = ref({})
+let placeUnsubscribe = null
 
-      return {
-        place,
-        bind
-      }
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      placeId () {
-        return this.$route.params.id
-      },
-      shows () {
-        return Object.keys(this.place?.shows || {}).map(id => {
-          return {...this.place.shows[id], ...{'.key': id}}
-        })
-      }
-    },
-    methods: {
-      init () {
-        this.bind('places/' + this.placeId)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      }
-    }
+const placeId = computed(() => {
+  return route.params.id
+})
+
+const shows = computed(() => {
+  return Object.keys(place.value.shows || {}).map(id => {
+    return { ...place.value.shows[id], ...{ '.key': id } }
+  })
+})
+
+const init = () => {
+  if (placeUnsubscribe) {
+    placeUnsubscribe()
   }
+  const db = getDatabase(firebaseApp)
+  const placeRef = dbRef(db, 'places/' + placeId.value)
+  placeUnsubscribe = onValue(placeRef, (snapshot) => {
+    if (snapshot.exists()) {
+      place.value = snapshot.val()
+    } else {
+      place.value = {}
+    }
+  }, (error) => {
+    console.error('Error loading place:', error)
+  })
+}
+
+const cleanup = () => {
+  if (placeUnsubscribe) {
+    placeUnsubscribe()
+    placeUnsubscribe = null
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+onBeforeUnmount(() => {
+  cleanup()
+})
+
+watch(() => route.path, () => {
+  init()
+})
 </script>

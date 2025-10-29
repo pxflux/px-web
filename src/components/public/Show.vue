@@ -14,40 +14,59 @@
   </main>
 </template>
 
-<script>
-  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+<script setup>
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import { firebaseApp } from '../../firebase-app'
+import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
 
-  export default {
-    setup() {
-      const { data: show, bind } = useFirebaseBinding()
+const route = useRoute()
+const show = ref({})
+let showUnsubscribe = null
 
-      return {
-        show,
-        bind
-      }
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      showId () {
-        return this.$route.params.id
-      },
-      places () {
-        return Object.keys(this.show?.places || {}).map(id => {
-          return {...this.show.places[id], ...{'.key': id}}
-        })
-      }
-    },
-    methods: {
-      init () {
-        this.bind('shows/' + this.showId)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      }
-    }
+const showId = computed(() => {
+  return route.params.id
+})
+
+const places = computed(() => {
+  return Object.keys(show.value.places || {}).map(id => {
+    return { ...show.value.places[id], ...{ '.key': id } }
+  })
+})
+
+const init = () => {
+  if (showUnsubscribe) {
+    showUnsubscribe()
   }
+  const db = getDatabase(firebaseApp)
+  const showRef = dbRef(db, 'shows/' + showId.value)
+  showUnsubscribe = onValue(showRef, (snapshot) => {
+    if (snapshot.exists()) {
+      show.value = snapshot.val()
+    } else {
+      show.value = {}
+    }
+  }, (error) => {
+    console.error('Error loading show:', error)
+  })
+}
+
+const cleanup = () => {
+  if (showUnsubscribe) {
+    showUnsubscribe()
+    showUnsubscribe = null
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+onBeforeUnmount(() => {
+  cleanup()
+})
+
+watch(() => route.path, () => {
+  init()
+})
 </script>

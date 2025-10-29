@@ -2,168 +2,144 @@
   <canvas ref="canvas" @resize="updateCanvasSize"></canvas>
 </template>
 
-<script>
-  /**
-   * @typedef {{objectBounds: ClientRect, type: string}} Connector
-   * @typedef {{video: Connector[], audio: Connector[]}} GroupedConnectors
-   *
-   * @typedef {{x:number, y:number, w:number, type: string}} Point
-   * @typedef {{type: string, points: Point[] }} PointsGroup
-   */
-  export default {
-    name: 'connectors-canvas',
-    props: [
-      /** @type GroupedConnectors */
-      'startConnectors',
-      /** @type GroupedConnectors */
-      'endConnectors',
-      'trigger'
-    ],
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
 
-    mounted () {
-      this.ctx = this.$refs.canvas.getContext('2d')
-    },
-    watch: {
-      trigger: function () {
-        this.draw()
-      }
-    },
+const props = defineProps({
+  startConnectors: Object,
+  endConnectors: Object,
+  trigger: null
+})
 
-    computed: {
-      colors () {
-        return {
-          video: 'rgba(115, 253, 234, 0.6)',
-          audio: 'rgba(248, 186, 0, 0.6)'
-        }
-      }
-    },
-    data () {
-      return {
-        ctx: null,
-        pixDensity: window.devicePixelRatio || 1,
-        w: 0,
-        h: 0,
-        t: 0,
-        l: 0,
-        lineColor: this.color ? this.color : '#ccc',
-        lineW: 1,
-        specialTypes: [
-          'projection'
-        ],
-        options: {
-          projectionBeamH: 30,
-          projectorRay: 4
-        }
-      }
-    },
-    methods: {
-      draw () {
-        this.updateCanvasSize()
+const canvas = ref(null)
+const ctx = ref(null)
+const pixDensity = ref(window.devicePixelRatio || 1)
+const w = ref(0)
+const h = ref(0)
+const lineW = ref(1)
+const options = ref({
+  projectionBeamH: 30,
+  projectorRay: 4
+})
 
-        const ctx = this.ctx
-        const lineWidth = this.lineW * this.pixDensity
-        ctx.clearRect(0, 0, this.w, this.h)
-
-        this.convert().forEach(({startPoint, endPoint, strokeColor}) => {
-          let endY = endPoint.y
-          if (endPoint.type === 'projection') {
-            endY -= (this.options.projectionBeamH + this.options.projectorRay * 3) * this.pixDensity
-          }
-          const half = (endPoint.y - startPoint.y) / 2
-          const c1x = startPoint.x
-          const c1y = startPoint.y + half
-          const c2x = endPoint.x
-          const c2y = endY - half
-
-          ctx.beginPath()
-          ctx.strokeStyle = strokeColor
-          ctx.lineWidth = lineWidth
-          ctx.moveTo(startPoint.x, startPoint.y)
-          ctx.bezierCurveTo(c1x, c1y, c2x, c2y, endPoint.x, endY)
-          ctx.stroke()
-          this.drawEndPoint(endPoint)
-        })
-      },
-      /**
-       * @param {Point} endPoint
-       */
-      drawEndPoint (endPoint) {
-        const ctx = this.ctx
-
-        switch (endPoint.type) {
-          case 'projection':
-            const originY = endPoint.y - this.options.projectionBeamH * this.pixDensity
-            const rayH = this.options.projectorRay * this.pixDensity
-            // BULB
-            ctx.beginPath()
-            ctx.strokeStyle = 'rgba(0,0,0,0.4)'
-            // ctx.lineWidth = 1 / this.pixDensity
-            ctx.save()
-            ctx.translate(Math.floor(endPoint.x) - 0.5, Math.floor(originY) - rayH * 1.5 - 0.5)
-            for (let i = 0; i < 5; i++) {
-              ctx.moveTo(0, -rayH)
-              ctx.lineTo(0, rayH)
-              ctx.rotate(Math.PI * 2 / 8)
-            }
-            ctx.stroke()
-            ctx.restore()
-
-            // LIGHT BEAM
-            ctx.beginPath()
-            ctx.strokeStyle = 'rgba(0,0,0,0.07)'
-            ctx.fillStyle = 'rgba(255,255,255,0.65)'
-            ctx.lineWidth = 1 / this.pixDensity
-            ctx.moveTo(endPoint.x, endPoint.y)
-            ctx.lineTo(endPoint.x, originY)
-            ctx.lineTo(endPoint.x + endPoint.w, endPoint.y)
-            ctx.fill()
-            ctx.stroke()
-            break
-          default:
-        }
-      },
-      updateCanvasSize () {
-        const bounds = this.$refs.canvas.parentElement.getBoundingClientRect()
-        this.w = (bounds.right - bounds.left) * this.pixDensity
-        this.h = (bounds.bottom - bounds.top) * this.pixDensity
-
-        this.$refs.canvas.width = this.w
-        this.$refs.canvas.height = this.h
-      },
-      convert () {
-        const canvasBounds = this.$refs.canvas.parentElement.getBoundingClientRect()
-        const points = []
-        this.startConnectors.audio.forEach((/** @type Connector */ connector, i) => {
-          points.push({
-            startPoint: this.connectorToPoint(connector, canvasBounds),
-            endPoint: this.connectorToPoint(this.endConnectors.audio[i], canvasBounds),
-            strokeColor: this.colors.audio
-          })
-        })
-        this.startConnectors.video.forEach((/** @type Connector */ connector, i) => {
-          points.push({
-            startPoint: this.connectorToPoint(connector, canvasBounds),
-            endPoint: this.connectorToPoint(this.endConnectors.video[i], canvasBounds),
-            strokeColor: this.colors.video
-          })
-        })
-        return points
-      },
-      /**
-       * @param {Connector} connector
-       * @param canvasBounds
-       * @return {Point}
-       */
-      connectorToPoint (connector, canvasBounds) {
-        let widthPlacement = connector.type === 'projection' ? 0 : 0.5
-        let heightPlacement = connector.type === 'socket' ? 1 : 0
-        return {
-          type: connector.type,
-          x: (connector.objectBounds.left + connector.objectBounds.width * widthPlacement - canvasBounds.left) * this.pixDensity,
-          y: (connector.objectBounds.top + connector.objectBounds.height * heightPlacement - canvasBounds.top) * this.pixDensity,
-          w: connector.objectBounds.width * this.pixDensity
-        }
-      }
-    }
+const colors = computed(() => {
+  return {
+    video: 'rgba(115, 253, 234, 0.6)',
+    audio: 'rgba(248, 186, 0, 0.6)'
   }
+})
+
+const updateCanvasSize = () => {
+  const bounds = canvas.value.parentElement.getBoundingClientRect()
+  w.value = (bounds.right - bounds.left) * pixDensity.value
+  h.value = (bounds.bottom - bounds.top) * pixDensity.value
+
+  canvas.value.width = w.value
+  canvas.value.height = h.value
+}
+
+const drawEndPoint = (endPoint) => {
+  const c = ctx.value
+
+  switch (endPoint.type) {
+    case 'projection':
+      const originY = endPoint.y - options.value.projectionBeamH * pixDensity.value
+      const rayH = options.value.projectorRay * pixDensity.value
+      c.beginPath()
+      c.strokeStyle = 'rgba(0,0,0,0.4)'
+      c.save()
+      c.translate(Math.floor(endPoint.x) - 0.5, Math.floor(originY) - rayH * 1.5 - 0.5)
+      for (let i = 0; i < 5; i++) {
+        c.moveTo(0, -rayH)
+        c.lineTo(0, rayH)
+        c.rotate(Math.PI * 2 / 8)
+      }
+      c.stroke()
+      c.restore()
+
+      c.beginPath()
+      c.strokeStyle = 'rgba(0,0,0,0.07)'
+      c.fillStyle = 'rgba(255,255,255,0.65)'
+      c.lineWidth = 1 / pixDensity.value
+      c.moveTo(endPoint.x, endPoint.y)
+      c.lineTo(endPoint.x, originY)
+      c.lineTo(endPoint.x + endPoint.w, endPoint.y)
+      c.fill()
+      c.stroke()
+      break
+    default:
+  }
+}
+
+const connectorToPoint = (connector, canvasBounds) => {
+  let widthPlacement = connector.type === 'projection' ? 0 : 0.5
+  let heightPlacement = connector.type === 'socket' ? 1 : 0
+  return {
+    type: connector.type,
+    x: (connector.objectBounds.left + connector.objectBounds.width * widthPlacement - canvasBounds.left) * pixDensity.value,
+    y: (connector.objectBounds.top + connector.objectBounds.height * heightPlacement - canvasBounds.top) * pixDensity.value,
+    w: connector.objectBounds.width * pixDensity.value
+  }
+}
+
+const convert = () => {
+  const canvasBounds = canvas.value.parentElement.getBoundingClientRect()
+  const points = []
+  props.startConnectors.audio.forEach((connector, i) => {
+    points.push({
+      startPoint: connectorToPoint(connector, canvasBounds),
+      endPoint: connectorToPoint(props.endConnectors.audio[i], canvasBounds),
+      strokeColor: colors.value.audio
+    })
+  })
+  props.startConnectors.video.forEach((connector, i) => {
+    points.push({
+      startPoint: connectorToPoint(connector, canvasBounds),
+      endPoint: connectorToPoint(props.endConnectors.video[i], canvasBounds),
+      strokeColor: colors.value.video
+    })
+  })
+  return points
+}
+
+const draw = () => {
+  updateCanvasSize()
+
+  const c = ctx.value
+  const lineWidth = lineW.value * pixDensity.value
+  c.clearRect(0, 0, w.value, h.value)
+
+  convert().forEach(({ startPoint, endPoint, strokeColor }) => {
+    let endY = endPoint.y
+    if (endPoint.type === 'projection') {
+      endY -= (options.value.projectionBeamH + options.value.projectorRay * 3) * pixDensity.value
+    }
+    const half = (endPoint.y - startPoint.y) / 2
+    const c1x = startPoint.x
+    const c1y = startPoint.y + half
+    const c2x = endPoint.x
+    const c2y = endY - half
+
+    c.beginPath()
+    c.strokeStyle = strokeColor
+    c.lineWidth = lineWidth
+    c.moveTo(startPoint.x, startPoint.y)
+    c.bezierCurveTo(c1x, c1y, c2x, c2y, endPoint.x, endY)
+    c.stroke()
+    drawEndPoint(endPoint)
+  })
+}
+
+onMounted(() => {
+  ctx.value = canvas.value.getContext('2d')
+})
+
+watch(() => props.trigger, () => {
+  draw()
+})
+
+defineExpose({
+  draw,
+  updateCanvasSize
+})
 </script>

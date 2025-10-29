@@ -8,19 +8,27 @@
   </textarea>
 </template>
 
-<script>
-  import autoSize from 'autosize'
+<script setup>
+import { onMounted, ref } from 'vue'
+import autoSize from 'autosize'
 
-  export default {
-    name: 'autosize-textarea',
-    props: ['value', 'placeholder', 'css-class'],
-    mounted () {
-      autoSize(this.$el)
-    },
-    methods: {
-      input (e) {
-        this.$emit('input', e.target.value)
-      }
-    }
+defineProps({
+  value: String,
+  placeholder: String,
+  cssClass: String
+})
+
+const emit = defineEmits(['input'])
+
+const textarea = ref(null)
+
+const input = (e) => {
+  emit('input', e.target.value)
+}
+
+onMounted(() => {
+  if (textarea.value) {
+    autoSize(textarea.value)
   }
+})
 </script>

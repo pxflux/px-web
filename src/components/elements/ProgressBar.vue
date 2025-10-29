@@ -9,122 +9,109 @@
   }"></div>
 </template>
 
-<script>
-  export default {
-    data () {
-      return {
-        percent: 0,
-        show: false,
-        canSuccess: true,
-        duration: 3000,
-        height: '2px',
-        color: '#ffca2b',
-        failedColor: '#ff0000',
-        _timeoutIds: [] // Track all timeouts for proper cleanup
-      }
-    },
+<script setup>
+import { ref, nextTick, onBeforeUnmount } from 'vue'
 
-    beforeUnmount () {
-      // Clean up all timers and timeouts
-      this.cleanup()
-    },
+const percent = ref(0)
+const show = ref(false)
+const canSuccess = ref(true)
+const duration = ref(3000)
+const height = ref('2px')
+const color = ref('#ffca2b')
+const failedColor = ref('#ff0000')
+const timeoutIds = ref([])
+let timer = null
 
-    methods: {
-      cleanup () {
-        // Clear interval
-        if (this._timer) {
-          clearInterval(this._timer)
-          this._timer = null
-        }
-
-        // Clear all tracked timeouts
-        this._timeoutIds.forEach(timeoutId => {
-          clearTimeout(timeoutId)
-        })
-        this._timeoutIds = []
-      },
-
-      _setTimeout (callback, delay) {
-        const timeoutId = setTimeout(() => {
-          // Remove from tracking array
-          const index = this._timeoutIds.indexOf(timeoutId)
-          if (index > -1) {
-            this._timeoutIds.splice(index, 1)
-          }
-
-          // Execute callback if component is still mounted
-          if (this.$el) {
-            callback()
-          }
-        }, delay)
-
-        // Track the timeout
-        this._timeoutIds.push(timeoutId)
-        return timeoutId
-      },
-      start () {
-        this.show = true
-        this.canSuccess = true
-        if (this._timer) {
-          clearInterval(this._timer)
-          this.percent = 0
-        }
-        this._cut = 10000 / Math.floor(this.duration)
-        this._timer = setInterval(() => {
-          this.increase(this._cut * Math.random())
-          if (this.percent > 95) {
-            this.finish()
-          }
-        }, 100)
-        return this
-      },
-      set (num) {
-        this.show = true
-        this.canSuccess = true
-        this.percent = Math.floor(num)
-        return this
-      },
-      get () {
-        return Math.floor(this.percent)
-      },
-      increase (num) {
-        this.percent = this.percent + Math.floor(num)
-        return this
-      },
-      decrease (num) {
-        this.percent = this.percent - Math.floor(num)
-        return this
-      },
-      finish () {
-        this.percent = 100
-        this.hide()
-        return this
-      },
-      pause () {
-        clearInterval(this._timer)
-        return this
-      },
-      hide () {
-        clearInterval(this._timer)
-        this._timer = null
-        this._setTimeout(() => {
-          this.show = false
-          this.$nextTick(() => {
-            this._setTimeout(() => {
-              if (this.$el) {
-                this.percent = 0
-              }
-            }, 200)
-          })
-        }, 500)
-        return this
-      },
-      fail () {
-        this.canSuccess = false
-        return this
-      }
-    }
+const cleanup = () => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
   }
+  timeoutIds.value.forEach(timeoutId => {
+    clearTimeout(timeoutId)
+  })
+  timeoutIds.value = []
+}
+
+const _setTimeout = (callback, delay) => {
+  const timeoutId = setTimeout(() => {
+    const index = timeoutIds.value.indexOf(timeoutId)
+    if (index > -1) {
+      timeoutIds.value.splice(index, 1)
+    }
+    callback()
+  }, delay)
+  timeoutIds.value.push(timeoutId)
+  return timeoutId
+}
+
+const start = () => {
+  show.value = true
+  canSuccess.value = true
+  if (timer) {
+    clearInterval(timer)
+    percent.value = 0
+  }
+  const cut = 10000 / Math.floor(duration.value)
+  timer = setInterval(() => {
+    increase(cut * Math.random())
+    if (percent.value > 95) {
+      finish()
+    }
+  }, 100)
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const set = (num) => {
+  show.value = true
+  canSuccess.value = true
+  percent.value = Math.floor(num)
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const increase = (num) => {
+  percent.value = percent.value + Math.floor(num)
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const decrease = (num) => {
+  percent.value = percent.value - Math.floor(num)
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const finish = () => {
+  percent.value = 100
+  hide()
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const pause = () => {
+  clearInterval(timer)
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const hide = () => {
+  clearInterval(timer)
+  timer = null
+  _setTimeout(() => {
+    show.value = false
+    nextTick(() => {
+      _setTimeout(() => {
+        percent.value = 0
+      }, 200)
+    })
+  }, 500)
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+const fail = () => {
+  canSuccess.value = false
+  return { start, set, get: () => Math.floor(percent.value), increase, decrease, finish, pause, hide, fail }
+}
+
+onBeforeUnmount(() => {
+  cleanup()
+})
 </script>
 
 <style scoped>

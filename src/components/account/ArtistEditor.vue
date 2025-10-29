@@ -25,97 +25,100 @@
   </main>
 </template>
 
-<script>
-  import { mapState, mapActions } from 'vuex'
-  import { ref } from 'firebase/database'
-  import { log } from '../../helper'
-  import { db, store } from '../../firebase-app'
-  import ImageUpload from '../elements/ImageUpload.vue'
-  import latinize from 'latinize'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { ref as dbRef } from 'firebase/database'
+import { db, store } from '../../firebase-app'
+import { log } from '../../helper'
+import ImageUpload from '../elements/ImageUpload.vue'
+import latinize from 'latinize'
 
-  export default {
-    props: ['isNew'],
-    components: {
-      ImageUpload
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount', 'accountArtist']),
+const props = defineProps({
+  isNew: Boolean
+})
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      artistId () {
-        return this.$route.params.id
-      },
-      published () {
-        return this.accountArtist && this.accountArtist.published ? this.accountArtist.published : false
-      },
-      image () {
-        return this.accountArtist && this.accountArtist.image ? this.accountArtist.image : {
-          displayUrl: null,
-          storageUri: null
-        }
-      }
-    },
-    data () {
-      return {
-        imageFile: null,
-        imageRemoved: false,
-        fullName: ''
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const storeInstance = useStore()
+const route = useRoute()
+const router = useRouter()
 
-      init () {
-        if (!this.isNew && this.accountId) {
-          this.setRef({
-            key: 'accountArtist',
-            ref: ref(db, 'accounts/' + this.accountId + '/artists/' + this.artistId)
-          })
-        }
-      },
+const imageFile = ref(null)
+const imageRemoved = ref(false)
+const fullName = ref('')
 
-      setImageFile (file) {
-        this.imageFile = file
-      },
-      setImageRemoved (flag) {
-        this.imageRemoved = flag
-      },
+const userAccount = computed(() => storeInstance.state.userAccount)
+const accountArtist = computed(() => storeInstance.state.accountArtist)
 
-      submitArtist () {
-        if (!this.accountId) {
-          return
-        }
-        const artist = {
-          published: this.published,
-          fullName: this.fullName,
-          _search_index: {
-            full_name: latinize(this.fullName.toLowerCase()),
-            reversed_full_name: latinize(this.fullName.toLowerCase().split(' ').reverse().join(' '))
-          }
-        }
-        store(this.accountId, this.artistId, 'artists', artist, this.imageRemoved, this.imageFile).then(function (ref) {
-          this.$router.push('/account/artist/' + ref.key)
-        }.bind(this)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      },
-      'accountArtist' () {
-        this.fullName = this.accountArtist.fullName
-      }
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
+  }
+  return userAccount.value['.key']
+})
+
+const artistId = computed(() => {
+  return route.params.id
+})
+
+const published = computed(() => {
+  return accountArtist.value && accountArtist.value.published ? accountArtist.value.published : false
+})
+
+const image = computed(() => {
+  return accountArtist.value && accountArtist.value.image ? accountArtist.value.image : {
+    displayUrl: null,
+    storageUri: null
+  }
+})
+
+const init = () => {
+  if (!props.isNew && accountId.value) {
+    storeInstance.dispatch('setRef', {
+      key: 'accountArtist',
+      ref: dbRef(db, 'accounts/' + accountId.value + '/artists/' + artistId.value)
+    })
+  }
+}
+
+const setImageFile = (file) => {
+  imageFile.value = file
+}
+
+const setImageRemoved = (flag) => {
+  imageRemoved.value = flag
+}
+
+const submitArtist = () => {
+  if (!accountId.value) {
+    return
+  }
+  const artist = {
+    published: published.value,
+    fullName: fullName.value,
+    _search_index: {
+      full_name: latinize(fullName.value.toLowerCase()),
+      reversed_full_name: latinize(fullName.value.toLowerCase().split(' ').reverse().join(' '))
     }
   }
+  store(accountId.value, artistId.value, 'artists', artist, imageRemoved.value, imageFile.value).then((ref) => {
+    router.push('/account/artist/' + ref.key)
+  }).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
+
+watch(accountArtist, () => {
+  fullName.value = accountArtist.value?.fullName
+})
 </script>

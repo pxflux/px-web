@@ -31,99 +31,103 @@
   </main>
 </template>
 
-<script>
-  import { mapState, mapActions } from 'vuex'
-  import { ref } from 'firebase/database'
-  import { log } from '../../helper'
-  import { db, store } from '../../firebase-app'
-  import ImageUpload from '../elements/ImageUpload.vue'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { ref as dbRef } from 'firebase/database'
+import { db, store } from '../../firebase-app'
+import { log } from '../../helper'
+import ImageUpload from '../elements/ImageUpload.vue'
 
-  export default {
-    props: ['isNew'],
-    components: {
-      ImageUpload
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['userAccount', 'accountShow', 'places']),
+const props = defineProps({
+  isNew: Boolean
+})
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      },
-      showId () {
-        return this.$route.params.id
-      },
-      published () {
-        return this.accountShow && this.accountShow.published ? this.accountShow.published : false
-      },
-      image () {
-        return this.accountShow && this.accountShow.image ? this.accountShow.image : {
-          displayUrl: null,
-          storageUri: null
-        }
-      }
-    },
-    data () {
-      return {
-        imageFile: null,
-        imageRemoved: false,
-        title: '',
-        selectedPlaceIds: []
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const storeInstance = useStore()
+const route = useRoute()
+const router = useRouter()
 
-      init () {
-        if (!this.isNew && this.accountId) {
-          this.setRef({
-            key: 'accountShow',
-            ref: ref(db, 'accounts/' + this.accountId + '/shows/' + this.showId)
-          })
-        }
-        this.setRef({key: 'places', ref: ref(db, 'places')})
-      },
+const imageFile = ref(null)
+const imageRemoved = ref(false)
+const title = ref('')
+const selectedPlaceIds = ref([])
 
-      setImageFile (file) {
-        this.imageFile = file
-      },
-      setImageRemoved (flag) {
-        this.imageRemoved = flag
-      },
+const userAccount = computed(() => storeInstance.state.userAccount)
+const accountShow = computed(() => storeInstance.state.accountShow)
+const places = computed(() => storeInstance.state.places)
 
-      submitShow () {
-        if (!this.accountId) {
-          return
-        }
-        const show = {
-          published: this.published,
-          title: this.title,
-          places: {}
-        }
-        this.places.filter(place => this.selectedPlaceIds.includes(place['.key'])).forEach(place => {
-          show.places[place['.key']] = {title: place.title}
-        })
-        store(this.accountId, this.showId, 'shows', show, this.imageRemoved, this.imageFile).then(function (ref) {
-          this.$router.push('/account/show/' + ref.key)
-        }.bind(this)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      },
-      'accountShow' () {
-        this.title = this.accountShow.title
-        this.selectedPlaceIds = Object.keys(this.accountShow.places || {})
-      }
-    }
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const showId = computed(() => {
+  return route.params.id
+})
+
+const published = computed(() => {
+  return accountShow.value && accountShow.value.published ? accountShow.value.published : false
+})
+
+const image = computed(() => {
+  return accountShow.value && accountShow.value.image ? accountShow.value.image : {
+    displayUrl: null,
+    storageUri: null
+  }
+})
+
+const init = () => {
+  if (!props.isNew && accountId.value) {
+    storeInstance.dispatch('setRef', {
+      key: 'accountShow',
+      ref: dbRef(db, 'accounts/' + accountId.value + '/shows/' + showId.value)
+    })
+  }
+  storeInstance.dispatch('setRef', { key: 'places', ref: dbRef(db, 'places') })
+}
+
+const setImageFile = (file) => {
+  imageFile.value = file
+}
+
+const setImageRemoved = (flag) => {
+  imageRemoved.value = flag
+}
+
+const submitShow = () => {
+  if (!accountId.value) {
+    return
+  }
+  const show = {
+    published: published.value,
+    title: title.value,
+    places: {}
+  }
+  places.value.filter(place => selectedPlaceIds.value.includes(place['.key'])).forEach(place => {
+    show.places[place['.key']] = { title: place.title }
+  })
+  store(accountId.value, showId.value, 'shows', show, imageRemoved.value, imageFile.value).then((ref) => {
+    router.push('/account/show/' + ref.key)
+  }).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
+
+watch(accountShow, () => {
+  title.value = accountShow.value?.title
+  selectedPlaceIds.value = Object.keys(accountShow.value?.places || {})
+})
 </script>

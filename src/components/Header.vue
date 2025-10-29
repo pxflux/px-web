@@ -26,7 +26,7 @@
             <img src="/static/img/collection-v3@2x.png" width="24" height="24" class="center">
           </router-link>
           <!-- -->
-          <div v-if="user" class="item-with-submenu">
+          <div v-if="user && userAccount" class="item-with-submenu">
             <a class="button submenu-trigger">{{ userAccount.title }}</a>
             <div class="submenu">
               <div v-for="account in inactiveAccounts" :key="account['.key']" class="button"
@@ -35,10 +35,12 @@
             </div>
           </div>
           <!-- -->
+          <router-link v-if="user && !userAccount" to="/account/new" class="button">Create Account</router-link>
+          <!-- -->
           <div v-if="user" class="item-with-submenu">
             <a class="button submenu-trigger">
               <img v-if="user.photoURL" :src="user.photoURL" :alt="user.displayName" class="user-photo">
-              <span v-else>{{ user.displayName }}</span>
+              <span v-else>{{ user.displayName || user.email }}</span>
             </a>
             <div class="submenu">
               <router-link to="/artworks" class="button">Artworks</router-link>
@@ -59,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUpdated, watch, nextTick, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, onUpdated, onBeforeUnmount, watch, nextTick, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { db, auth } from '../firebase-app'
@@ -128,6 +130,7 @@ const setFlicker = () => {
 
 const getLogoURL = () => {
   const el = document.getElementById('px-logo-box')
+  if (!el) return ''
   const style = window.getComputedStyle(el)
   return style.backgroundImage.slice(4, -1).replace(/"/g, '')
 }
@@ -135,15 +138,23 @@ const getLogoURL = () => {
 onMounted(() => {
   init()
 
-  let logoURL = getLogoURL()
-  const canvasID = 'px-logo'
-  const logo = new ScalableCanvasFromImage(logoURL, canvasID, { fillParent: false })
-  logo.setup()
-  setFlicker()
-  setupSubmenusWithClass('submenu', 'submenu-trigger')
-
-  window.addEventListener('resize', () => {
-    logo.setup(getLogoURL())
+  nextTick(() => {
+    try {
+      let logoURL = getLogoURL()
+      const canvasID = 'px-logo'
+      const canvas = document.getElementById(canvasID)
+      if (canvas && logoURL) {
+        const logo = new ScalableCanvasFromImage(logoURL, canvasID, { fillParent: false })
+        logo.setup()
+        window.addEventListener('resize', () => {
+          logo.setup(getLogoURL())
+        })
+      }
+    } catch (error) {
+      log('Error setting up logo:', error)
+    }
+    setFlicker()
+    setupSubmenusWithClass('submenu', 'submenu-trigger')
   })
 })
 
@@ -158,10 +169,10 @@ watch(user, () => {
   init()
 }, { immediate: false })
 
-watch(() => {
+onBeforeUnmount(() => {
   if (accountsUnsubscribe) {
     accountsUnsubscribe()
     accountsUnsubscribe = null
   }
-}, { immediate: false })
+})
 </script>

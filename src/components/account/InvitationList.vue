@@ -15,50 +15,51 @@
   </main>
 </template>
 
-<script>
-  import { mapActions, mapGetters, mapState } from 'vuex'
-  import { ref, set, remove } from 'firebase/database'
-  import { log } from '../../helper'
-  import { db } from '../../firebase-app'
+<script setup>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref as dbRef, set, remove } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { log } from '../../helper'
 
-  export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['user']),
-      ...mapGetters(['userInvitations'])
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const store = useStore()
+const route = useRoute()
 
-      init () {
-        if (this.user) {
-          this.setRef({
-            key: 'invitations',
-            ref: ref(db, 'invitations')
-          })
-        }
-      },
-      acceptInvitation (invitationId) {
-        const data = {
-          'uid': this.user.uid,
-          'displayName': this.user.displayName,
-          'photoUrl': this.user.photoURL
-        }
-        set(ref(db, 'invitations/' + invitationId + '/user'), data).catch(log)
-      },
-      rejectInvitation (invitationId) {
-        remove(ref(db, 'invitations/' + invitationId)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'user' () {
-        this.init()
-      }
-    }
+const user = computed(() => store.state.user)
+const userInvitations = computed(() => store.getters.userInvitations)
+
+const init = () => {
+  if (user.value) {
+    store.dispatch('setRef', {
+      key: 'invitations',
+      ref: dbRef(db, 'invitations')
+    })
   }
+}
+
+const acceptInvitation = (invitationId) => {
+  const data = {
+    'uid': user.value.uid,
+    'displayName': user.value.displayName,
+    'photoUrl': user.value.photoURL
+  }
+  set(dbRef(db, 'invitations/' + invitationId + '/user'), data).catch(log)
+}
+
+const rejectInvitation = (invitationId) => {
+  remove(dbRef(db, 'invitations/' + invitationId)).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(user, () => {
+  init()
+})
 </script>

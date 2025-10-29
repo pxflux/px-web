@@ -37,106 +37,105 @@
     </div>
   </main>
 </template>
-<script>
-  import Color from '../../assets/js/color'
-  import Logo from '../../assets/js/logo'
+<script setup>
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import Color from '../../assets/js/color'
+import Logo from '../../assets/js/logo'
 
-  export default {
-    data () {
-      return {
-        slogan: 'Art that lives in flux of pixels.', // 'Flux of picture elements', // 'Art in flux of pixels',
-        logo: null,
-        pixelRatio: window.devicePixelRatio || 1
-      }
-    },
-    computed: {
-      pxSubtitleLetters () {
-        return this.slogan
-      },
-      pxSubtitlesWords () {
-        const txt = this.pxSubtitleLetters.toUpperCase()
-        const words = txt.split(' ')
-        const pxWords = []
-        words.forEach((w, i) => {
-          const ll = w.split('')
-          ll.push(' ')
-          pxWords.push(ll)
-        })
-        return pxWords
-      }
-    },
+const slogan = ref('Art that lives in flux of pixels.')
+const logo = ref(null)
+const pixelRatio = ref(window.devicePixelRatio || 1)
+const main = ref(null)
+const wrap = ref(null)
+const subtitleBox = ref(null)
+const subtitleLetters = ref(null)
 
-    methods: {
-      sPxToBgSize (sPx) {
-        if (sPx % 3 === 0) return 3
-        if (sPx % 2 === 0) return 2
-        return null
-      }
-    },
+const pxSubtitleLetters = computed(() => {
+  return slogan.value
+})
 
-    mounted: function () {
-      window.addEventListener('resize', () => {
-        this.logo.setup(getLogoURL())
-      })
+const pxSubtitlesWords = computed(() => {
+  const txt = pxSubtitleLetters.value.toUpperCase()
+  const words = txt.split(' ')
+  const pxWords = []
+  words.forEach((w, i) => {
+    const ll = w.split('')
+    ll.push(' ')
+    pxWords.push(ll)
+  })
+  return pxWords
+})
 
-      window.addEventListener('changePxSize', e => {
-        const sPx = e.detail
-        const cssPx = Math.round(sPx / this.pixelRatio)
-        let bgSize = this.sPxToBgSize(cssPx)
-        if (!bgSize) bgSize = sPx / 4
-        const bgFile = `grid-cell-${bgSize}px-o10@${this.pixelRatio}x.png`
-        document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
-        document.body.style.backgroundSize = bgSize + 'px'
+const sPxToBgSize = (sPx) => {
+  if (sPx % 3 === 0) return 3
+  if (sPx % 2 === 0) return 2
+  return null
+}
 
-        const subtitle = this.$refs['subtitleBox']
-        if (subtitle) subtitle.style.left = 0
+const getLogoURL = () => {
+  const el = document.getElementById('px-logo-box')
+  const style = window.getComputedStyle(el)
+  return style.backgroundImage.slice(4, -1).replace(/"/g, '')
+}
 
-        const letters = this.$refs['subtitleLetters']
-        if (Array.isArray(letters)) {
-          letters.forEach(e => {
-            e.style.width = cssPx + 'px'
-            e.style.height = cssPx + 'px'
-            e.style.lineHeight = cssPx + 'px'
-            e.style.marginTop = cssPx + 'px'
-            e.style.fontSize = cssPx + 'px'
-          })
-        }
-        this.$nextTick(() => {
-          if (subtitle) {
-            subtitle.style.left = cssPx * (this.logo.logoLeftSpx) + 'px'
-            subtitle.style.top = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + 'px'
-          }
-          this.$refs['wrap'].style.marginTop = cssPx * (this.logo.logoTopSpx + this.logo.logoH) + cssPx + 'px'
-        })
-      })
-
-      this.$nextTick(() => {
-        let logoURL = getLogoURL()
-        const canvasID = 'px-main-logo'
-        const options = {
-          stroke: true,
-          top: 4,
-          left: 2,
-          mainColor: new Color(203, 16, 26), // new Color(142, 100, 50), //
-          strokeColor: new Color(0).setAlpha(0.1),
-          fillParent: true
-        }
-        this.logo = new Logo(logoURL, canvasID, options)
-        this.logo.setup()
-      })
-
-      function getLogoURL () {
-        const el = document.getElementById('px-logo-box')
-        const style = window.getComputedStyle(el)
-        return style.backgroundImage.slice(4, -1).replace(/"/g, '')
-      }
-    },
-
-    unmounted () {
-      document.body.style.removeProperty('background-image')
-      document.body.style.removeProperty('background-size')
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    if (logo.value) {
+      logo.value.setup(getLogoURL())
     }
-  }
+  })
+
+  window.addEventListener('changePxSize', e => {
+    const sPx = e.detail
+    const cssPx = Math.round(sPx / pixelRatio.value)
+    let bgSize = sPxToBgSize(cssPx)
+    if (!bgSize) bgSize = sPx / 4
+    const bgFile = `grid-cell-${bgSize}px-o10@${pixelRatio.value}x.png`
+    document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
+    document.body.style.backgroundSize = bgSize + 'px'
+
+    if (subtitleBox.value) subtitleBox.value.style.left = 0
+
+    if (Array.isArray(subtitleLetters.value)) {
+      subtitleLetters.value.forEach(e => {
+        e.style.width = cssPx + 'px'
+        e.style.height = cssPx + 'px'
+        e.style.lineHeight = cssPx + 'px'
+        e.style.marginTop = cssPx + 'px'
+        e.style.fontSize = cssPx + 'px'
+      })
+    }
+    nextTick(() => {
+      if (subtitleBox.value) {
+        subtitleBox.value.style.left = cssPx * (logo.value.logoLeftSpx) + 'px'
+        subtitleBox.value.style.top = cssPx * (logo.value.logoTopSpx + logo.value.logoH) + 'px'
+      }
+      if (wrap.value) {
+        wrap.value.style.marginTop = cssPx * (logo.value.logoTopSpx + logo.value.logoH) + cssPx + 'px'
+      }
+    })
+  })
+
+  nextTick(() => {
+    let logoURL = getLogoURL()
+    const canvasID = 'px-main-logo'
+    const options = {
+      stroke: true,
+      top: 4,
+      left: 2,
+      mainColor: new Color(203, 16, 26),
+      strokeColor: new Color(0).setAlpha(0.1),
+      fillParent: true
+    }
+    logo.value = new Logo(logoURL, canvasID, options)
+    logo.value.setup()
+  })
+})
+
+onUnmounted(() => {
+  document.body.style.removeProperty('background-image')
+  document.body.style.removeProperty('background-size')
+})
 </script>
 <style lang="scss">
   @use "../../assets/sass/vars" as *;
