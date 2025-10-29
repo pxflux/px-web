@@ -60,7 +60,12 @@ const distribute = computed(() => {
   if (config.value && config.value.distribute) {
     return config.value.distribute
   }
-  return { macos: {} }
+  // Provide fallback configuration for development/testing
+  return {
+    macos: {
+      directUrl: '#'
+    }
+  }
 })
 </script>
 
