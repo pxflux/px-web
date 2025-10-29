@@ -13,7 +13,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-import firebaseui from 'firebaseui'
+import * as firebaseui from 'firebaseui'
 import { auth } from '../firebase-app'
 
 let ui
