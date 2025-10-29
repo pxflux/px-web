@@ -10,12 +10,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ref as dbRef, update } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const storeInstance = useStore()
 const route = useRoute()
@@ -25,19 +26,17 @@ const title = ref({
   val: '',
   edit: false
 })
-let source = null
 
 const user = computed(() => storeInstance.state.user)
-const accountIteration = computed(() => storeInstance.state.accountIteration)
 
-const init = () => {
-  if (user.value?.uid) {
-    source = dbRef(db, 'users/' + user.value.uid + '/artworks/' + route.params.artworkId + '/iterations/' + route.params.id)
-    storeInstance.dispatch('setRef', { key: 'accountIteration', ref: source })
-  } else {
-    source = null
+const path = computed(() => {
+  if (user.value?.uid && route.params.artworkId && route.params.id) {
+    return 'users/' + user.value.uid + '/artworks/' + route.params.artworkId + '/iterations/' + route.params.id
   }
-}
+  return null
+})
+
+const { data: accountIteration } = useFirebaseBinding(path, { isList: false, defaultValue: {} })
 
 const toggleTitle = () => {
   title.value.edit = !title.value.edit
@@ -50,25 +49,13 @@ const toggleTitle = () => {
 
 const saveTitle = () => {
   toggleTitle()
-  if (source) {
-    update(source, { 'title': title.value.val }).catch(log)
+  if (path.value) {
+    update(dbRef(db, path.value), { 'title': title.value.val }).catch(log)
   }
 }
 
 const publishIteration = () => {
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(user, () => {
-  init()
-})
 
 watch(accountIteration, () => {
   title.value.val = accountIteration.value?.title || 'Untitled'

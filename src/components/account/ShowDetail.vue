@@ -19,19 +19,20 @@
 </template>
 
 <script setup>
-import { computed, watch, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { useRouteParams } from '@vueuse/router'
 import { ref as dbRef, remove } from 'firebase/database'
 import { db, store } from '../../firebase-app'
 import { log } from '../../helper'
+import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const storeInstance = useStore()
-const route = useRoute()
 const router = useRouter()
 
 const userAccount = computed(() => storeInstance.state.userAccount)
-const accountShow = computed(() => storeInstance.state.accountShow)
+const showId = useRouteParams('id')
 
 const accountId = computed(() => {
   if (!userAccount.value) {
@@ -40,9 +41,14 @@ const accountId = computed(() => {
   return userAccount.value['.key']
 })
 
-const showId = computed(() => {
-  return route.params.id
+const path = computed(() => {
+  if (accountId.value && showId.value) {
+    return 'accounts/' + accountId.value + '/shows/' + showId.value
+  }
+  return null
 })
+
+const { data: accountShow } = useFirebaseBinding(path, { isList: false, defaultValue: {} })
 
 const image = computed(() => {
   return accountShow.value && accountShow.value.image ? accountShow.value.image : {
@@ -52,19 +58,8 @@ const image = computed(() => {
 })
 
 const places = computed(() => {
-  return Object.keys(accountShow.value?.places || {}).map(id => {
-    return { ...accountShow.value.places[id], ...{ '.key': id } }
-  })
+  return Object.entries(accountShow.value?.places || {}).map(([ id, place ]) => ({ ['.key']: id, ...place }))
 })
-
-const init = () => {
-  if (accountId.value) {
-    storeInstance.dispatch('setRef', {
-      key: 'accountShow',
-      ref: dbRef(db, 'accounts/' + accountId.value + '/shows/' + showId.value)
-    })
-  }
-}
 
 const togglePublished = (published) => {
   if (!accountId.value) {
@@ -81,16 +76,4 @@ const removeShow = () => {
     router.push('/account/shows')
   }).catch(log)
 }
-
-onMounted(() => {
-  init()
-})
-
-watch(() => route.path, () => {
-  init()
-})
-
-watch(userAccount, () => {
-  init()
-})
 </script>
