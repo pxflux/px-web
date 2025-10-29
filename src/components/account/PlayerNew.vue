@@ -10,39 +10,35 @@
   </main>
 </template>
 
-<script>
-  import { mapState } from 'vuex'
-  import { ref, set } from 'firebase/database'
-  import { db } from '../../firebase-app'
-  import { log } from '../../helper'
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { ref as dbRef, set } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { log } from '../../helper'
 
-  export default {
-    computed: {
-      ...mapState(['userAccount']),
+const store = useStore()
+const router = useRouter()
 
-      accountId () {
-        if (!this.userAccount) {
-          return null
-        }
-        return this.userAccount['.key']
-      }
-    },
-    data () {
-      return {
-        pin: ''
-      }
-    },
-    methods: {
-      accept () {
-        if (this.accountId) {
-          const account = {
-            accountId: this.accountId
-          }
-          set(ref(db, 'player-pins/' + this.pin), account).then(() => {
-            this.$router.push('/account/players')
-          }).catch(log)
-        }
-      }
-    }
+const pin = ref('')
+const userAccount = computed(() => store.state.userAccount)
+
+const accountId = computed(() => {
+  if (!userAccount.value) {
+    return null
   }
+  return userAccount.value['.key']
+})
+
+const accept = () => {
+  if (accountId.value) {
+    const account = {
+      accountId: accountId.value
+    }
+    set(dbRef(db, 'player-pins/' + pin.value), account).then(() => {
+      router.push('/account/players')
+    }).catch(log)
+  }
+}
 </script>

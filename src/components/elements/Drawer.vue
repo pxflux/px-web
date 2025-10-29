@@ -15,10 +15,7 @@
   </div>
 </template>
 
-<script>
-  export default {
-    name: 'output-video-options'
-  }
+<script setup>
 </script>
 
 <style scoped>

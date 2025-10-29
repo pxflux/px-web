@@ -20,70 +20,71 @@
   </div>
 </template>
 
-<script>
-  import VueSelect from '../UI/Select/components/Select.vue'
-  import OutputsPanel from './OutputsPanel.vue'
-  import { AWChannel } from '../../../models/AWChannel'
-  import { AWSource } from '../../../models/AWSource'
+<script setup>
+import { ref, computed, watch } from 'vue'
+import VueSelect from '../UI/Select/components/Select.vue'
+import OutputsPanel from './OutputsPanel.vue'
+import { AWChannel } from '../../../models/AWChannel'
+import { AWSource } from '../../../models/AWSource'
 
-  export default {
-    name: 'channel-editor',
-    props: ['index', 'value'],
-    components: {
-      VueSelect,
-      OutputsPanel
-    },
+const props = defineProps({
+  index: Number,
+  value: Object
+})
 
-    computed: {
-      url: {
-        set (newValue) {
-          this.sourceUrl = newValue
-          this.setUrl(newValue)
-        },
-        get () {
-          if (this.sourceUrl !== null) {
-            return this.sourceUrl
-          }
-          return this.channel.source ? this.channel.source.url : null
-        }
-      },
-      sourceDescription () {
-        return this.channel.source ? this.channel.source.toString() : 'URL (HTML/Javascript or Vimeo video link)'
-      }
-    },
-    data () {
-      return {
-        channel: this.value || AWChannel.empty(),
-        sourceUrl: null,
-        error: null
-      }
-    },
+const emit = defineEmits(['remove', 'input'])
 
-    methods: {
-      removeChannel () {
-        this.$emit('remove', this.index)
-      },
-      setUrl (url) {
-        AWSource.fromUrl(url).then(source => {
-          this.channel.source = source
-          this.error = ''
-          this.$emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(this.channel))))
-        }).catch(err => {
-          this.error = err.message
-        })
-      },
-      setChannel (channel) {
-        this.$emit('input', channel)
-      },
-      fixPanelsOnScroll (e) {
-        this.$refs['outputsPanel'].fixPanelsOnScroll(e)
-      }
-    },
+const channel = ref(props.value || AWChannel.empty())
+const sourceUrl = ref(null)
+const error = ref(null)
+const outputsPanel = ref(null)
 
-    watch: {
-      value (newValue) {
-        this.channel = newValue || AWChannel.empty()
-      }
+const url = computed({
+  set (newValue) {
+    sourceUrl.value = newValue
+    setUrl(newValue)
+  },
+  get () {
+    if (sourceUrl.value !== null) {
+      return sourceUrl.value
     }
+    return channel.value.source ? channel.value.source.url : null
   }
+})
+
+const sourceDescription = computed(() => {
+  return channel.value.source ? channel.value.source.toString() : 'URL (HTML/Javascript or Vimeo video link)'
+})
+
+const removeChannel = () => {
+  emit('remove', props.index)
+}
+
+const setUrl = (url) => {
+  AWSource.fromUrl(url).then(source => {
+    channel.value.source = source
+    error.value = ''
+    emit('input', AWChannel.fromJson(JSON.parse(JSON.stringify(channel.value))))
+  }).catch(err => {
+    error.value = err.message
+  })
+}
+
+const setChannel = (ch) => {
+  emit('input', ch)
+}
+
+const fixPanelsOnScroll = (e) => {
+  if (outputsPanel.value) {
+    outputsPanel.value.fixPanelsOnScroll(e)
+  }
+}
+
+watch(() => props.value, (newValue) => {
+  channel.value = newValue || AWChannel.empty()
+})
+
+defineExpose({
+  fixPanelsOnScroll
+})
 </script>

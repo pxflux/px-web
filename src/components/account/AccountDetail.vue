@@ -40,87 +40,85 @@
   </main>
 </template>
 
-<script>
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { ref, set, push, remove } from 'firebase/database'
-  import { db } from '../../firebase-app'
-  import { log } from '../../helper'
-  import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref as dbRef, set, push, remove } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { log } from '../../helper'
+import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
 
-  export default {
-    components: {EditableString},
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['user', 'userAccount', 'account']),
-      ...mapGetters(['accountInvitations']),
-      people () {
-        const account = this.account || {}
-        return Object.keys(account.users || {}).map(userId => {
-          const user = account.users[userId]
-          user['.key'] = userId
-          return user
-        })
-      }
-    },
-    data () {
-      return {
-        title: '',
-        email: '',
-        showEditForm: false,
-        showInviteForm: false
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
-      ...mapMutations(['REMOVE_ACCOUNT']),
+const store = useStore()
+const route = useRoute()
 
-      init () {
-        if (this.userAccount) {
-          this.setRef({key: 'account', ref: ref(db, 'accounts/' + this.userAccount['.key'])})
-          this.setRef({key: 'invitations', ref: ref(db, 'invitations')})
-        }
-      },
+const title = ref('')
+const email = ref('')
+const showEditForm = ref(false)
+const showInviteForm = ref(false)
 
-      updateAccount () {
-        this.showEditForm = false
-        set(ref(db, 'accounts/' + this.userAccount['.key'] + '/title'), this.title).catch(log)
-      },
+const user = computed(() => store.state.user)
+const userAccount = computed(() => store.state.userAccount)
+const account = computed(() => store.state.account)
+const accountInvitations = computed(() => store.getters.accountInvitations)
 
-      invite () {
-        this.showInviteForm = false
-        const invitation = {
-          'account': {
-            'id': this.userAccount['.key'],
-            'title': this.userAccount.title
-          },
-          'email': this.email
-        }
-        push(ref(db, 'invitations'), invitation).catch(log)
-      },
+const people = computed(() => {
+  const acc = account.value || {}
+  return Object.keys(acc.users || {}).map(userId => {
+    const u = acc.users[userId]
+    u['.key'] = userId
+    return u
+  })
+})
 
-      removeInvitation (invitationId) {
-        remove(ref(db, 'invitations/' + invitationId)).catch(log)
-      },
-
-      leaveAccount () {
-        this.showEditForm = false
-        remove(ref(db, 'accounts/' + this.userAccount['.key'] + '/users/' + this.user.uid)).catch(log)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      },
-      'userAccount' () {
-        this.init()
-      },
-      'account' () {
-        this.title = this.account.title
-      }
-    }
+const init = () => {
+  if (userAccount.value) {
+    store.dispatch('setRef', { key: 'account', ref: dbRef(db, 'accounts/' + userAccount.value['.key']) })
+    store.dispatch('setRef', { key: 'invitations', ref: dbRef(db, 'invitations') })
   }
+}
+
+const updateAccount = () => {
+  showEditForm.value = false
+  set(dbRef(db, 'accounts/' + userAccount.value['.key'] + '/title'), title.value).catch(log)
+}
+
+const invite = () => {
+  showInviteForm.value = false
+  const invitation = {
+    'account': {
+      'id': userAccount.value['.key'],
+      'title': userAccount.value.title
+    },
+    'email': email.value
+  }
+  push(dbRef(db, 'invitations'), invitation).catch(log)
+}
+
+const removeInvitation = (invitationId) => {
+  remove(dbRef(db, 'invitations/' + invitationId)).catch(log)
+}
+
+const leaveAccount = () => {
+  showEditForm.value = false
+  remove(dbRef(db, 'accounts/' + userAccount.value['.key'] + '/users/' + user.value.uid)).catch(log)
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
+
+watch(userAccount, () => {
+  init()
+})
+
+watch(account, () => {
+  title.value = account.value?.title
+})
 </script>
 <style lang="scss">
 

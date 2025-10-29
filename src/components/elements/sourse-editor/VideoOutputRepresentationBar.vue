@@ -29,42 +29,39 @@
   </div>
 </template>
 
-<script>
-  import { createApp } from 'vue'
-  import VideoOptions from './OutputVideoOptions.vue'
-  import { AWVideoOutputs } from '../../../models/AWVideoOutput'
+<script setup>
+import { ref } from 'vue'
+import { createApp } from 'vue'
+import VideoOptions from './OutputVideoOptions.vue'
+import { AWVideoOutputs } from '../../../models/AWVideoOutput'
 
-  export default {
-    name: 'video-output-representation-bar',
-    components: {
-      VideoOptions
-    },
-    props: ['value'],
+defineProps({
+  value: Array
+})
 
-    data () {
-      return {
-        bus: createApp({})
-      }
-    },
-    mounted () {
-      this.bus.config.globalProperties.$on = () => {} // Vue 3 doesn't have $on, use mitt or similar
-      // For Vue 3, we'll use direct props/events instead of event bus
-    },
-    methods: {
-      closeOptions (index) {
-        this.$refs['popups-' + index][0].hide()
-      },
-      collectBounds () {
-        const bounds = []
-        if (this.$refs.boxes) {
-          this.$refs.boxes.forEach(el => {
-            bounds.push({type: 'projection', objectBounds: el.getBoundingClientRect()})
-          })
-        }
-        return bounds
-      }
-    }
+const bus = ref(createApp({}))
+const boxes = ref(null)
+const popups = ref({})
+
+const closeOptions = (index) => {
+  if (popups.value['popups-' + index]) {
+    popups.value['popups-' + index][0].hide()
   }
+}
+
+const collectBounds = () => {
+  const bounds = []
+  if (boxes.value) {
+    boxes.value.forEach(el => {
+      bounds.push({ type: 'projection', objectBounds: el.getBoundingClientRect() })
+    })
+  }
+  return bounds
+}
+
+defineExpose({
+  collectBounds
+})
 </script>
 
 <style lang="scss" scoped>

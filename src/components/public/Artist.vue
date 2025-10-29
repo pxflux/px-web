@@ -22,45 +22,65 @@
   </main>
 </template>
 
-<script>
-  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+<script setup>
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import { firebaseApp } from '../../firebase-app'
+import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
 
-  export default {
-    setup() {
-      const { data: artist, bind } = useFirebaseBinding()
+const route = useRoute()
+const artist = ref({})
+let artistUnsubscribe = null
 
-      return {
-        artist,
-        bind
-      }
-    },
-    created () {
-      this.init()
-    },
-    computed: {
-      artistId () {
-        return this.$route.params.id
-      },
-      artworks () {
-        return Object.keys(this.artist?.artworks || {}).map(id => {
-          return {...this.artist.artworks[id], ...{'.key': id}}
-        })
-      },
-      shows () {
-        return Object.keys(this.artist?.shows || {}).map(id => {
-          return {...this.artist.shows[id], ...{'.key': id}}
-        })
-      }
-    },
-    methods: {
-      init () {
-        this.bind('artists/' + this.artistId)
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      }
-    }
+const artistId = computed(() => {
+  return route.params.id
+})
+
+const artworks = computed(() => {
+  return Object.keys(artist.value.artworks || {}).map(id => {
+    return { ...artist.value.artworks[id], ...{ '.key': id } }
+  })
+})
+
+const shows = computed(() => {
+  return Object.keys(artist.value.shows || {}).map(id => {
+    return { ...artist.value.shows[id], ...{ '.key': id } }
+  })
+})
+
+const init = () => {
+  if (artistUnsubscribe) {
+    artistUnsubscribe()
   }
+  const db = getDatabase(firebaseApp)
+  const artistRef = dbRef(db, 'artists/' + artistId.value)
+  artistUnsubscribe = onValue(artistRef, (snapshot) => {
+    if (snapshot.exists()) {
+      artist.value = snapshot.val()
+    } else {
+      artist.value = {}
+    }
+  }, (error) => {
+    console.error('Error loading artist:', error)
+  })
+}
+
+const cleanup = () => {
+  if (artistUnsubscribe) {
+    artistUnsubscribe()
+    artistUnsubscribe = null
+  }
+}
+
+onMounted(() => {
+  init()
+})
+
+onBeforeUnmount(() => {
+  cleanup()
+})
+
+watch(() => route.path, () => {
+  init()
+})
 </script>

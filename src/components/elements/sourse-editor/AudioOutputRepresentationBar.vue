@@ -16,23 +16,28 @@
   </div>
 </template>
 
-<script>
-  export default {
-    name: 'audio-output-representation-bar',
-    props: ['value'],
+<script setup>
+import { ref } from 'vue'
 
-    methods: {
-      collectBounds () {
-        const bounds = []
-        if (this.$refs.boxes) {
-          this.$refs.boxes.forEach(el => {
-            bounds.push({type: 'projection', objectBounds: el.getBoundingClientRect()})
-          })
-        }
-        return bounds
-      }
-    }
+defineProps({
+  value: Array
+})
+
+const boxes = ref(null)
+
+const collectBounds = () => {
+  const bounds = []
+  if (boxes.value) {
+    boxes.value.forEach(el => {
+      bounds.push({ type: 'projection', objectBounds: el.getBoundingClientRect() })
+    })
   }
+  return bounds
+}
+
+defineExpose({
+  collectBounds
+})
 </script>
 
 <style lang="scss" scoped>

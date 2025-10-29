@@ -12,75 +12,71 @@
   </div>
 </template>
 
-<script>
-  import { useDropzone } from 'vue3-dropzone'
-  // CSS will be loaded via CDN in index.html or included in the component
-  export default {
-    props: ['imageUrl'],
-    setup() {
-      const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles) => {
-          console.log(acceptedFiles)
-        }
-      })
-      return {
-        getRootProps,
-        getInputProps
-      }
-    },
-    computed: {
-      originalUrl: function () {
-        return this.removed ? null : this.imageUrl
-      },
-      showUrl: function () {
-        return this.previewUrl || this.originalUrl
-      }
-    },
-    data () {
-      return {
-        previewUrl: null,
-        removed: false,
-        dropZoneOptions: {
-          url: '...'
-        }
-      }
-    },
-    methods: {
-      uploadImage (event) {
-        const files = event.target.files || event.dataTransfer.files
-        if (files && files[0]) {
-          switch (files[0].type) {
-            case 'image/jpeg':
-            case 'image/jpg':
-            case 'image/png':
-            case 'image/gif':
-              break
-            default:
-              return
-          }
-          const uploadedFile = files[0]
-          this.$emit('input-file', uploadedFile)
-          const reader = new FileReader()
-          reader.onload = function (e) {
-            this.previewUrl = e.target.result
-          }.bind(this)
-          reader.readAsDataURL(uploadedFile)
-        }
-      },
-      removeImage () {
-        this.$refs.inputImage.value = ''
-        if (this.previewUrl === null) {
-          this.removed = true
-          this.$emit('remove-image', true)
-        } else {
-          this.previewUrl = null
-          this.$emit('input-file', null)
-        }
-      },
-      undo () {
-        this.removed = false
-        this.$emit('remove-image', false)
-      }
-    }
+<script setup>
+import { ref, computed } from 'vue'
+import { useDropzone } from 'vue3-dropzone'
+
+const props = defineProps({
+  imageUrl: String
+})
+
+const emit = defineEmits(['input-file', 'remove-image'])
+
+const previewUrl = ref(null)
+const removed = ref(false)
+const inputImage = ref(null)
+
+const { getRootProps, getInputProps } = useDropzone({
+  onDrop: (acceptedFiles) => {
+    console.log(acceptedFiles)
   }
+})
+
+const originalUrl = computed(() => {
+  return removed.value ? null : props.imageUrl
+})
+
+const showUrl = computed(() => {
+  return previewUrl.value || originalUrl.value
+})
+
+const uploadImage = (event) => {
+  const files = event.target.files || event.dataTransfer.files
+  if (files && files[0]) {
+    switch (files[0].type) {
+      case 'image/jpeg':
+      case 'image/jpg':
+      case 'image/png':
+      case 'image/gif':
+        break
+      default:
+        return
+    }
+    const uploadedFile = files[0]
+    emit('input-file', uploadedFile)
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      previewUrl.value = e.target.result
+    }
+    reader.readAsDataURL(uploadedFile)
+  }
+}
+
+const removeImage = () => {
+  if (inputImage.value) {
+    inputImage.value.value = ''
+  }
+  if (previewUrl.value === null) {
+    removed.value = true
+    emit('remove-image', true)
+  } else {
+    previewUrl.value = null
+    emit('input-file', null)
+  }
+}
+
+const undo = () => {
+  removed.value = false
+  emit('remove-image', false)
+}
 </script>

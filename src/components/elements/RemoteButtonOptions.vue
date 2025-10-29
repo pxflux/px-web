@@ -44,131 +44,122 @@
   </div>
 </template>
 
-<script>
-  import keycodes from 'keycode'
-  import VSelect from './UI/Select/components/Select.vue'
-  import { Control, ControlValue } from '../../models/Control'
+<script setup>
+import { ref, nextTick, watch, onMounted } from 'vue'
+import keycodes from 'keycode'
+import VSelect from './UI/Select/components/Select.vue'
+import { Control, ControlValue } from '../../models/Control'
 
-  export default {
-    name: 'remote-button-options',
-    components: {VSelect},
-    props: ['title', 'button', 'index'],
+const props = defineProps({
+  title: String,
+  button: Object,
+  index: Number
+})
 
-    computed: {},
-    data () {
-      return {
-        label: this.button ? this.button.label : null,
-        eventType: this.button ? this.button.type : 'keyboard',
+const emit = defineEmits(['update-button'])
 
-        types: ['keyboard', 'custom', 'mouse'],
-        keyCombination: {toHtmlString: () => { return '' }},
-        keyCodeDisplayStr: '',
-        keyCodeLiteralStr: '',
-        helpMessage: '',
-        keyUpTimeout: null
-      }
-    },
+const label = ref(props.button ? props.button.label : null)
+const eventType = ref(props.button ? props.button.type : 'keyboard')
+const types = ref(['keyboard', 'custom', 'mouse'])
+const keyCodeDisplayStr = ref('')
+const keyCodeLiteralStr = ref('')
+const helpMessage = ref('')
+const keyUpTimeout = ref(null)
+const keysField = ref(null)
 
-    mounted () {
-      const the = this
-      this.keyCombination = {
-        keyCode: '',
-        modifiers: [],
-        modifiersLabels: {altKey: '⌥', ctrlKey: 'Ctrl', metaKey: '⌘', shiftKey: '⇧'},
-        modifiersCodes: [18, 17, 91, 93, 16],
-        toHtmlString () {
-          if (!this.keyCode) return ''
-          let litSrt = ''
-          let str = ''
-          this.modifiers.forEach(m => {
-            if (litSrt) litSrt += ' '
-            str += this.modifiersLabels[m]
-            litSrt += m
-          })
-          if (litSrt) litSrt += ' '
-          if (this.modifiersCodes.indexOf(this.keyCode) === -1) str += keycodes(this.keyCode).toUpperCase()
-          litSrt += this.keyCode
-          the.keyCodeDisplayStr = str
-          the.keyCodeLiteralStr = litSrt
-          return str
-        }
-      }
-
-      const keyer = this.$refs.keysField
-      if (keyer) {
-        keyer.addEventListener('keydown', this.getKeysCombination)
-        keyer.addEventListener('keyup', this.blurKyeDisplay)
-      }
-      this.helpMessage = this.refreshHelpMessage()
-    },
-
-    watch: {
-      button () {
-        this.label = this.button ? this.button.label : null
-        this.eventType = this.button ? this.button.type : 'keyboard'
-      },
-      eventType () {
-        if (this.eventType === 'keyboard') {
-          this.refreshHelpMessage()
-          this.$nextTick(() => {
-            const keyer = this.$refs.keysField
-            keyer.addEventListener('keydown', this.getKeysCombination)
-            keyer.addEventListener('keyup', this.blurKyeDisplay)
-          })
-        }
-      }
-    },
-
-    methods: {
-      blurKyeDisplay () {
-        this.keyUpTimeout = setTimeout(() => {
-          this.$refs.keysField.blur()
-          this.refreshHelpMessage()
-        }, 200)
-      },
-
-      refreshHelpMessage () {
-        // this.nextTick(() => {
-        let str = ''
-        if (document.activeElement === this.$refs.keysField) {
-          str = 'Press a key combination, which is expected by your program.'
-        } else {
-          str = 'Click to '
-          str += this.keyCodeDisplayStr ? 'Modify' : 'Specify Key'
-        }
-        this.helpMessage = str
-        // })
-      },
-      /**
-       * @param {KeyboardEvent} e
-       */
-      getKeysCombination (e) {
-        clearTimeout(this.keyUpTimeout)
-
-        this.keyCombination.keyCode = e.keyCode
-        this.keyCombination.modifiers = []
-        const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
-        modifiers.forEach(m => {
-          if (e[m] === true) this.keyCombination.modifiers.push(m)
-        })
-        this.keyCombination.toHtmlString()
-        e.preventDefault()
-      },
-
-      clear () {
-        this.$emit('update-button', this.index, null)
-      },
-      submit () {
-        const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
-        const controlValue = new ControlValue('keyup', this.keyCombination.keyCode, false, false, false, false)
-        modifiers.forEach(m => {
-          if (this.keyCombination.modifiers[m] === true) {
-            controlValue[m] = true
-          }
-        })
-        const control = new Control(this.index, null, this.label, this.eventType, controlValue)
-        this.$emit('update-button', this.index, control)
-      }
-    }
+let keyCombination = {
+  keyCode: '',
+  modifiers: [],
+  modifiersLabels: { altKey: '⌥', ctrlKey: 'Ctrl', metaKey: '⌘', shiftKey: '⇧' },
+  modifiersCodes: [18, 17, 91, 93, 16],
+  toHtmlString() {
+    if (!this.keyCode) return ''
+    let litSrt = ''
+    let str = ''
+    this.modifiers.forEach(m => {
+      if (litSrt) litSrt += ' '
+      str += this.modifiersLabels[m]
+      litSrt += m
+    })
+    if (litSrt) litSrt += ' '
+    if (this.modifiersCodes.indexOf(this.keyCode) === -1) str += keycodes(this.keyCode).toUpperCase()
+    litSrt += this.keyCode
+    keyCodeDisplayStr.value = str
+    keyCodeLiteralStr.value = litSrt
+    return str
   }
+}
+
+const blurKyeDisplay = () => {
+  keyUpTimeout.value = setTimeout(() => {
+    if (keysField.value) {
+      keysField.value.blur()
+    }
+    refreshHelpMessage()
+  }, 200)
+}
+
+const refreshHelpMessage = () => {
+  let str = ''
+  if (document.activeElement === keysField.value) {
+    str = 'Press a key combination, which is expected by your program.'
+  } else {
+    str = 'Click to '
+    str += keyCodeDisplayStr.value ? 'Modify' : 'Specify Key'
+  }
+  helpMessage.value = str
+}
+
+const getKeysCombination = (e) => {
+  clearTimeout(keyUpTimeout.value)
+  keyCombination.keyCode = e.keyCode
+  keyCombination.modifiers = []
+  const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
+  modifiers.forEach(m => {
+    if (e[m] === true) keyCombination.modifiers.push(m)
+  })
+  keyCombination.toHtmlString()
+  e.preventDefault()
+}
+
+const clear = () => {
+  emit('update-button', props.index, null)
+}
+
+const submit = () => {
+  const modifiers = ['altKey', 'ctrlKey', 'metaKey', 'shiftKey']
+  const controlValue = new ControlValue('keyup', keyCombination.keyCode, false, false, false, false)
+  modifiers.forEach(m => {
+    if (keyCombination.modifiers[m] === true) {
+      controlValue[m] = true
+    }
+  })
+  const control = new Control(props.index, null, label.value, eventType.value, controlValue)
+  emit('update-button', props.index, control)
+}
+
+onMounted(() => {
+  if (keysField.value) {
+    keysField.value.addEventListener('keydown', getKeysCombination)
+    keysField.value.addEventListener('keyup', blurKyeDisplay)
+  }
+  helpMessage.value = refreshHelpMessage()
+})
+
+watch(() => props.button, () => {
+  label.value = props.button ? props.button.label : null
+  eventType.value = props.button ? props.button.type : 'keyboard'
+})
+
+watch(eventType, () => {
+  if (eventType.value === 'keyboard') {
+    refreshHelpMessage()
+    nextTick(() => {
+      if (keysField.value) {
+        keysField.value.addEventListener('keydown', getKeysCombination)
+        keysField.value.addEventListener('keyup', blurKyeDisplay)
+      }
+    })
+  }
+})
 </script>

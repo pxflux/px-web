@@ -19,36 +19,34 @@
   </main>
 </template>
 
-<script>
-  import { mapActions, mapState } from 'vuex'
-  import { ref } from 'firebase/database'
-  import { db } from '@/firebase-app'
+<script setup>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { ref } from 'firebase/database'
+import { db } from '@/firebase-app'
 
-  export default {
-    created () {
-      this.init()
-    },
-    computed: {
-      ...mapState(['config']),
+const storeInstance = useStore()
+const route = useRoute()
 
-      distribute () {
-        if (this.config) {
-          return this.config.distribute
-        }
-        return {macos: {}}
-      }
-    },
-    methods: {
-      ...mapActions(['setRef']),
+const config = computed(() => storeInstance.state.config)
 
-      init () {
-        this.setRef({key: 'config', ref: ref(db, 'config')})
-      }
-    },
-    watch: {
-      $route () {
-        this.init()
-      }
-    }
+const distribute = computed(() => {
+  if (config.value) {
+    return config.value.distribute
   }
+  return { macos: {} }
+})
+
+const init = () => {
+  storeInstance.dispatch('setRef', { key: 'config', ref: ref(db, 'config') })
+}
+
+onMounted(() => {
+  init()
+})
+
+watch(() => route.path, () => {
+  init()
+})
 </script>
