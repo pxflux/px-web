@@ -9,8 +9,6 @@
       </router-link>
       <template v-if="!['player-client', 'auth'].includes($route.name)">
         <div class="right">
-          <router-link to="/download" class="button">Download</router-link>
-          <router-link v-if=" ! user" to="/auth" class="button">Login</router-link>
           <!-- -->
           <div v-if="user" class="item-with-submenu">
             <a class="button submenu-trigger" title="Add">
@@ -22,7 +20,7 @@
             </div>
           </div>
           <!-- -->
-          <router-link v-if="user" to="/artworks" class="button">
+          <router-link to="/artworks" class="button">
             <img src="/static/img/collection-v3@2x.png" width="24" height="24" class="center">
           </router-link>
           <!-- -->
@@ -30,7 +28,8 @@
             <a class="button submenu-trigger">{{ userAccount.title }}</a>
             <div class="submenu">
               <div v-for="account in inactiveAccounts" :key="account['.key']" class="button"
-                   @click="setAccount(account['.key'])">{{ account.title }}
+                @click="setAccount(account['.key'])">
+                {{ account.title }}
               </div>
             </div>
           </div>
@@ -54,6 +53,10 @@
               </div>
             </div>
           </div>
+          <template v-if="!user">
+            <router-link to="/download" class="button">Download</router-link>
+            <router-link v-if="!user" to="/auth" class="button">Login</router-link>
+          </template>
         </div>
       </template>
     </div>
