@@ -23,16 +23,17 @@
 </template>
 
 <script>
-  import { firebaseApp } from '../../firebase-app'
-  import { getDatabase, ref } from 'firebase/database'
+  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
   export default {
-    data() {
+    setup() {
+      const { data: artist, bind } = useFirebaseBinding()
+
       return {
-        artist: {}
+        artist,
+        bind
       }
     },
-
     created () {
       this.init()
     },
@@ -41,20 +42,19 @@
         return this.$route.params.id
       },
       artworks () {
-        return Object.keys(this.artist.artworks || {}).map(id => {
+        return Object.keys(this.artist?.artworks || {}).map(id => {
           return {...this.artist.artworks[id], ...{'.key': id}}
         })
       },
       shows () {
-        return Object.keys(this.artist.shows || {}).map(id => {
+        return Object.keys(this.artist?.shows || {}).map(id => {
           return {...this.artist.shows[id], ...{'.key': id}}
         })
       }
     },
     methods: {
       init () {
-        const db = getDatabase(firebaseApp)
-        this.$databaseBind('artist', ref(db, 'artists/' + this.artistId))
+        this.bind('artists/' + this.artistId)
       }
     },
     watch: {

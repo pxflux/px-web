@@ -18,7 +18,8 @@
 
 <script>
   import { mapActions, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { ref } from 'firebase/database'
+  import { db } from '../../firebase-app'
 
   export default {
     created () {
@@ -39,7 +40,7 @@
 
       init () {
         if (this.accountId) {
-          this.setRef({key: 'accountShows', ref: firebase.database().ref('accounts/' + this.accountId + '/shows')})
+          this.setRef({key: 'accountShows', ref: ref(db, 'accounts/' + this.accountId + '/shows')})
         }
       }
     },

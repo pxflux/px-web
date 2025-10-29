@@ -2,8 +2,6 @@ import { initializeApp } from 'firebase/app'
 import { getDatabase as getModularDatabase, ref as modularRef, push, update, get } from 'firebase/database'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { getAuth } from 'firebase/auth'
-import firebase from 'firebase/compat/app'
-import 'firebase/compat/database'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAYMwrJAFUxlY-Igs_ts-goUAkLwN2ZPKc',
@@ -15,9 +13,7 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
-
-// Initialize compat app for vuexfire
-const compatApp = firebase.initializeApp(firebaseConfig, 'compat')
+const db = getModularDatabase(app)
 
 export function store (accountId, id, path, data, imageRemoved, imageFile) {
   const promise = save(id, 'accounts/' + accountId + '/' + path, data)
@@ -34,7 +30,6 @@ export function store (accountId, id, path, data, imageRemoved, imageFile) {
 }
 
 async function save (id, path, data) {
-  const db = getModularDatabase(app)
   if (id) {
     const source = modularRef(db, path + '/' + id)
     await update(source, data)
@@ -116,5 +111,4 @@ function getFileExtension (file) {
 
 export const auth = getAuth(app)
 
-export { compatApp as default }
-export { app as firebaseApp }
+export { app as firebaseApp, db }

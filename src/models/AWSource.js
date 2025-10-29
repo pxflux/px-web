@@ -230,7 +230,7 @@ export class AWSource {
     } else {
       switch (this.type) {
         case 'vimeo':
-          return `Vimeo video ${this.resolution.toString()} | [${this.durationToString(this.duration)}]`
+          return `Vimeo video ${this.resolution ? this.resolution.toString() : 'unknown'} | [${this.durationToString(this.duration)}]`
         default:
           const remote = this.local ? '' : 'External link '
           return `${remote}${this.type.toUpperCase()}`

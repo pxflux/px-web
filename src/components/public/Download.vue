@@ -21,7 +21,8 @@
 
 <script>
   import { mapActions, mapState } from 'vuex'
-  import firebase from '@/firebase-app'
+  import { ref } from 'firebase/database'
+  import { db } from '@/firebase-app'
 
   export default {
     created () {
@@ -41,7 +42,7 @@
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({key: 'config', ref: firebase.database().ref('config')})
+        this.setRef({key: 'config', ref: ref(db, 'config')})
       }
     },
     watch: {

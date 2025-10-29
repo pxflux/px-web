@@ -12,7 +12,8 @@
 
 <script>
   import { mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { ref, set } from 'firebase/database'
+  import { db } from '../../firebase-app'
   import { log } from '../../helper'
 
   export default {
@@ -37,7 +38,7 @@
           const account = {
             accountId: this.accountId
           }
-          firebase.database().ref('player-pins/' + this.pin).set(account).then(() => {
+          set(ref(db, 'player-pins/' + this.pin), account).then(() => {
             this.$router.push('/account/players')
           }).catch(log)
         }

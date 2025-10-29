@@ -14,8 +14,9 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
+  import { ref, remove } from 'firebase/database'
   import { log } from '../../helper'
-  import firebase, { store } from '../../firebase-app'
+  import { db, store } from '../../firebase-app'
 
   export default {
     created () {
@@ -47,7 +48,7 @@
         if (this.accountId) {
           this.setRef({
             key: 'accountPlace',
-            ref: firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId)
+            ref: ref(db, 'accounts/' + this.accountId + '/places/' + this.placeId)
           })
         }
       },
@@ -61,7 +62,7 @@
         if (!this.accountId) {
           return
         }
-        firebase.database().ref('accounts/' + this.accountId + '/places/' + this.placeId).remove().then(function () {
+        remove(ref(db, 'accounts/' + this.accountId + '/places/' + this.placeId)).then(function () {
           this.$router.push('/account/places')
         }.bind(this)).catch(log)
       }

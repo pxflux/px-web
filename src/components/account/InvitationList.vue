@@ -17,8 +17,9 @@
 
 <script>
   import { mapActions, mapGetters, mapState } from 'vuex'
+  import { ref, set, remove } from 'firebase/database'
   import { log } from '../../helper'
-  import firebase from '../../firebase-app'
+  import { db } from '../../firebase-app'
 
   export default {
     created () {
@@ -35,7 +36,7 @@
         if (this.user) {
           this.setRef({
             key: 'invitations',
-            ref: firebase.database().ref('invitations')
+            ref: ref(db, 'invitations')
           })
         }
       },
@@ -45,10 +46,10 @@
           'displayName': this.user.displayName,
           'photoUrl': this.user.photoURL
         }
-        firebase.database().ref('invitations/' + invitationId + '/user').set(data).catch(log)
+        set(ref(db, 'invitations/' + invitationId + '/user'), data).catch(log)
       },
       rejectInvitation (invitationId) {
-        firebase.database().ref('invitations/' + invitationId).remove().catch(log)
+        remove(ref(db, 'invitations/' + invitationId)).catch(log)
       }
     },
     watch: {

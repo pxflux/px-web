@@ -42,7 +42,8 @@
 
 <script>
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { ref, set, push, remove } from 'firebase/database'
+  import { db } from '../../firebase-app'
   import { log } from '../../helper'
   import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
 
@@ -77,14 +78,14 @@
 
       init () {
         if (this.userAccount) {
-          this.setRef({key: 'account', ref: firebase.database().ref('accounts/' + this.userAccount['.key'])})
-          this.setRef({key: 'invitations', ref: firebase.database().ref('invitations')})
+          this.setRef({key: 'account', ref: ref(db, 'accounts/' + this.userAccount['.key'])})
+          this.setRef({key: 'invitations', ref: ref(db, 'invitations')})
         }
       },
 
       updateAccount () {
         this.showEditForm = false
-        firebase.database().ref('accounts/' + this.userAccount['.key'] + '/title').set(this.title).catch(log)
+        set(ref(db, 'accounts/' + this.userAccount['.key'] + '/title'), this.title).catch(log)
       },
 
       invite () {
@@ -96,16 +97,16 @@
           },
           'email': this.email
         }
-        firebase.database().ref('invitations').push(invitation).catch(log)
+        push(ref(db, 'invitations'), invitation).catch(log)
       },
 
       removeInvitation (invitationId) {
-        firebase.database().ref('invitations/' + invitationId).remove().catch(log)
+        remove(ref(db, 'invitations/' + invitationId)).catch(log)
       },
 
       leaveAccount () {
         this.showEditForm = false
-        firebase.database().ref('accounts/' + this.userAccount['.key'] + '/users/' + this.user.uid).remove().catch(log)
+        remove(ref(db, 'accounts/' + this.userAccount['.key'] + '/users/' + this.user.uid)).catch(log)
       }
     },
     watch: {

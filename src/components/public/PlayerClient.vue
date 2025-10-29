@@ -37,7 +37,8 @@
 
 <script>
   import { mapActions, mapMutations, mapState } from 'vuex'
-  import firebase from '@/firebase-app'
+  import { ref, push } from 'firebase/database'
+  import { db } from '@/firebase-app'
   import { log } from '../../helper'
   import RemoteControl from '../elements/RemoteControl.vue'
 
@@ -119,11 +120,11 @@
         }
         if (this.pinReady) {
           this.SET_LOADING(true)
-          this.setRef({key: 'playerPin', ref: firebase.database().ref('player-pins/' + this.pin)})
+          this.setRef({key: 'playerPin', ref: ref(db, 'player-pins/' + this.pin)})
         }
       },
       sendControl (position) {
-        firebase.database().ref('commands/' + this.pin).push({controlId: '' + position}).catch(log)
+        push(ref(db, 'commands/' + this.pin), {controlId: '' + position}).catch(log)
       }
     },
     watch: {

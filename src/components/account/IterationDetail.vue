@@ -11,7 +11,8 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { ref, update } from 'firebase/database'
+  import { db } from '../../firebase-app'
   import { log } from '../../helper'
 
   export default {
@@ -34,7 +35,7 @@
 
       init () {
         if (this.user.uid) {
-          this.source = firebase.database().ref('users/' + this.user.uid + '/artworks/' + this.$route.params.artworkId + '/iterations/' + this.$route.params.id)
+          this.source = ref(db, 'users/' + this.user.uid + '/artworks/' + this.$route.params.artworkId + '/iterations/' + this.$route.params.id)
           this.setRef({key: 'accountIteration', ref: this.source})
         } else {
           this.source = null
@@ -54,7 +55,7 @@
       saveTitle: function () {
         this.toggleTitle()
         if (this.source) {
-          this.source.update({'title': this.title.val}, log)
+          update(this.source, {'title': this.title.val}).catch(log)
         }
       },
 

@@ -91,19 +91,31 @@
 
 <script>
   import { mapState } from 'vuex'
-  import { firebaseApp } from '../../firebase-app'
-  import { getDatabase, ref, remove, update } from 'firebase/database'
+  import { db } from '../../firebase-app'
+  import { ref, remove, update, push } from 'firebase/database'
   import AttachmentPanel from '../elements/AttachmentsPanel.vue'
   import RemoteControl from '../elements/RemoteControl.vue'
   import { log } from '../../helper'
   import { PlayerArtwork } from '../../models/PlayerArtwork'
   import { Artwork } from '../../models/ArtworkData'
   import { Player } from '../../models/Player'
+  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
   export default {
     components: {
       AttachmentPanel,
       RemoteControl
+    },
+    setup() {
+      const { data: accountArtwork, bind: bindArtwork } = useFirebaseBinding()
+      const { data: accountPlayers, bind: bindPlayers } = useFirebaseBinding()
+
+      return {
+        accountArtwork,
+        accountPlayers,
+        bindArtwork,
+        bindPlayers
+      }
     },
     created () {
       this.init()
@@ -111,9 +123,7 @@
 
     data () {
       return {
-        setupIndex: 0,
-        accountArtwork: null,
-        accountPlayers: []
+        setupIndex: 0
       }
     },
 
@@ -121,7 +131,7 @@
       ...mapState(['userAccount']),
 
       sourceDescription () {
-        if (this.setup && this.setup.channels.length) {
+        if (this.setup && this.setup.channels && this.setup.channels.length && this.setup.channels[0].source) {
           return this.setup.channels[0].source.toString()
         }
       },
@@ -150,7 +160,8 @@
       },
       players () {
         if (this.accountPlayers) {
-          return this.accountPlayers.map(player => Player.fromJson(player)).filter(player => player.connected)
+          const players = Array.isArray(this.accountPlayers) ? this.accountPlayers : Object.values(this.accountPlayers)
+          return players.map(player => Player.fromJson(player)).filter(player => player.connected)
         }
         return []
       },
@@ -186,16 +197,14 @@
     methods: {
       init () {
         if (this.accountId) {
-          const db = getDatabase(firebaseApp)
-          this.$databaseBind('accountArtwork', ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId))
-          this.$databaseBind('accountPlayers', ref(db, 'accounts/' + this.accountId + '/players'))
+          this.bindArtwork('accounts/' + this.accountId + '/artworks/' + this.artworkId)
+          this.bindPlayers('accounts/' + this.accountId + '/players')
         }
       },
       launch (player) {
         if (!this.accountId || !this.artwork) {
           return
         }
-        const db = getDatabase(firebaseApp)
         const path = 'accounts/' + this.accountId + '/players/' + player.key + '/artwork/'
         const values = PlayerArtwork.fromArtwork(this.artworkId, this.artwork).toUpdates(path, PlayerArtwork.empty())
         const pathRef = ref(db, path)
@@ -207,23 +216,23 @@
         if (!this.accountId || !this.artwork) {
           return
         }
-        firebase.database().ref('accounts/' + this.accountId + '/players/' + player.key + '/artwork').remove().catch(log)
+        remove(ref(db, 'accounts/' + this.accountId + '/players/' + player.key + '/artwork')).catch(log)
       },
       sendControl (player, position) {
-        firebase.database().ref('commands/' + player.pin).push({ controlId: '' + position }).catch(log)
+        push(ref(db, 'commands/' + player.pin), { controlId: '' + position }).catch(log)
       },
       togglePublished (published) {
         if (!this.accountId) {
           return
         }
         const data = { published: published }
-        firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId).update(data).catch(log)
+        update(ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId), data).catch(log)
       },
       removeArtwork () {
         if (!this.accountId) {
           return
         }
-        firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId).remove().then(function () {
+        remove(ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId)).then(function () {
           this.$router.push('/artworks')
         }.bind(this)).catch(log)
       }

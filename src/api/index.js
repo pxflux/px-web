@@ -1,11 +1,10 @@
-import { getDatabase, ref, get } from 'firebase/database'
-import { firebaseApp as app } from '../firebase-app'
+import { ref, get } from 'firebase/database'
+import { db } from '../firebase-app'
 
 const logRequests = true
 
 function fetch (child, relationships = []) {
   logRequests && console.log(`fetching [${child}]`)
-  const db = getDatabase(app)
   return get(ref(db, child))
     .then(snapshot => {
       const data = snapshot.val()

@@ -33,8 +33,9 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
+  import { ref } from 'firebase/database'
   import { log } from '../../helper'
-  import firebase, { store } from '../../firebase-app'
+  import { db, store } from '../../firebase-app'
   import ImageUpload from '../elements/ImageUpload.vue'
 
   export default {
@@ -82,10 +83,10 @@
         if (!this.isNew && this.accountId) {
           this.setRef({
             key: 'accountShow',
-            ref: firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId)
+            ref: ref(db, 'accounts/' + this.accountId + '/shows/' + this.showId)
           })
         }
-        this.setRef({key: 'places', ref: firebase.database().ref('places')})
+        this.setRef({key: 'places', ref: ref(db, 'places')})
       },
 
       setImageFile (file) {

@@ -13,8 +13,8 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { firebaseApp } from '../../firebase-app'
-import { getDatabase, ref as dbRef, onValue } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { ref as dbRef, onValue } from 'firebase/database'
 import { Artwork } from '../../models/ArtworkData'
 import ArtworkItem from '../elements/ArtworkItem.vue'
 
@@ -51,7 +51,6 @@ const init = () => {
     accountArtworksUnsubscribe()
   }
   if (accountId.value) {
-    const db = getDatabase(firebaseApp)
     const artworksRef = dbRef(db, 'accounts/' + accountId.value + '/artworks')
     accountArtworksUnsubscribe = onValue(artworksRef, (snapshot) => {
       if (snapshot.exists()) {

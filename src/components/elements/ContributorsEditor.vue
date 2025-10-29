@@ -16,7 +16,8 @@
 
 <script>
   import { mapActions, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { ref } from 'firebase/database'
+  import { db } from '../../firebase-app'
   import vSelect from './UI/Select/components/Select.vue'
   import inlineSelect from './UI/Select/components/SelectInline.vue'
   import { ContributorRefs } from '../../models/ContributorRef'
@@ -58,7 +59,7 @@
       ...mapActions(['setRef']),
 
       init () {
-        this.setRef({key: 'artists', ref: firebase.database().ref('artists')})
+        this.setRef({key: 'artists', ref: ref(db, 'artists')})
       },
       updateValue: function (value) {
         this.$emit('input', value)

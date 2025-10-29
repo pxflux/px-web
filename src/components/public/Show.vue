@@ -15,16 +15,17 @@
 </template>
 
 <script>
-  import { firebaseApp } from '../../firebase-app'
-  import { getDatabase, ref } from 'firebase/database'
+  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
   export default {
-    data() {
+    setup() {
+      const { data: show, bind } = useFirebaseBinding()
+
       return {
-        show: {}
+        show,
+        bind
       }
     },
-
     created () {
       this.init()
     },
@@ -33,15 +34,14 @@
         return this.$route.params.id
       },
       places () {
-        return Object.keys(this.show.places || {}).map(id => {
+        return Object.keys(this.show?.places || {}).map(id => {
           return {...this.show.places[id], ...{'.key': id}}
         })
       }
     },
     methods: {
       init () {
-        const db = getDatabase(firebaseApp)
-        this.$databaseBind('show', ref(db, 'shows/' + this.showId))
+        this.bind('shows/' + this.showId)
       }
     },
     watch: {

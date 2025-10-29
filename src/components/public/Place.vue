@@ -6,7 +6,7 @@
         <h2>Shows</h2>
         <ul v-for="show in shows" :key="show['__key']">
           <li>
-            <router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link>
+            <router-link :to="'/show/' + place.key">{{ show.title }}</router-link>
           </li>
         </ul>
       </template>
@@ -15,16 +15,17 @@
 </template>
 
 <script>
-  import { firebaseApp } from '../../firebase-app'
-  import { getDatabase, ref } from 'firebase/database'
+  import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
   export default {
-    data() {
+    setup() {
+      const { data: place, bind } = useFirebaseBinding()
+
       return {
-        place: {}
+        place,
+        bind
       }
     },
-
     created () {
       this.init()
     },
@@ -33,15 +34,14 @@
         return this.$route.params.id
       },
       shows () {
-        return Object.keys(this.place.shows || {}).map(id => {
+        return Object.keys(this.place?.shows || {}).map(id => {
           return {...this.place.shows[id], ...{'.key': id}}
         })
       }
     },
     methods: {
       init () {
-        const db = getDatabase(firebaseApp)
-        this.$databaseBind('place', ref(db, 'places/' + this.placeId))
+        this.bind('places/' + this.placeId)
       }
     },
     watch: {

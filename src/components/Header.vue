@@ -62,9 +62,9 @@
 import { ref, computed, onMounted, onUpdated, watch, nextTick, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { firebaseApp, auth } from '../firebase-app'
+import { db, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
-import { getDatabase, ref as dbRef, set, onValue, off } from 'firebase/database'
+import { ref as dbRef, set, onValue, off } from 'firebase/database'
 import ScalableCanvasFromImage from '../assets/js/logo'
 import ColorFlicker from '../assets/js/color-flicker'
 import { useSubmenu } from '../composables/useSubmenu'
@@ -91,7 +91,6 @@ const init = () => {
     accountsUnsubscribe()
   }
   if (user.value) {
-    const db = getDatabase(firebaseApp)
     const accountsRef = dbRef(db, 'users/' + user.value.uid + '/accounts')
     accountsUnsubscribe = onValue(accountsRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -107,7 +106,6 @@ const init = () => {
 
 const setAccount = (accountId) => {
   closeSubmenus()
-  const db = getDatabase(firebaseApp)
   const accountRef = dbRef(db, 'users/' + user.value.uid + '/accountId')
   set(accountRef, accountId).catch(log)
 }

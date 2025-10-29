@@ -67,7 +67,8 @@
   // https://github.com/hilongjw/vue-dragging *
 
   import { mapActions, mapState } from 'vuex'
-  import firebase from '../../firebase-app'
+  import { ref, push, update } from 'firebase/database'
+  import { db } from '../../firebase-app'
   import { Artwork } from '../../models/ArtworkData'
   import { log } from '../../helper'
 
@@ -112,7 +113,7 @@
 
       init () {
         if (!this.isNew && this.accountId) {
-          this.source = firebase.database().ref('accounts/' + this.accountId + '/artworks/' + this.artworkId)
+          this.source = ref(db, 'accounts/' + this.accountId + '/artworks/' + this.artworkId)
           this.setRef({key: 'accountArtwork', ref: this.source})
         } else {
           this.source = null
@@ -123,10 +124,10 @@
           return
         }
         const path = 'accounts/' + this.accountId + '/artworks/'
-        const id = this.isNew ? firebase.database().ref(path).push().key : this.artworkId
+        const id = this.isNew ? push(ref(db, path)).key : this.artworkId
         const original = this.isNew ? Artwork.empty() : Artwork.fromJson(this.accountArtwork)
         const values = this.artwork.toUpdates(path + id + '/', original)
-        firebase.database().ref().update(values).then(() => {
+        update(ref(db), values).then(() => {
           this.$router.push('/artwork/' + id)
         }).catch(log)
       }

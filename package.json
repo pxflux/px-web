@@ -18,7 +18,7 @@
     "axios-add-jsonp": "0.0.4",
     "axios-jsonp-pro": "^1.0.1",
     "element-plus": "^2.4.0",
-    "firebase": "^10.0.0",
+    "firebase": "^12.4.0",
     "firebaseui": "^6.1.0",
     "jsonp": "^0.2.1",
     "keycode": "^2.1.9",
@@ -31,9 +31,7 @@
     "vue-scrollto": "^2.20.0",
     "vue-vimeo-player": "^1.0.0",
     "vue3-dropzone": "^2.0.0",
-    "vuefire": "^3.2.2",
     "vuex": "^4.1.0",
-    "vuexfire": "^3.0.5",
     "weakmap": "0.0.6"
   },
   "devDependencies": {

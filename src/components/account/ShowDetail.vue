@@ -20,8 +20,9 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
+  import { ref, remove } from 'firebase/database'
   import { log } from '../../helper'
-  import firebase, { store } from '../../firebase-app'
+  import { db, store } from '../../firebase-app'
 
   export default {
     created () {
@@ -58,7 +59,7 @@
         if (this.accountId) {
           this.setRef({
             key: 'accountShow',
-            ref: firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId)
+            ref: ref(db, 'accounts/' + this.accountId + '/shows/' + this.showId)
           })
         }
       },
@@ -72,7 +73,7 @@
         if (!this.accountId) {
           return
         }
-        firebase.database().ref('accounts/' + this.accountId + '/shows/' + this.showId).remove().then(function () {
+        remove(ref(db, 'accounts/' + this.accountId + '/shows/' + this.showId)).then(function () {
           this.$router.push('/account/shows')
         }.bind(this)).catch(log)
       }

@@ -4,12 +4,11 @@ import { createApp } from 'vue'
 import { createAppRouter } from './router'
 import { createStore } from './store'
 import ProgressBar from './components/elements/ProgressBar.vue'
-import { firebaseApp, auth } from './firebase-app'
-import { getDatabase, ref, onValue, off, get } from 'firebase/database'
+import { db, auth } from './firebase-app'
+import { ref, onValue, off, get } from 'firebase/database'
 import { onAuthStateChanged } from 'firebase/auth'
 import { plugin as inputAutoWidth } from 'vue-input-autowidth'
 import VueScrollTo from 'vue-scrollto'
-import { VueFire, VueFireDatabaseOptionsAPI } from 'vuefire'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import App from './components/App.vue'
@@ -22,21 +21,6 @@ function b64DecodeUnicode (str) {
 
 // global progress bar
 let bar = null
-
-// a global mixin that calls `asyncData` when a route component's params change
-const globalMixin = {
-  beforeRouteUpdate (to, from, next) {
-    const {asyncData} = this.$options
-    if (asyncData) {
-      asyncData({
-        store: this.$store,
-        route: to
-      }).then(next).catch(next)
-    } else {
-      next()
-    }
-  }
-}
 
 // Create app instance
 const app = createApp(App)
@@ -51,15 +35,6 @@ app.use(router)
 app.use(inputAutoWidth)
 app.use(VueScrollTo)
 app.use(ElementPlus)
-app.use(VueFire, {
-  firebaseApp,
-  modules: [
-    VueFireDatabaseOptionsAPI()
-  ]
-})
-
-// Add global mixin
-app.mixin(globalMixin)
 
 // Global progress bar
 if (!document.getElementById('progress-bar-placeholder')) {
@@ -84,7 +59,6 @@ onAuthStateChanged(auth, (user) => {
     off(userRef, 'value', callback)
   }
   if (user) {
-    const db = getDatabase(firebaseApp)
     userRef = ref(db, 'metadata/' + user.uid + '/refreshTime')
     callback = onValue(userRef, (snapshot) => {
       console.log('onMetadataChanged:', snapshot)
@@ -120,35 +94,6 @@ onAuthStateChanged(auth, (user) => {
 
 // wait until router has resolved all async before hooks and async components...
 router.isReady().then(() => {
-  // Add router hook for handling asyncData.
-  // Doing it after initial route is resolved so that we don't double-fetch
-  // the data that we already have. Using router.beforeResolve() so that all
-  // async components are resolved.
-  router.beforeResolve((to, from, next) => {
-    const matched = to.matched.flatMap(record =>
-      Object.values(record.components).filter(c => c.asyncData)
-    )
-    const prevMatched = from.matched.flatMap(record =>
-      Object.values(record.components).filter(c => c.asyncData)
-    )
-    let diffed = false
-    const activated = matched.filter((c, i) => {
-      return diffed || (diffed = (prevMatched[i] !== c))
-    })
-    const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _)
-    if (!asyncDataHooks.length) {
-      return next()
-    }
-
-    bar.start()
-    Promise.all(asyncDataHooks.map(hook => hook({store, route: to})))
-      .then(() => {
-        bar.finish()
-        next()
-      })
-      .catch(next)
-  })
-
   // actually mount to DOM
   app.mount('#app')
 })
