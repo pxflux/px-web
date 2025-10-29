@@ -57,9 +57,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
+import { GoogleAuthProvider, EmailAuthProvider, updateEmail as firebaseUpdateEmail } from 'firebase/auth'
 import { auth } from '../firebase-app'
 
 const store = useStore()
@@ -81,13 +81,62 @@ const multipleAuth = computed(() => {
   return user.value?.providerData.length > 1
 })
 
-const updateProfile = () => {
-  user.value.updateProfile({
-    displayName: displayName.value,
-    email: email.value
-  }).catch((error) => {
-    console.log('Account linking error', error)
-  })
+// Watch user data changes and update form values
+watch(() => user.value?.displayName, (newDisplayName) => {
+  if (newDisplayName && newDisplayName !== displayName.value) {
+    displayName.value = newDisplayName
+  }
+})
+
+watch(() => user.value?.email, (newEmail) => {
+  if (newEmail && newEmail !== email.value) {
+    email.value = newEmail
+  }
+})
+
+const updateProfile = async () => {
+  const currentUser = auth.currentUser
+  if (!currentUser) {
+    console.error('No authenticated user found')
+    return
+  }
+
+  try {
+    const updates = []
+
+    // Update displayName if changed
+    if (currentUser.displayName !== displayName.value) {
+      updates.push(
+        currentUser.updateProfile({
+          displayName: displayName.value
+        })
+      )
+    }
+
+    // Update email if changed
+    if (currentUser.email !== email.value) {
+      updates.push(
+        firebaseUpdateEmail(currentUser, email.value)
+      )
+    }
+
+    if (updates.length > 0) {
+      await Promise.all(updates)
+
+      // Reload user data to get updated values
+      await currentUser.reload()
+
+      // Update Vuex store with fresh user data
+      store.commit('UPDATE_USER', { user: currentUser })
+
+      console.log('Profile updated successfully')
+    } else {
+      console.log('No changes to save')
+    }
+  } catch (error) {
+    console.error('Error updating profile:', error)
+    // You could show a user-friendly error message here
+  }
 }
 
 const updatePassword = () => {
