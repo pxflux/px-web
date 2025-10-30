@@ -1,113 +1,166 @@
 <template>
-  <div>
+  <div class="auth-container">
     <div v-if="authError" class="auth-error">
       <p>Authentication failed: {{ authError }}</p>
       <button @click="clearError" class="error-dismiss">×</button>
     </div>
-    <div id="firebaseui-auth"></div>
+
+    <div v-if="!user" class="auth-form">
+      <h2>Sign In</h2>
+
+      <!-- Google Sign-In Button -->
+      <button @click="signInWithGoogle" class="auth-button google-button" :disabled="isLoading">
+        <span v-if="isLoading && currentProvider === 'google'">Signing in...</span>
+        <span v-else>Sign in with Google</span>
+      </button>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Email/Password Form -->
+      <form @submit.prevent="signInWithEmail" class="email-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            placeholder="Enter your email"
+            required
+            :disabled="isLoading"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            placeholder="Enter your password"
+            required
+            :disabled="isLoading"
+          >
+        </div>
+
+        <button type="submit" class="auth-button email-button" :disabled="isLoading || !email || !password">
+          <span v-if="isLoading && currentProvider === 'email'">Signing in...</span>
+          <span v-else>Sign In with Email</span>
+        </button>
+      </form>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-import * as firebaseui from 'firebaseui'
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  AuthError
+} from 'firebase/auth'
 import { auth } from '../firebase-app'
-
-let ui
 
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
-const authError = ref(null)
 
+// Form state
+const email = ref('')
+const password = ref('')
+const authError = ref(null)
+const isLoading = ref(false)
+const currentProvider = ref(null)
+
+// Computed properties
+const user = computed(() => store.state.user)
+
+// Methods
 const clearError = () => {
   authError.value = null
 }
 
-const uiConfig = {
-  callbacks: {
-    signInSuccessWithAuthResult (authResult, redirectUrl) {
-      console.log('Sign-in successful:', authResult.user.email)
-      clearError()
-      return false
-    },
-    signInFailure (error) {
-      console.error('Sign-in failed:', error)
-      let errorMessage = 'Authentication failed'
-
-      if (error.code) {
-        switch (error.code) {
-          case 'auth/user-not-found':
-            errorMessage = 'No account found with this email address'
-            break
-          case 'auth/wrong-password':
-            errorMessage = 'Incorrect password'
-            break
-          case 'auth/invalid-email':
-            errorMessage = 'Invalid email address'
-            break
-          case 'auth/user-disabled':
-            errorMessage = 'This account has been disabled'
-            break
-          case 'auth/too-many-requests':
-            errorMessage = 'Too many failed attempts. Please try again later'
-            break
-          case 'auth/network-request-failed':
-            errorMessage = 'Network error. Please check your connection'
-            break
-          case 'auth/email-already-in-use':
-            errorMessage = 'An account with this email already exists'
-            break
-          case 'auth/weak-password':
-            errorMessage = 'Password is too weak'
-            break
-          case 'auth/operation-not-allowed':
-            errorMessage = 'Email/password accounts are not enabled'
-            break
-          default:
-            errorMessage = `Authentication error: ${error.message || error.code}`
-        }
-      } else {
-        errorMessage = error.message || 'Unknown authentication error'
-      }
-
-      authError.value = errorMessage
-      return Promise.reject(error)
-    },
-    uiShown () {
-      console.log('Firebase UI shown')
-      clearError()
+const getErrorMessage = (error) => {
+  if (error.code) {
+    switch (error.code) {
+      case 'auth/user-not-found':
+        return 'No account found with this email address'
+      case 'auth/wrong-password':
+        return 'Incorrect password'
+      case 'auth/invalid-email':
+        return 'Invalid email address'
+      case 'auth/user-disabled':
+        return 'This account has been disabled'
+      case 'auth/too-many-requests':
+        return 'Too many failed attempts. Please try again later'
+      case 'auth/network-request-failed':
+        return 'Network error. Please check your connection'
+      case 'auth/email-already-in-use':
+        return 'An account with this email already exists'
+      case 'auth/weak-password':
+        return 'Password is too weak'
+      case 'auth/operation-not-allowed':
+        return 'Email/password accounts are not enabled'
+      case 'auth/popup-closed-by-user':
+        return 'Sign-in was cancelled'
+      case 'auth/popup-blocked':
+        return 'Sign-in popup was blocked by the browser'
+      default:
+        return `Authentication error: ${error.message || error.code}`
     }
-  },
-  signInFlow: 'popup',
-  credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-  signInOptions: [
-    {
-      provider: GoogleAuthProvider.PROVIDER_ID,
-      scopes: [ 'https://www.googleapis.com/auth/plus.login' ]
-    },
-    {
-      provider: EmailAuthProvider.PROVIDER_ID,
-      requireDisplayName: true,
-      signInMethod: 'password'
-    }
-  ]
+  } else {
+    return error.message || 'Unknown authentication error'
+  }
 }
 
-const user = computed(() => store.state.user)
+const signInWithGoogle = async () => {
+  try {
+    clearError()
+    isLoading.value = true
+    currentProvider.value = 'google'
 
-onMounted(() => {
-  ui = ui || new firebaseui.auth.AuthUI(auth)
-  ui.start('#firebaseui-auth', uiConfig)
-})
+    const provider = new GoogleAuthProvider()
+    provider.addScope('https://www.googleapis.com/auth/plus.login')
 
-onUnmounted(() => {
-  ui.reset()
-})
+    const result = await signInWithPopup(auth, provider)
+    console.log('Sign-in successful:', result.user.email)
+    clearError()
+  } catch (error) {
+    console.error('Google sign-in failed:', error)
+    authError.value = getErrorMessage(error)
+  } finally {
+    isLoading.value = false
+    currentProvider.value = null
+  }
+}
 
+const signInWithEmail = async () => {
+  try {
+    clearError()
+    isLoading.value = true
+    currentProvider.value = 'email'
+
+    const result = await signInWithEmailAndPassword(auth, email.value, password.value)
+    console.log('Sign-in successful:', result.user.email)
+    clearError()
+
+    // Clear form after successful sign-in
+    email.value = ''
+    password.value = ''
+  } catch (error) {
+    console.error('Email sign-in failed:', error)
+    authError.value = getErrorMessage(error)
+  } finally {
+    isLoading.value = false
+    currentProvider.value = null
+  }
+}
+
+// Watch for user changes and handle redirects
 watch(user, (val) => {
   if (val) {
     if (route.query.redirect) {
@@ -120,7 +173,10 @@ watch(user, (val) => {
 </script>
 
 <style lang="sass">
-@use 'firebaseui/dist/firebaseui.css' as *
+.auth-container
+  max-width: 768px
+  margin: 0 auto
+  padding: 20px
 
 .auth-error
   background-color: #fee
@@ -156,23 +212,93 @@ watch(user, (val) => {
       background-color: #fdd
       border-radius: 2px
 
-ul.firebaseui-idp-list
-  margin: 0
-  list-style-type: none
+.auth-form
+  background: white
+  border-radius: 8px
+  padding: 24px
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)
 
-.firebaseui-card-content
-  padding: 0 5px
-
-.firebaseui-container
-  max-width: 768px
-
-.firebaseui-idp-button
-  font-weight: 100
-  max-width: 768px
-  line-height: 36px
-  span
+  h2
     text-align: center
+    margin-bottom: 24px
+    color: #363636
+    font-weight: 300
+    font-size: 24px
 
-.firebaseui-idp-google > .firebaseui-idp-text
-  color: #363636
+.auth-button
+  width: 100%
+  padding: 12px 16px
+  border: none
+  border-radius: 4px
+  font-size: 16px
+  font-weight: 500
+  cursor: pointer
+  transition: all 0.2s ease
+  margin-bottom: 16px
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+.google-button
+  background-color: #4285f4
+  color: white
+
+  &:hover:not(:disabled)
+    background-color: #357ae8
+
+.email-button
+  background-color: #363636
+  color: white
+
+  &:hover:not(:disabled)
+    background-color: #292929
+
+.divider
+  text-align: center
+  margin: 20px 0
+  position: relative
+
+  &::before
+    content: ''
+    position: absolute
+    top: 50%
+    left: 0
+    right: 0
+    height: 1px
+    background-color: #ddd
+
+  span
+    background: white
+    padding: 0 16px
+    color: #666
+    font-size: 14px
+    position: relative
+    z-index: 1
+
+.email-form
+  .form-group
+    margin-bottom: 16px
+
+    label
+      display: block
+      margin-bottom: 4px
+      font-weight: 500
+      color: #363636
+
+    input
+      width: 100%
+      padding: 12px
+      border: 1px solid #ddd
+      border-radius: 4px
+      font-size: 16px
+      transition: border-color 0.2s ease
+
+      &:focus
+        outline: none
+        border-color: #4285f4
+
+      &:disabled
+        background-color: #f5f5f5
+        cursor: not-allowed
 </style>
