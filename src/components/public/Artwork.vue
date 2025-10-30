@@ -47,6 +47,7 @@
             </div>
           </div>
           <artwork-player-list
+            v-if="accountId"
             :account-id="accountId"
             :artwork="artwork"
           />
