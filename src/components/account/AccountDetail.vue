@@ -8,7 +8,7 @@
         <section class="staff">
           <h2>People</h2>
           <ul class="card-stack">
-            <li v-for="person in people" :key="user['.key']" class="card thin">
+            <li v-for="person in people" :key="person['.key']" class="card thin">
               <img v-if="person.photoUrl"
                    :src="person.photoUrl"
                    :alt="person.displayName"
@@ -59,32 +59,14 @@ const showInviteForm = ref(false)
 const user = computed(() => store.state.user)
 const userAccount = computed(() => store.state.userAccount)
 
-const accountPath = computed(() => {
-  if (userAccount.value) {
-    return 'accounts/' + userAccount.value['.key']
-  }
-  return null
-})
-
+const accountPath = computed(() => userAccount.value ? 'accounts/' + userAccount.value['.key'] : null)
 const { data: account } = useFirebaseBinding(accountPath, { isList: false, defaultValue: {} })
 
-const invitationsPath = computed(() => {
-  if (userAccount.value) {
-    return 'invitations'
-  }
-  return null
-})
-
+const invitationsPath = computed(() => userAccount.value ? 'invitations' : null)
 const { data: invitations } = useFirebaseBinding(invitationsPath)
+const accountInvitations = computed(() => invitations.value.filter(invitation => invitation.account?.id === userAccount.value?.['.key']))
 
-const accountInvitations = computed(() => {
-  return invitations.value.filter(invitation => invitation.account?.id === userAccount.value?.['.key'])
-})
-
-const people = computed(() => {
-  const acc = account.value || {}
-  return Object.entries(acc.users || {}).map(([ userId, u ]) => ({ ['.key']: userId, ...u }))
-})
+const people = computed(() => Object.entries(account.value?.users || {}).map(([ userId, u ]) => ({ ['.key']: userId, ...u })))
 
 const updateAccount = () => {
   showEditForm.value = false

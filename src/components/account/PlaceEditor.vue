@@ -30,7 +30,7 @@ import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
-import { db, store } from '../../firebase-app'
+import { store } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import ImageUpload from '../elements/ImageUpload.vue'
@@ -49,12 +49,7 @@ const title = ref('')
 const userAccount = computed(() => storeInstance.state.userAccount)
 const placeId = useRouteParams('id')
 
-const accountId = computed(() => {
-  if (!userAccount.value) {
-    return null
-  }
-  return userAccount.value['.key']
-})
+const accountId = computed(() => userAccount.value?.['.key'] ?? null)
 
 const placePath = computed(() => {
   if (!props.isNew && accountId.value && placeId.value) {
@@ -65,12 +60,10 @@ const placePath = computed(() => {
 
 const { data: accountPlace } = useFirebaseBinding(placePath, { isList: false, defaultValue: {} })
 
-const published = computed(() => {
-  return accountPlace.value && accountPlace.value.published ? accountPlace.value.published : false
-})
+const published = computed(() => accountPlace.value?.published ? accountPlace.value.published : false)
 
 const image = computed(() => {
-  return accountPlace.value && accountPlace.value.image ? accountPlace.value.image : {
+  return accountPlace.value?.image ?? {
     displayUrl: null,
     storageUri: null
   }

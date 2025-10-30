@@ -50,12 +50,7 @@ const fullName = ref('')
 const userAccount = computed(() => storeInstance.state.userAccount)
 const artistId = useRouteParams('id')
 
-const accountId = computed(() => {
-  if (!userAccount.value) {
-    return null
-  }
-  return userAccount.value['.key']
-})
+const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 
 const artistPath = computed(() => {
   if (!props.isNew && accountId.value && artistId.value) {
@@ -63,15 +58,12 @@ const artistPath = computed(() => {
   }
   return null
 })
-
 const { data: accountArtist } = useFirebaseBinding(artistPath, { isList: false, defaultValue: {} })
 
-const published = computed(() => {
-  return accountArtist.value && accountArtist.value.published ? accountArtist.value.published : false
-})
+const published = computed(() => accountArtist.value?.published ? accountArtist.value.published : false)
 
 const image = computed(() => {
-  return accountArtist.value && accountArtist.value.image ? accountArtist.value.image : {
+  return accountArtist.value?.image ? accountArtist.value.image : {
     displayUrl: null,
     storageUri: null
   }

@@ -40,11 +40,7 @@ const roles = ref([
 ])
 
 const artistsPath = computed(() => 'artists')
-const { data: artists } = useFirebaseBinding(artistsPath)
-
-const contributors = computed(() => {
-  return ContributorRefs.fromJson(artists.value)
-})
+const { data: contributors } = useFirebaseBinding(artistsPath, { transform: ContributorRefs.fromJson })
 
 const updateValue = (value) => {
   emit('input', value)

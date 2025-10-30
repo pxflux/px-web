@@ -21,7 +21,7 @@
         <template v-if="playerPin && artwork">
           <h1 :title="artwork.title">{{ artwork.title }}</h1>
           <ul v-if="artists.length" class="by-string">
-            <li v-for="artist in artists" :key="artist['__key']">
+            <li v-for="artist in artists" :key="artist['.key']">
               <router-link :to="'/artist/' + artist['.key']">{{ artist.fullName }}</router-link>
             </li>
           </ul>
@@ -37,15 +37,12 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouteParams } from '@vueuse/router'
 import { ref as dbRef, push } from 'firebase/database'
 import { db } from '@/firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import RemoteControl from '../elements/RemoteControl.vue'
-
-const storeInstance = useStore()
 
 const pin0 = ref('')
 const pin1 = ref('')
@@ -56,43 +53,15 @@ const pin5 = ref('')
 
 const playerId = useRouteParams('id')
 
-const pin = computed(() => {
-  return pin0.value + pin1.value + pin2.value + pin3.value + pin4.value + pin5.value
-})
+const pin = computed(() => pin0.value + pin1.value + pin2.value + pin3.value + pin4.value + pin5.value)
+const pinReady = computed(() => pin.value > 100000)
 
-const pinReady = computed(() => {
-  return pin.value > 100000
-})
-
-const playerPinPath = computed(() => {
-  if (pinReady.value) {
-    return 'player-pins/' + pin.value
-  }
-  return null
-})
-
+const playerPinPath = computed(() => pinReady.value ? 'player-pins/' + pin.value : null)
 const { data: playerPin } = useFirebaseBinding(playerPinPath, { isList: false, defaultValue: {} })
 
-const artwork = computed(() => {
-  if (playerPin.value) {
-    return playerPin.value.artwork
-  }
-  return null
-})
-
-const artists = computed(() => {
-  if (artwork.value) {
-    return Object.entries(artwork.value.artists || {}).map(([ id, artist ]) => ({ ['.key']: id, ...artist }))
-  }
-  return []
-})
-
-const controls = computed(() => {
-  if (artwork.value) {
-    return artwork.value.controls || []
-  }
-  return []
-})
+const artwork = computed(() => playerPin.value?.artwork ?? null)
+const artists = computed(() => Object.entries(artwork.value?.artists || {}).map(([ id, artist ]) => ({ ['.key']: id, ...artist })))
+const controls = computed(() => artwork.value?.controls || [])
 
 const setPin = () => {
   if (playerId.value > 100000 && playerId.value < 999999) {

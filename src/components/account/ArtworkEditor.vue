@@ -87,20 +87,9 @@ const artwork = ref(Artwork.empty())
 const userAccount = computed(() => storeInstance.state.userAccount)
 const artworkId = useRouteParams('id')
 
-const accountId = computed(() => {
-  if (!userAccount.value) {
-    return null
-  }
-  return userAccount.value['.key']
-})
+const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 
-const artworkPath = computed(() => {
-  if (!props.isNew && accountId.value && artworkId.value) {
-    return 'accounts/' + accountId.value + '/artworks/' + artworkId.value
-  }
-  return null
-})
-
+const artworkPath = computed(() => props.isNew && accountId.value && artworkId.value ? 'accounts/' + accountId.value + '/artworks/' + artworkId.value : null)
 const { data: accountArtwork } = useFirebaseBinding(artworkPath, { isList: false, defaultValue: {} })
 
 const submitArtwork = () => {

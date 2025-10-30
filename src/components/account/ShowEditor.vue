@@ -56,12 +56,7 @@ const selectedPlaceIds = ref([])
 const userAccount = computed(() => storeInstance.state.userAccount)
 const showId = useRouteParams('id')
 
-const accountId = computed(() => {
-  if (!userAccount.value) {
-    return null
-  }
-  return userAccount.value['.key']
-})
+const accountId = computed(() => userAccount.value?.['.key'] ?? null)
 
 const showPath = computed(() => {
   if (!props.isNew && accountId.value && showId.value) {
@@ -69,18 +64,15 @@ const showPath = computed(() => {
   }
   return null
 })
-
 const { data: accountShow } = useFirebaseBinding(showPath, { isList: false, defaultValue: {} })
 
 const placesPath = computed(() => 'places')
 const { data: places } = useFirebaseBinding(placesPath)
 
-const published = computed(() => {
-  return accountShow.value && accountShow.value.published ? accountShow.value.published : false
-})
+const published = computed(() => accountShow.value?.published ?? false)
 
 const image = computed(() => {
-  return accountShow.value && accountShow.value.image ? accountShow.value.image : {
+  return accountShow.value?.image ?? {
     displayUrl: null,
     storageUri: null
   }
