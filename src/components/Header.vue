@@ -90,6 +90,9 @@ const loginUrl = computed(() => {
   return `/auth?redirect=${encodeURIComponent(route.fullPath)}`
 })
 
+const accountsPath = computed(() => user.value?.uid ? 'users/' + user.value.uid + '/accounts' : null)
+const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })
+
 const inactiveAccounts = computed(() => {
   const accountsArray = Array.isArray(accounts.value) ? accounts.value : Object.values(accounts.value)
   return accountsArray.filter(account => account && account['.key'] !== userAccount.value?.['.key'])
