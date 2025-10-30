@@ -46,9 +46,9 @@
           </li>
         </ul>
         <h2>Email Preferences</h2>
-        <form>
+        <form @submit.prevent="updateEmailPreferences">
           <label for="receive_emails">Receive Emails</label>
-          <input type="checkbox" id="receive_emails" name="receive_emails" checked="checked">
+          <input type="checkbox" id="receive_emails" name="receive_emails" v-model="receiveEmails">
           <button class="right">Save Changes</button>
         </form>
       </div>
@@ -57,17 +57,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
-import { auth } from '../firebase-app'
+import { auth, db } from '../firebase-app'
+import { ref as databaseRef, update, get } from 'firebase/database'
 
 const store = useStore()
 const user = computed(() => store.state.user)
 
-const displayName = ref(user.value?.displayName || '')
-const email = ref(user.value?.email || '')
+const displayName = ref('')
+const email = ref('')
 const password = ref('')
+const receiveEmails = ref(false)
 
 const googleFederated = computed(() => {
   return user.value?.providerData.find(o => o.providerId === GoogleAuthProvider.PROVIDER_ID)
@@ -82,25 +84,27 @@ const multipleAuth = computed(() => {
 })
 
 const updateProfile = () => {
+  if (!user.value) return
   user.value.updateProfile({
     displayName: displayName.value,
     email: email.value
   }).catch((error) => {
-    console.log('Account linking error', error)
+    console.log('Profile update error', error)
   })
 }
 
 const updatePassword = () => {
+  if (!user.value) return
   if (emailFederated.value) {
     user.value.updatePassword(password.value).catch((error) => {
-      console.log('Account linking error', error)
+      console.log('Password update error', error)
     })
   } else {
     const credential = EmailAuthProvider.credential(user.value.email, password.value)
-    user.value.linkWithCredential(credential).then((user) => {
-      console.log('Account link', user)
+    user.value.linkWithCredential(credential).then((updatedUser) => {
+      console.log('Account link', updatedUser)
       auth.currentUser.reload()
-      store.commit('UPDATE_USER', { user: user })
+      store.commit('UPDATE_USER', { user: updatedUser })
     }, (error) => {
       console.log('Account linking error', error)
     })
@@ -109,11 +113,12 @@ const updatePassword = () => {
 }
 
 const disconnectGoogle = () => {
+  if (!user.value) return
   user.value.unlink(GoogleAuthProvider.PROVIDER_ID)
-    .then((user) => {
-      console.log('Account unlink', user)
+    .then((updatedUser) => {
+      console.log('Account unlink', updatedUser)
       auth.currentUser.reload()
-      store.commit('UPDATE_USER', { user: user })
+      store.commit('UPDATE_USER', { user: updatedUser })
     })
     .catch((error) => {
       console.log('Account unlink error', error)
@@ -121,6 +126,7 @@ const disconnectGoogle = () => {
 }
 
 const connectGoogle = () => {
+  if (!user.value) return
   const provider = new GoogleAuthProvider()
   provider.addScope('https://www.googleapis.com/auth/plus.login')
   user.value.linkWithPopup(provider)
@@ -133,4 +139,47 @@ const connectGoogle = () => {
       console.log('Account linking error', error)
     })
 }
+
+const loadEmailPreferences = async () => {
+  if (!user.value?.uid) return
+  try {
+    const preferencesRef = databaseRef(db, `users/${user.value.uid}/preferences`)
+    const snapshot = await get(preferencesRef)
+    const preferences = snapshot.val()
+    if (preferences && preferences.receiveEmails !== undefined) {
+      receiveEmails.value = preferences.receiveEmails
+    }
+  } catch (error) {
+    console.error('Error loading email preferences:', error)
+  }
+}
+
+const updateEmailPreferences = async () => {
+  if (!user.value?.uid) return
+  try {
+    const preferencesRef = databaseRef(db, `users/${user.value.uid}/preferences`)
+    await update(preferencesRef, {
+      receiveEmails: receiveEmails.value,
+      updatedAt: new Date().toISOString()
+    })
+    console.log('Email preferences saved successfully')
+  } catch (error) {
+    console.error('Error saving email preferences:', error)
+  }
+}
+
+// Watch for user changes to update form data
+watch(user, (newUser) => {
+  if (newUser) {
+    displayName.value = newUser.displayName || ''
+    email.value = newUser.email || ''
+    loadEmailPreferences()
+  }
+}, { immediate: true })
+
+onMounted(() => {
+  if (user.value) {
+    loadEmailPreferences()
+  }
+})
 </script>
