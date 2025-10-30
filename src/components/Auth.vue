@@ -166,7 +166,7 @@ watch(user, (val) => {
     if (route.query.redirect) {
       router.replace(route.query.redirect)
     } else {
-      router.replace('/auth')
+      router.replace('/')
     }
   }
 })

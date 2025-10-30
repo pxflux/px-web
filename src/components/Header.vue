@@ -50,7 +50,7 @@
           </div>
           <template v-if="!user">
             <router-link to="/download" class="button">Download</router-link>
-            <router-link v-if="!user" to="/auth" class="button">Login</router-link>
+            <router-link v-if="!user" :to="loginUrl" class="button">Login</router-link>
           </template>
         </div>
       </template>
@@ -61,7 +61,7 @@
 <script setup>
 import { computed, onMounted, onUpdated, nextTick } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { db, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
 import { ref as dbRef, set } from 'firebase/database'
@@ -72,6 +72,7 @@ import HeaderLogo from './HeaderLogo.vue'
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
 
 const user = computed(() => store.state.user)
@@ -79,6 +80,15 @@ const userAccount = computed(() => store.state.userAccount)
 
 const accountsPath = computed(() => user.value?.uid ? 'users/' + user.value.uid + '/accounts' : null)
 const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })
+
+const loginUrl = computed(() => {
+  // Don't add redirect parameter if already on auth page or if it's the homepage
+  if (route.path === '/auth' || route.path === '/') {
+    return '/auth'
+  }
+  // Include current path as redirect parameter
+  return `/auth?redirect=${encodeURIComponent(route.fullPath)}`
+})
 
 const inactiveAccounts = computed(() => {
   const accountsArray = Array.isArray(accounts.value) ? accounts.value : Object.values(accounts.value)
