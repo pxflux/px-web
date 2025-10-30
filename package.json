@@ -20,7 +20,7 @@
     "axios-add-jsonp": "0.0.4",
     "axios-jsonp-pro": "^1.0.1",
     "element-plus": "^2.4.0",
-    "firebase": "^10.14.1",
+    "firebase": "^11.0.1",
       "jsonp": "^0.2.1",
     "keycode": "^2.1.9",
     "latinize": "^0.4.0",
