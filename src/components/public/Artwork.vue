@@ -82,12 +82,12 @@ const setupIndex = ref(0)
 
 const accountId = computed(() => store.state.userAccount ? store.state.userAccount['.key'] : null)
 
+const setup = computed(() => artwork.value?.setups?.[setupIndex.value] ?? null)
 const sourceDescription = computed(() => {
-  if (setup.value?.channels?.[0].source) {
+  if (setup.value?.channels?.[0]?.source) {
     return setup.value.channels[0].source.toString()
   }
 })
-const setup = computed(() => artwork.value.setups?.[setupIndex.value] ?? null)
 const images = computed(() => setup.value?.thumbnails || [])
 const video = computed(() => setup.value?.preview || null)
 
