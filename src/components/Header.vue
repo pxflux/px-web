@@ -1,12 +1,7 @@
 <template>
   <header class="main">
     <div class="wrap">
-      <router-link to="/">
-        <div id="px-logo-box" class="px-logo">
-          <canvas id="px-logo"></canvas>
-          <span class="label beta"></span>
-        </div>
-      </router-link>
+      <header-logo />
       <template v-if="!['player-client', 'auth'].includes($route.name)">
         <div class="right">
           <!-- -->
@@ -70,11 +65,10 @@ import { useRouter } from 'vue-router'
 import { db, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
 import { ref as dbRef, set } from 'firebase/database'
-import ScalableCanvasFromImage from '../assets/js/logo'
-import ColorFlicker from '../assets/js/color-flicker'
 import { useSubmenu } from '../composables/useSubmenu'
 import { log } from '../helper'
 import { useFirebaseBinding } from '../composables/useFirebaseBinding'
+import HeaderLogo from './HeaderLogo.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -83,13 +77,7 @@ const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
 const user = computed(() => store.state.user)
 const userAccount = computed(() => store.state.userAccount)
 
-const accountsPath = computed(() => {
-  if (user.value?.uid) {
-    return 'users/' + user.value.uid + '/accounts'
-  }
-  return null
-})
-
+const accountsPath = computed(() => user.value?.uid ? 'users/' + user.value.uid + '/accounts' : null)
 const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })
 
 const inactiveAccounts = computed(() => {
@@ -113,42 +101,13 @@ const logOut = () => {
   router.push('/')
 }
 
-const setFlicker = () => {
-  nextTick(() => {
-    new ColorFlicker().flickElement()
-  })
-}
-
-const getLogoURL = () => {
-  const el = document.getElementById('px-logo-box')
-  if (!el) return ''
-  const style = window.getComputedStyle(el)
-  return style.backgroundImage.slice(4, -1).replace(/"/g, '')
-}
-
 onMounted(() => {
   nextTick(() => {
-    try {
-      let logoURL = getLogoURL()
-      const canvasID = 'px-logo'
-      const canvas = document.getElementById(canvasID)
-      if (canvas && logoURL) {
-        const logo = new ScalableCanvasFromImage(logoURL, canvasID, { fillParent: false })
-        logo.setup()
-        window.addEventListener('resize', () => {
-          logo.setup(getLogoURL())
-        })
-      }
-    } catch (error) {
-      log('Error setting up logo:', error)
-    }
-    setFlicker()
     setupSubmenusWithClass('submenu', 'submenu-trigger')
   })
 })
 
 onUpdated(() => {
-  setFlicker()
   nextTick(() => {
     setupSubmenusWithClass('submenu', 'submenu-trigger')
   })
