@@ -21,7 +21,6 @@
     "axios-jsonp-pro": "^1.0.1",
     "element-plus": "^2.4.0",
     "firebase": "^12.4.0",
-    "firebaseui": "^6.1.0",
     "jsonp": "^0.2.1",
     "keycode": "^2.1.9",
     "latinize": "^0.4.0",
