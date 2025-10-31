@@ -78,13 +78,11 @@ import { ref as dbRef, remove, update } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
 
-const { userAccount } = useAuth()
+const { accountId } = useAuth()
 const router = useRouter()
 const id = useRouteParams('id')
 
 const setupIndex = ref(0)
-
-const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 
 const setup = computed(() => artwork.value?.setups?.[setupIndex.value] ?? null)
 const sourceDescription = computed(() => setup.value?.channels?.[0]?.source?.toString() || '')

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content text-block">
+    <div v-if="accountId" class="wrap-content text-block">
       <router-link to="/account/places/">Places</router-link>
       <template v-if="! isNew">
         &gt;
@@ -39,7 +39,7 @@ const props = defineProps({
   isNew: Boolean
 })
 
-const { userAccount } = useAuth()
+const { accountId } = useAuth()
 const router = useRouter()
 
 const imageFile = ref(null)
@@ -47,25 +47,12 @@ const imageRemoved = ref(false)
 const title = ref('')
 const placeId = useRouteParams('id')
 
-const accountId = computed(() => userAccount.value?.['.key'] ?? null)
-
-const placePath = computed(() => {
-  if (!props.isNew && accountId.value && placeId.value) {
-    return 'accounts/' + accountId.value + '/places/' + placeId.value
-  }
-  return null
-})
-
+const placePath = computed(() => props.isNew && accountId.value && placeId.value ? 'accounts/' + accountId.value + '/places/' + placeId.value : null)
 const { data: accountPlace } = useFirebaseBinding(placePath, { isList: false, defaultValue: {} })
 
-const published = computed(() => accountPlace.value?.published ? accountPlace.value.published : false)
+const published = computed(() => accountPlace.value?.published ?? false)
 
-const image = computed(() => {
-  return accountPlace.value?.image ?? {
-    displayUrl: null,
-    storageUri: null
-  }
-})
+const image = computed(() => accountPlace.value?.image ?? { displayUrl: null, storageUri: null })
 
 const setImageFile = (file) => {
   imageFile.value = file

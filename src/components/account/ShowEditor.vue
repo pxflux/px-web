@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content text-block">
+    <div v-if="accountId" class="wrap-content text-block">
       <router-link to="/account/shows/">Shows</router-link>
       <template v-if="! isNew">
         &gt;
@@ -45,7 +45,7 @@ const props = defineProps({
   isNew: Boolean
 })
 
-const { userAccount } = useAuth()
+const { accountId } = useAuth()
 const router = useRouter()
 
 const imageFile = ref(null)
@@ -53,8 +53,6 @@ const imageRemoved = ref(false)
 const title = ref('')
 const selectedPlaceIds = ref([])
 const showId = useRouteParams('id')
-
-const accountId = computed(() => userAccount.value?.['.key'] ?? null)
 
 const showPath = computed(() => {
   if (!props.isNew && accountId.value && showId.value) {

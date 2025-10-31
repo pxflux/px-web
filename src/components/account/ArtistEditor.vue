@@ -1,25 +1,32 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content text-block">
+    <div v-if="accountId" class="wrap-content wrap-forms">
       <router-link to="/account/artists/">Artists</router-link>
       <template v-if="! isNew">
         &gt;
         <router-link :to="'/account/artist/' + artistId">{{ accountArtist.fullName }}</router-link>
       </template>
-      <form id="form-artist">
-        <fieldset>
-          <label>Image</label>
-          <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
-        </fieldset>
-        <fieldset>
-          <label>Full name</label>
-          <input type="text" v-model.trim="fullName" title="Artist name" required="required">
-        </fieldset>
-
-        <router-link v-if="isNew" to="/account/artists">Cancel</router-link>
-        <router-link v-if="! isNew" :to="'/account/artist/' + artistId">Cancel</router-link>
-        <button v-if="isNew" @click.prevent="submitArtist">Create</button>
-        <button v-if="! isNew" @click.prevent="submitArtist">Save</button>
+      <form id="form-artist" @submit.prevent>
+        <section class="editor-section">
+          <div class="row">
+            <label for="image"><span>Image</span></label>
+            <div class="field">
+              <image-upload :imageUrl="image.displayUrl" @input-file="setImageFile" @remove-image="setImageRemoved"></image-upload>
+            </div>
+          </div>
+          <div class="row">
+            <label for="fullName"><span>Full name</span></label>
+            <div class="field">
+              <input id="fullName" type="text" v-model.trim="fullName" title="Artist name" required="required">
+            </div>
+          </div>
+        </section>
+        <footer class="editor-section">
+          <router-link v-if="isNew" to="/account/artists" class="button frameless">Cancel</router-link>
+          <router-link v-if="! isNew" :to="'/account/artist/' + artistId" class="button frameless">Cancel</router-link>
+          <button v-if="isNew" @click="submitArtist" class="frameless">Create</button>
+          <button v-if="! isNew" @click="submitArtist" class="frameless">Save</button>
+        </footer>
       </form>
     </div>
   </main>
@@ -40,15 +47,13 @@ const props = defineProps({
   isNew: Boolean
 })
 
-const { userAccount } = useAuth()
+const { accountId } = useAuth()
 const router = useRouter()
 
 const imageFile = ref(null)
 const imageRemoved = ref(false)
 const fullName = ref('')
 const artistId = useRouteParams('id')
-
-const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 
 const artistPath = computed(() => {
   if (!props.isNew && accountId.value && artistId.value) {
@@ -58,14 +63,9 @@ const artistPath = computed(() => {
 })
 const { data: accountArtist } = useFirebaseBinding(artistPath, { isList: false, defaultValue: {} })
 
-const published = computed(() => accountArtist.value?.published ? accountArtist.value.published : false)
+const published = computed(() => accountArtist.value?.published ?? false)
 
-const image = computed(() => {
-  return accountArtist.value?.image ? accountArtist.value.image : {
-    displayUrl: null,
-    storageUri: null
-  }
-})
+const image = computed(() => accountArtist.value?.image ?? { displayUrl: null, storageUri: null })
 
 const setImageFile = (file) => {
   imageFile.value = file

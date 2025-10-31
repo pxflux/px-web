@@ -1,4 +1,4 @@
-import { ref, readonly } from 'vue'
+import { ref, readonly, computed } from 'vue'
 
 const user = ref(null)
 const userAccount = ref(null)
@@ -19,6 +19,7 @@ export function useAuth() {
   return {
     user: readonly(user),
     userAccount: readonly(userAccount),
+    accountId: computed(() => userAccount.value ? userAccount.value['.key'] : null),
     updateUser
   }
 }

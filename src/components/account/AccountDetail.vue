@@ -49,32 +49,32 @@ import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import { useAuth } from '../../composables/useAuth'
 import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
 
-const { user, userAccount } = useAuth()
+const { user, userAccount, accountId } = useAuth()
 
 const title = ref('')
 const email = ref('')
 const showEditForm = ref(false)
 const showInviteForm = ref(false)
 
-const accountPath = computed(() => userAccount.value ? 'accounts/' + userAccount.value['.key'] : null)
+const accountPath = computed(() => accountId.value ? 'accounts/' + accountId.value : null)
 const { data: account } = useFirebaseBinding(accountPath, { isList: false, defaultValue: {} })
 
-const invitationsPath = computed(() => userAccount.value ? 'invitations' : null)
+const invitationsPath = computed(() => accountId.value ? 'invitations' : null)
 const { data: invitations } = useFirebaseBinding(invitationsPath)
-const accountInvitations = computed(() => invitations.value.filter(invitation => invitation.account?.id === userAccount.value?.['.key']))
+const accountInvitations = computed(() => invitations.value.filter(invitation => invitation.account?.id === accountId.value))
 
 const people = computed(() => Object.entries(account.value?.users || {}).map(([ userId, u ]) => ({ ['.key']: userId, ...u })))
 
 const updateAccount = () => {
   showEditForm.value = false
-  set(dbRef(db, 'accounts/' + userAccount.value['.key'] + '/title'), title.value).catch(log)
+  set(dbRef(db, 'accounts/' + accountId.value + '/title'), title.value).catch(log)
 }
 
 const invite = () => {
   showInviteForm.value = false
   const invitation = {
     'account': {
-      'id': userAccount.value['.key'],
+      'id': accountId.value,
       'title': userAccount.value.title
     },
     'email': email.value
@@ -88,7 +88,7 @@ const removeInvitation = (invitationId) => {
 
 const leaveAccount = () => {
   showEditForm.value = false
-  remove(dbRef(db, 'accounts/' + userAccount.value['.key'] + '/users/' + user.value.uid)).catch(log)
+  remove(dbRef(db, 'accounts/' + accountId.value + '/users/' + user.value.uid)).catch(log)
 }
 
 watch(account, () => {

@@ -16,8 +16,7 @@ import ArtworkItem from '../elements/ArtworkItem.vue'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import { useAuth } from '../../composables/useAuth'
 
-const { userAccount } = useAuth()
-const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
+const { accountId } = useAuth()
 const path = computed(() => accountId.value ? 'accounts/' + accountId.value + '/artworks' : 'artworks')
 const { data: artworks } = useFirebaseBinding(path, { transform: Artwork.fromJson })
 </script>

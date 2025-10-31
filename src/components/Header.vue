@@ -39,6 +39,8 @@
             <div class="submenu">
               <router-link to="/artworks" class="button">Artworks</router-link>
               <router-link to="/account/artists" class="button">Artists</router-link>
+              <router-link to="/account/places" class="button">Places</router-link>
+              <router-link to="/account/shows" class="button">Shows</router-link>
               <div class="sub-section">
                 <router-link to="/account/players" class="button">Players</router-link>
                 <div @click="goto('/account/update')" class="button">Team profile</div>

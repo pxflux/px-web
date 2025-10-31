@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div v-if="userAccount" class="wrap-content">
+    <div v-if="accountId" class="wrap-content">
       <div class="content">
         <ul>
           <li v-for="artist in accountArtists" :key="artist['.key']">
@@ -19,21 +19,7 @@ import { computed } from 'vue'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 import { useAuth } from '../../composables/useAuth'
 
-const { userAccount } = useAuth()
-
-const accountId = computed(() => {
-  if (!userAccount.value) {
-    return null
-  }
-  return userAccount.value['.key']
-})
-
-const path = computed(() => {
-  if (accountId.value) {
-    return 'accounts/' + accountId.value + '/artists'
-  }
-  return null
-})
-
+const { accountId } = useAuth()
+const path = computed(() => accountId.value ? 'accounts/' + accountId.value + '/artists' : null)
 const { data: accountArtists } = useFirebaseBinding(path)
 </script>

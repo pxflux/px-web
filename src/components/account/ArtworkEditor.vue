@@ -79,13 +79,11 @@ const props = defineProps({
   isNew: Boolean
 })
 
-const { userAccount } = useAuth()
+const { accountId } = useAuth()
 const router = useRouter()
 
 const artwork = ref(Artwork.empty())
 const artworkId = useRouteParams('id')
-
-const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 
 const artworkPath = computed(() => props.isNew && accountId.value && artworkId.value ? 'accounts/' + accountId.value + '/artworks/' + artworkId.value : null)
 const { data: accountArtwork } = useFirebaseBinding(artworkPath, { isList: false, defaultValue: {} })
