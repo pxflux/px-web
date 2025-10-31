@@ -24,7 +24,7 @@ header.main {
     background: $logo-bg-color url("/img/pxflux-logo-X-ico.png") no-repeat;
     background-size: 0;
 
-    @include weider-then-phone() {
+    @include wider-than-phone() {
       width: math.round($module-size * 2.5);
       background: $logo-bg-color url("/img/pxflux-logo-Xc.png") no-repeat;
       background-size: 0;
@@ -35,7 +35,7 @@ header.main {
       right: 4px;
       transform: translate(0%, -50%);
 
-      @include weider-then-phone() {
+      @include wider-than-phone() {
         left: 50%;
         transform: translate(-50%, -50%);
       }

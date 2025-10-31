@@ -18,7 +18,7 @@ footer {
     width: 100%;
     bottom: 0;
     background: $bg-secondary-color;
-    @include weider-then-phone{
+    @include wider-than-phone{
       justify-content: unset;
       padding-left: $module-size * 2.5;
     }

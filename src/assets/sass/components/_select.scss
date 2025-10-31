@@ -110,7 +110,7 @@ $select-line-height: $three-quarters;
 .v-select.single .selected-tag {
   background-color: transparent;
   border-color: transparent;
-  pointer-events: none
+  pointer-events: none;
 }
 
 .v-select.single.open .selected-tag {
@@ -159,7 +159,7 @@ $select-line-height: $three-quarters;
       outline: none;
       background: none;
       box-shadow: none;
-      @include hairline-border()
+      @include hairline-border();
     }
     &::-webkit-search-decoration,
     &::-webkit-search-cancel-button,

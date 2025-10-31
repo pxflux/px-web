@@ -30,7 +30,7 @@ form {
   .row {
     min-height: $module-size;
 
-    @include weider-then-phone() {
+    @include wider-than-phone() {
       display: flex;
       flex-flow: row nowrap;
       align-items: flex-start;
@@ -124,7 +124,7 @@ form {
     font-size: $font-size-caption;
     padding: math.div($module-size, 4);
 
-    @include weider-then-phone() {
+    @include wider-than-phone() {
       flex-shrink: 0;
       width: $module-size * 2.5;
       padding: 0;
@@ -133,7 +133,7 @@ form {
 
     &:not(.with-icon) > span {
       @include centeredVertical();
-      @include weider-then-phone {
+      @include wider-than-phone {
         display: block;
         width: 100%;
         padding: 0 math.div($module-size, 4) 0 0;
@@ -147,7 +147,7 @@ form {
       padding: 0;
       cursor: pointer;
 
-      @include weider-then-phone {
+      @include wider-than-phone {
         padding: 0 math.div($module-size, 4) 0 0;
         justify-content: flex-end;
       }

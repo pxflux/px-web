@@ -50,7 +50,7 @@
 .remote-button-options-box {
   width: auto;
   padding: 0 $two-thirds;
-  @include weider-then-phone{
+  @include wider-than-phone{
     width: 4.5 * $module-size + 2 * $options-padding;
   }
 

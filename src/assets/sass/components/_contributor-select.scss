@@ -111,7 +111,7 @@
   }
 
   .focused{
-    @include input-focused()
+    @include input-focused();
   }
   ul.dropdown-menu{
     //margin-top: -1px; // compencate fore a strange gap between the menu and the panel above

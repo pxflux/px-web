@@ -314,7 +314,7 @@
   word-wrap: break-word;
   hyphens: auto;
   position: relative;
-  margin-bottom: $font-size-body
+  margin-bottom: $font-size-body;
 }
 
 .medium-editor-element:focus {
@@ -349,10 +349,10 @@
     min-height: 1em;
 
     & > * {
-      @include centeredVertical()
+      @include centeredVertical();
     }
     &.with-label:before {
-      height: auto
+      height: auto;
     }
     .title {
       margin-left: $module-size + 1rem;

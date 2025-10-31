@@ -15,10 +15,10 @@ $channel-padding-big: $module-size;
 @mixin channel-editor-panel-width(){
   width: calc(100vw - #{$channel-padding-small*2});
   max-width: 9 * $module-size;
-  @include weider-then-iphon5{
+  @include wider-than-iphone5{
     width: calc(100vw - #{$channel-padding-normal*2});
   }
-  @include weider-then-phone{
+  @include wider-than-phone{
     width: calc(100vw - #{$channel-padding-normal*2});
   }
 }
@@ -39,10 +39,10 @@ $channel-padding-big: $module-size;
   border-right: 1px dashed color.adjust($bg-secondary-color, $alpha: -0.9);
   padding: $channel-padding-small;
 
-  @include weider-then-iphon5 {
+  @include wider-than-iphone5 {
     padding: $channel-padding-small $channel-padding-normal;
   }
-  @include weider-then-phone {
+  @include wider-than-phone {
     flex-shrink: 0;
     padding: $channel-padding-small $channel-padding-big $channel-padding-big 0;
   }
@@ -59,7 +59,7 @@ $channel-padding-big: $module-size;
   }
   .field{
     max-width: 100vw;
-    @include weider-then-phone{
+    @include wider-than-phone{
       max-width: calc(100vw - #{$module-size * 2.5});
     }
   }
@@ -75,7 +75,7 @@ $channel-padding-big: $module-size;
   }
   label[for='sourceUrl'] {
     font-size: $font-size-source;
-    @include weider-then-phone {
+    @include wider-than-phone {
       height: $source-input-height;
     }
   }
@@ -88,16 +88,16 @@ $channel-padding-big: $module-size;
     position: relative;
     background: transparent;
     max-width: calc(100vw - #{$channel-padding-small*2});
-    @include weider-then-iphon5{
+    @include wider-than-iphone5{
       max-width: calc(100vw - #{$channel-padding-normal*2});
     }
-    @include weider-then-phone{
+    @include wider-than-phone{
       max-width: calc(100vw - #{$channel-padding-big});
     }
   }
 
   .source-editor-panel {
-    @include weider-then-phone {
+    @include wider-than-phone {
       display: flex;
       position: relative;
     }
@@ -161,7 +161,7 @@ $channel-padding-big: $module-size;
 
     .output-bar-holder > label {
       display: none;
-      @include weider-then-phone {
+      @include wider-than-phone {
         display: block;
       }
     }

@@ -1,8 +1,8 @@
 @use 'sass:math';
-@use 'vars' as *;
+@use 'vars';
 @use 'megatype/megatype' as megatype;
-@use 'hidpi' as *;
-@use 'mixins' as *;
+@use 'hidpi';
+@use 'mixins';
 
 //@import url('https://fonts.googleapis.com/css?family=Work+Sans:300,400,600&subset=latin-ext');
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500');
@@ -19,27 +19,27 @@ $breakpoint-map: (
   0: (
     start: 0px,
     max: 420px,
-    rootsize: $baseline
+    rootsize: vars.$baseline
   ),
   1: (
     start: 480px,
     max: 560px,
-    rootsize: $baseline
+    rootsize: vars.$baseline
   ),
   2: (
     start: 768px,
     max: 840px,
-    rootsize: $baseline
+    rootsize: vars.$baseline
   ),
   3: (
     start: 980px,
     max: 1080px,
-    rootsize: $baseline
+    rootsize: vars.$baseline
   ),
   4: (
     start: 1280px,
     max: 1440px,
-    rootsize: $baseline
+    rootsize: vars.$baseline
   )
 );
 // Set cap height to set to the baseline.
@@ -48,20 +48,20 @@ $breakpoint-map: (
 // Lucida Grande: 0.72, Helvetica: 0.65, Helvetica Neue: 0.71, Verdana: 0.76, Tahoma: 0.76
 $work-sans: (
   font-family: '"Work Sans", sans-serif',
-  font-size: $font-size-body,
-  regular: $font-normal-wight,
+  font-size: vars.$font-size-body,
+  regular: vars.$font-normal-weight,
   cap-height: 0.66
 );
 $roboto-mono: (
   font-family: '"Roboto Mono", monospace',
-  font-size: $font-size-body,
-  regular: $font-normal-wight,
+  font-size: vars.$font-size-body,
+  regular: vars.$font-normal-weight,
   cap-height: 0.75
 );
 $overpass-mono: (
   font-family: '"Overpass Mono", monospace',
-  font-size: $font-size-body,
-  regular: $font-normal-wight,
+  font-size: vars.$font-size-body,
+  regular: vars.$font-normal-weight,
   cap-height: 0.7
 );
 
@@ -76,9 +76,6 @@ $debug-breakpoints: false;
 
 html {
   //font-size: 62.5%; // 1rem = 10px
-}
-
-html {
   -webkit-text-size-adjust: 100%;
 }
 
@@ -89,17 +86,17 @@ html {
 body {
   //font-family: megatype.font-family-of($work-sans);
   font-family: megatype.font-family-of($roboto-mono);
-  font-size: $font-size-body;
-  font-weight: $font-normal-wight;
+  font-size: vars.$font-size-body;
+  font-weight: vars.$font-normal-weight;
 
-  letter-spacing: $letter-spacing;
+  letter-spacing: vars.$letter-spacing;
   overflow-y: scroll;
   overflow-x: hidden;
-  color: $font-color;
-  background: $dark-bg url('/img/grid-cell-3px-o10@1x.png') repeat 0 0;
+  color: vars.$font-color;
+  background: vars.$dark-bg url('/img/grid-cell-3px-o10@1x.png') repeat 0 0;
   background-size: 3px;
-  @include on-retina {
-    background: $dark-bg url('/img/grid-cell-3px-o10@2x.png') repeat 0 0;
+  @include hidpi.on-retina {
+    background: vars.$dark-bg url('/img/grid-cell-3px-o10@2x.png') repeat 0 0;
     background-size: 3px;
   }
 
@@ -122,16 +119,16 @@ h2 {
 }
 
 h3, .h3 {
-  font-size: $h3-font-size;
+  font-size: vars.$h3-font-size;
 }
 
 h1 {
-  @include megatype.typeset($roboto-mono, $h1-font-size, $lineheight: 4rem, $leader: 1rem, $trailer: 1rem);
-  margin-bottom: math.div($module-size, 2);
+  @include megatype.typeset($roboto-mono, vars.$h1-font-size, $lineheight: 4rem, $leader: 1rem, $trailer: 1rem);
+  margin-bottom: math.div(vars.$module-size, 2);
 }
 
 .h1 {
-  @include h-style
+  @include mixins.h-style
 }
 
 h1, .h1, .h3 {
@@ -139,7 +136,7 @@ h1, .h1, .h3 {
 }
 
 .caption {
-  font-size: $font-size-caption;
+  font-size: vars.$font-size-caption;
   font-weight: 300;
   color: #696969;
   -webkit-font-smoothing: subpixel-antialiased;
@@ -148,26 +145,26 @@ h1, .h1, .h3 {
 // Paragraph.
 p {
   //font-family: font-family-of($work-sans);
-  @include megatype.typeset($work-sans, $font-size-body, $lineheight: 2, $leader: 1.5, $trailer: 1rem);
+  @include megatype.typeset($work-sans, vars.$font-size-body, $lineheight: 2, $leader: 1.5, $trailer: 1rem);
 
   &:first-child {
     //@include megatype.typeset($work-sans, $font-size-body, $lineheight: 2, $leader: 0, $trailer: 1rem);
   }
   &.caption {
     //font-family: font-family-of($work-sans);
-    @include megatype.typeset($work-sans, $font-size-caption, $lineheight: 2, $leader: 1.5, $trailer: 1.5);
+    @include megatype.typeset($work-sans, vars.$font-size-caption, $lineheight: 2, $leader: 1.5, $trailer: 1.5);
   }
 }
 
 ul.by-string {
   //font-family: font-family-of($work-sans);
-  @include megatype.typeset($work-sans, $font-size-body, $lineheight: 2, $leader: 1.5, $trailer: 0);
+  @include megatype.typeset($work-sans, vars.$font-size-body, $lineheight: 2, $leader: 1.5, $trailer: 0);
 }
 
 a {
   outline: none;
   text-decoration: none;
-  color: $link-color;
+  color: vars.$link-color;
 }
 
 ul, ol {

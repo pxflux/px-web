@@ -10,7 +10,7 @@ $pop-padding: $two-thirds;
 .popper {
   box-sizing: border-box;
   width: calc(100vw - #{math.div($module-size, 4)});
-  @include weider-then-phone {
+  @include wider-than-phone {
     width: auto;
     min-width: 5 * $module-size;
   }

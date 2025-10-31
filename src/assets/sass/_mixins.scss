@@ -54,12 +54,12 @@
   @include checker-bg($color, $size, "/img/checker-48-tr5@2x.png");
 }
 
-@mixin weider-then-iphon5 (){
+@mixin wider-than-iphone5 (){
   @media (min-width: 340px) {
     @content;
   }
 }
-@mixin weider-then-phone (){
+@mixin wider-than-phone (){
   @media (min-width: 600px) {
     @content;
   }

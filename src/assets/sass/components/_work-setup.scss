@@ -57,10 +57,10 @@
   > .row:first-child{
     @include channel-editor-panel-width();
     padding: 0 $channel-padding-small;
-    @include weider-then-iphon5{
+    @include wider-than-iphone5{
       padding: 0 $channel-padding-normal;
     }
-    @include weider-then-phone{
+    @include wider-than-phone{
       padding: 0;
     }
   }

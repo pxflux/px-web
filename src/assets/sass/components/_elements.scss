@@ -91,7 +91,7 @@ ul {
     max-width: initial;
     padding-right: $input-padding-x;
 
-    @include weider-then-phone {
+    @include wider-than-phone {
       width: auto;
     }
   }

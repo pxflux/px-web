@@ -3,7 +3,7 @@
 @use '../mixins' as *;
 
 @function no-unit($n) {
-  @return math.div($n, ($n * 0 + 1))
+  @return math.div($n, ($n * 0 + 1));
 }
 
 $button-icon-color: rgb(69, 69, 69);

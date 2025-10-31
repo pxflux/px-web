@@ -40,10 +40,10 @@ main {
     flex-grow: 1;
     padding: 0 math.div($module-size, 4);
     //background: $bg-semi-transparent-color;
-    @include weider-then-iphon5 {
+    @include wider-than-iphone5 {
 
     }
-    @include weider-then-phone {
+    @include wider-than-phone {
       padding: 0 $module-size $module-size;
     }
 
@@ -69,7 +69,7 @@ main {
 .columns{
   display: flex;
   flex-flow: column nowrap;
-  @include weider-then-phone{
+  @include wider-than-phone{
     flex-flow: row nowrap;
   }
   padding: 0 !important;
