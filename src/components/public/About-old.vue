@@ -91,7 +91,7 @@ onMounted(() => {
     let bgSize = sPxToBgSize(cssPx)
     if (!bgSize) bgSize = sPx / 4
     const bgFile = `grid-cell-${bgSize}px-o10@${pixelRatio.value}x.png`
-    document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
+    document.body.style.backgroundImage = `url('/img/${bgFile}')`
     document.body.style.backgroundSize = bgSize + 'px'
 
     if (subtitleBox.value) subtitleBox.value.style.left = 0

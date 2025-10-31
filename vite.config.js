@@ -1,41 +1,28 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      'vue': 'vue/dist/vue.esm-bundler.js',
-      '@': resolve(__dirname, 'src')
-    }
-  },
-  define: {
-    'process.env': {}
+      "@": resolve(__dirname, "src"),
+    },
   },
   server: {
     port: 8080,
     open: true,
-    cors: true
-  },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'static',
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html')
-      }
-    }
+    cors: true,
   },
   css: {
     preprocessorOptions: {
-      sass: {
-        additionalData: `@use "@/assets/sass/_vars.scss" as *;`
-      }
-    }
-  }
-})
+      scss: {
+        api: "modern-compiler",
+      },
+    },
+  },
+});

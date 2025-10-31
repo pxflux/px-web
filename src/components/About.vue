@@ -81,7 +81,7 @@ const setWinWidth = () => {
   }
   const bgSize = sPxToBgSize(pxSize.value)
   const bgFile = `grid-cell-${bgSize}px-o10@${pixelRatio.value}x.png`
-  document.body.style.backgroundImage = `url('/static/img/${bgFile}')`
+  document.body.style.backgroundImage = `url('/img/${bgFile}')`
   document.body.style.backgroundSize = bgSize + 'px'
 }
 
