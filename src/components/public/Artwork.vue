@@ -74,6 +74,9 @@ import AttachmentPanel from '../elements/AttachmentsPanel.vue'
 import ArtworkPlayerList from './ArtworkPlayerList.vue'
 import { Artwork } from '../../models/ArtworkData'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { ref as dbRef, remove, update } from 'firebase/database'
+import { db } from '../../firebase-app'
+import { log } from '../../helper'
 
 const store = useStore()
 const router = useRouter()
@@ -84,11 +87,7 @@ const setupIndex = ref(0)
 const accountId = computed(() => store.state.userAccount ? store.state.userAccount['.key'] : null)
 
 const setup = computed(() => artwork.value?.setups?.[setupIndex.value] ?? null)
-const sourceDescription = computed(() => {
-  if (setup.value?.channels?.[0]?.source) {
-    return setup.value.channels[0].source.toString()
-  }
-})
+const sourceDescription = computed(() => setup.value?.channels?.[0]?.source?.toString() || '')
 const images = computed(() => setup.value?.thumbnails || [])
 const video = computed(() => setup.value?.preview || null)
 
@@ -106,12 +105,15 @@ const togglePublished = (published) => {
   if (!accountId.value) {
     return
   }
+  update(dbRef(db, 'accounts/' + accountId.value + '/artworks/' + id.value), { published }).catch(log)
 }
 
 const removeArtwork = () => {
   if (!accountId.value) {
     return
   }
-  router.push('/artworks')
+  remove(dbRef(db, 'accounts/' + accountId.value + '/artworks/' + id.value)).then(() => {
+    router.push('/artworks')
+  }).catch(log)
 }
 </script>

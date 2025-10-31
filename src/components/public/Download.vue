@@ -25,11 +25,5 @@ import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 
 const path = computed(() => 'config')
 const { data: config } = useFirebaseBinding(path, { isList: false, defaultValue: {} })
-
-const distribute = computed(() => {
-  if (config.value) {
-    return config.value.distribute
-  }
-  return { macos: {} }
-})
+const distribute = computed(() => config.value?.distribute ?? { macos: {} })
 </script>

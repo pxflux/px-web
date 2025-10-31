@@ -4,9 +4,9 @@
       <h1>{{ place.title }}</h1>
       <template v-if="shows.length">
         <h2>Shows</h2>
-        <ul v-for="show in shows" :key="show['__key']">
-          <li>
-            <router-link :to="'/show/' + place['.key']">{{ show.title }}</router-link>
+        <ul>
+          <li v-for="show in shows" :key="show['.key']">
+            <router-link :to="'/show/' + show['.key']">{{ show.title }}</router-link>
           </li>
         </ul>
       </template>
@@ -22,5 +22,5 @@ import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
 const placeId = useRouteParams('id')
 const path = computed(() => placeId.value ? 'places/' + placeId.value : null)
 const { data: place } = useFirebaseBinding(path, { isList: false, defaultValue: {} })
-const shows = computed(() => Object.entries(place.value.shows || {}).map(([ id, show ]) => ({ ['.key']: id, ...show })))
+const shows = computed(() => Object.entries(place.value?.shows || {}).map(([ id, show ]) => ({ ['.key']: id, ...show })))
 </script>

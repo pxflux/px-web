@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase as getModularDatabase, ref as modularRef, push, update, get } from 'firebase/database'
+import { getDatabase, ref as databaseRef, push, update, get } from 'firebase/database'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 import { getAuth } from 'firebase/auth'
 
@@ -13,85 +13,67 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
-const db = getModularDatabase(app)
+const db = getDatabase(app)
+const auth = getAuth(app)
 
-export function store (accountId, id, path, data, imageRemoved, imageFile) {
-  const promise = save(id, 'accounts/' + accountId + '/' + path, data)
+export async function store (accountId, id, path, data, imageRemoved, imageFile) {
+  const ref = await save(id, 'accounts/' + accountId + '/' + path, data)
   if (imageRemoved) {
-    promise.then(function (ref) {
-      return removeFile(ref)
-    })
+    return removeFile(ref)
   } else if (imageFile) {
-    promise.then(function (ref) {
-      return uploadFile(ref, '/accounts/' + accountId + '/' + path, imageFile)
-    })
+    return uploadFile(ref, '/accounts/' + accountId + '/' + path, imageFile)
   }
-  return promise
+  return ref
 }
 
 async function save (id, path, data) {
   if (id) {
-    const source = modularRef(db, path + '/' + id)
-    await update(source, data)
-    return source
+    const ref = databaseRef(db, path + '/' + id)
+    await update(ref, data)
+    return ref
   } else {
-    return push(modularRef(db, path), data)
+    return push(databaseRef(db, path), data)
   }
 }
 
-function uploadFile (dbRef, path, file) {
+async function uploadFile (dbRef, path, file) {
   const storage = getStorage(app)
-  return get(dbRef).then(function (snapshot) {
-    const val = snapshot.val()
-    return val && val.image ? val.image.storageUri : null
-  }).then(function (storageUri) {
-    if (storageUri && storageUri.startsWith('gs://')) {
-      return deleteObject(storageRef(storage, storageUri))
+  const snapshot = await get(dbRef)
+  const storageUri = snapshot.val()?.image?.storageUri
+  if (storageUri?.startsWith('gs://')) {
+    await deleteObject(storageRef(storage, storageUri))
+  }
+  await update(dbRef, {
+    image: {
+      displayUrl: null,
+      storageUri: null
     }
-  }).then(function () {
-    return update(dbRef, {
-      image: {
-        displayUrl: null,
-        storageUri: null
-      }
-    })
-  }).then(function () {
-    const filePath = [path + '/' + dbRef.key, getFileExtension(file)].map(_ => _).join('.')
-    const fileRef = storageRef(storage, filePath)
-    return uploadBytes(fileRef, file)
-  }).then(function (snapshot) {
-    return getDownloadURL(snapshot.ref).then(function (downloadURL) {
-      return update(dbRef, {
-        image: {
-          displayUrl: downloadURL,
-          storageUri: snapshot.ref.toString()
-        }
-      })
-    })
-  }).then(function () {
-    return dbRef
   })
+  const filePath = [path + '/' + dbRef.key, getFileExtension(file)].map(_ => _).join('.')
+  const uploadSnapshot = await uploadBytes(storageRef(storage, filePath), file)
+  const downloadURL = await getDownloadURL(uploadSnapshot.ref)
+  await update(dbRef, {
+    image: {
+      displayUrl: downloadURL,
+      storageUri: uploadSnapshot.ref.toString()
+    }
+  })
+  return dbRef
 }
 
-function removeFile (dbRef) {
-  const storage = getStorage(app)
-  return get(dbRef).then(function (snapshot) {
-    const val = snapshot.val()
-    return val && val.image ? val.image.storageUri : null
-  }).then(function (storageUri) {
-    if (storageUri && storageUri.startsWith('gs://')) {
-      return deleteObject(storageRef(storage, storageUri))
+async function removeFile (dbRef) {
+  const snapshot = await get(dbRef)
+  const storageUri = snapshot.val()?.image?.storageUri
+  if (storageUri?.startsWith('gs://')) {
+    await deleteObject(storageRef(getStorage(app), storageUri))
+  }
+  await update(dbRef, {
+    image: {
+      displayUrl: null,
+      storageUri: null
     }
-  }).then(function () {
-    return update(dbRef, {
-      image: {
-        displayUrl: null,
-        storageUri: null
-      }
-    })
-  }).then(function () {
-    return dbRef
   })
+  return dbRef
 }
 
 function getFileExtension (file) {
@@ -109,6 +91,4 @@ function getFileExtension (file) {
   return null
 }
 
-export const auth = getAuth(app)
-
-export { app as firebaseApp, db }
+export { app as firebaseApp, db, auth }

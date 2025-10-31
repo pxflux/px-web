@@ -57,12 +57,7 @@
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import {
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  AuthError
-} from 'firebase/auth'
+import { signInWithPopup, signInWithEmailAndPassword, GoogleAuthProvider } from 'firebase/auth'
 import { auth } from '../firebase-app'
 
 const store = useStore()

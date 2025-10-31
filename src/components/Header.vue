@@ -82,11 +82,9 @@ const accountsPath = computed(() => user.value?.uid ? 'users/' + user.value.uid 
 const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })
 
 const loginUrl = computed(() => {
-  // Don't add redirect parameter if already on auth page or if it's the homepage
   if (route.path === '/auth' || route.path === '/') {
     return '/auth'
   }
-  // Include current path as redirect parameter
   return `/auth?redirect=${encodeURIComponent(route.fullPath)}`
 })
 

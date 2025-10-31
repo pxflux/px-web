@@ -2,8 +2,8 @@
   <div v-if="videoId" class="video-box" ref="videoBox">
     <div ref="vimeoContainer" class="vimeo-player"></div>
     <div class="overlay" @click="togglePlay">
-      <div class="button frameless" :class="{play: paused, pause: !paused}" @click="togglePlay">
-        <i :class="{play: paused, pause: !paused}"></i>
+      <div class="button frameless" :class="{ play: paused, pause: !paused }" @click="togglePlay">
+        <i :class="{ play: paused, pause: !paused }"></i>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@ const props = defineProps({
   },
   ratio: {
     type: Number,
-    default: 16/9
+    default: 16 / 9
   },
   fillParent: {
     type: Boolean,
@@ -44,14 +44,19 @@ const videoId = computed(() => {
 })
 
 const fitToParent = () => {
-  if (!fillVideoBox.value) return
+  if (!fillVideoBox.value) {
+    return
+  }
 
   const iframe = videoBox.value?.querySelector('iframe')
-  if (!iframe) return
+  if (!iframe) {
+    return
+  }
   const parentRect = videoBox.value.getBoundingClientRect()
   const parentRatio = parentRect.width / parentRect.height
 
-  let w, h
+  let w
+  let h
   if (props.ratio < parentRatio) {
     w = parentRect.width
     h = w / props.ratio
@@ -68,7 +73,9 @@ const setPaused = (value) => {
 }
 
 const onLoad = () => {
-  if (!player) return
+  if (!player) {
+    return
+  }
   player.setVolume(1)
   fitToParent()
 }
@@ -90,7 +97,9 @@ const stop = () => {
 }
 
 const initPlayer = () => {
-  if (!vimeoContainer.value || !videoId.value) return
+  if (!vimeoContainer.value || !videoId.value) {
+    return
+  }
 
   player = new Player(vimeoContainer.value, {
     id: videoId.value,

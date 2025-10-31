@@ -35,7 +35,5 @@ const thumbnail = computed(() => {
   return null
 })
 
-const artists = computed(() => {
-  return props.artwork.artists.map(artist => artist.fullName).join(', ')
-})
+const artists = computed(() => props.artwork.artists.map(artist => artist.fullName).join(', '))
 </script>
