@@ -1,6 +1,6 @@
 @use 'sass:math';
-@use 'vars' as *;
-@use 'components/hairline' as *;
+@use 'vars';
+@use 'components/hairline';
 
 /// Remove the unit of a length
 /// @param {Number} $number - Number to remove unit from
@@ -24,7 +24,7 @@
 }
 
 @mixin grey-outline(){
-  @include hairline-border();
+  @include hairline.hairline-border();
   //box-shadow: 0 0 0 $outline-width $outline-color;
 }
 
@@ -40,17 +40,17 @@
   transform: translate(0, -50% + $y-shift);
 }
 
-@mixin checker-bg ($color:#1a1a1a, $size: math.div($module-size, 4), $url:"/img/checker-12-tr@1x.png"){
+@mixin checker-bg ($color:#1a1a1a, $size: math.div(vars.$module-size, 4), $url:"/img/checker-12-tr@1x.png"){
   background: $color url($url) repeat fixed 0 0;
   background-size: $size;
 }
-@mixin checker-bg-20 ($color:#1a1a1a, $size: math.div($module-size, 4) ){
+@mixin checker-bg-20 ($color:#1a1a1a, $size: math.div(vars.$module-size, 4) ){
   @include checker-bg($color, $size, "/img/checker-12-tr20@2x.png");
 }
-@mixin checker-bg-10 ($color:#1a1a1a, $size: math.div($module-size, 4) ){
+@mixin checker-bg-10 ($color:#1a1a1a, $size: math.div(vars.$module-size, 4) ){
   @include checker-bg($color, $size, "/img/checker-48-tr10@2x.png");
 }
-@mixin checker-bg-5 ($color:#1a1a1a, $size: math.div($module-size, 4) ){
+@mixin checker-bg-5 ($color:#1a1a1a, $size: math.div(vars.$module-size, 4) ){
   @include checker-bg($color, $size, "/img/checker-48-tr5@2x.png");
 }
 
@@ -72,7 +72,7 @@
 }
 
 @mixin h-style() {
-  font-size: $h1-font-size;
-  line-height: $h1-line-height;
+  font-size: vars.$h1-font-size;
+  line-height: vars.$h1-line-height;
 }
 
