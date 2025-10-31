@@ -60,7 +60,6 @@
 
 <script setup>
 import { computed, onMounted, onUpdated, nextTick } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { db, auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
@@ -68,15 +67,13 @@ import { ref as dbRef, set } from 'firebase/database'
 import { useSubmenu } from '../composables/useSubmenu'
 import { log } from '../helper'
 import { useFirebaseBinding } from '../composables/useFirebaseBinding'
+import { useAuth } from '../composables/useAuth'
 import HeaderLogo from './HeaderLogo.vue'
 
-const store = useStore()
+const { user, userAccount } = useAuth()
 const router = useRouter()
 const route = useRoute()
 const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
-
-const user = computed(() => store.state.user)
-const userAccount = computed(() => store.state.userAccount)
 
 const accountsPath = computed(() => user.value?.uid ? 'users/' + user.value.uid + '/accounts' : null)
 const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })

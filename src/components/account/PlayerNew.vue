@@ -12,17 +12,16 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { ref as dbRef, set } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
+import { useAuth } from '../../composables/useAuth'
 
-const store = useStore()
+const { userAccount } = useAuth()
 const router = useRouter()
 
 const pin = ref('')
-const userAccount = computed(() => store.state.userAccount)
 
 const accountId = computed(() => {
   if (!userAccount.value) {

@@ -17,15 +17,13 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { ref as dbRef, set, remove } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 
-const store = useStore()
-
-const user = computed(() => store.state.user)
+const { user } = useAuth()
 
 const path = computed(() => {
   if (user.value) {

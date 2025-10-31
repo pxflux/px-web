@@ -27,26 +27,24 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
 import { store } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 import ImageUpload from '../elements/ImageUpload.vue'
 
 const props = defineProps({
   isNew: Boolean
 })
 
-const storeInstance = useStore()
+const { userAccount } = useAuth()
 const router = useRouter()
 
 const imageFile = ref(null)
 const imageRemoved = ref(false)
 const title = ref('')
-
-const userAccount = computed(() => storeInstance.state.userAccount)
 const placeId = useRouteParams('id')
 
 const accountId = computed(() => userAccount.value?.['.key'] ?? null)

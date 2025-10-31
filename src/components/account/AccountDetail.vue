@@ -42,22 +42,19 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { ref as dbRef, set, push, remove } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 import EditableString from '../elements/UI/EditableStringWithSubmit.vue'
 
-const store = useStore()
+const { user, userAccount } = useAuth()
 
 const title = ref('')
 const email = ref('')
 const showEditForm = ref(false)
 const showInviteForm = ref(false)
-
-const user = computed(() => store.state.user)
-const userAccount = computed(() => store.state.userAccount)
 
 const accountPath = computed(() => userAccount.value ? 'accounts/' + userAccount.value['.key'] : null)
 const { data: account } = useFirebaseBinding(accountPath, { isList: false, defaultValue: {} })

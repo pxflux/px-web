@@ -55,12 +55,12 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { signInWithPopup, signInWithEmailAndPassword, GoogleAuthProvider } from 'firebase/auth'
 import { auth } from '../firebase-app'
+import { useAuth } from '../composables/useAuth'
 
-const store = useStore()
+const { user } = useAuth()
 const route = useRoute()
 const router = useRouter()
 
@@ -70,9 +70,6 @@ const password = ref('')
 const authError = ref(null)
 const isLoading = ref(false)
 const currentProvider = ref(null)
-
-// Computed properties
-const user = computed(() => store.state.user)
 
 // Methods
 const clearError = () => {

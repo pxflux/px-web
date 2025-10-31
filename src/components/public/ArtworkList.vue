@@ -11,13 +11,13 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { Artwork } from '../../models/ArtworkData'
 import ArtworkItem from '../elements/ArtworkItem.vue'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 
-const store = useStore()
-const accountId = computed(() => store.state.userAccount ? store.state.userAccount['.key'] : null)
+const { userAccount } = useAuth()
+const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 const path = computed(() => accountId.value ? 'accounts/' + accountId.value + '/artworks' : 'artworks')
 const { data: artworks } = useFirebaseBinding(path, { transform: Artwork.fromJson })
 </script>

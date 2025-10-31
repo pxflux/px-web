@@ -27,12 +27,12 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
 import { db, store } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 import ImageUpload from '../elements/ImageUpload.vue'
 import latinize from 'latinize'
 
@@ -40,14 +40,12 @@ const props = defineProps({
   isNew: Boolean
 })
 
-const storeInstance = useStore()
+const { userAccount } = useAuth()
 const router = useRouter()
 
 const imageFile = ref(null)
 const imageRemoved = ref(false)
 const fullName = ref('')
-
-const userAccount = computed(() => storeInstance.state.userAccount)
 const artistId = useRouteParams('id')
 
 const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)

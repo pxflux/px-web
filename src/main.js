@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import { createAppRouter } from "./router";
-import { createStore } from "./store";
 import { db, auth } from "./firebase-app";
 import { ref, onValue, off, get } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
@@ -9,6 +8,7 @@ import VueScrollTo from "vue-scrollto";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import App from "./components/App.vue";
+import { useAuth } from "./composables/useAuth";
 
 function b64DecodeUnicode(str) {
   return decodeURIComponent(
@@ -24,22 +24,23 @@ function b64DecodeUnicode(str) {
 // Create app instance
 const app = createApp(App);
 
-// Setup router and store
+// Setup router
 const router = createAppRouter();
-const store = createStore();
 
 // Install plugins
-app.use(store);
 app.use(router);
 app.use(inputAutoWidth);
 app.use(VueScrollTo);
 app.use(ElementPlus);
 
+// Initialize auth composable
+const { updateUser } = useAuth();
+
 /**
- * Sync store.state.user with firebase.auth().currentUser
+ * Sync auth state with firebase.auth().currentUser
  *
  * This callback is called when firebase.auth() detects user changes,
- * so just update the vuex store with the new user object.
+ * so just update the auth composable with the new user object.
  */
 let callback = null;
 let userRef = null;
@@ -52,14 +53,14 @@ onAuthStateChanged(auth, (user) => {
     callback = onValue(userRef, (snapshot) => {
       console.log("onMetadataChanged:", snapshot);
       fetchAccount(user).then(({ user, account }) => {
-        store.commit("UPDATE_USER", { user, account });
+        updateUser({ user, account });
       }).catch(error => {
         console.error("Error fetching account:", error.message || error);
-        store.commit("UPDATE_USER", { user, account: null });
+        updateUser({ user, account: null });
       });
     });
   } else {
-    store.commit("UPDATE_USER", null);
+    updateUser(null);
   }
 });
 

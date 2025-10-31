@@ -60,7 +60,6 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
 import { ref as dbRef, update } from 'firebase/database'
@@ -68,6 +67,7 @@ import { db } from '../../firebase-app'
 import { Artwork } from '../../models/ArtworkData'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 
 import RemoteControlEditor from '../elements/RemoteControlEditor.vue'
 import ContributorsEditor from '../elements/ContributorsEditor.vue'
@@ -79,12 +79,10 @@ const props = defineProps({
   isNew: Boolean
 })
 
-const storeInstance = useStore()
+const { userAccount } = useAuth()
 const router = useRouter()
 
 const artwork = ref(Artwork.empty())
-
-const userAccount = computed(() => storeInstance.state.userAccount)
 const artworkId = useRouteParams('id')
 
 const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)

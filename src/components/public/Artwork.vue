@@ -67,24 +67,24 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
 import AttachmentPanel from '../elements/AttachmentsPanel.vue'
 import ArtworkPlayerList from './ArtworkPlayerList.vue'
 import { Artwork } from '../../models/ArtworkData'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 import { ref as dbRef, remove, update } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
 
-const store = useStore()
+const { userAccount } = useAuth()
 const router = useRouter()
 const id = useRouteParams('id')
 
 const setupIndex = ref(0)
 
-const accountId = computed(() => store.state.userAccount ? store.state.userAccount['.key'] : null)
+const accountId = computed(() => userAccount.value ? userAccount.value['.key'] : null)
 
 const setup = computed(() => artwork.value?.setups?.[setupIndex.value] ?? null)
 const sourceDescription = computed(() => setup.value?.channels?.[0]?.source?.toString() || '')

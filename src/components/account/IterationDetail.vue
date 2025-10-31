@@ -11,14 +11,14 @@
 
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
-import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ref as dbRef, update } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 
-const storeInstance = useStore()
+const { user } = useAuth()
 const route = useRoute()
 
 const inputTitle = ref(null)
@@ -26,8 +26,6 @@ const title = ref({
   val: '',
   edit: false
 })
-
-const user = computed(() => storeInstance.state.user)
 
 const path = computed(() => {
   if (user.value?.uid && route.params.artworkId && route.params.id) {

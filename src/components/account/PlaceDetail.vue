@@ -14,18 +14,16 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
 import { ref as dbRef, remove } from 'firebase/database'
 import { db, store } from '../../firebase-app'
 import { log } from '../../helper'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 
-const storeInstance = useStore()
+const { userAccount } = useAuth()
 const router = useRouter()
-
-const userAccount = computed(() => storeInstance.state.userAccount)
 const placeId = useRouteParams('id')
 
 const accountId = computed(() => {

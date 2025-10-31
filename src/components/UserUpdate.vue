@@ -58,13 +58,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
 import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth'
 import { auth } from '../firebase-app'
 import { log } from '../helper'
+import { useAuth } from '../composables/useAuth'
 
-const store = useStore()
-const user = computed(() => store.state.user)
+const { user, updateUser } = useAuth()
 
 const displayName = ref(user.value?.displayName || '')
 const email = ref(user.value?.email || '')
@@ -83,20 +82,20 @@ const updatePassword = () => {
     user.value.updatePassword(password.value).catch(log)
   } else {
     const credential = EmailAuthProvider.credential(user.value.email, password.value)
-    user.value.linkWithCredential(credential).then((user) => {
-      console.log('Account link', user)
+    user.value.linkWithCredential(credential).then((linkedUser) => {
+      console.log('Account link', linkedUser)
       auth.currentUser.reload()
-      store.commit('UPDATE_USER', { user: user })
+      updateUser({ user: linkedUser })
     }).catch(log)
   }
   password.value = ''
 }
 
 const disconnectGoogle = () => {
-  user.value.unlink(GoogleAuthProvider.PROVIDER_ID).then((user) => {
-    console.log('Account unlink', user)
+  user.value.unlink(GoogleAuthProvider.PROVIDER_ID).then((unlinkedUser) => {
+    console.log('Account unlink', unlinkedUser)
     auth.currentUser.reload()
-    store.commit('UPDATE_USER', { user: user })
+    updateUser({ user: unlinkedUser })
   }).catch(log)
 }
 
@@ -106,7 +105,7 @@ const connectGoogle = () => {
   user.value.linkWithPopup(provider).then((result) => {
     console.log('Account link', result)
     auth.currentUser.reload()
-    store.commit('UPDATE_USER', { user: result.user })
+    updateUser({ user: result.user })
   }).catch(log)
 }
 </script>

@@ -13,18 +13,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ref as dbRef, push, set } from 'firebase/database'
 import { db } from '../../firebase-app'
 import { log } from '../../helper'
+import { useAuth } from '../../composables/useAuth'
 
-const store = useStore()
+const { user } = useAuth()
 const router = useRouter()
 
 const title = ref('')
-const user = computed(() => store.state.user)
 
 const createAccount = () => {
   const account = {

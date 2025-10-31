@@ -18,12 +18,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { useFirebaseBinding } from '../../composables/useFirebaseBinding'
+import { useAuth } from '../../composables/useAuth'
 
-const store = useStore()
-
-const userAccount = computed(() => store.state.userAccount)
+const { userAccount } = useAuth()
 
 const accountId = computed(() => {
   if (!userAccount.value) {
