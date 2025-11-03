@@ -19,17 +19,7 @@
             <img src="/img/collection-v3@2x.png" width="24" height="24" class="center">
           </router-link>
           <!-- -->
-          <div v-if="user && userAccount" class="item-with-submenu">
-            <a class="button submenu-trigger">{{ userAccount.title }}</a>
-            <div class="submenu">
-              <div v-for="account in inactiveAccounts" :key="account['.key']" class="button"
-                @click="setAccount(account['.key'])">
-                {{ account.title }}
-              </div>
-            </div>
-          </div>
-          <!-- -->
-          <router-link v-if="user && !userAccount" to="/account/new" class="button">Create Account</router-link>
+          <header-accounts v-if="user" :user="user" />
           <!-- -->
           <div v-if="user" class="item-with-submenu">
             <a class="button submenu-trigger">
@@ -63,22 +53,17 @@
 <script setup>
 import { computed, onMounted, onUpdated, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { db, auth } from '../firebase-app'
+import { auth } from '../firebase-app'
 import { signOut } from 'firebase/auth'
-import { ref as dbRef, set } from 'firebase/database'
 import { useSubmenu } from '../composables/useSubmenu'
-import { log } from '../helper'
-import { useFirebaseBinding } from '../composables/useFirebaseBinding'
 import { useAuth } from '../composables/useAuth'
 import HeaderLogo from './HeaderLogo.vue'
+import HeaderAccounts from './HeaderAccounts.vue'
 
-const { user, userAccount } = useAuth()
+const { user } = useAuth()
 const router = useRouter()
 const route = useRoute()
 const { closeSubmenus, setupSubmenusWithClass } = useSubmenu()
-
-const accountsPath = computed(() => user.value?.uid ? 'users/' + user.value.uid + '/accounts' : null)
-const { data: accounts } = useFirebaseBinding(accountsPath, { isList: false, defaultValue: {} })
 
 const loginUrl = computed(() => {
   if (route.path === '/auth' || route.path === '/') {
@@ -86,17 +71,6 @@ const loginUrl = computed(() => {
   }
   return `/auth?redirect=${encodeURIComponent(route.fullPath)}`
 })
-
-const inactiveAccounts = computed(() => {
-  const accountsArray = Array.isArray(accounts.value) ? accounts.value : Object.values(accounts.value)
-  return accountsArray.filter(account => account && account['.key'] !== userAccount.value?.['.key'])
-})
-
-const setAccount = (accountId) => {
-  closeSubmenus()
-  const accountRef = dbRef(db, 'users/' + user.value.uid + '/accountId')
-  set(accountRef, accountId).catch(log)
-}
 
 const goto = (path) => {
   closeSubmenus()
